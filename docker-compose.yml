@@ -1,0 +1,76 @@
+version: '3'
+networks: 
+  dbnet:
+    driver: bridge
+
+services:
+  redis:
+    image: redis
+    env_file: .env
+    hostname: ${REDIS_HOST}
+    networks:
+      - dbnet
+    ports:
+        - "6376:6379"
+    restart: always
+
+  rpcnode:
+    build: ./docker/node
+    env_file: .env
+    networks:
+      - dbnet
+    volumes:
+      - /root/wagerr:/root/.wagerr
+      - ./docker/node/docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
+      - ./docker/node/start.sh:/usr/local/bin/start.sh
+      - ./docker/node/dev.sh:/usr/local/bin/dev.sh
+    ports:
+      - "55003:55003"
+      - "55002:55002"
+    restart: always
+    command: dev.sh
+
+  mongo:
+    image: mongo:latest
+    env_file: .env
+    restart: always
+    networks:
+      - dbnet
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGODB_DATABASE}
+      MONGODB_USERNAME: ${MONGODB_USERNAME}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD}
+      MONGODB_DATABASE: ${MONGODB_DATABASE}
+    volumes:
+      - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
+      - ./data/db:/data/db
+    ports:
+      - 27017:27017
+    command: mongod --logpath=/dev/null # --quiet
+
+  explorer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env
+    depends_on:
+      - mongo
+      - redis
+    links:
+      - mongo
+      - redis:${REDIS_HOST}
+    networks:
+      - dbnet
+    volumes:
+      - ./docker/node/start.sh:/usr/local/bin/start.sh
+      - ./server:/explorer/server
+    ports:
+      - "8087:8087"
+      - "8081:8081"
+      - "9051:9051"
+    restart: always
+    command: script/start.sh
+    volumes:
+      - ./:/explorer

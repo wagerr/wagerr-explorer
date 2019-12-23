@@ -1,0 +1,208 @@
+.menu-desktop {
+
+	background: $wgreen;
+
+	box-shadow: #7d7d7d 0px 0px 16px;
+	color: $white;
+    float: left;
+	font-weight: lighter;
+    height: 100%;
+    margin: 0;
+    min-height: 550px;
+	padding: 1em 2em 2em;
+
+	@include media-breakpoint-down(sm) {
+		display: none;
+	}
+
+	@keyframes fadein {
+		from {
+			opacity:0;
+		}
+		to {
+			opacity:1;
+		}
+	}
+
+	@-moz-keyframes fadein { /* Firefox */
+		from {
+			opacity:0;
+		}
+		to {
+			opacity:1;
+		}
+	}
+
+	@-webkit-keyframes fadein { /* Safari and Chrome */
+		from {
+			opacity:0;
+		}
+		to {
+			opacity:1;
+		}
+	}
+
+	@-o-keyframes fadein { /* Opera */
+		from {
+			opacity:0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+
+	&__content-wrapper {
+		display: flex;
+		flex-direction: column;
+		height: 75%;
+		max-height: 600px;
+		justify-content: space-between;
+	}
+
+	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 3.5em;
+	}
+
+	&__toggle {
+		cursor: pointer;
+		font-size: 2em;
+		height: 24px;
+		width: 24px;
+	}
+
+	&__logo {
+		height: auto;
+		margin-right: 2em;
+		/* Used to align with searchbar */
+		width: 140px;
+	}
+
+	&__title {
+		margin: 0;
+		text-align: center;
+	}
+
+	&__item {
+		display: flex;
+		align-items: center;
+		color: $white;
+		line-height: 1;
+		margin: 0;
+		padding: 0;
+		position: relative;
+		transition: all 1s cubic-bezier(0, 1, .5, 1);
+
+		&:hover {
+			color: $white;
+			text-decoration: none;
+		}
+
+	}
+
+	&__item-icon {
+		height: 24px;
+		transition: all 1s cubic-bezier(0, 1, .5, 1);
+		width: 24px;
+	}
+
+	&__item-label {
+		/*opacity: 1;
+		transition: opacity .5s;*/
+		/*position: absolute;*/
+		margin-left: 1em;
+		transition: all 1s cubic-bezier(0, 1, .5, 1);
+		/*Prevent text wrapping when width is changed*/
+		white-space: nowrap;
+	}
+
+	&__item-indicator {
+		display: none;
+		position: absolute;
+		right: -32px;
+	}
+
+	&__item--is-active &__item-indicator {
+		display: block;
+	}
+
+	&__settings {
+		height: 24px;
+		width: 24px;
+		transition: all 1s cubic-bezier(0, 1, .5, 1);
+		margin: 0 auto;
+		position: relative;
+		&:hover {
+			color: $white;
+			text-decoration: none;
+		}
+	}
+
+	/*Opened modifier*/
+	&--open {
+		transition: all 1s cubic-bezier(0, 1, .5, 1);
+		width: $menu-width-open;
+	}
+
+	&--open &__toggle {
+		transform: rotate(-90deg);
+		transition: all 1s cubic-bezier(0, 1, .5, 1);
+	}
+
+	&--open &__logo {
+		animation: fadein 2s;
+			-moz-animation: fadein 2s;
+				-webkit-animation: fadein 2s;
+					-o-animation: fadein 2s;
+	}
+
+	/*Closed modifier*/
+	&--close {
+		transition: all 1s cubic-bezier(0, 1, .5, 1);
+		width: $menu-width-close;
+	}
+
+	&--close &__toggle {
+		transition: all 1s cubic-bezier(0, 1, .5, 1);
+	}
+
+	&--close &__logo {
+		height: 0;
+		width: 0;
+		margin: 0;
+		transform: scale(0);
+		transition: all 1s cubic-bezier(0, 1, .5, 1);
+	}
+
+	&--close &__item-icon {
+		margin: 0 auto;
+		transition: all 1s cubic-bezier(0, 1, .5, 1);
+	}
+
+	&--close &__item-label {
+		display: none;
+		transition: all 1s cubic-bezier(0, 1, .5, 1);
+	}
+
+	&--close &__settings {
+		margin: 0 auto;
+		position: relative;
+		transition: all 1s cubic-bezier(0, 1, .5, 1);
+	}
+
+	a, a:visited {
+		color: $white;
+		font-family: $fontSmall;
+		font-size: 18px;
+		transition: all 1s cubic-bezier(0, 1, .5, 1);
+	}
+
+	a:hover {
+		color: $gray-light;
+		transition: all 1s cubic-bezier(0, 1, .5, 1);
+	}
+}
+

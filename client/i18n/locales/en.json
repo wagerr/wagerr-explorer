@@ -1,0 +1,65 @@
+{
+  "common": {
+  },
+  "overview": {
+    "latestBlocks": "Latest Blocks"
+  },
+  "menu":{
+    "overview": "Overview",
+    "movement": "Movement",
+    "top": "Top 100",
+    "masternode": "Masternode",
+    "governance": "Governance",
+    "betEvents": "Bet Events",
+    "connections": "Connections",
+    "statistics": "Statistics",
+    "coinInfo": "Coin Info",
+    "api": "API"
+  },
+  "betEventList": {
+    "title": "Bet Events",
+    "start": "Start",
+    "eventId": "Id",
+    "name": "Name",
+    "round": "Round",
+    "homeTeam": "Home",
+    "awayTeam": "Away",
+    "supplyChange": "Supply Change",
+    "betAmount": "Bet Amount",
+    "betStatus": "Bet Status",
+    "detail": "Detail",
+    "open": "OPEN",
+    "waitForStart": "WAITING FOR START",
+    "started": "STARTED",
+    "waitingForOracle": "WAITING FOR ORACLE",
+    "seeDetail": "See Detail"
+  },
+  "betEvent": {
+    "time": "Time",
+    "bet": "Bet",
+    "odds": "Odds",
+    "value": "Value",
+    "txId": "TX ID",
+    "homeOdds": "Home Odds",
+    "drawOdds": "Draw Odds",
+    "awayOdds": "Away Odds",
+    "betEvent": "Bet Event",
+    "league": "League",
+    "homeTeam": "Home Team",
+    "awayTeam": "Away Team",
+    "homeBetNum": "Home Bet Num",
+    "homeBetAmount": "Home Bet Amount",
+    "drawBetNum": "Draw Bet Num",
+    "drawBetAmount": "Draw Bet Amount",
+    "awayBetNum": "Away Bet Num",
+    "awayBetAmount": "Away Bet Amount",
+    "cantFindEvent": "Can't find event",
+    "betResult": "Bet Result",
+    "result": "Result",
+    "payoutBlock": "Payout Block",
+    "betAmount": "Bet Amount",
+    "payoutAmount": "Payout Amount",
+    "supplyChange": "Supply Change",
+    "waitingForOracle": "Waiting For Oracle"
+  }
+}

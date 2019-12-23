@@ -1,0 +1,239 @@
+
+@import "./sass/mainnet";
+/* Variables */
+$black: #151515;
+$blue: rgba(41, 77, 234, 1);
+$blue-dark: #595ff5;
+$blue-light: #2ba2f8;
+$wblue: rgba(41, 77, 234, 1);
+$gray: #adadad;
+$gray-dark: #354052;
+$gray-light: #e8e8e8;
+$green: #61d75e;
+$red: #ed1c24;
+$orange: #f7981c;
+$white: #ffffff;
+$white-light: rgba(255,255,255,.5);
+
+$margin: 1rem;
+$margin-lg: 1.5rem;
+
+$menu-gradient-main: #295af5;
+$menu-gradient-secondary: #595ff5;
+$menu-width-open: 240px;
+$menu-width-close: 110px;
+$menu-mobile-height: 70px;
+
+/* Bootstrap override */
+$card-border-width: 0;
+$hr-margin-y: 0;
+$paragraph-margin-bottom: 0;
+
+$table-border-width: 0;
+$table-cell-padding: 0;
+
+$container-large-desktop: 1170px;
+
+// Badges
+$badge-font-size:                   1em;
+$badge-font-weight:                 bold;
+$badge-padding-y:                   .25em;
+$badge-padding-x:                   1em;
+$badge-border-radius:               10px;
+$badge-pill-padding-x:              .6em;
+$badge-pill-border-radius:          10rem;
+
+// Pagination
+$pagination-padding-y:              8px;
+$pagination-padding-x:              12px;
+$pagination-padding-y-sm:           8px;
+$pagination-padding-x-sm:           12px;
+$pagination-padding-y-lg:           8px;
+$pagination-padding-x-lg:           12px;
+$pagination-line-height:            1;
+
+$pagination-color:                  $gray;
+$pagination-bg:                     $white;
+$pagination-border-width:           1px;
+$pagination-border-color:           $gray;
+
+$pagination-hover-color:            $blue;
+$pagination-hover-bg:            	$white;
+$pagination-hover-border-color:    	$blue;
+
+$pagination-active-color:           $black;
+$pagination-active-bg:           	$white;
+$pagination-active-border-color:    $gray-light;
+
+$pagination-disabled-color:         $gray;
+$pagination-disabled-bg:            $gray-light;
+$pagination-disabled-border-color:  $gray;
+
+@import "~bootstrap/scss/bootstrap.scss";
+@import "./sass/font";
+@import "./sass/card";
+@import "./sass/error";
+@import "./sass/form";
+@import "./sass/hr";
+@import "./sass/select";
+@import "./sass/search";
+@import "./sass/table";
+@import "./sass/utility";
+@import "./sass/animatevars";
+@import "../node_modules/animate-sass/animate";
+
+@import "./sass/footer";
+@import "./sass/loading";
+@import "./sass/menu-desktop";
+@import "./sass/menu-mobile";
+@import "./sass/qrcode";
+@import "./sass/watch-list";
+
+/* Containers */
+@import "./sass/api";
+
+/* Reset */
+html, body {
+	text-rendering: auto;
+	text-shadow: none;
+	-webkit-font-smoothing: antialiased;
+	-webkit-text-stroke: 0;
+	//for table to scroll in safari ios
+	@media (min-width: 1600px) {
+		height: 100vh;
+	}
+	margin: 0;
+	padding: 0;
+	overflow-x: hidden;
+	width: 100vw;
+}
+
+a, a:visited {
+	color: $gray-dark;
+	text-decoration: none;
+}
+
+a:hover {
+	color: $blue;
+	text-decoration: none;
+	transition: all 1s cubic-bezier(0, 1, .5, 1);
+}
+
+h1, h2, h3, h4, h5, h6 {
+	display: inline-block;
+	font-weight: bolder;
+}
+
+#react-app {
+	height: 100%;
+}
+
+.page-wrapper {
+	display: flex;
+	flex-direction: row;
+	height: 100%;
+
+	@include media-breakpoint-down(sm) {
+		flex-direction: column;
+	}
+
+}
+
+.menu-wrapper {
+	display: flex;
+	z-index: $zindex-fixed;
+}
+
+.badge {
+	border-radius: 2.5px;
+	color: $black;
+	font-family: $fontSmall;
+	font-size: 0.85em;
+	font-weight: normal;
+	font-style: normal;
+	font-stretch: normal;
+	font-weight: bold;
+	line-height: normal;
+	letter-spacing: normal;
+	min-width: 60%;
+	mix-blend-mode: undefined;
+	padding: .2em .6em;
+	text-align: center;
+	text-transform: uppercase;
+
+	&-danger {
+		color: $white !important;
+	}
+
+	&-info {
+		color: $white !important;
+	}
+
+	&-success {
+		color: $white !important;
+	}
+}
+
+// Content Wrapper
+.content {
+	flex: 1;
+	overflow-y: auto;
+
+	@media (min-width: 1600px) {
+		padding-left: $menu-width-open;
+		padding-right: $menu-width-open;
+	}
+
+	@include media-breakpoint-down(sm) {
+		margin-top: $menu-mobile-height;
+	}
+
+	/* Static Footer
+	@include media-breakpoint-up(md) {
+		margin-bottom: 159px;
+	}
+
+	@include media-breakpoint-up(lg) {
+		margin-bottom: 112px;
+	}
+	*/
+
+	&__inner-wrapper {
+		min-height: 50vh;
+	}
+
+    &__wrapper {
+		background-color: $white;
+	    margin: 0 auto;
+		min-height: 80vh;
+		overflow-x: hidden;
+		padding: 1em 2em 2em;
+	    position: relative;
+		transition: all 1s cubic-bezier(0, 1, .5, 1);
+    }
+
+    /*Set margin for content offset*/
+	& + div .menu-desktop--close + & {
+	    margin-left: $menu-width-close;
+		transition: all 1s cubic-bezier(0, 1, .5, 1);
+	}
+}
+
+.scroller {
+	background-color: transparentize($gray, .5);
+	bottom: 2em;
+	border-radius: 15px;
+	padding: 1em;
+	cursor: pointer;
+	position: fixed;
+	right: 2em;
+
+	&__icon {
+		font-size: 3em;
+	}
+
+}
+
+.scrollable-table{
+	height: 100%;
+}
