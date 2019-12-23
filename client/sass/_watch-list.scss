@@ -1,0 +1,64 @@
+.watch-list {
+	margin: 16px 0;
+
+	&__title {
+		font-family: $fontLarge;
+		font-size: 24px;
+		margin-bottom: .8em;
+		text-transform: capitalize;
+	}
+
+	&__item {
+		align-items: center;
+		background-color: $wgreen;
+  		border-radius: 15px;
+		color: $white;
+		font-size: .75em;
+		margin: .5em 0;
+		padding: .5em;
+		text-transform: uppercase;
+
+		display: block;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		width: 100%;
+	}
+
+	&__item:nth-child(odd) {
+		background-color: $wgreen;
+	}
+
+	&__item-close {
+		color: $white;
+		cursor: pointer;
+		font-size: 1.75em;
+		margin-right: .25em;
+		position: absolute;
+	}
+
+	&__item-text {
+		color: $white;
+		cursor: pointer;
+		font-family: $fontLarge;
+		font-size: 1.25em;
+		font-weight: normal;
+		font-style: normal;
+		font-stretch: normal;
+		letter-spacing: normal;
+		margin-left: 1.75em;
+		text-align: left;
+
+		display: block;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		width: 85%;
+
+		text-rendering: auto;
+		text-shadow: none;
+		-webkit-font-smoothing: auto;
+		-webkit-text-stroke: 0;
+	}
+
+}
