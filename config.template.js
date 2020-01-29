@@ -1,35 +1,46 @@
-
-/**
- * Global configuration object.
- */
 const config = {
-  'api': {
-    'host': 'https://explorer.bulwarkcrypto.com',
-    'port': '443',
-    'prefix': '/api',
-    'timeout': '5s'
+  api: {
+    host: 'https://explorer.wagerr.com',
+    port: '8087' || '8087',
+    prefix: '/api',
+    timeout: '30s'
   },
-  'coinMarketCap': {
-    'api': 'http://api.coinmarketcap.com/v1/ticker/',
-    'ticker': 'bulwark'
+  coinMarketCap: {
+    tickerId: '1779'
   },
-  'db': {
-    'host': '127.0.0.1',
-    'port': '27017',
-    'name': 'blockex',
-    'user': 'blockexuser',
-    'pass': 'Explorer!1'
+  db: {
+    host: 'mongo' || 'mongo',
+    port: '27017' || '27017',
+    name: 'wagerrx4' || 'wagerrx',
+    user: 'wagerrun' || 'wagerru',
+    pass: 'wagerrpass2020' || 'wagerrpass2019'
   },
-  'freegeoip': {
-    'api': 'http://freegeoip.net/json/'
+  freegeoip: {
+    api: 'https://extreme-ip-lookup.com/json/'
   },
-  'rpc': {
-    'host': '127.0.0.1',
-    'port': '52541',
-    'user': 'bulwarkrpc',
-    'pass': 'someverysafepassword',
-    'timeout': 8000, // 8 seconds
-  }
+  faucet:{
+    wait_time: 1440,
+    percent: 0.02,
+    limit: 500
+  },
+  rpc: {
+    host: 'rpcnode' || 'rpcnode',
+    port: '55003' || 8332,
+    user: 'wagerr' || 'wagerr',
+    pass: 'this' || 'thiswagerrpass',
+    timeout: 8000, // 8 seconds
+  },
+  coin:{
+    testnet: 'MainNet' || 'MainNet',
+    oracle_payout_address: 'WRBs8QD22urVNeGGYeAMP765ncxtUA1Rv2' || 'TGFKr64W3tTMLZrKBhMAou9wnQmdNMrSG2', // testnet address, replace with mainnet
+    dev_payout_address: 'Wm5om9hBJTyKqv5FkMSfZ2FDMeGp12fkTe' || 'TLceyDrdPLBu8DK6UZjKu4vCDUQBGPybcY', // testnet address, replace with mainnet
+  },
+  redis:{
+    host: 'redis' || 'localhost',
+  },
+  crons: {
+    start: '',
+  },
 };
 
 module.exports = config;

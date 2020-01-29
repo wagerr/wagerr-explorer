@@ -53,7 +53,7 @@ async function syncPayoutData() {
       // log('Attaching to result');
       resultPayoutTxs = await TX.find({blockHeight: block.height+1});
       // log(resultPayoutTxs);
-    
+
       result.payoutTx = resultPayoutTxs[0];
     } else {
       result.payoutTx = resultPayoutTxs[0];
@@ -78,7 +78,7 @@ async function syncPayoutData() {
  */
 async function syncCoin() {
   const date = moment().utc().startOf('minute').toDate();
-
+  rpc.timeout(20000)
   const info = await rpc.call('getinfo');
   const masternodes = await rpc.call('getmasternodecount');
   const nethashps = await rpc.call('getnetworkhashps');

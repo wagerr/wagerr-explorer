@@ -128,6 +128,11 @@ const APIdata = [
         name: 'getBetTotals',
         info: 'Returns bet totals',
         path: '/api/bet/totals?eventId=%23061'
+      },
+      {
+        name: 'getBetUpdates',
+        info: 'Returns bet updates',
+        path: '/api/bet/updates?eventId=%23061'
       }
     ]
   },

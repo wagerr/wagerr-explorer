@@ -483,7 +483,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
       // log(`Bet update ${_id} already on record`);
       return betExists;
     }
-
+    
     try {
       const { event, originalRecord } = await getEventData(block, transaction.eventId, waitTime);
 
@@ -493,9 +493,10 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
       if ([4, 5].includes(transaction.outcome)) {
         const spreadRecords = await Betspread.find({
           eventId: transaction.eventId,
+          blockHeight: { $lt: block.height },
           createdAt: { $lte: block.createdAt },
         });
-    
+
         lastSpread = spreadRecords[spreadRecords.length - 1];
       }
 
@@ -540,6 +541,8 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
 
   if (['peerlessSpreadsMarket'].includes(transaction.txType)) {
     const _id = `SM${transaction.eventId}${rpctx.get('txid')}${block.height}`;
+
+    
     const spreadExists = await recordCheck(Betspread, _id);
     let mhomeOdds;
     let mawayOdds;
@@ -548,7 +551,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
     if (spreadExists) {
       return spreadExists;
     }
-
+    
     const { spreadPoints } = transaction;
 
     const moneyLine = await Betupdate.find({

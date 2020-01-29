@@ -53,6 +53,7 @@ async function update() {
     locker.lock('bet');
     locker.lock('listevent');
     await clearDatabase();
+    console.log('finished');
   } catch(err) {
     console.log(err);
     code = 1;

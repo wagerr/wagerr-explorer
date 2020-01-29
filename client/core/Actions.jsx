@@ -209,9 +209,15 @@ export const getBetspreads = (query) => {
   return new promise((resolve, reject) => {
     return getFromWorker('betspreads', resolve, reject, query);
   });
-};export const getBetTotals = (query) => {
+};
+export const getBetTotals = (query) => {
   return new promise((resolve, reject) => {
     return getFromWorker('bettotals', resolve, reject, query);
+  });
+};
+export const getBetUpdates = (query) => {
+  return new promise((resolve, reject) => {
+    return getFromWorker('betupdates', resolve, reject, query);
   });
 };
 export const getBetEventInfo = (query) => {

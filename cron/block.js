@@ -52,6 +52,7 @@ async function syncBlocks(start, stop, clean = false) {
     const hash = await rpc.call('getblockhash', [height]);
     const rpcblock = await rpc.call('getblock', [hash]);
 
+    if (rpcblock.confirmations < 1) break; 
     const block = new Block({
       hash,
       height,
@@ -124,7 +125,7 @@ async function update() {
     }
 
     locker.lock(type);
-    await syncBlocks(dbHeight, rpcHeight);
+    await syncBlocks(dbHeight, rpcHeight, true);
   } catch(err) {
     logError(err);
     code = 1;
