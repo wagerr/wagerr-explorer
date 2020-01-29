@@ -32,6 +32,6 @@ EOL
 
 echo 'RPC configuration has been applied'
 # ls /root/.wagerr
-cat /root/.wagerr/testnet4/wagerr.conf
+cat /root/.wagerr/wagerr.conf
 
 exec "$@"
