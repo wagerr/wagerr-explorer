@@ -23,7 +23,7 @@ async function syncMasternode() {
   await Masternode.deleteMany({});
 
   // Increase the timeout for masternode.
-  rpc.timeout(10000); // 10 secs
+  rpc.timeout(20000); // 10 secs
 
   const mns = await rpc.call('listmasternodes');
   const inserts = [];
@@ -48,6 +48,8 @@ async function syncMasternode() {
   if (inserts.length) {
     await Masternode.insertMany(inserts);
   }
+
+  console.log('Finish masternode cron job');
 }
 
 /**

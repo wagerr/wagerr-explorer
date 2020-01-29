@@ -48,7 +48,7 @@ class Overview extends Component {
 
       return ({
         ...tx,
-        age: diffSeconds < 60 ? `${ diffSeconds } seconds` : createdAt.fromNow(true),
+        age: diffSeconds < 0 ? "Just Now" : (diffSeconds < 60 ? `${ diffSeconds } seconds` : createdAt.fromNow(true)),
         blockHeight: (<Link to={ `/block/${ tx.blockHeight }` }>{ tx.blockHeight }</Link>),
         createdAt: date24Format(tx.createdAt),
         recipients: tx.vout.length,

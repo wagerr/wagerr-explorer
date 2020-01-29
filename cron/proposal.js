@@ -18,7 +18,7 @@ async function syncProposal () {
   const date = moment().utc().startOf('minute').toDate()
   await Proposal.deleteMany({})
   // Increase the timeout for Proposals.
-  rpc.timeout(10000) // 10 secs
+  rpc.timeout(30000) // 10 secs
   const proposals = await rpc.call('getbudgetinfo')
   const mnc = await rpc.call('getmasternodecount')
   const projectionProposals = await rpc.call('getbudgetprojection')
@@ -54,7 +54,7 @@ async function syncProposal () {
     })
     await proposal.save()
   })
-
+  console.log('Finished proposal cron job');
 }
 
 /**

@@ -32,7 +32,7 @@ async function getBlockData(height) {
   let block = {};
   if (blocks.length > 1) {
     let rpctxsCount = 0;
-    
+
     for (let x = 0; x < blocks.length; x +=1) {
       const thisBlock = blocks[x];
 
@@ -41,7 +41,7 @@ async function getBlockData(height) {
         block = thisBlock;
       }
     }
-    
+
   } else {
     block = blocks[0] || {};
   }
@@ -155,6 +155,7 @@ async function preOPCode(block, rpctx, vout) {
 }
 
 async function addPoS(block, rpcTx, waitTime = 50) {
+
   const rpctx = rpcTx;
   // We will ignore the empty PoS txs.
   // Setup the outputs for the transaction.
@@ -163,12 +164,15 @@ async function addPoS(block, rpcTx, waitTime = 50) {
       return rpctx[param];
     }
   }
-
+  //console.log(rpctx.txid);
   const rpctxVout = rpctx.get('vout');
 
+
   if (rpctxVout) {
-    rpctxVout.forEach(async (vout) => {
+    for (let i=0; i<rpctxVout.length; i++){
+      let vout = rpctxVout[i];
       if (vout.scriptPubKey.type === 'nulldata') {
+
         let transaction;
         try {
           transaction = await validateVoutData(vout);
@@ -180,7 +184,8 @@ async function addPoS(block, rpcTx, waitTime = 50) {
         }
 
         let success;
-
+        if (rpctx.txid == "592266f8deb84d350784c09850eeeca26966d51590e5c68940e1c55cd9e97d65")
+          console.log('transaction', transaction);
         if (transaction.error || !transaction.prefix) {
           success = await preOPCode(block, rpctx, vout);
         } else {
@@ -191,7 +196,33 @@ async function addPoS(block, rpcTx, waitTime = 50) {
           return { success: true };
         }
       }
-    })
+    }
+    // rpctxVout.forEach(async (vout) => {
+    //   if (vout.scriptPubKey.type === 'nulldata') {
+
+    //     let transaction;
+    //     try {
+    //       transaction = await validateVoutData(vout);
+    //     } catch (e) {
+    //       log('addPoS error');
+    //       log(block.height);
+    //       log(e);
+    //       transaction = { error: true, fullError: e };
+    //     }
+
+    //     let success;
+    //     //console.log('transaction', transaction);
+    //     if (transaction.error || !transaction.prefix) {
+    //       success = await preOPCode(block, rpctx, vout);
+    //     } else {
+    //       success = await saveOPTransaction(block, rpctx, vout, transaction, waitTime);
+    //     }
+
+    //     if (!transaction.error && success && !success.error) {
+    //       return { success: true };
+    //     }
+    //   }
+    // })
   }
 
   return true;
@@ -214,7 +245,7 @@ async function syncBlocksForBet(start, stop, clean = false, waitTime = 50) {
   if (clean) {
     await deleteBetData(start, stop);
   }
-  rpc.timeout(10000); // 10 secs
+  rpc.timeout(20000); // 10 secs
 
   log(start, stop);
   try {
@@ -222,16 +253,24 @@ async function syncBlocksForBet(start, stop, clean = false, waitTime = 50) {
       if (height >= dataStartBlock) {
 
         const block = await getBlockData(height);
-
         let rpcblock = block;
         let txs = rpcblock.rpctxs ? rpcblock.rpctxs : [];
 
-        await forEachSeries(txs, async (rpctx) => {
+        // await forEachSeries(txs, async (rpctx) => {
+        //   if (blockchain.isPoS(block)) {
+        //     // const rpctx = await util.getTX(txhash)
+        //     await addPoS(block, rpctx, waitTime);
+        //   }
+        // });
+        
+        for (let tx_index=0; tx_index < txs.length; tx_index++) {
+          let rpctx = txs[tx_index];      
+          console.log('txid:', rpctx.txid);    
           if (blockchain.isPoS(block)) {
             // const rpctx = await util.getTX(txhash)
             await addPoS(block, rpctx, waitTime);
           }
-        });
+        }
       }
     }
     log('Finished sync process');

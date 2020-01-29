@@ -9,6 +9,7 @@ const {
 
 // Models.
 const Block = require('../model/block');
+const Mappingname = require('../model/mappingname');
 const { log } = console;
 
 
@@ -55,7 +56,7 @@ async function update () {
     }
 
    locker.lock(type);
-   response = await syncBlocksForBet(dbHeight, blockDbHeight, false, 80);
+   response = await syncBlocksForBet(dbHeight, blockDbHeight, true, 200);
   } catch (err) {
     log('Update() error');
     log(err);

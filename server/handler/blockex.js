@@ -9,7 +9,7 @@ const { rpc } = require('../../lib/cron');
 
 const { CarverAddressType, CarverMovementType, CarverTxType } = require('../../lib/carver2d');
 const { CarverAddress, CarverMovement, CarverAddressMovement } = require('../../model/carver2d');
-
+const  opCode = require('../../lib/op_code')
 // System models for query and etc.
 const Block = require('../../model/block');
 const Coin = require('../../model/coin');
@@ -502,7 +502,7 @@ const getTX = async (req, res) => {
     const query = isNaN(req.params.hash)
       ? { txId: req.params.hash }
       : { height: req.params.hash };
-    const tx = await TX.findOne(query);
+    let tx = await TX.findOne(query);
     if (!tx) {
       res.status(404).send('Unable to find the transaction!');
       return;
@@ -529,8 +529,35 @@ const getTX = async (req, res) => {
         vin.push(vi);
       }
     });
-
-    res.json({ ...tx.toObject(), vin });
+    
+    tx = tx.toObject();
+    for (let i=0; i<tx.vout.length; i++){
+      vout = tx.vout[i];
+      if (vout.address.indexOf('OP_RETURN 1|') == -1 || vout.address.indexOf('OP_RETURN 2|') == -1 || vout.address.indexOf('OP_RETURN 3|') == -1) {
+        if (vout.address.indexOf('OP_RETURN') !== -1){
+          let betaction = await BetAction.findOne({txId: tx.txId});
+          if (betaction.betChoose.includes('Home')) {
+            betaction.odds = betaction.homeOdds / 10000
+          } else if (betaction.betChoose.includes('Away')) {
+            betaction.odds = betaction.awayOdds / 10000
+          } else {
+            betaction.odds = betaction.drawOdds / 10000
+          }         
+          if (betaction){            
+            if (betaction.betChoose.includes('Money Line')) {
+              tx.vout[i]['price'] = betaction.odds;
+            } else if (betaction.betChoose.includes('Totals')) {
+              const betChoose = action.betChoose.replace('Spreads - ', '');
+              tx.vout[i].Spread = betChoose == 'Away' ? betaction.spreadAwayOdds / 10000 : betaction.spreadHomeOdds / 10000
+            } else if (betaction.betChoose.includes('Spreads')) {
+              tx.vout[i].Total = betaction.betChoose.includes('Over') ? betaction.overOdds / 10000 : betaction.underOdds / 10000
+            };
+            tx.vout[i].eventId = betaction.eventId;
+          }          
+        }
+      }
+    }    
+    res.json({ ...tx, vin });
   } catch (err) {
     console.log(err);
     res.status(500).send(err.message || err);
@@ -770,6 +797,36 @@ const getBetTotals = async (req, res) => {
         visibility: true,
       }).sort({ createdAt: 1 }).countDocuments();
       const results = await Bettotal.find({
+        visibility: true,
+      }).skip(skip).limit(limit).sort({ createdAt: 1 });
+      res.json({ results, pages: total <= limit ? 1 : Math.ceil(total / limit) });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message || err);
+  }
+};
+
+const getBetUpdates = async (req, res) => {
+  try {
+    const limit = req.query.limit ? parseInt(req.query.limit, 10) : 1000;
+    const skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
+    if (req.query.eventId) {
+      const { eventId } = req.query;
+      const total = await BetUpdate.find({
+        eventId: `${eventId}`,
+        visibility: true,
+      }).sort({ createdAt: 1 }).countDocuments();
+      const results = await BetUpdate.find({
+        eventId: `${eventId}`,
+        visibility: true,
+      }).skip(skip).limit(limit).sort({ createdAt: 1 });
+      res.json({ results, pages: total <= limit ? 1 : Math.ceil(total / limit) });
+    } else {
+      const total = await BetUpdate.find({
+        visibility: true,
+      }).sort({ createdAt: 1 }).countDocuments();
+      const results = await BetUpdate.find({
         visibility: true,
       }).skip(skip).limit(limit).sort({ createdAt: 1 });
       res.json({ results, pages: total <= limit ? 1 : Math.ceil(total / limit) });
@@ -1471,6 +1528,7 @@ module.exports = {
   getStatisticPerWeek,
   getBetspreads,
   getBetTotals,
+  getBetUpdates,
   getLottoEvents,
   getLottoBets,
   getLottoResults,

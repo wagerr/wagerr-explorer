@@ -2,7 +2,7 @@ export const genMenuData = (t) => {
   return [
     {label: t('overview'), icon: '/img/home.svg', href: '/'},
     {label: t('movement'), icon: '/img/movement.svg', href: '/movement'},
-    {label: t('top'), icon: '/img/top100.svg', href: '/top'},
+    // {label: t('top'), icon: '/img/top100.svg', href: '/top'},
     {label: t('masternode'), icon: '/img/masternodes.svg', href: '/masternode'},
     // {label: t('governance'), icon: '/img/governance.svg', href: '/governance'},
     {label: t('Sports Betting'), icon: '/img/betevent.svg', href: '/betevents'},
