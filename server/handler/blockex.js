@@ -536,23 +536,39 @@ const getTX = async (req, res) => {
       if (vout.address.indexOf('OP_RETURN 1|') == -1 || vout.address.indexOf('OP_RETURN 2|') == -1 || vout.address.indexOf('OP_RETURN 3|') == -1) {
         if (vout.address.indexOf('OP_RETURN') !== -1){
           let betaction = await BetAction.findOne({txId: tx.txId});
-          if (betaction.betChoose.includes('Home')) {
-            betaction.odds = betaction.homeOdds / 10000
-          } else if (betaction.betChoose.includes('Away')) {
-            betaction.odds = betaction.awayOdds / 10000
-          } else {
-            betaction.odds = betaction.drawOdds / 10000
-          }         
-          if (betaction){            
+          if (betaction){    
+            console.log('betaction', betaction);
+            if (betaction.betChoose.includes('Home')) {
+              betaction.odds = betaction.homeOdds / 10000
+            } else if (betaction.betChoose.includes('Away')) {
+              betaction.odds = betaction.awayOdds / 10000
+            } else {
+              betaction.odds = betaction.drawOdds / 10000
+            }         
+            const displayNum = (num, divider) => {
+              const value = num > 0 ? `+${num / divider}` : `${num / divider}`;
+              
+              return value;
+            };      
             if (betaction.betChoose.includes('Money Line')) {
-              tx.vout[i]['price'] = betaction.odds;
-            } else if (betaction.betChoose.includes('Totals')) {
-              const betChoose = action.betChoose.replace('Spreads - ', '');
-              tx.vout[i].Spread = betChoose == 'Away' ? betaction.spreadAwayOdds / 10000 : betaction.spreadHomeOdds / 10000
+              tx.vout[i].price = betaction.odds;              
             } else if (betaction.betChoose.includes('Spreads')) {
-              tx.vout[i].Total = betaction.betChoose.includes('Over') ? betaction.overOdds / 10000 : betaction.underOdds / 10000
+              const betChoose = betaction.betChoose.replace('Spreads - ', '');
+              tx.vout[i].price = betChoose == 'Away' ? betaction.spreadAwayOdds / 10000 : betaction.spreadHomeOdds / 10000;
+              tx.vout[i].Spread = betChoose == 'Away' ? displayNum(betaction.spreadAwayPoints, 10) : displayNum(betaction.spreadHomePoints, 10);
+            } else if (betaction.betChoose.includes('Totals')) {
+              tx.vout[i].price = betaction.betChoose.includes('Over') ? betaction.overOdds / 10000 : betaction.underOdds / 10000
+              tx.vout[i].Total = (betaction.points / 10).toFixed(1)
             };
+            tx.vout[i].market = betaction.betChoose;
             tx.vout[i].eventId = betaction.eventId;
+
+            betevent = await BetEvent.findOne({eventId: betaction.eventId});
+            if (betevent){
+              tx.vout[i].homeTeam = betevent.homeTeam
+              tx.vout[i].awayTeam = betevent.awayTeam
+              tx.vout[i].league = betevent.league
+            }            
           }          
         }
       }
@@ -1110,10 +1126,10 @@ const getBetEventInfo = async (req, res) => {
 
     // We add how home teams are represented in bets with new opCodes
     homeTeamNames.push('Money Line - Home Win');
-    homeTeamNames.push('Spreads - Home');
+    //homeTeamNames.push('Spreads - Home');
     // We add how home teams are represented in bets with new opCodes
     awayTeamNames.push('Money Line - Away Win');
-    awayTeamNames.push('Spreads - Away');
+    //awayTeamNames.push('Spreads - Away');
     // We create the array that contains draw values
     const drawResults = ['DRW', 'Money Line - Draw'];
 
@@ -1132,7 +1148,38 @@ const getBetEventInfo = async (req, res) => {
       visibility: true,
       betChoose: { $in: drawResults },
     });
+    const spreadHomeBets = await BetAction.find({
+      eventId,
+      visibility: true,
+      betChoose: "Spreads - Home",
+    });
+    const spreadAwayBets = await BetAction.find({
+      eventId,
+      visibility: true,
+      betChoose: "Spreads - Away",
+    });
 
+    const overBets = await BetAction.find({
+      eventId,
+      visibility: true,
+      betChoose: "Totals - Over",
+    });
+
+    const underBets = await BetAction.find({
+      eventId,
+      visibility: true,
+      betChoose: "Totals - Under",
+    });
+    
+    let H2HEvents = [];
+    if (events.length > 0) {
+      H2HEvents = await BetEvent.find({
+        homeTeam:events[0].homeTeam,
+        awayTeam:events[0].awayTeam,
+        visibility: true,
+        createdAt: {$lt: events[0].createdAt}
+      }).sort({ createdAt: -1 });
+    }
     // These will return only one event with the latest updated odds
     // (with possibility of duplicates), but contains the original odds the event was created with.
     // We update them to these original
@@ -1180,6 +1227,11 @@ const getBetEventInfo = async (req, res) => {
       homeBets,
       awayBets,
       drawBets,
+      spreadHomeBets,
+      spreadAwayBets,
+      overBets,
+      underBets,
+      H2HEvents,
       results,
     });
   } catch (err) {
