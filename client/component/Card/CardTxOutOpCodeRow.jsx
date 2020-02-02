@@ -49,6 +49,10 @@ export default class CardTxOutOpCodeRow extends Component {
             <span className="card__label">Total</span>
             <span className="card__result">{ this.props.tx.Total}</span>
           </div>}
+          {(typeof this.props.tx.Spread != "undefined") && <div className="card__row">
+            <span className="card__label">Spread</span>
+            <span className="card__result">{ this.props.tx.Spread}</span>
+          </div>}
           <div className="card__row">
             <span className="card__label">Price</span>
             <span className="card__result">{ this.props.tx.price }</span>
