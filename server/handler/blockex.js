@@ -1173,13 +1173,34 @@ const getBetEventInfo = async (req, res) => {
     
     let H2HEvents = [];
     if (events.length > 0) {
-      H2HEvents = await BetEvent.find({
+      H2HEvents_Home = await BetEvent.find({
         homeTeam:events[0].homeTeam,
         awayTeam:events[0].awayTeam,
         visibility: true,
         createdAt: {$lt: events[0].createdAt}
       }).sort({ createdAt: -1 });
+
+      H2HEvents_Away = await BetEvent.find({
+        homeTeam:events[0].awayTeam,
+        awayTeam:events[0].homeTeam,
+        visibility: true,
+        createdAt: {$lt: events[0].createdAt}
+      }).sort({ createdAt: -1 });
+
+      H2HEvents_Home = H2HEvents_Home.concat(H2HEvents_Away);
+      H2HEvents_Home.sort(function(a,b){return b.createdAt - a.createdAt});
+      //H2HEvents =tx.toObject();
+      for (i=0; i<H2HEvents_Home.length; i++){
+        const h2hevent_results = await BetResult.find({
+          eventId: H2HEvents_Home[i].eventId,
+          visibility: true,
+        }).sort({ createdAt: 1 });
+        event_item = H2HEvents_Home[i].toObject();
+        event_item.results = h2hevent_results;
+        H2HEvents.push(event_item);
+      }
     }
+
     // These will return only one event with the latest updated odds
     // (with possibility of duplicates), but contains the original odds the event was created with.
     // We update them to these original
@@ -1231,8 +1252,8 @@ const getBetEventInfo = async (req, res) => {
       spreadAwayBets,
       overBets,
       underBets,
-      H2HEvents,
       results,
+      H2HEvents,
     });
   } catch (err) {
     console.log(err);
