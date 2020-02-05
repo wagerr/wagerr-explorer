@@ -829,23 +829,67 @@ const getBetUpdates = async (req, res) => {
     const skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
     if (req.query.eventId) {
       const { eventId } = req.query;
-      const total = await BetUpdate.find({
+      const total_update = await BetUpdate.find({
         eventId: `${eventId}`,
         visibility: true,
       }).sort({ createdAt: 1 }).countDocuments();
-      const results = await BetUpdate.find({
+      const results_update = await BetUpdate.find({
         eventId: `${eventId}`,
         visibility: true,
       }).skip(skip).limit(limit).sort({ createdAt: 1 });
-      res.json({ results, pages: total <= limit ? 1 : Math.ceil(total / limit) });
+
+      const betupdates = { results:results_update, pages: total_update <= limit ? 1 : Math.ceil(total_update / limit) };
+
+      const total_total = await Bettotal.find({
+        eventId: `${eventId}`,
+        visibility: true,
+      }).sort({ createdAt: 1 }).countDocuments();
+      const results_total = await Bettotal.find({
+        eventId: `${eventId}`,
+        visibility: true,
+      }).skip(skip).limit(limit).sort({ createdAt: 1 });
+      
+      const bettotals = { results: results_total, pages: total_total <= limit ? 1 : Math.ceil(total_total / limit) };
+
+      const total_spread = await Betspread.find({
+        eventId: `${eventId}`,
+        visibility: true,
+      }).sort({ createdAt: 1 }).countDocuments();
+      const results_spread = await Betspread.find({
+        eventId: `${eventId}`,
+        visibility: true,
+      }).skip(skip).limit(limit).sort({ createdAt: 1 });
+            
+      const betspreads = { results: results_spread, pages: total_spread <= limit ? 1 : Math.ceil(total_spread / limit) };
+      res.json({ betupdates, bettotals,  betspreads});
     } else {
-      const total = await BetUpdate.find({
+      const total_update = await BetUpdate.find({
         visibility: true,
       }).sort({ createdAt: 1 }).countDocuments();
-      const results = await BetUpdate.find({
+      const results_update = await BetUpdate.find({
         visibility: true,
       }).skip(skip).limit(limit).sort({ createdAt: 1 });
-      res.json({ results, pages: total <= limit ? 1 : Math.ceil(total / limit) });
+
+      const total_total = await Bettotal.find({
+        visibility: true,
+      }).sort({ createdAt: 1 }).countDocuments();
+      const results_total = await Bettotal.find({
+        visibility: true,
+      }).skip(skip).limit(limit).sort({ createdAt: 1 });
+
+      const total_spread = await Betspread.find({
+        visibility: true,
+      }).sort({ createdAt: 1 }).countDocuments();
+      const results_spread = await Betspread.find({
+        visibility: true,
+      }).skip(skip).limit(limit).sort({ createdAt: 1 });
+
+
+      const bettotals = { results: results_total, pages: total_total <= limit ? 1 : Math.ceil(total_total / limit) };
+      const betupdates = { results:results_update, pages: total_update <= limit ? 1 : Math.ceil(total_update / limit) };
+      const betspreads = { results: results_spread, pages: total_spread <= limit ? 1 : Math.ceil(total_spread / limit) };
+
+      res.json({ betupdates, bettotals,  betspreads });
     }
   } catch (err) {
     console.log(err);
