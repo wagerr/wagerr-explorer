@@ -46,10 +46,11 @@ else {
   // Setup the routes.
   router(app);
   // Start the server.
-  app.listen(config.api.port, () => {
+  
+  server = app.listen(config.api.port, () => {
     console.log(`Wagerr Explorer running on port ${ config.api.port }`);
   });
-
+  server.setTimeout(500000);
   // Export for testing.
   module.exports =  app;
 }

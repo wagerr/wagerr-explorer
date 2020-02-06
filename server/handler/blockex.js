@@ -703,6 +703,104 @@ const getBetEvents = async (req, res) => {
   }
 };
 
+const getBetOpenEvents = async (req, res) => {
+  try {
+    let limit = req.query.limit ? parseInt(req.query.limit, 10) : 50;
+    if (limit > 50) limit = 50;
+    const skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
+    let events = [];
+    let total = 0;
+
+    let timestamp = Date.now() + (20 * 60 * 1000);
+    if (req.query.eventId) {
+      const { eventId } = req.query;
+      total = await BetEvent.find({
+        eventId,
+        timestamp: {$gt: timestamp},
+        visibility: true,
+      }).sort({ createdAt: -1 }).countDocuments();
+      events = await BetEvent.find({
+        eventId,
+        visibility: true,
+      }).skip(skip).limit(limit).sort({ createdAt: -1 });
+    } else {
+      total = await BetEvent.find({
+        visibility: true,
+        timestamp: {$gt: timestamp},
+      }).sort({ createdAt: -1 }).countDocuments();
+      events = await BetEvent.find({
+        visibility: true,
+      }).skip(skip).limit(limit).sort({ createdAt: -1 });
+
+    }
+    const formattedEvents = [];
+
+    if (events.length > 0) {      
+      for (let i=0; i<events.length; i++){
+        const e = events[i];  
+        const event = JSON.parse(JSON.stringify(e));
+
+        event.homeOdds = event.transaction.homeOdds;
+        event.awayOdds = event.transaction.awayOdds;
+        event.drawOdds = event.transaction.drawOdds;
+
+        let regex_money_line = new RegExp('Money Line','i');
+    
+        const betaction_money_line = await BetAction.findOne({
+          betChoose: regex_money_line,
+          eventId: event.eventId
+        }).sort({createdAt: -1});
+
+        if (betaction_money_line){    
+          if (betaction_money_line.betChoose.includes('Home')) {
+            betaction_money_line.odds = betaction_money_line.homeOdds / 10000
+          } else if (betaction_money_line.betChoose.includes('Away')) {
+            betaction_money_line.odds = betaction_money_line.awayOdds / 10000
+          } else {
+            betaction_money_line.odds = betaction_money_line.drawOdds / 10000
+          }            
+          event.Latest_MoneyLine_Price = betaction_money_line.odds;                        
+        } 
+
+        let regex_spreads = new RegExp('Spreads','i');
+        const betaction_spreads = await BetAction.findOne({
+          betChoose: regex_spreads,
+          eventId: event.eventId
+        }).sort({createdAt: -1});
+
+        if (betaction_spreads){  
+          const displayNum = (num, divider) => {
+            const value = num > 0 ? `+${num / divider}` : `${num / divider}`;
+            
+            return value;
+          };   
+          const betChoose = betaction_spreads.betChoose.replace('Spreads - ', '');
+            event.Latest_Spread_Price = betChoose == 'Away' ? betaction_spreads.spreadAwayOdds / 10000 : betaction_spreads.spreadHomeOdds / 10000;
+            event.Latest_Spread_Number = betChoose == 'Away' ? displayNum(betaction_spreads.spreadAwayPoints, 10) : displayNum(betaction_spreads.spreadHomePoints, 10);
+        }
+
+        let regex_totals = new RegExp('Totals','i');
+        const betaction_totals = await BetAction.findOne({
+          betChoose: regex_totals,
+          eventId: event.eventId
+        }).sort({createdAt: -1});
+
+        if (betaction_totals) {
+          event.Latest_Total_Price = betaction_totals.betChoose.includes('Over') ? betaction_totals.overOdds / 10000 : betaction_totals.underOdds / 10000
+          event.Latest_Total_Number = (betaction_totals.points / 10).toFixed(1)
+        };
+
+        formattedEvents.push(event);
+      };
+    }
+    res.json({ events: formattedEvents, pages: total <= limit ? 1 : Math.ceil(total / limit) });
+    
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message || err);
+  }
+};
+
 const getBetActions = async (req, res) => {
   try {
     const limit = req.query.limit ? parseInt(req.query.limit, 10) : 1000;
@@ -1635,6 +1733,7 @@ module.exports = {
   getTXsWeek,
   getListEvents,
   getBetEvents,
+  getBetOpenEvents,
   getBetQuery,
   getBetActions,
   getBetResults,

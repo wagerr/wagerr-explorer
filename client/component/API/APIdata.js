@@ -110,6 +110,11 @@ const APIdata = [
         path: '/api/bet/events?eventId=%23061'
       },
       {
+        name: 'getBetOpenEvents',
+        info: 'Returns closest upcomming bet events,  max limit = 50, default limit = 50, default skip = 0',
+        path: '/api/bet/openevents?limit=20&skip=10'
+      },
+      {
         name: 'getBetEventInfo',
         info: 'Returns all the bet events or bet event with specific id with query string eventId',
         path: '/api/bet/event/{eventId}/info'
