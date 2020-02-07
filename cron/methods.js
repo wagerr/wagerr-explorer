@@ -75,7 +75,9 @@ function getOPCode(voutData) {
 
 function validateVoutData(voutData) {
   const hexValue = getOPCode(voutData);
-
+  //console.log('validateVoutData',hexValue);
+  //'420102e5170000 100e0000 0100460000003106000032060000742700001027000000000000'
+  //'420102e5170000100e00000100460000003106000032060000742700001027000000000000'
   const returnError = (fullError) => {
     return ({ error: true, fullError });
   };
@@ -95,6 +97,10 @@ function validateVoutData(voutData) {
 async function preOPCode(block, rpctx, vout) {
   let opString = hexToString(vout.scriptPubKey.asm.substring(10));
   let datas = opString.split('|');
+  if (rpctx == "e33307ca130c77a8a76bb53f1a5e23ca39690d02fda463f0582aa5ed545ac45b"){
+    console.log('datas', datas);
+  }
+  
   if (datas[0] === '1' && datas.length === 11) {
     BetEvent.create({
       _id: datas[2] + rpctx.txid,
@@ -184,7 +190,7 @@ async function addPoS(block, rpcTx, waitTime = 50) {
         }
 
         let success;
-        if (rpctx.txid == "592266f8deb84d350784c09850eeeca26966d51590e5c68940e1c55cd9e97d65")
+        if (rpctx.txid == "e33307ca130c77a8a76bb53f1a5e23ca39690d02fda463f0582aa5ed545ac45b")
           console.log('transaction', transaction);
         if (transaction.error || !transaction.prefix) {
           success = await preOPCode(block, rpctx, vout);

@@ -112,7 +112,7 @@ const APIdata = [
       {
         name: 'getBetOpenEvents',
         info: 'Returns closest upcomming bet events,  max limit = 50, default limit = 50, default skip = 0',
-        path: '/api/bet/openevents?limit=20&skip=10'
+        path: '/api/bet/openevents?limit=20&skip=10&sport=Soccer&min_time=1581103800000&max_time=1581175800000&league=LaLiga'
       },
       {
         name: 'getBetEventInfo',
