@@ -708,31 +708,23 @@ const getBetOpenEvents = async (req, res) => {
     let limit = req.query.limit ? parseInt(req.query.limit, 10) : 50;
     if (limit > 50) limit = 50;
     const skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
-    let events = [];
-    let total = 0;
-
     let timestamp = Date.now() + (20 * 60 * 1000);
-    if (req.query.eventId) {
-      const { eventId } = req.query;
-      total = await BetEvent.find({
-        eventId,
-        timestamp: {$gt: timestamp},
-        visibility: true,
-      }).sort({ createdAt: -1 }).countDocuments();
-      events = await BetEvent.find({
-        eventId,
-        visibility: true,
-      }).skip(skip).limit(limit).sort({ createdAt: -1 });
-    } else {
-      total = await BetEvent.find({
-        visibility: true,
-        timestamp: {$gt: timestamp},
-      }).sort({ createdAt: -1 }).countDocuments();
-      events = await BetEvent.find({
-        visibility: true,
-      }).skip(skip).limit(limit).sort({ createdAt: -1 });
+    
+    console.log('timestamp', timestamp);
+    let total = await BetEvent.find({
+      visibility: true,
+      $expr: {$gt: [{ $toDouble: "$timeStamp" }, timestamp]},
+    }).countDocuments();
 
-    }
+    let events = await BetEvent.find({
+      visibility: true,        
+      $expr: {$gt: [{ $toDouble: "$timeStamp" }, timestamp]},
+    }).skip(skip).limit(limit);
+
+    events.sort(function(a,b){
+      return Number(a.timeStamp) - Number(b.timeStamp);
+    })
+
     const formattedEvents = [];
 
     if (events.length > 0) {      
