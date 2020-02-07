@@ -34,7 +34,7 @@ router.get('/bet/actions', blockex.getBetActions);
 router.get('/bet/results', blockex.getBetResults);
 router.get('/bet/spreads', blockex.getBetspreads);
 router.get('/bet/totals', blockex.getBetTotals);
-router.get('/bet/updates', blockex.getBetUpdates);
+router.get('/bet/moneyline', blockex.getBetUpdates);
 router.get('/bet/event/:eventId/info', blockex.getBetEventInfo);
 router.get('/bet/events/info', blockex.getBetEventsInfo);
 router.get('/bet/action/week', blockex.getBetActioinsWeek());
