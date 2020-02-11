@@ -36,6 +36,7 @@ async function deleteBetData(start, stop) {
   await BetAction.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
   await BetEvent.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
   await BetResult.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
+  await Betupdate.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
 }
 
 
@@ -415,32 +416,39 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
     return createResponse;
   }
 
-  if (['peerlessUpdateOdds'].includes(transaction.txType)) {
+  if (['peerlessUpdateOdds'].includes(transaction.txType)) {    
     const _id = `${transaction.eventId}${rpctx.get('txid')}${block.height}`;
 
     const updateExists = await recordCheck(Betupdate, _id);
-
+    if (transaction.eventId == "6117"){
+      console.log('updateExists', updateExists)
+    }
     if (updateExists) {
       return updateExists;
     }
-
+    
     const resultExists = await recordCheck(BetResult, `${transaction.eventId}`, 'eventId');
-
+    if (transaction.eventId == "6117"){
+      console.log('resultExists', resultExists)
+    }
     if (!resultExists) {
       try {
-        const event = await BetEvent.findOne({
-          eventId: `${transaction.eventId}`,
+        const event = await BetEvent.findOne({eventId: `${transaction.eventId}`}).sort({
+          createdAt: -1
         });
-
+        if (transaction.eventId == "6117"){
+          console.log('event', event)
+        }
         if (event) {
           event.homeOdds = `${transaction.homeOdds}`;
           event.awayOdds = `${transaction.awayOdds}`;
           event.drawOdds = `${transaction.drawOdds}`;
-
-          if (event.homeOdds == 0 || event.awayOdds == 0 || event.drawOdds == 0) {
-            // log('Invalid transaction data');
-            // log(transaction);
+          if (transaction.eventId == "6117"){
+            console.log('event', event)
           }
+          // if (transaction.eventId == "6118"){
+          //   console.log('transaction.homeOdds', transaction.homeOdds)
+          // }
 
           try {
             await event.save();

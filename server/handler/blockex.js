@@ -1088,6 +1088,7 @@ const getData = async (Model, req, res, visibility = true) => {
 const getDataListing = async (Model, actions, results, req, res) => {
   const limit = req.query.limit ? parseInt(req.query.limit, 10) : 1000;
   const skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
+
   try {
     const totalParams = [
       {
@@ -1102,6 +1103,11 @@ const getDataListing = async (Model, actions, results, req, res) => {
 
     const resultParams = [
       {
+        $addFields: {
+          convertedTimestamp: { $toLong: "$timeStamp" },
+        },
+      },
+      {
         $group: {
           _id: '$eventId',
           events: {
@@ -1113,13 +1119,15 @@ const getDataListing = async (Model, actions, results, req, res) => {
         $project: {
           _id: '$_id',
           events: '$events',
-          timeStamp: { $arrayElemAt: ['$events.timeStamp', 0] },
+          // timeStamp: { 
+          //   $arrayElemAt: ['$events.convertedTimestamp', 0] 
+          // },
+          timeStamp: { $max: '$events.convertedTimestamp'},
         },
       },
       {
         $sort: {
           timeStamp: -1,
-          _id: -1,
         },
       }, {
         $skip: skip,
@@ -1142,12 +1150,21 @@ const getDataListing = async (Model, actions, results, req, res) => {
       },
     ];
 
-    const result = await Model.aggregate(resultParams);
-
+    let result = await Model.aggregate(resultParams);
+    result.sort(function(a,b){
+      return Number(a.timeStamp) - Number(b.timeStamp);
+    })
     res.json({
       data: result,
       pages: total[0].count <= limit ? 1 : Math.ceil(total[0].count / limit),
     });
+    for (i=0; i<result.length; i++){
+      item = result[i];
+      if (item._id == "6117"){
+        console.log('item', item)
+      }
+    }
+
   } catch (err) {
     console.log(err);
     res.status(500).send(err.message || err);
@@ -1423,10 +1440,10 @@ const getBetEventInfo = async (req, res) => {
 
         formattedEvents.push(event);
       });
-
       // We also query event updates
       const updates = await BetUpdate.find({
         eventId: `${eventId}`,
+        blockHeight: {$gt: events[0].blockHeight},
         visibility: true,
       }).sort({ createdAt: 1 });
 

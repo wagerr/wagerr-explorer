@@ -251,6 +251,7 @@ async function syncBlocksForBet(start, stop, clean = false, waitTime = 50) {
   if (clean) {
     await deleteBetData(start, stop);
   }
+  
   rpc.timeout(20000); // 10 secs
 
   log(start, stop);
