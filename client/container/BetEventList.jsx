@@ -112,6 +112,9 @@ class BetEventList extends Component {
                 }
                 item.totalBet = totalBet
                 item.totalMint = totalMint
+                item.events.sort(function(a,b){
+                  return b.blockHeight - a.blockHeight;
+                })
               })
               this.setState({ events: data, pages, loading: false })
             }
@@ -227,14 +230,17 @@ class BetEventList extends Component {
           className={'table-responsive table--for-betevents'}
           cols={cols}
           data={this.state.events.map((event) => {
-            const betAmount = event.actions.reduce((acc, action) => {
+            const betAmount = event.actions.reduce((acc, action) => { 
               return acc + action.betValue
             }, 0.0
             )
             let betStatus = t('open')
+
             const eventTime = parseInt(event.events[0].timeStamp);
             const eventData = event.events[0];
-
+            if (event.events[0].eventId == "6117"){
+              console.log(event, eventTime);
+            }
             if ((eventTime - (20 * 60 * 1000)) < Date.now()) {
               betStatus = t('waitForStart')
               if (eventTime < Date.now()) {
@@ -278,13 +284,13 @@ class BetEventList extends Component {
                 }
               }
             }
-            let homeOdds = (event.events[event.events.length - 1].homeOdds / 10000)
-            let drawOdds = (event.events[event.events.length - 1].drawOdds / 10000)
-            let awayOdds = (event.events[event.events.length - 1].awayOdds / 10000)
+            let homeOdds = (event.events[0].homeOdds / 10000)
+            let drawOdds = (event.events[0].drawOdds / 10000)
+            let awayOdds = (event.events[0].awayOdds / 10000)
             if (event.events.length > 1) {
-              const lastHomeOdds = (event.events[event.events.length - 2].homeOdds / 10000)
-              const lastDrawOdds = (event.events[event.events.length - 2].drawOdds / 10000)
-              const lastAwayOdds = (event.events[event.events.length - 2].awayOdds / 10000)
+              const lastHomeOdds = (event.events[1].homeOdds / 10000)
+              const lastDrawOdds = (event.events[1].drawOdds / 10000)
+              const lastAwayOdds = (event.events[1].awayOdds / 10000)
               if (homeOdds > lastHomeOdds) {
                 homeOdds = homeOdds + ' ↑'
               } else if (homeOdds < lastHomeOdds) {
