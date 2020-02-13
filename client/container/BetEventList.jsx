@@ -234,56 +234,57 @@ class BetEventList extends Component {
               return acc + action.betValue
             }, 0.0
             )
-            let betStatus = t('open')
 
+            let betStatus = t('open')
             const eventTime = parseInt(event.events[0].timeStamp);
             const eventData = event.events[0];
-            if (event.events[0].eventId == "6117"){
-              console.log(event, eventTime);
-            }
-            if ((eventTime - (20 * 60 * 1000)) < Date.now()) {
-              betStatus = t('waitForStart')
-              if (eventTime < Date.now()) {
-                betStatus = t('started')
-                if (event.results.length === 0) {
-                  betStatus = <span className={`badge badge-warning`}>{t('waitingForOracle')}</span>
-                }
-                if (event.results.length > 0) {
-                  for (const result of event.results) {
-                    const awayVsHome = result.transaction ? (result.transaction.awayScore - result.transaction.homeScore) : 0;
-                    let outcome;
-                    if (awayVsHome > 0) {
-                      // outcome = 'Away Win';
-                      outcome = eventData.awayTeam;
-                    }
 
-                    if (awayVsHome < 0) {
-                      // outcome = 'Home Win';
-                      outcome = eventData.homeTeam;
-                    }
-
-                    if (awayVsHome === 0) {
-                      outcome = 'Draw';
-                    }
-
-                    if (result.result && result.result.includes('Refund')) {
-                      outcome = 'Refund';
-                    }
-
-                    if (outcome) {
-                      betStatus = <span className={`badge badge-info`}>{outcome}</span>
-                    }
-                  }
-                }
-                if (event.results.length > 1) {
-                  for (const result of event.results) {
-                    if (result.result.indexOf('REFUND') !== -1) {
-                      betStatus = <span className={`badge badge-info`}>REFUND</span>
-                    }
-                  }
+            if (event.results.length > 1) {
+              for (const result of event.results) {
+                if (result.result.indexOf('REFUND') !== -1) {
+                  betStatus = <span className={`badge badge-info`}>REFUND</span>
                 }
               }
             }
+            else if (event.results.length > 0) {
+              for (const result of event.results) {
+                const awayVsHome = result.transaction ? (result.transaction.awayScore - result.transaction.homeScore) : 0;
+                let outcome;
+                if (awayVsHome > 0) {
+                  // outcome = 'Away Win';
+                  outcome = eventData.awayTeam;
+                }
+
+                if (awayVsHome < 0) {
+                  // outcome = 'Home Win';
+                  outcome = eventData.homeTeam;
+                }
+
+                if (awayVsHome === 0) {
+                  outcome = 'Draw';
+                }
+
+                if (result.result && result.result.includes('Refund')) {
+                  outcome = 'Refund';
+                }
+
+                if (outcome) {
+                  betStatus = <span className={`badge badge-info`}>{outcome}</span>
+                }
+              }
+            } else {
+              if ((eventTime - (20 * 60 * 1000)) < Date.now()) {
+                betStatus = t('waitForStart')
+                if (eventTime < Date.now()) {
+                  betStatus = t('started')
+                  if (event.results.length === 0) {
+                    betStatus = <span className={`badge badge-warning`}>{t('waitingForOracle')}</span>
+                  }
+                  
+                }
+              }
+            }
+            
             let homeOdds = (event.events[0].homeOdds / 10000)
             let drawOdds = (event.events[0].drawOdds / 10000)
             let awayOdds = (event.events[0].awayOdds / 10000)
