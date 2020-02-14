@@ -13,7 +13,7 @@ import Table from '../component/SuperTable'
 import Select from '../component/Select'
 
 import Icon from '../component/Icon';
-
+import Switch from "react-switch";
 import _ from 'lodash'
 
 import { PAGINATION_PAGE_SIZE, FILTER_EVENTS_OPTIONS } from '../constants'
@@ -47,6 +47,7 @@ class BetEventList extends Component {
       size: 50,
       filterBy: 'All',
       search: '',
+      toggleSwitch: false
     }
   };
 
@@ -73,7 +74,8 @@ class BetEventList extends Component {
 
       const params = {
         limit: this.state.size,
-        skip: (this.state.page - 1) * this.state.size
+        skip: (this.state.page - 1) * this.state.size,
+        opened_or_completed: this.state.toggleSwitch
       };
 
       if (this.state.filterBy !== 'All') {
@@ -90,7 +92,7 @@ class BetEventList extends Component {
       this.debounce = setTimeout(() => {
         getMethod(params)
           .then(({ data, pages }) => {
-            if (this.debounce) {
+            if (this.debounce) {              
               data.map(item => {
                 let totalBet = 0;
                 let totalMint = 0;
@@ -119,7 +121,10 @@ class BetEventList extends Component {
               this.setState({ events: data, pages, loading: false })
             }
           })
-          .catch(error => this.setState({ error, loading: false }))
+          .catch(error => {
+            console.log('error', error);
+            this.setState({ error, loading: false })
+          })
       }, 800)
     })
   }
@@ -161,6 +166,11 @@ class BetEventList extends Component {
       });
     }
     return results;
+  }
+
+  handleToggleChange = (toggleSwitch) => {
+    this.setState({ toggleSwitch }, this.getBetEventsInfo);
+    console.log(toggleSwitch);
   }
 
   render () {
@@ -222,6 +232,26 @@ class BetEventList extends Component {
     return (
       <div>
         {searchBar}
+        <div style={{alignItems:'center',marginTop:'20px'}}>
+          <span>Completed/Opened</span>
+        </div>
+        <label htmlFor="material-switch" style={{marginTop:'10px'}}>
+          <Switch
+            checked={this.state.toggleSwitch}
+            onChange={this.handleToggleChange}
+            onColor="#86d3ff"
+            onHandleColor="#2693e6"
+            handleDiameter={30}
+            uncheckedIcon={false}
+            checkedIcon={false}
+            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+            height={20}
+            width={48}
+            className="react-switch"
+            id="material-switch"
+          />
+        </label> 
         <HorizontalRule
           select={select}
           filterSport={filterSport}

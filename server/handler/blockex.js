@@ -1086,9 +1086,16 @@ const getData = async (Model, req, res, visibility = true) => {
 
 // Modified this a bit - kyle h
 const getDataListing = async (Model, actions, results, req, res) => {
+  req.clearTimeout();
   const limit = req.query.limit ? parseInt(req.query.limit, 10) : 1000;
   const skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
-
+  const opened_or_completed = req.query.opened_or_completed;
+  console.log(opened_or_completed);
+  let match =  {$ne: []};
+  if (opened_or_completed == 'true'){    
+    match =  {$eq: []};
+  } 
+  console.log('match', match);
   try {
     const totalParams = [
       {
@@ -1101,12 +1108,10 @@ const getDataListing = async (Model, actions, results, req, res) => {
     ];
     const total = await Model.aggregate(totalParams);
 
-    const resultParams = [
+    const resultParams = [      
       {
-        $addFields: {
-          convertedTimestamp: { $toLong: "$timeStamp" },
-        },
-      },
+        $addFields: { convertedTimestamp: { $toLong: "$timeStamp" } }
+      }, 
       {
         $group: {
           _id: '$eventId',
@@ -1116,58 +1121,54 @@ const getDataListing = async (Model, actions, results, req, res) => {
         },
       },
       {
-        $project: {
-          _id: '$_id',
-          events: '$events',
-          // timeStamp: { 
-          //   $arrayElemAt: ['$events.convertedTimestamp', 0] 
-          // },
-          timeStamp: { $max: '$events.convertedTimestamp'},
-        },
-      },
-      {
-        $sort: {
-          timeStamp: -1,
-        },
-      }, {
-        $skip: skip,
-      }, {
-        $limit: limit,
-      }, {
-        $lookup: {
-          from: actions,
-          localField: '_id',
-          foreignField: 'eventId',
-          as: 'actions',
-        },
-      }, {
         $lookup: {
           from: results,
           localField: '_id',
           foreignField: 'eventId',
           as: 'results',
         },
+      },      
+      {
+        $project: {
+          _id: '$_id',
+          events: '$events',
+          results: '$results',
+          actions: '$actions',
+          timeStamp: { $max: '$events.convertedTimestamp'},          
+        },
       },
+      {
+        $match:{
+          results: match  
+        }
+      },
+      {
+        $sort: {
+          timeStamp: -1,
+        }
+      },
+      {
+        $skip: skip,
+      }, {
+        $limit: limit,
+      },{
+        $lookup: {
+          from: actions,
+          localField: '_id',
+          foreignField: 'eventId',
+          as: 'actions',
+        },
+      }, 
     ];
 
     let result = await Model.aggregate(resultParams);
-    result.sort(function(a,b){
-      return Number(a.timeStamp) - Number(b.timeStamp);
-    })
-    res.json({
+    return res.json({
       data: result,
       pages: total[0].count <= limit ? 1 : Math.ceil(total[0].count / limit),
     });
-    for (i=0; i<result.length; i++){
-      item = result[i];
-      if (item._id == "6117"){
-        console.log('item', item)
-      }
-    }
-
   } catch (err) {
     console.log(err);
-    res.status(500).send(err.message || err);
+    return res.status(500).send(err.message || err);
   }
 };
 
@@ -1225,13 +1226,13 @@ const getAltDataListing = async (Model, actions, results, req, res) => {
         },
       },
     ]);
-    res.json({
+    return res.json({
       data: result,
       pages: total[0].count <= limit ? 1 : Math.ceil(total[0].count / limit),
     });
   } catch (err) {
     console.log(err);
-    res.status(500).send(err.message || err);
+    return res.status(500).send(err.message || err);
   }
 };
 
