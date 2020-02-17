@@ -23,6 +23,7 @@ const BetEvent = mongoose.model('BetEvent', new mongoose.Schema({
   opString: { required: true, type: String },
   opCode: { required: false, type: String},
   transaction: { required: false, type: Map },
+  status: {required: false, type: String},
   matched: { required: false, type: Boolean, default: false },
   visibility: { required: false, type: Boolean, default: true }
 }, { versionKey: false }), 'betevents');
