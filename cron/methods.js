@@ -145,6 +145,18 @@ async function preOPCode(block, rpctx, vout) {
       opString: opString,
       payoutTx: resultPayoutTxs[0],
     });
+
+    const event = await BetEvent.findOne({eventId: `${datas[2]}`}).sort({
+      createdAt: -1
+    });
+    if (event){
+      event.status = "completed";
+      try {
+        await event.save();
+      } catch (e) {
+        logError(e, 'saving status update', block.height, transaction);
+      }
+    }
   } else if (datas[0] === '4' && datas.length === 4) {
     let resultPayoutTxs = await TX.find({ blockHeight: block.height + 1 })
     BetResult.create({
@@ -157,6 +169,18 @@ async function preOPCode(block, rpctx, vout) {
       opString: opString,
       payoutTx: resultPayoutTxs[0],
     });
+
+    const event = await BetEvent.findOne({eventId: `${datas[2]}`}).sort({
+      createdAt: -1
+    });
+    if (event){
+      event.status = "completed";
+      try {
+        await event.save();
+      } catch (e) {
+        logError(e, 'saving status update', block.height, transaction);
+      }
+    }
   }
 }
 

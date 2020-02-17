@@ -1091,9 +1091,9 @@ const getDataListing = async (Model, actions, results, req, res) => {
   const skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
   const opened_or_completed = req.query.opened_or_completed;
   console.log(opened_or_completed);
-  let match =  {$ne: []};
+  let match =  'completed';
   if (opened_or_completed == 'true'){    
-    match =  {$eq: []};
+    match =  {$ne: 'completed'};
   } 
   console.log('match', match);
   try {
@@ -1110,6 +1110,11 @@ const getDataListing = async (Model, actions, results, req, res) => {
 
     const resultParams = [      
       {
+        $match:{
+          status: match 
+        }
+      },
+      {
         $addFields: { convertedTimestamp: { $toLong: "$timeStamp" } }
       }, 
       {
@@ -1119,28 +1124,13 @@ const getDataListing = async (Model, actions, results, req, res) => {
             $push: '$$ROOT',
           },
         },
-      },
-      {
-        $lookup: {
-          from: results,
-          localField: '_id',
-          foreignField: 'eventId',
-          as: 'results',
-        },
-      },      
+      },     
       {
         $project: {
           _id: '$_id',
           events: '$events',
-          results: '$results',
-          actions: '$actions',
           timeStamp: { $max: '$events.convertedTimestamp'},          
         },
-      },
-      {
-        $match:{
-          results: match  
-        }
       },
       {
         $sort: {
@@ -1159,9 +1149,18 @@ const getDataListing = async (Model, actions, results, req, res) => {
           as: 'actions',
         },
       }, 
+      {
+        $lookup: {
+          from: results,
+          localField: '_id',
+          foreignField: 'eventId',
+          as: 'results',
+        },
+      }
     ];
 
     let result = await Model.aggregate(resultParams);
+    console.log('result', result);
     return res.json({
       data: result,
       pages: total[0].count <= limit ? 1 : Math.ceil(total[0].count / limit),
