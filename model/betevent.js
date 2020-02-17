@@ -24,6 +24,7 @@ const BetEvent = mongoose.model('BetEvent', new mongoose.Schema({
   opCode: { required: false, type: String},
   transaction: { required: false, type: Map },
   status: {required: false, type: String},
+  completedAt: { required: false, type: Date },
   matched: { required: false, type: Boolean, default: false },
   visibility: { required: false, type: Boolean, default: true }
 }, { versionKey: false }), 'betevents');
