@@ -146,16 +146,18 @@ async function preOPCode(block, rpctx, vout) {
       payoutTx: resultPayoutTxs[0],
     });
 
-    const event = await BetEvent.findOne({eventId: `${datas[2]}`}).sort({
-      createdAt: -1
-    });
-    if (event){
-      event.status = "completed";
-      try {
-        await event.save();
-      } catch (e) {
-        logError(e, 'saving status update', block.height, transaction);
-      }
+    const events = await BetEvent.find({eventId: `${datas[2]}`});
+    try {
+      if (events.length > 0){
+        for (i=0; i<events.length; i++){
+          const event = events[i];
+          event.status = "completed";
+          event.completedAt = block.createdAt;
+          await event.save();
+        }          
+      }      
+    } catch (e) {
+      logError(e, 'saving status update', block.height);
     }
   } else if (datas[0] === '4' && datas.length === 4) {
     let resultPayoutTxs = await TX.find({ blockHeight: block.height + 1 })
@@ -170,16 +172,18 @@ async function preOPCode(block, rpctx, vout) {
       payoutTx: resultPayoutTxs[0],
     });
 
-    const event = await BetEvent.findOne({eventId: `${datas[2]}`}).sort({
-      createdAt: -1
-    });
-    if (event){
-      event.status = "completed";
-      try {
-        await event.save();
-      } catch (e) {
-        logError(e, 'saving status update', block.height, transaction);
-      }
+    const events = await BetEvent.find({eventId: `${datas[2]}`});
+    try {
+      if (events.length > 0){
+        for (i=0; i<events.length; i++){
+          const event = events[i];
+          event.status = "completed";
+          event.completedAt = block.createdAt;
+          await event.save();
+        }          
+      }      
+    } catch (e) {
+      logError(e, 'saving status update', block.height);
     }
   }
 }
@@ -293,10 +297,10 @@ async function syncBlocksForBet(start, stop, clean = false, waitTime = 50) {
         //     await addPoS(block, rpctx, waitTime);
         //   }
         // });
-        
+        console.log('blockheight:', height);    
         for (let tx_index=0; tx_index < txs.length; tx_index++) {
           let rpctx = txs[tx_index];      
-          console.log('txid:', rpctx.txid);    
+          
           if (blockchain.isPoS(block)) {
             // const rpctx = await util.getTX(txhash)
             await addPoS(block, rpctx, waitTime);
