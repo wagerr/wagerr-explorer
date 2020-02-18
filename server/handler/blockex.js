@@ -6,7 +6,6 @@ const { forEach } = require('p-iteration');
 const { getSubsidy } = require('../../lib/blockchain');
 const chain = require('../../lib/blockchain');
 const { rpc } = require('../../lib/cron');
-
 const { CarverAddressType, CarverMovementType, CarverTxType } = require('../../lib/carver2d');
 const { CarverAddress, CarverMovement, CarverAddressMovement } = require('../../model/carver2d');
 const  opCode = require('../../lib/op_code')
@@ -1716,6 +1715,159 @@ const getCurrentProposals = async (req, res) => {
   }
 };
 
+const getBetStats = async (req, res) => {
+  const duration = req.query.duration ? parseInt(req.query.duration, 10) : 0;
+  const games = req.query.games ? parseInt(req.query.games, 10) : 0;
+  const team1 = req.query.team1? req.query.team1: '';
+  const team2 = req.query.team2? req.query.team2: '';
+  const sport = req.query.sport? req.query.sport: '';
+  const league = req.query.league? req.query.league: '';
+  try {
+    if (duration > 0){
+      let cutOff = moment().utc().subtract(duration*24, 'hour').unix();
+      console.log('cutOff', cutOff);
+      console.log(team1, team2);
+      let qry = [
+        {
+          $match: {createdAt: {$gte: new Date(cutOff * 1000)}}
+        },
+        {
+          $sort: {
+            createdAt: -1,
+          }
+        },{
+          $lookup: {
+            from: 'betevents',
+            localField: 'eventId',
+            foreignField: 'eventId',
+            as: 'events',
+          },
+        }
+      ];
+      if (league != ''){
+        qry.push({ 
+          $match: {
+            "events.transaction.league": league
+          }
+        });
+      }
+      if (sport != ''){
+        qry.push({ 
+          $match: {
+            "events.transaction.sport": sport
+          }
+        });
+      }
+      if (team1 != '' && team2 != ''){
+        qry.push({ 
+          $match: {
+            $or: [
+              { $and: [ { "events.homeTeam": team1 }, { "events.awayTeam": team2 } ] },
+              { $and: [ { "events.homeTeam": team2 }, { "events.awayTeam": team1 } ] },
+            ]
+          }
+        });
+      } else if (team1 != '') {
+        qry.push({ 
+          $match: {
+            $or: [
+              { "events.homeTeam": team1 }, { "events.awayTeam": team1 }
+            ]
+          }
+        });
+      } 
+
+      const results = await BetAction.aggregate(qry);  
+      let totalBetWagerr = 0;
+      let totalBetUSD = 0;
+      for (i=0; i<results.length; i++){
+        const action = results[i];
+        totalBetWagerr = totalBetWagerr + action.betValue;
+        const coins = await Coin.aggregate([
+          {$project: {diff: {$abs: {$subtract: [action.createdAt, '$createdAt']}}, doc: '$$ROOT'}},
+          {$sort: {diff: 1}},
+          {$limit: 1}
+        ]);
+
+        if (coins.length > 0){
+          console.log(coins[0]);
+          totalBetUSD = totalBetUSD + coins[0].doc.usd * action.betValue;
+        }         
+      }
+
+      return res.json({totalBetWagerr: totalBetWagerr, totalBetUSD: totalBetUSD});    
+
+    } else if (games > 0) {
+      qry = [
+        {
+          $match:{
+            status: "completed"
+          }
+        }
+      ]
+
+      if (sport != ''){
+        qry.push({ 
+          $match: {
+            "transaction.sport": sport
+          }
+        });
+      }
+
+      if (league != ''){
+        qry.push({ 
+          $match: {
+            "transaction.league": league
+          }
+        });
+      }
+
+      qry = qry.concat([
+        {
+          $sort: {
+            completedAt: -1,
+          }
+        },{
+          $limit: games
+        }, {
+          $lookup: {
+            from: 'betactions',
+            localField: 'eventId',
+            foreignField: 'eventId',
+            as: 'actions',
+          }
+        }
+      ]);
+      const results = await BetEvent.aggregate(qry);  
+      let totalBetWagerr = 0;
+      let totalBetUSD = 0;
+      for (i = 0; i < results.length; i++){
+        const item = results[i];
+        for (j = 0; j< item.actions.length; j++){
+          const action = item.actions[i];
+          totalBetWagerr = totalBetWagerr + action.betValue;
+          const coins = await Coin.aggregate([
+            {$project: {diff: {$abs: {$subtract: [action.createdAt, '$createdAt']}}, doc: '$$ROOT'}},
+            {$sort: {diff: 1}},
+            {$limit: 1}
+          ]);
+
+          if (coins.length > 0){            
+            totalBetUSD = totalBetUSD + coins[0].doc.usd * action.betValue;
+          }         
+        }
+      }
+      return res.json({totalBetWagerr: totalBetWagerr, totalBetUSD: totalBetUSD});    
+    } else {
+      data = [];
+      return res.json(data);  
+    }    
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message || err);
+  }
+}
+
 const getStatisticPerWeek = () => {
   // When does the cache expire.
   // For now this is hard coded.
@@ -1837,4 +1989,5 @@ module.exports = {
   getLottoBets,
   getLottoResults,
   getLottoEventInfo,
+  getBetStats
 };
