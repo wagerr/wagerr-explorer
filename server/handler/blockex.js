@@ -1806,6 +1806,25 @@ const getBetStats = async (req, res) => {
         }
       ]
 
+      if (team1 != '' && team2 != ''){
+        qry.push({ 
+          $match: {
+            $or: [
+              { $and: [ { "homeTeam": team1 }, { "awayTeam": team2 } ] },
+              { $and: [ { "homeTeam": team2 }, { "awayTeam": team1 } ] },
+            ]
+          }
+        });
+      } else if (team1 != '') {
+        qry.push({ 
+          $match: {
+            $or: [
+              { "homeTeam": team1 }, { "awayTeam": team1 }
+            ]
+          }
+        });
+      } 
+
       if (sport != ''){
         qry.push({ 
           $match: {
@@ -1838,6 +1857,7 @@ const getBetStats = async (req, res) => {
           }
         }
       ]);
+      
       const results = await BetEvent.aggregate(qry);  
       let totalBetWagerr = 0;
       let totalBetUSD = 0;
