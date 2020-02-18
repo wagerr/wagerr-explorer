@@ -358,7 +358,8 @@ async function getEventData(block, eventId, waitTime = 50) {
       recheck = await waitForData(eventId, 100);
       event = recheck[0];
     }
-
+    console.log('lastTotal', lastTotal);
+    console.log('event', event);
     event.points = lastTotal ? lastTotal.points : 0;
     event.overOdds = lastTotal ? lastTotal.overOdds : 0;
     event.underOdds = lastTotal? lastTotal.underOdds : 0;
@@ -436,9 +437,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         const event = await BetEvent.findOne({eventId: `${transaction.eventId}`}).sort({
           createdAt: -1
         });
-        if (transaction.eventId == "6117"){
-          console.log('event', event)
-        }
+
         if (event) {
           event.homeOdds = `${transaction.homeOdds}`;
           event.awayOdds = `${transaction.awayOdds}`;
@@ -685,6 +684,20 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         transaction,
         matched: true,
       });
+
+      const events = await BetEvent.find({eventId: `${transaction.eventId}`})
+      try {
+        if (events.length > 0){
+          for (i=0; i<events.length; i++){
+            const event = events[i];
+            event.status = "completed";
+            event.completedAt = block.createdAt;
+            await event.save();
+          }          
+        }      
+      } catch (e) {
+        logError(e, 'saving status update', block.height, transaction);
+      }
     } catch (e) {
       createResponse = e;
       logError(e, ' creating bet result', block.height, transaction);
