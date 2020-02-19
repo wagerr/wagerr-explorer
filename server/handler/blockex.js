@@ -1098,12 +1098,17 @@ const getDataListing = async (Model, actions, results, req, res) => {
   if (opened_or_completed == 'true'){    
     match =  {$ne: 'completed'};
     sort = {
-      timeStamp: -1,
+      timeStamp: 1,
     }
   } 
-  console.log('match', match);
+  console.log('match', match, sort);
   try {
     const totalParams = [
+      {
+        $match:{
+          status: match 
+        }
+      },
       {
         $group: {
           _id: '$eventId',
@@ -1117,7 +1122,7 @@ const getDataListing = async (Model, actions, results, req, res) => {
     const resultParams = [      
       {
         $match:{
-          status: match 
+          status: match
         }
       },
       {
@@ -1135,17 +1140,19 @@ const getDataListing = async (Model, actions, results, req, res) => {
         $project: {
           _id: '$_id',
           events: '$events',
-          timeStamp: { $max: '$events.convertedTimestamp'},          
+          timeStamp: { $max: '$events.convertedTimestamp'},     
+          completedAt: { $max: '$events.completedAt'},     
         },
       },
       {
         $sort: sort
-      },
+      }, 
       {
         $skip: skip,
       }, {
         $limit: limit,
-      },{
+      },
+      {
         $lookup: {
           from: actions,
           localField: '_id',
@@ -1164,7 +1171,7 @@ const getDataListing = async (Model, actions, results, req, res) => {
     ];
 
     let result = await Model.aggregate(resultParams);
-    console.log('result', result);
+    //console.log('result', result);
     return res.json({
       data: result,
       pages: total[0].count <= limit ? 1 : Math.ceil(total[0].count / limit),
