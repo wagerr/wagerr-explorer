@@ -47,7 +47,7 @@ class BetEventList extends Component {
       size: 50,
       filterBy: 'All',
       search: '',
-      toggleSwitch: false
+      toggleSwitch: true
     }
   };
 
@@ -233,7 +233,7 @@ class BetEventList extends Component {
       <div>
         {searchBar}
         <div style={{alignItems:'center',marginTop:'20px'}}>
-          <span>Completed/Opened</span>
+          <span>Completed / Opened</span>
         </div>
         <label htmlFor="material-switch" style={{marginTop:'10px'}}>
           <Switch
