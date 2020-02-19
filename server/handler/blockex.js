@@ -1090,17 +1090,19 @@ const getDataListing = async (Model, actions, results, req, res) => {
   const skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
   const opened_or_completed = req.query.opened_or_completed;
   console.log(opened_or_completed);
-  let match =  'completed';
-  let sort = {
-    completedAt: -1,
-  }
 
-  if (opened_or_completed == 'true'){    
-    match =  {$ne: 'completed'};
+  let match =  {$ne: 'completed'};
+  let sort = {
+    timeStamp: 1,
+  }
+  
+  if (opened_or_completed == 'false'){    
+    match =  'completed';
     sort = {
-      timeStamp: 1,
+      completedAt: -1,
     }
   } 
+
   console.log('match', match, sort);
   try {
     const totalParams = [
