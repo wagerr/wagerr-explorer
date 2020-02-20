@@ -57,6 +57,10 @@ export default class CardTxOutOpCodeRow extends Component {
             <span className="card__label">Price</span>
             <span className="card__result">{ this.props.tx.price }</span>
           </div>  
+          <div className="card__row">
+            <span className="card__label">BetValue</span>
+            <span className="card__result">{ this.props.tx.betValue } WGR / { this.props.tx.betValueUSD } USD</span>
+          </div>           
         </div>        
         }        
       </div>      

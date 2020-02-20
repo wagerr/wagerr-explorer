@@ -564,6 +564,19 @@ const getTX = async (req, res) => {
             tx.vout[i].market = betaction.betChoose;
             tx.vout[i].eventId = betaction.eventId;
 
+            const coins = await Coin.aggregate([
+              {$project: {diff: {$abs: {$subtract: [betaction.createdAt, '$createdAt']}}, doc: '$$ROOT'}},
+              {$sort: {diff: 1}},
+              {$limit: 1}
+            ]);
+
+            tx.vout[i].betValue = betaction.betValue;
+            tx.vout[i].betValueUSD = 0;
+            if (coins.length > 0){
+              tx.vout[i].betValueUSD = coins[0].doc.usd * betaction.betValue;
+            }
+            
+            
             betevent = await BetEvent.findOne({eventId: betaction.eventId});
             if (betevent){
               tx.vout[i].homeTeam = betevent.homeTeam
