@@ -501,10 +501,11 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         const spreadRecords = await Betspread.find({
           eventId: transaction.eventId,
           blockHeight: { $lt: block.height },
-          createdAt: { $lte: block.createdAt },
+          createdAt: { $lt: block.createdAt },
         });
 
         lastSpread = spreadRecords[spreadRecords.length - 1];
+        console.log('lastSpread', lastSpread);
       }
 
       try {
