@@ -330,12 +330,14 @@ async function getEventData(block, eventId, waitTime = 50) {
   // Getting money line updates that are less or equal to the block the transaction is contained in
   const updates = await Betupdate.find({
     eventId: `${eventId}`,
+    blockHeight: { $lt: block.height },
     createdAt: { $lte: block.createdAt },
   });
 
   // Get thebettotals that are less or equal to the block the transaction is contained in
   const betTotals = await Bettotal.find({
     eventId: `${eventId}`,
+    blockHeight: { $lt: block.height },
     createdAt: { $lte: block.createdAt },
   });
 
@@ -505,7 +507,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         });
 
         lastSpread = spreadRecords[spreadRecords.length - 1];
-        console.log('lastSpread', lastSpread);
+        //console.log('lastSpread', lastSpread);
       }
 
       try {
