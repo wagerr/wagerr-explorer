@@ -42,6 +42,7 @@ class BetEventTable extends Component {
     });
     this.getBetData();
     this.sortBetData();
+
   };
 
   componentDidUpdate(prevProps) {
@@ -73,8 +74,10 @@ class BetEventTable extends Component {
         MoneyLine,
         Totals,
         Spreads,
-      });
+      });      
     });
+
+    console.log('sortBetData', MoneyLineBetData); 
   };
 
   getBetData = () => {
@@ -273,7 +276,7 @@ class BetEventTable extends Component {
                 )
               }
             }), ['createdAt'])}
-          />
+          /> 
           <Table
             cols={bottomThreeCols}
             data={sortBy(this.state.Totals.map((action) => {
