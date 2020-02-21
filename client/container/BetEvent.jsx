@@ -71,7 +71,7 @@ class BetEvent extends Component {
       this.getBetData();
     };
   };
- 
+
   getBetData = () => {
     this.setState({loading: true}, () => {
       Promise.all([
@@ -158,22 +158,22 @@ class BetEvent extends Component {
                 Money Line
               </NavLink>
             </NavItem>
-            {tableData.betSpreads.length > 0 && <NavItem>
+            <NavItem>
                 <NavLink
                   className={classnames({ active: this.state.activeTab === '2' })}
                   onClick={() => { this.toggle('2'); }}
                 >
                   Spread
                 </NavLink>
-              </NavItem>}
-              {tableData.betTotals.length > 0 && <NavItem>
+              </NavItem>
+            <NavItem>
               <NavLink
                 className={classnames({ active: this.state.activeTab === '3' })}
                 onClick={() => { this.toggle('3'); }}
               >
                 Over/Under
               </NavLink>
-            </NavItem>}
+            </NavItem>
           </Nav>
           <TabContent activeTab={this.state.activeTab}>
             <TabPane tabId="1">

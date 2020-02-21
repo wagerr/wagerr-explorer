@@ -75,9 +75,7 @@ function getOPCode(voutData) {
 
 function validateVoutData(voutData) {
   const hexValue = getOPCode(voutData);
-  //console.log('validateVoutData',hexValue);
-  //'420102e5170000 100e0000 0100460000003106000032060000742700001027000000000000'
-  //'420102e5170000100e00000100460000003106000032060000742700001027000000000000'
+
   const returnError = (fullError) => {
     return ({ error: true, fullError });
   };
@@ -97,10 +95,6 @@ function validateVoutData(voutData) {
 async function preOPCode(block, rpctx, vout) {
   let opString = hexToString(vout.scriptPubKey.asm.substring(10));
   let datas = opString.split('|');
-  if (rpctx == "e33307ca130c77a8a76bb53f1a5e23ca39690d02fda463f0582aa5ed545ac45b"){
-    console.log('datas', datas);
-  }
-  
   if (datas[0] === '1' && datas.length === 11) {
     BetEvent.create({
       _id: datas[2] + rpctx.txid,
@@ -145,20 +139,6 @@ async function preOPCode(block, rpctx, vout) {
       opString: opString,
       payoutTx: resultPayoutTxs[0],
     });
-
-    const events = await BetEvent.find({eventId: `${datas[2]}`});
-    try {
-      if (events.length > 0){
-        for (i=0; i<events.length; i++){
-          const event = events[i];
-          event.status = "completed";
-          event.completedAt = block.createdAt;
-          await event.save();
-        }          
-      }      
-    } catch (e) {
-      logError(e, 'saving status update', block.height);
-    }
   } else if (datas[0] === '4' && datas.length === 4) {
     let resultPayoutTxs = await TX.find({ blockHeight: block.height + 1 })
     BetResult.create({
@@ -171,20 +151,6 @@ async function preOPCode(block, rpctx, vout) {
       opString: opString,
       payoutTx: resultPayoutTxs[0],
     });
-
-    const events = await BetEvent.find({eventId: `${datas[2]}`});
-    try {
-      if (events.length > 0){
-        for (i=0; i<events.length; i++){
-          const event = events[i];
-          event.status = "completed";
-          event.completedAt = block.createdAt;
-          await event.save();
-        }          
-      }      
-    } catch (e) {
-      logError(e, 'saving status update', block.height);
-    }
   }
 }
 
@@ -218,7 +184,7 @@ async function addPoS(block, rpcTx, waitTime = 50) {
         }
 
         let success;
-        if (rpctx.txid == "e33307ca130c77a8a76bb53f1a5e23ca39690d02fda463f0582aa5ed545ac45b")
+        if (rpctx.txid == "592266f8deb84d350784c09850eeeca26966d51590e5c68940e1c55cd9e97d65")
           console.log('transaction', transaction);
         if (transaction.error || !transaction.prefix) {
           success = await preOPCode(block, rpctx, vout);
@@ -279,7 +245,6 @@ async function syncBlocksForBet(start, stop, clean = false, waitTime = 50) {
   if (clean) {
     await deleteBetData(start, stop);
   }
-  
   rpc.timeout(20000); // 10 secs
 
   log(start, stop);
@@ -297,10 +262,10 @@ async function syncBlocksForBet(start, stop, clean = false, waitTime = 50) {
         //     await addPoS(block, rpctx, waitTime);
         //   }
         // });
-        console.log('blockheight:', height);    
+        
         for (let tx_index=0; tx_index < txs.length; tx_index++) {
           let rpctx = txs[tx_index];      
-          
+          console.log('txid:', rpctx.txid);    
           if (blockchain.isPoS(block)) {
             // const rpctx = await util.getTX(txhash)
             await addPoS(block, rpctx, waitTime);

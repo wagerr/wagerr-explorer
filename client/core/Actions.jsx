@@ -36,7 +36,6 @@ worker.onmessage = (ev) => {
 
 const getFromWorker = (type, resolve, reject, query = null) => {
   promises.set(type, { resolve, reject });
-  console.log('getFromWorker', query, type);
   worker.postMessage({ query, type });
   return true;
 };

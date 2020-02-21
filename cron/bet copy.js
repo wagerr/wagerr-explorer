@@ -466,7 +466,6 @@ async function syncBlocksForBet (start, stop, clean = false) {
     await BetAction.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
     await BetEvent.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
     await BetResult.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
-    await Betupdate.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
   }
   rpc.timeout(10000) // 10 secs
 
