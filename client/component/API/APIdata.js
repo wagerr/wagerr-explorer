@@ -110,6 +110,16 @@ const APIdata = [
         path: '/api/bet/events?eventId=%23061'
       },
       {
+        name: 'getBetOpenEvents',
+        info: 'Returns closest upcomming bet events,  max limit = 50, default limit = 50, default skip = 0',
+        path: '/api/bet/openevents?limit=20&skip=10&sport=Soccer&min_time=1581103800000&max_time=1581175800000&league=LaLiga'
+      },
+      {
+        name: 'getBetEventInfo',
+        info: 'Returns all the bet events or bet event with specific id with query string eventId',
+        path: '/api/bet/event/{eventId}/info'
+      },
+      {
         name: 'getBetActions',
         info: 'Returns all the bet actions or bet action with specific id with query string eventId',
         path: '/api/bet/actions?eventId=%23061'
@@ -133,6 +143,12 @@ const APIdata = [
         name: 'getBetUpdates',
         info: 'Returns bet updates',
         path: '/api/bet/updates?eventId=%23061'
+      },{
+        name: 'getBetStats',
+        info: 'Returns bet stats by duration or latest game count, ex: duration=3 or games=10',
+        path: [
+         '/api/bet/status?duration=3&league=[filter by league]&sport=[filter by sport]&team1=x&team2=x',         
+        ]
       }
     ]
   },

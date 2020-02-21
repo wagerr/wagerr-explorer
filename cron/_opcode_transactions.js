@@ -36,6 +36,7 @@ async function deleteBetData(start, stop) {
   await BetAction.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
   await BetEvent.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
   await BetResult.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
+  await Betupdate.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
 }
 
 
@@ -329,12 +330,14 @@ async function getEventData(block, eventId, waitTime = 50) {
   // Getting money line updates that are less or equal to the block the transaction is contained in
   const updates = await Betupdate.find({
     eventId: `${eventId}`,
+    blockHeight: { $lt: block.height },
     createdAt: { $lte: block.createdAt },
   });
 
   // Get thebettotals that are less or equal to the block the transaction is contained in
   const betTotals = await Bettotal.find({
     eventId: `${eventId}`,
+    blockHeight: { $lt: block.height },
     createdAt: { $lte: block.createdAt },
   });
 
@@ -357,7 +360,8 @@ async function getEventData(block, eventId, waitTime = 50) {
       recheck = await waitForData(eventId, 100);
       event = recheck[0];
     }
-
+    console.log('lastTotal', lastTotal);
+    console.log('event', event);
     event.points = lastTotal ? lastTotal.points : 0;
     event.overOdds = lastTotal ? lastTotal.overOdds : 0;
     event.underOdds = lastTotal? lastTotal.underOdds : 0;
@@ -415,32 +419,37 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
     return createResponse;
   }
 
-  if (['peerlessUpdateOdds'].includes(transaction.txType)) {
+  if (['peerlessUpdateOdds'].includes(transaction.txType)) {    
     const _id = `${transaction.eventId}${rpctx.get('txid')}${block.height}`;
 
     const updateExists = await recordCheck(Betupdate, _id);
-
+    if (transaction.eventId == "6117"){
+      console.log('updateExists', updateExists)
+    }
     if (updateExists) {
       return updateExists;
     }
-
+    
     const resultExists = await recordCheck(BetResult, `${transaction.eventId}`, 'eventId');
-
+    if (transaction.eventId == "6117"){
+      console.log('resultExists', resultExists)
+    }
     if (!resultExists) {
       try {
-        const event = await BetEvent.findOne({
-          eventId: `${transaction.eventId}`,
+        const event = await BetEvent.findOne({eventId: `${transaction.eventId}`}).sort({
+          createdAt: -1
         });
 
         if (event) {
           event.homeOdds = `${transaction.homeOdds}`;
           event.awayOdds = `${transaction.awayOdds}`;
           event.drawOdds = `${transaction.drawOdds}`;
-
-          if (event.homeOdds == 0 || event.awayOdds == 0 || event.drawOdds == 0) {
-            // log('Invalid transaction data');
-            // log(transaction);
+          if (transaction.eventId == "6117"){
+            console.log('event', event)
           }
+          // if (transaction.eventId == "6118"){
+          //   console.log('transaction.homeOdds', transaction.homeOdds)
+          // }
 
           try {
             await event.save();
@@ -494,10 +503,11 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         const spreadRecords = await Betspread.find({
           eventId: transaction.eventId,
           blockHeight: { $lt: block.height },
-          createdAt: { $lte: block.createdAt },
+          createdAt: { $lt: block.createdAt },
         });
 
         lastSpread = spreadRecords[spreadRecords.length - 1];
+        //console.log('lastSpread', lastSpread);
       }
 
       try {
@@ -677,6 +687,20 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         transaction,
         matched: true,
       });
+
+      const events = await BetEvent.find({eventId: `${transaction.eventId}`})
+      try {
+        if (events.length > 0){
+          for (i=0; i<events.length; i++){
+            const event = events[i];
+            event.status = "completed";
+            event.completedAt = block.createdAt;
+            await event.save();
+          }          
+        }      
+      } catch (e) {
+        logError(e, 'saving status update', block.height, transaction);
+      }
     } catch (e) {
       createResponse = e;
       logError(e, ' creating bet result', block.height, transaction);
