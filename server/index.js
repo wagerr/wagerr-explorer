@@ -33,7 +33,6 @@ else {
   // Application.
   const middleware = require('./lib/middleware');
   const router = require('./lib/router');
-  var timeout = require('connect-timeout')
 
   /* Database */
   // Connect to the database.
@@ -42,17 +41,15 @@ else {
   /* API */
   // Setup the application.
   const app = express();
-
   // Setup middleware for app.
   middleware(app);
   // Setup the routes.
   router(app);
   // Start the server.
-  app.use(timeout(1000000))
-  server = app.listen(config.api.port, () => {
+  app.listen(config.api.port, () => {
     console.log(`Wagerr Explorer running on port ${ config.api.port }`);
   });
-  server.setTimeout(1000000);
+
   // Export for testing.
   module.exports =  app;
 }

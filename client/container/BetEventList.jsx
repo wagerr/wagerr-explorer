@@ -13,7 +13,7 @@ import Table from '../component/SuperTable'
 import Select from '../component/Select'
 
 import Icon from '../component/Icon';
-import Switch from "react-switch";
+
 import _ from 'lodash'
 
 import { PAGINATION_PAGE_SIZE, FILTER_EVENTS_OPTIONS } from '../constants'
@@ -47,7 +47,6 @@ class BetEventList extends Component {
       size: 50,
       filterBy: 'All',
       search: '',
-      toggleSwitch: false
     }
   };
 
@@ -74,8 +73,7 @@ class BetEventList extends Component {
 
       const params = {
         limit: this.state.size,
-        skip: (this.state.page - 1) * this.state.size,
-        opened_or_completed: this.state.toggleSwitch
+        skip: (this.state.page - 1) * this.state.size
       };
 
       if (this.state.filterBy !== 'All') {
@@ -92,7 +90,7 @@ class BetEventList extends Component {
       this.debounce = setTimeout(() => {
         getMethod(params)
           .then(({ data, pages }) => {
-            if (this.debounce) {              
+            if (this.debounce) {
               data.map(item => {
                 let totalBet = 0;
                 let totalMint = 0;
@@ -114,17 +112,11 @@ class BetEventList extends Component {
                 }
                 item.totalBet = totalBet
                 item.totalMint = totalMint
-                item.events.sort(function(a,b){
-                  return b.blockHeight - a.blockHeight;
-                })
               })
               this.setState({ events: data, pages, loading: false })
             }
           })
-          .catch(error => {
-            console.log('error', error);
-            this.setState({ error, loading: false })
-          })
+          .catch(error => this.setState({ error, loading: false }))
       }, 800)
     })
   }
@@ -166,11 +158,6 @@ class BetEventList extends Component {
       });
     }
     return results;
-  }
-
-  handleToggleChange = (toggleSwitch) => {
-    this.setState({ toggleSwitch }, this.getBetEventsInfo);
-    console.log(toggleSwitch);
   }
 
   render () {
@@ -232,26 +219,6 @@ class BetEventList extends Component {
     return (
       <div>
         {searchBar}
-        <div style={{alignItems:'center',marginTop:'20px'}}>
-          <span>Completed/Opened</span>
-        </div>
-        <label htmlFor="material-switch" style={{marginTop:'10px'}}>
-          <Switch
-            checked={this.state.toggleSwitch}
-            onChange={this.handleToggleChange}
-            onColor="#86d3ff"
-            onHandleColor="#2693e6"
-            handleDiameter={30}
-            uncheckedIcon={false}
-            checkedIcon={false}
-            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-            height={20}
-            width={48}
-            className="react-switch"
-            id="material-switch"
-          />
-        </label> 
         <HorizontalRule
           select={select}
           filterSport={filterSport}
@@ -260,68 +227,64 @@ class BetEventList extends Component {
           className={'table-responsive table--for-betevents'}
           cols={cols}
           data={this.state.events.map((event) => {
-            const betAmount = event.actions.reduce((acc, action) => { 
+            const betAmount = event.actions.reduce((acc, action) => {
               return acc + action.betValue
             }, 0.0
             )
-
             let betStatus = t('open')
             const eventTime = parseInt(event.events[0].timeStamp);
             const eventData = event.events[0];
 
-            if (event.results.length > 1) {
-              for (const result of event.results) {
-                if (result.result.indexOf('REFUND') !== -1) {
-                  betStatus = <span className={`badge badge-info`}>REFUND</span>
+            if ((eventTime - (20 * 60 * 1000)) < Date.now()) {
+              betStatus = t('waitForStart')
+              if (eventTime < Date.now()) {
+                betStatus = t('started')
+                if (event.results.length === 0) {
+                  betStatus = <span className={`badge badge-warning`}>{t('waitingForOracle')}</span>
                 }
-              }
-            }
-            else if (event.results.length > 0) {
-              for (const result of event.results) {
-                const awayVsHome = result.transaction ? (result.transaction.awayScore - result.transaction.homeScore) : 0;
-                let outcome;
-                if (awayVsHome > 0) {
-                  // outcome = 'Away Win';
-                  outcome = eventData.awayTeam;
-                }
+                if (event.results.length > 0) {
+                  for (const result of event.results) {
+                    const awayVsHome = result.transaction ? (result.transaction.awayScore - result.transaction.homeScore) : 0;
+                    let outcome;
+                    if (awayVsHome > 0) {
+                      // outcome = 'Away Win';
+                      outcome = eventData.awayTeam;
+                    }
 
-                if (awayVsHome < 0) {
-                  // outcome = 'Home Win';
-                  outcome = eventData.homeTeam;
-                }
+                    if (awayVsHome < 0) {
+                      // outcome = 'Home Win';
+                      outcome = eventData.homeTeam;
+                    }
 
-                if (awayVsHome === 0) {
-                  outcome = 'Draw';
-                }
+                    if (awayVsHome === 0) {
+                      outcome = 'Draw';
+                    }
 
-                if (result.result && result.result.includes('Refund')) {
-                  outcome = 'Refund';
-                }
+                    if (result.result && result.result.includes('Refund')) {
+                      outcome = 'Refund';
+                    }
 
-                if (outcome) {
-                  betStatus = <span className={`badge badge-info`}>{outcome}</span>
-                }
-              }
-            } else {
-              if ((eventTime - (20 * 60 * 1000)) < Date.now()) {
-                betStatus = t('waitForStart')
-                if (eventTime < Date.now()) {
-                  betStatus = t('started')
-                  if (event.results.length === 0) {
-                    betStatus = <span className={`badge badge-warning`}>{t('waitingForOracle')}</span>
+                    if (outcome) {
+                      betStatus = <span className={`badge badge-info`}>{outcome}</span>
+                    }
                   }
-                  
+                }
+                if (event.results.length > 1) {
+                  for (const result of event.results) {
+                    if (result.result.indexOf('REFUND') !== -1) {
+                      betStatus = <span className={`badge badge-info`}>REFUND</span>
+                    }
+                  }
                 }
               }
             }
-            
-            let homeOdds = (event.events[0].homeOdds / 10000)
-            let drawOdds = (event.events[0].drawOdds / 10000)
-            let awayOdds = (event.events[0].awayOdds / 10000)
+            let homeOdds = (event.events[event.events.length - 1].homeOdds / 10000)
+            let drawOdds = (event.events[event.events.length - 1].drawOdds / 10000)
+            let awayOdds = (event.events[event.events.length - 1].awayOdds / 10000)
             if (event.events.length > 1) {
-              const lastHomeOdds = (event.events[1].homeOdds / 10000)
-              const lastDrawOdds = (event.events[1].drawOdds / 10000)
-              const lastAwayOdds = (event.events[1].awayOdds / 10000)
+              const lastHomeOdds = (event.events[event.events.length - 2].homeOdds / 10000)
+              const lastDrawOdds = (event.events[event.events.length - 2].drawOdds / 10000)
+              const lastAwayOdds = (event.events[event.events.length - 2].awayOdds / 10000)
               if (homeOdds > lastHomeOdds) {
                 homeOdds = homeOdds + ' ↑'
               } else if (homeOdds < lastHomeOdds) {
