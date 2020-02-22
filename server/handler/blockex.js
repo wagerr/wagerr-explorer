@@ -1738,20 +1738,27 @@ const getCurrentProposals = async (req, res) => {
 };
 
 const getBetStats = async (req, res) => {
-  const duration = req.query.duration ? parseInt(req.query.duration, 10) : 0;
+  req.clearTimeout();
+  const start_time = req.query.start_time ? req.query.start_time : null;
+  const end_time = req.query.end_time ? req.query.end_time : null;
   const games = req.query.games ? parseInt(req.query.games, 10) : 0;
   const team1 = req.query.team1? req.query.team1: '';
   const team2 = req.query.team2? req.query.team2: '';
   const sport = req.query.sport? req.query.sport: '';
   const league = req.query.league? req.query.league: '';
   try {
-    if (duration > 0){
-      let cutOff = moment().utc().subtract(duration*24, 'hour').unix();
-      console.log('cutOff', cutOff);
-      console.log(team1, team2);
+    if (start_time && end_time){
+      // let cutOff = moment().utc().subtract(duration*24, 'hour').unix();
+      // console.log('cutOff', cutOff);
+      // console.log(team1, team2);
       let qry = [
         {
-          $match: {createdAt: {$gte: new Date(cutOff * 1000)}}
+          $match: {
+            $and: [
+              {createdAt: {$gte: new Date(start_time * 1000)}},
+              {createdAt: {$lte: new Date(end_time * 1000)}}
+            ]            
+          }
         },
         {
           $sort: {
@@ -1769,7 +1776,7 @@ const getBetStats = async (req, res) => {
       if (league != ''){
         qry.push({ 
           $match: {
-            "events.transaction.league": league
+            "events.league": league
           }
         });
       }
@@ -1799,7 +1806,8 @@ const getBetStats = async (req, res) => {
         });
       } 
 
-      const results = await BetAction.aggregate(qry);  
+      const results = await BetAction.aggregate(qry).allowDiskUse(true);  
+
       let totalBetWagerr = 0;
       let totalBetUSD = 0;
       for (i=0; i<results.length; i++){
@@ -1812,7 +1820,6 @@ const getBetStats = async (req, res) => {
         ]);
 
         if (coins.length > 0){
-          console.log(coins[0]);
           totalBetUSD = totalBetUSD + coins[0].doc.usd * action.betValue;
         }         
       }
@@ -1820,13 +1827,12 @@ const getBetStats = async (req, res) => {
       return res.json({totalBetWagerr: totalBetWagerr, totalBetUSD: totalBetUSD});    
 
     } else if (games > 0) {
-      qry = [
-        {
-          $match:{
-            status: "completed"
-          }
+      qry = [{
+        $match: {
+          status: "completed"
         }
-      ]
+      }        
+      ];
 
       if (team1 != '' && team2 != ''){
         qry.push({ 
@@ -1858,7 +1864,7 @@ const getBetStats = async (req, res) => {
       if (league != ''){
         qry.push({ 
           $match: {
-            "transaction.league": league
+            "league": league
           }
         });
       }
@@ -1880,13 +1886,13 @@ const getBetStats = async (req, res) => {
         }
       ]);
       
-      const results = await BetEvent.aggregate(qry);  
+      const results = await BetEvent.aggregate(qry).allowDiskUse(true);  
       let totalBetWagerr = 0;
       let totalBetUSD = 0;
       for (i = 0; i < results.length; i++){
         const item = results[i];
         for (j = 0; j< item.actions.length; j++){
-          const action = item.actions[i];
+          const action = item.actions[j];
           totalBetWagerr = totalBetWagerr + action.betValue;
           const coins = await Coin.aggregate([
             {$project: {diff: {$abs: {$subtract: [action.createdAt, '$createdAt']}}, doc: '$$ROOT'}},

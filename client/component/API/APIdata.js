@@ -145,8 +145,10 @@ const APIdata = [
         path: '/api/bet/updates?eventId=%23061'
       },{
         name: 'getBetStats',
-        info: 'Returns bet stats by duration or latest game count',
-        path: '/api/bet/status?duration=3&games=[latest completed games count]&league=[filter by league]&sport=[filter by sport]&team1=x&team2=x'
+        info: 'Returns bet stats by duration or latest game count, ex: duration=3 or games=10',
+        path: [
+         '/api/bet/status?duration=3&league=[filter by league]&sport=[filter by sport]&team1=x&team2=x',         
+        ]
       }
     ]
   },
