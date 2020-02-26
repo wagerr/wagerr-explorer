@@ -1739,13 +1739,23 @@ const getCurrentProposals = async (req, res) => {
 
 const getBetStats = async (req, res) => {
   req.clearTimeout();
-  const start_time = req.query.start_time ? req.query.start_time : null;
-  const end_time = req.query.end_time ? req.query.end_time : null;
+  let start_time = req.query.start_time ? req.query.start_time : null;
+  let end_time = req.query.end_time ? req.query.end_time : null;
+  const duration = req.query.duration ? req.query.duration : null;  
   const games = req.query.games ? parseInt(req.query.games, 10) : 0;
   const team1 = req.query.team1? req.query.team1: '';
   const team2 = req.query.team2? req.query.team2: '';
   const sport = req.query.sport? req.query.sport: '';
   const league = req.query.league? req.query.league: '';
+
+  if (start_time && end_time){
+    console.log(start_time, end_time);
+  } else if (duration) {
+    if (duration > 14)  duration = 14;
+    start_time = moment().utc().subtract(duration*24, 'hour').unix();
+    end_time = moment().unix();
+  }
+
   try {
     if (start_time && end_time){
       // let cutOff = moment().utc().subtract(duration*24, 'hour').unix();
@@ -1887,6 +1897,7 @@ const getBetStats = async (req, res) => {
       ]);
       
       const results = await BetEvent.aggregate(qry).allowDiskUse(true);  
+      console.log('qry', qry);
       let totalBetWagerr = 0;
       let totalBetUSD = 0;
       for (i = 0; i < results.length; i++){
