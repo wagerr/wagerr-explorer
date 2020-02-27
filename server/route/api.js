@@ -38,6 +38,7 @@ router.get('/bet/moneyline', blockex.getBetUpdates);
 router.get('/bet/event/:eventId/info', blockex.getBetEventInfo);
 router.get('/bet/events/info', blockex.getBetEventsInfo);
 router.get('/bet/stats', blockex.getBetStats);
+router.get('/bet/stats_test', blockex.getBetStatsTest);
 router.get('/bet/action/week', blockex.getBetActioinsWeek());
 router.get('/pps/current', blockex.getCurrentProposals);
 router.get('/statistic/perweek', blockex.getStatisticPerWeek());
