@@ -1423,6 +1423,7 @@ const getBetEventInfo = async (req, res) => {
           eventId: H2HEvents_Home[i].eventId,
           visibility: true,
         }).sort({ createdAt: 1 });
+        console.log(H2HEvents_Home[i]);
         event_item = H2HEvents_Home[i].toObject();
         event_item.results = h2hevent_results;
         H2HEvents.push(event_item);
@@ -1835,8 +1836,7 @@ const getBetStats = async (req, res) => {
         const action = results[i];   
         const event = action.events[0];
         if (typeof event == "undefined") continue;
-        // console.log('---event---',event)
-        // console.log('--event.transaction--', event.transaction);
+        
         if (typeof volume[event.transaction.sport] == "undefined"){
           volume[event.transaction.sport] = {}
           volume[event.transaction.sport].totalBetWagerr = 0;
@@ -1867,7 +1867,7 @@ const getBetStats = async (req, res) => {
           volume[event.transaction.sport].totalBetUSD = volume[event.transaction.sport].totalBetUSD + coins[0].doc.usd * action.betValue;
         }         
       }
-      return res.json({stats: {volume: volume, events:events}});    
+      return res.json({stats: {volume: volume, events:events}, start_time: start_time,  end_time:end_time});    
     } else if (games > 0) {
       qry = [{
         $match: {
