@@ -1423,7 +1423,8 @@ const getBetEventInfo = async (req, res) => {
           const h2hevent_results = await BetResult.find({
             eventId: H2HEvents_Home[i].eventId,
             visibility: true,
-          }).sort({ createdAt: 1 });                  
+          }).sort({ createdAt: 1 });       
+          console.log(H2HEvents_Home[i]);           
           event_item = H2HEvents_Home[i].toObject();
           event_item.results = h2hevent_results;
           H2HEvents.push(event_item);
@@ -1854,14 +1855,15 @@ const getBetStats = async (req, res) => {
         }
         
         if (!backup_events.includes(event.eventId)){
-          backup_events.push(event.eventId);
-          events.total++;
-          events[event.transaction.sport]++;
+          backup_events.push(event.eventId);          
         }
 
+        events.total++;
+        events[event.transaction.sport]++;
 
         volume.total.totalBetWagerr = volume.total.totalBetWagerr + action.betValue;
         volume[event.transaction.sport].totalBetWagerr = volume[event.transaction.sport].totalBetWagerr + action.betValue;
+
         const coins = await Coin.aggregate([
           {$project: {diff: {$abs: {$subtract: [action.createdAt, '$createdAt']}}, doc: '$$ROOT'}},
           {$sort: {diff: 1}},
