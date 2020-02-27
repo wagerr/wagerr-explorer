@@ -1820,9 +1820,42 @@ const getBetStats = async (req, res) => {
 
       let totalBetWagerr = 0;
       let totalBetUSD = 0;
-      for (i=0; i<results.length; i++){
-        const action = results[i];
-        totalBetWagerr = totalBetWagerr + action.betValue;
+      let volume = { 
+        total: {
+          totalBetWagerr: 0,
+          totalBetUSD: 0
+        }
+      };
+      let events = {
+        total: 0
+      };
+
+      let backup_events = [];
+      for (i=0; i<results.length; i++){        
+        const action = results[i];   
+        const event = action.events[0];
+        if (typeof event == "undefined") continue;
+        // console.log('---event---',event)
+        // console.log('--event.transaction--', event.transaction);
+        if (typeof volume[event.transaction.sport] == "undefined"){
+          volume[event.transaction.sport] = {}
+          volume[event.transaction.sport].totalBetWagerr = 0;
+          volume[event.transaction.sport].totalBetUSD = 0;
+        }
+
+        if (typeof events[event.transaction.sport] == "undefined"){
+          events[event.transaction.sport] = 0
+        }
+        
+        if (!backup_events.includes(event.eventId)){
+          backup_events.push(event.eventId);
+          events.total++;
+          events[event.transaction.sport]++;
+        }
+
+
+        volume.total.totalBetWagerr = volume.total.totalBetWagerr + action.betValue;
+        volume[event.transaction.sport].totalBetWagerr = volume[event.transaction.sport].totalBetWagerr + action.betValue;
         const coins = await Coin.aggregate([
           {$project: {diff: {$abs: {$subtract: [action.createdAt, '$createdAt']}}, doc: '$$ROOT'}},
           {$sort: {diff: 1}},
@@ -1830,12 +1863,11 @@ const getBetStats = async (req, res) => {
         ]);
 
         if (coins.length > 0){
-          totalBetUSD = totalBetUSD + coins[0].doc.usd * action.betValue;
+          volume.total.totalBetUSD = volume.total.totalBetUSD + coins[0].doc.usd * action.betValue;
+          volume[event.transaction.sport].totalBetUSD = volume[event.transaction.sport].totalBetUSD + coins[0].doc.usd * action.betValue;
         }         
       }
-
-      return res.json({totalBetWagerr: totalBetWagerr, totalBetUSD: totalBetUSD});    
-
+      return res.json({stats: {volume: volume, events:events}});    
     } else if (games > 0) {
       qry = [{
         $match: {
