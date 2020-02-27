@@ -1419,14 +1419,15 @@ const getBetEventInfo = async (req, res) => {
       H2HEvents_Home.sort(function(a,b){return b.createdAt - a.createdAt});
       //H2HEvents =tx.toObject();
       for (i=0; i<H2HEvents_Home.length; i++){
-        const h2hevent_results = await BetResult.find({
-          eventId: H2HEvents_Home[i].eventId,
-          visibility: true,
-        }).sort({ createdAt: 1 });
-        console.log(H2HEvents_Home[i]);
-        event_item = H2HEvents_Home[i].toObject();
-        event_item.results = h2hevent_results;
-        H2HEvents.push(event_item);
+        if (typeof H2HEvents_Home[i] !== "undefined"){
+          const h2hevent_results = await BetResult.find({
+            eventId: H2HEvents_Home[i].eventId,
+            visibility: true,
+          }).sort({ createdAt: 1 });                  
+          event_item = H2HEvents_Home[i].toObject();
+          event_item.results = h2hevent_results;
+          H2HEvents.push(event_item);
+        }        
       }
 
 
@@ -1818,9 +1819,7 @@ const getBetStats = async (req, res) => {
       } 
 
       const results = await BetAction.aggregate(qry).allowDiskUse(true);  
-      console.log(start_time, end_time, results.length);
-      let totalBetWagerr = 0;
-      let totalBetUSD = 0;
+
       let volume = { 
         total: {
           totalBetWagerr: 0,
@@ -1832,10 +1831,17 @@ const getBetStats = async (req, res) => {
       };
 
       let backup_events = [];
-      for (i=0; i<results.length; i++){        
+      let undefined_count = 0;
+
+      console.log(start_time, end_time, results.length);
+      for (i=0; i<results.length; i++){                
         const action = results[i];   
         const event = action.events[0];
-        if (typeof event == "undefined") continue;
+        if (typeof event === "undefined"){
+          undefined_count++;
+          console.log('undefined event', action,  undefined_count);          
+          continue;
+        } 
         
         if (typeof volume[event.transaction.sport] == "undefined"){
           volume[event.transaction.sport] = {}
