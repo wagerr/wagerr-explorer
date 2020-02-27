@@ -1835,6 +1835,233 @@ const getBetStats = async (req, res) => {
       let undefined_count = 0;
 
       console.log(start_time, end_time, results.length);
+      for (i=0; i<results.length; i++){                        
+        const action = results[i];   
+        const event = action.events[0];
+        if (typeof event === "undefined"){
+          undefined_count++;
+          console.log('undefined event', action,  undefined_count);          
+          continue;
+        } 
+        
+        if (typeof volume[event.transaction.sport] == "undefined"){
+          volume[event.transaction.sport] = {}
+          volume[event.transaction.sport].totalBetWagerr = 0;
+          volume[event.transaction.sport].totalBetUSD = 0;
+        }
+
+        if (typeof events[event.transaction.sport] == "undefined"){
+          events[event.transaction.sport] = 0
+        }
+        
+        if (!backup_events.includes(event.eventId)){
+          backup_events.push(event.eventId);          
+        }
+
+        events.total++;
+        events[event.transaction.sport]++;
+
+        volume.total.totalBetWagerr = volume.total.totalBetWagerr + action.betValue;
+        volume[event.transaction.sport].totalBetWagerr = volume[event.transaction.sport].totalBetWagerr + action.betValue;
+
+        const coins = await Coin.aggregate([
+          {$project: {diff: {$abs: {$subtract: [action.createdAt, '$createdAt']}}, doc: '$$ROOT'}},
+          {$sort: {diff: 1}},
+          {$limit: 1}
+        ]);
+
+        if (coins.length > 0){
+          volume.total.totalBetUSD = volume.total.totalBetUSD + coins[0].doc.usd * action.betValue;
+          volume[event.transaction.sport].totalBetUSD = volume[event.transaction.sport].totalBetUSD + coins[0].doc.usd * action.betValue;
+        }         
+      }
+      return res.json({stats: {volume: volume, events:events}, start_time: start_time,  end_time:end_time});    
+    } else if (games > 0) {
+      qry = [{
+        $match: {
+          status: "completed"
+        }
+      }        
+      ];
+
+      if (team1 != '' && team2 != ''){
+        qry.push({ 
+          $match: {
+            $or: [
+              { $and: [ { "homeTeam": team1 }, { "awayTeam": team2 } ] },
+              { $and: [ { "homeTeam": team2 }, { "awayTeam": team1 } ] },
+            ]
+          }
+        });
+      } else if (team1 != '') {
+        qry.push({ 
+          $match: {
+            $or: [
+              { "homeTeam": team1 }, { "awayTeam": team1 }
+            ]
+          }
+        });
+      } 
+
+      if (sport != ''){
+        qry.push({ 
+          $match: {
+            "transaction.sport": sport
+          }
+        });
+      }
+
+      if (league != ''){
+        qry.push({ 
+          $match: {
+            "league": league
+          }
+        });
+      }
+
+      qry = qry.concat([
+        {
+          $sort: {
+            completedAt: -1,
+          }
+        },{
+          $limit: games
+        }, {
+          $lookup: {
+            from: 'betactions',
+            localField: 'eventId',
+            foreignField: 'eventId',
+            as: 'actions',
+          }
+        }
+      ]);
+      
+      const results = await BetEvent.aggregate(qry).allowDiskUse(true);  
+      console.log('qry', qry);
+      let totalBetWagerr = 0;
+      let totalBetUSD = 0;
+      for (i = 0; i < results.length; i++){
+        const item = results[i];
+        for (j = 0; j< item.actions.length; j++){
+          const action = item.actions[j];
+          totalBetWagerr = totalBetWagerr + action.betValue;
+          const coins = await Coin.aggregate([
+            {$project: {diff: {$abs: {$subtract: [action.createdAt, '$createdAt']}}, doc: '$$ROOT'}},
+            {$sort: {diff: 1}},
+            {$limit: 1}
+          ]);
+
+          if (coins.length > 0){            
+            totalBetUSD = totalBetUSD + coins[0].doc.usd * action.betValue;
+          }         
+        }
+      }
+      return res.json({totalBetWagerr: totalBetWagerr, totalBetUSD: totalBetUSD});    
+    } else {
+      data = [];
+      return res.json(data);  
+    }    
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message || err);
+  }
+}
+
+const getBetStatsTest = async (req, res) => {
+  req.clearTimeout();
+  let start_time = req.query.start_time ? req.query.start_time : null;
+  let end_time = req.query.end_time ? req.query.end_time : null;
+  const duration = req.query.duration ? req.query.duration : null;  
+  const games = req.query.games ? parseInt(req.query.games, 10) : 0;
+  const team1 = req.query.team1? req.query.team1: '';
+  const team2 = req.query.team2? req.query.team2: '';
+  const sport = req.query.sport? req.query.sport: '';
+  const league = req.query.league? req.query.league: '';
+
+  if (start_time && end_time){
+    console.log(start_time, end_time);
+  } else if (duration) {
+    if (duration > 14)  duration = 14;
+    start_time = moment().utc().subtract(duration*24, 'hour').unix();
+    end_time = moment().unix();
+  }
+
+  try {
+    if (start_time && end_time){
+      // let cutOff = moment().utc().subtract(duration*24, 'hour').unix();
+      // console.log('cutOff', cutOff);
+      // console.log(team1, team2);
+      let qry = [
+        {
+          $match: {
+            $and: [
+              {createdAt: {$gte: new Date(start_time * 1000)}},
+              {createdAt: {$lte: new Date(end_time * 1000)}}
+            ]            
+          }
+        },
+        {
+          $sort: {
+            createdAt: -1,
+          }
+        },{
+          $lookup: {
+            from: 'betevents',
+            localField: 'eventId',
+            foreignField: 'eventId',
+            as: 'events',
+          },
+        }
+      ];
+      if (league != ''){
+        qry.push({ 
+          $match: {
+            "events.league": league
+          }
+        });
+      }
+      if (sport != ''){
+        qry.push({ 
+          $match: {
+            "events.transaction.sport": sport
+          }
+        });
+      }
+      if (team1 != '' && team2 != ''){
+        qry.push({ 
+          $match: {
+            $or: [
+              { $and: [ { "events.homeTeam": team1 }, { "events.awayTeam": team2 } ] },
+              { $and: [ { "events.homeTeam": team2 }, { "events.awayTeam": team1 } ] },
+            ]
+          }
+        });
+      } else if (team1 != '') {
+        qry.push({ 
+          $match: {
+            $or: [
+              { "events.homeTeam": team1 }, { "events.awayTeam": team1 }
+            ]
+          }
+        });
+      } 
+
+      const results = await BetAction.aggregate(qry).allowDiskUse(true);  
+
+      let volume = { 
+        total: {
+          totalBetWagerr: 0,
+          totalBetUSD: 0
+        }
+      };
+      let events = {
+        total: 0
+      };
+
+      let backup_events = [];
+      let undefined_count = 0;
+
+      console.log(start_time, end_time, results.length);
       for (i=0; i<results.length; i++){                
         const action = results[i];   
         const event = action.events[0];
@@ -2088,5 +2315,6 @@ module.exports = {
   getLottoBets,
   getLottoResults,
   getLottoEventInfo,
-  getBetStats
+  getBetStats,
+  getBetStatsTest
 };
