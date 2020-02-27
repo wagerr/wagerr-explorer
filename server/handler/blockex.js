@@ -1836,7 +1836,8 @@ const getBetStats = async (req, res) => {
 
       console.log(start_time, end_time, results.length);
       let count = 0;
-      for (let i=0; i<results.length; i++){                        
+      let i=0;
+      for (i=0; i<results.length; i++){                        
         const action = results[i];   
         const event = action.events[0];
         if (typeof event === "undefined"){
