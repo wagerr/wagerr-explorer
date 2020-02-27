@@ -1835,7 +1835,8 @@ const getBetStats = async (req, res) => {
       let undefined_count = 0;
 
       console.log(start_time, end_time, results.length);
-      for (i=0; i<results.length; i++){                        
+      let count = 0;
+      for (let i=0; i<results.length; i++){                        
         const action = results[i];   
         const event = action.events[0];
         if (typeof event === "undefined"){
@@ -1855,12 +1856,12 @@ const getBetStats = async (req, res) => {
         }
         
         if (!backup_events.includes(event.eventId)){
-          backup_events.push(event.eventId);          
+          backup_events.push(event.eventId);         
+          events.total++; 
+          events[event.transaction.sport]++;
         }
-
-        events.total++;
-        events[event.transaction.sport]++;
-
+        
+        count++;
         volume.total.totalBetWagerr = volume.total.totalBetWagerr + action.betValue;
         volume[event.transaction.sport].totalBetWagerr = volume[event.transaction.sport].totalBetWagerr + action.betValue;
 
@@ -1875,7 +1876,7 @@ const getBetStats = async (req, res) => {
           volume[event.transaction.sport].totalBetUSD = volume[event.transaction.sport].totalBetUSD + coins[0].doc.usd * action.betValue;
         }         
       }
-      return res.json({stats: {volume: volume, events:events}, start_time: start_time,  end_time:end_time});    
+      return res.json({stats: {volume: volume, events:events}, start_time: start_time,  end_time:end_time, count:count, i:i});    
     } else if (games > 0) {
       qry = [{
         $match: {
