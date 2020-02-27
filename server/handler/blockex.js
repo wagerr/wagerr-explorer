@@ -1817,7 +1817,7 @@ const getBetStats = async (req, res) => {
       } 
 
       const results = await BetAction.aggregate(qry).allowDiskUse(true);  
-
+      console.log(start_time, end_time, results.length);
       let totalBetWagerr = 0;
       let totalBetUSD = 0;
       let volume = { 
