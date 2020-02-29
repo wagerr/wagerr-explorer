@@ -2023,10 +2023,11 @@ const getTeamEventInfo = async (req, res) => {
       let e = events[i];
       e = JSON.parse(JSON.stringify(e));  
       let event = {}
-      event.status = e.status ? e.status : "unknown"
+      event.status = e.status == "completed" ? e.status : "open"
       event.timeStamp = e.timeStamp;
       event.eventId = e.eventId;
-
+      event.homeTeam = e.homeTeam;
+      event.awayTeam = e.awayTeam;
       const betupdates = await BetUpdate.find({
         eventId: event.eventId,
         visibility: true
@@ -2079,11 +2080,10 @@ const getTeamEventInfo = async (req, res) => {
       }).sort({createdAt: 1});
 
       if (betresults.length > 0){        
-        const result = JSON.parse(JSON.stringify(betresults[betresults.length-1]))
-        console.log(result.transaction.homeScore);
+        const result = JSON.parse(JSON.stringify(betresults[betresults.length-1]))        
         event.result = {            
-          homePoints: `${displayNum(result.transaction.homeScore, 10)}`,
-          awayPoints: `${displayNum(result.transaction.awayScore, 10)}`
+          homePoints: result.transaction.homeScore/10,
+          awayPoints: result.transaction.awayScore/10
         }
       }
       formattedEvents.push(event);
