@@ -21,7 +21,7 @@ const BetAction = require('../model/betaction');
 const BetEvent = require('../model/betevent');
 const BetResult = require('../model/betresult');
 const BetError = require('../model/beterror');
-
+const Price = require('../model/price');
 const TX = require('../model/tx');
 
 const { log } = console;
@@ -120,6 +120,14 @@ async function preOPCode(block, rpctx, vout) {
     });
   } else if (datas[0] === '2' && datas.length === 4) {
     try {
+      const prices = await Price.aggregate([
+        {$project: {diff: {$abs: {$subtract: [block.createdAt, '$createdAt']}}, doc: '$$ROOT'}},
+        {$sort: {diff: 1}},
+        {$limit: 1}
+      ]);
+      
+      const betValueUSD = prices[0].doc.usd * vout.value;
+      console.log('betValueUSD', betValueUSD);
       await BetAction.create({
         _id: datas[2] + datas[3] + rpctx.txid,
         txId: rpctx.txid,
@@ -128,6 +136,7 @@ async function preOPCode(block, rpctx, vout) {
         eventId: datas[2],
         betChoose: datas[3],
         betValue: vout.value,
+        betValueUSD: betValueUSD,
         opString: opString,
       });
     } catch (e) {
@@ -154,7 +163,7 @@ async function preOPCode(block, rpctx, vout) {
           event.status = "completed";
           event.completedAt = block.createdAt;
           await event.save();
-        }          
+        }           
       }      
     } catch (e) {
       logError(e, 'saving status update', block.height);
@@ -188,8 +197,7 @@ async function preOPCode(block, rpctx, vout) {
   }
 }
 
-async function addPoS(block, rpcTx, waitTime = 50) {
-
+async function addPoS(block, rpcTx, waitTime = 50) {  
   const rpctx = rpcTx;
   // We will ignore the empty PoS txs.
   // Setup the outputs for the transaction.
@@ -198,7 +206,7 @@ async function addPoS(block, rpcTx, waitTime = 50) {
       return rpctx[param];
     }
   }
-  //console.log(rpctx.txid);
+
   const rpctxVout = rpctx.get('vout');
 
 
@@ -218,7 +226,7 @@ async function addPoS(block, rpcTx, waitTime = 50) {
         }
 
         let success;
-        if (rpctx.txid == "e33307ca130c77a8a76bb53f1a5e23ca39690d02fda463f0582aa5ed545ac45b")
+        if (rpctx.txid == "dd68732d728f4204cdf7d627fa3cb14de630a131a472063759ec0dfe58971778")
           console.log('transaction', transaction);
         if (transaction.error || !transaction.prefix) {
           success = await preOPCode(block, rpctx, vout);
@@ -296,13 +304,13 @@ async function syncBlocksForBet(start, stop, clean = false, waitTime = 50) {
         //     // const rpctx = await util.getTX(txhash)
         //     await addPoS(block, rpctx, waitTime);
         //   }
-        // });
-        console.log('blockheight:', height);    
+        // });        
         for (let tx_index=0; tx_index < txs.length; tx_index++) {
           let rpctx = txs[tx_index];      
           
           if (blockchain.isPoS(block)) {
             // const rpctx = await util.getTX(txhash)
+          
             await addPoS(block, rpctx, waitTime);
           }
         }
