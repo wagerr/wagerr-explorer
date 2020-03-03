@@ -14,6 +14,7 @@ const BetAction = mongoose.model('BetAction', new mongoose.Schema({
   createdAt: { required: true, type: Date },
   eventId: { required: true, type: String },
   betValue: { required: true, type: Number },
+  betValueUSD: { required: true, type: Number },
   betChoose: { required: true, type: String },
   opString: { required: true, type: String },
   opCode: { required: false, type: String},

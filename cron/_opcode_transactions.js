@@ -11,7 +11,7 @@ const Transaction = require('../model/transaction');
 const BetAction = require('../model/betaction');
 const BetEvent = require('../model/betevent');
 const BetResult = require('../model/betresult');
-
+const Price = require('../model/price')
 const BetError = require('../model/beterror');
 
 const TX = require('../model/tx');
@@ -361,7 +361,6 @@ async function getEventData(block, eventId, waitTime = 50) {
       event = recheck[0];
     }
     console.log('lastTotal', lastTotal);
-    console.log('event', event);
     event.points = lastTotal ? lastTotal.points : 0;
     event.overOdds = lastTotal ? lastTotal.overOdds : 0;
     event.underOdds = lastTotal? lastTotal.underOdds : 0;
@@ -511,6 +510,14 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
       }
 
       try {
+        const prices = await Price.aggregate([
+          {$project: {diff: {$abs: {$subtract: [block.createdAt, '$createdAt']}}, doc: '$$ROOT'}},
+          {$sort: {diff: 1}},
+          {$limit: 1}
+        ]);
+        
+        const betValueUSD = prices[0].doc.usd * vout.value;
+        
         createResponse = await BetAction.create({
           _id,
           txId: rpctx.get('txid'),
@@ -519,6 +526,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
           eventId: transaction.eventId,
           betChoose: outcomeMapping[transaction.outcome],
           betValue: vout.value,
+          betValueUSD: betValueUSD,
           opString: JSON.stringify(transaction),
           opCode: transaction.opCode,
           homeOdds: eventRecord.homeOdds || 0,
