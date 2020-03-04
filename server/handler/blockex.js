@@ -2001,8 +2001,8 @@ const getBetStats = async (req, res) => {
 
 const getTeamEventInfo = async (req, res) => {
   const team = req.query.team ? req.query.team:null;
-  const limit = req.query.limit? (req.query.limit > 50? 50:req.query.limit) : 50;
-  const skip = req.query.skip? req.query.skip:0; 
+  const limit = req.query.limit? (req.query.limit > 50? 50: parseInt(req.query.limit)) : 50;
+  const skip = req.query.skip? parseInt(req.query.skip):0; 
   const sport = req.query.sport? req.query.sport:null; 
   if (!team){    
     res.status(500).send("team field is missed");
