@@ -45,8 +45,20 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
     if (resultData.length !== 0 ){
       resultData.forEach(queryResult => {
         let startIndex = 2
-        if (queryResult.payoutTx.vout[1].address === queryResult.payoutTx.vout[2].address) {
-          startIndex = 3
+        let obj_checked = false;
+        
+        if (typeof queryResult.payoutTx !== "undefined" && typeof queryResult.payoutTx.vout !== "undefined"){
+          if (queryResult.payoutTx.vout.length > 2){
+            if (typeof queryResult.payoutTx.vout[1].address !== "undefined" && typeof queryResult.payoutTx.vout[2].address !== "undefined")
+            {
+              obj_checked = true;
+            }
+          }
+        }
+        if (obj_checked){
+          if (queryResult.payoutTx.vout[1].address === queryResult.payoutTx.vout[2].address) {
+            startIndex = 3
+          }
         }
         for (let i = startIndex; i < queryResult.payoutTx.vout.length - 1; i++) {
           totalMint += queryResult.payoutTx.vout[i].value

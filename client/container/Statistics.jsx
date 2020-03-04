@@ -42,6 +42,7 @@ class Statistics extends Component {
         this.props.getBetPerWeek()
       ])
       .then((res) => {
+        console.log('res', res);
         this.setState({
           coins: res[0], // 7 days at 5 min = 2016 coins
           loading: false,
@@ -146,8 +147,8 @@ class Statistics extends Component {
     this.state.betPerWeek.forEach((bet) => {
       betTotals.set(moment(bet.date, 'YYYY-MM-DD').format('MMM DD'), bet.totalBet);
     });
-    const overallTotalBet = this.state.betPerWeek[this.state.betPerWeek.length - 1].totalBet
-    const overallTotalBetDate =  (<small>{ moment(this.state.betPerWeek[this.state.betPerWeek.length - 1].date, 'YYYY-MM-DD').format('MMM DD') }</small>);
+    const overallTotalBet = this.state.betPerWeek.length > 0? this.state.betPerWeek[this.state.betPerWeek.length - 1].totalBet : "comming soon";
+    const overallTotalBetDate = this.state.betPerWeek.length > 0? (<small>{ moment(this.state.betPerWeek[this.state.betPerWeek.length - 1].date, 'YYYY-MM-DD').format('MMM DD') }</small>) : (<small>Comming soon</small>);
 
     const betActions = new Map();
     this.state.betActions.forEach((action) => {
