@@ -147,8 +147,8 @@ class Statistics extends Component {
     this.state.betPerWeek.forEach((bet) => {
       betTotals.set(moment(bet.date, 'YYYY-MM-DD').format('MMM DD'), bet.totalBet);
     });
-    const overallTotalBet = this.state.betPerWeek.length > 0? this.state.betPerWeek[this.state.betPerWeek.length - 1].totalBet : "comming soon";
-    const overallTotalBetDate = this.state.betPerWeek.length > 0? (<small>{ moment(this.state.betPerWeek[this.state.betPerWeek.length - 1].date, 'YYYY-MM-DD').format('MMM DD') }</small>) : (<small>Comming soon</small>);
+    const overallTotalBet = this.state.betPerWeek.length > 0? this.state.betPerWeek[this.state.betPerWeek.length - 1].totalBet : "";
+    const overallTotalBetDate = this.state.betPerWeek.length > 0? (<small>{ moment(this.state.betPerWeek[this.state.betPerWeek.length - 1].date, 'YYYY-MM-DD').format('MMM DD') }</small>) : (<small></small>);
 
     const betActions = new Map();
     this.state.betActions.forEach((action) => {
