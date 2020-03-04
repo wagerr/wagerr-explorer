@@ -2171,7 +2171,7 @@ const getStatisticPerWeek = () => {
       ];
 
       cache = await Statistic.aggregate(qry);
-      console.log(cache);
+      console.log('cache',cache);
       cutOff = moment()
         .utc()
         .add(90, 'seconds')
