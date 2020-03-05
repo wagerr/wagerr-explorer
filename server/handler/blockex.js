@@ -37,9 +37,9 @@ const LottoResult = require('../../model/lottoresult');
 
 const displayNum = (num, divider) => {
   const value = num > 0 ? `+${num / divider}` : `${num / divider}`;
-  
+
   return value;
-};   
+};
 
 /**
  * Get transactions and unspent transactions by address.
@@ -536,14 +536,14 @@ const getTX = async (req, res) => {
         vin.push(vi);
       }
     });
-    
+
     tx = tx.toObject();
     for (let i=0; i<tx.vout.length; i++){
       vout = tx.vout[i];
       if (vout.address.indexOf('OP_RETURN 1|') == -1 || vout.address.indexOf('OP_RETURN 2|') == -1 || vout.address.indexOf('OP_RETURN 3|') == -1) {
         if (vout.address.indexOf('OP_RETURN') !== -1){
           let betaction = await BetAction.findOne({txId: tx.txId});
-          if (betaction){    
+          if (betaction){
             console.log('betaction', betaction);
             if (betaction.betChoose.includes('Home')) {
               betaction.odds = betaction.homeOdds / 10000
@@ -551,9 +551,9 @@ const getTX = async (req, res) => {
               betaction.odds = betaction.awayOdds / 10000
             } else {
               betaction.odds = betaction.drawOdds / 10000
-            }            
+            }
             if (betaction.betChoose.includes('Money Line')) {
-              tx.vout[i].price = betaction.odds;              
+              tx.vout[i].price = betaction.odds;
             } else if (betaction.betChoose.includes('Spreads')) {
               const betChoose = betaction.betChoose.replace('Spreads - ', '');
               tx.vout[i].price = betChoose == 'Away' ? betaction.spreadAwayOdds / 10000 : betaction.spreadHomeOdds / 10000;
@@ -576,18 +576,18 @@ const getTX = async (req, res) => {
             if (prices.length > 0){
               tx.vout[i].betValueUSD = prices[0].doc.usd * betaction.betValue;
             }
-            
-            
+
+
             betevent = await BetEvent.findOne({eventId: betaction.eventId});
             if (betevent){
               tx.vout[i].homeTeam = betevent.homeTeam
               tx.vout[i].awayTeam = betevent.awayTeam
               tx.vout[i].league = betevent.league
-            }            
-          }          
+            }
+          }
         }
       }
-    }    
+    }
     res.json({ ...tx, vin });
   } catch (err) {
     console.log(err);
@@ -733,20 +733,20 @@ const getBetOpenEvents = async (req, res) => {
         if (req.query.min_time){
           if (req.query.min_time < timestamp){
             req.query.min_time = timestamp;
-          }           
+          }
           query = {
             $expr:{
               $and:[
-                {$lt: [{ $toDouble: "$timeStamp" }, Number(req.query.max_time)]}, 
-                {$gt: [{ $toDouble: "$timeStamp" }, Number(req.query.min_time)]}, 
+                {$lt: [{ $toDouble: "$timeStamp" }, Number(req.query.max_time)]},
+                {$gt: [{ $toDouble: "$timeStamp" }, Number(req.query.min_time)]},
               ]
             }
           }
-        } else {    
+        } else {
           query = {
             $expr:{
               $and:[
-                {$lt: [{ $toDouble: "$timeStamp" }, Number(req.query.max_time)]}, 
+                {$lt: [{ $toDouble: "$timeStamp" }, Number(req.query.max_time)]},
                 {$gt: [{ $toDouble: "$timeStamp" }, Number(timestamp)]},
               ]
             }
@@ -758,7 +758,7 @@ const getBetOpenEvents = async (req, res) => {
     }
 
     query.visibility = true;
-    
+
 
     if (req.query.sport){
       query['transaction.sport'] = req.query.sport;
@@ -771,13 +771,13 @@ const getBetOpenEvents = async (req, res) => {
     console.log(JSON.parse(JSON.stringify(query)), timestamp);
 
     // query = {
-    //   visibility: true,      
+    //   visibility: true,
     //   $expr:{
     //     $and:[
     //       { $gt: [ { '$toDouble': '$timeStamp' }, 1581084996293 ] },
-    //       { $lt: [ { '$toDouble': '$timeStamp' }, 1681175800000 ] },       
+    //       { $lt: [ { '$toDouble': '$timeStamp' }, 1681175800000 ] },
     //     ]
-    //   }      
+    //   }
     // };
     let total = await BetEvent.find(query).countDocuments();
 
@@ -786,12 +786,12 @@ const getBetOpenEvents = async (req, res) => {
     events.sort(function(a,b){
       return Number(a.timeStamp) - Number(b.timeStamp);
     })
- 
+
     const formattedEvents = [];
 
-    if (events.length > 0) {      
+    if (events.length > 0) {
       for (let i=0; i<events.length; i++){
-        const e = events[i];  
+        const e = events[i];
         const event = JSON.parse(JSON.stringify(e));
 
         event.homeOdds = event.transaction.homeOdds;
@@ -801,11 +801,11 @@ const getBetOpenEvents = async (req, res) => {
         const betupdates = await BetUpdate.find({
           eventId: event.eventId,
           visibility: true
-        }).sort({createdAt: 1});        
+        }).sort({createdAt: 1});
         if (betupdates.length > 0){
           const update = JSON.parse(JSON.stringify(betupdates[betupdates.length-1]));
-          
-          event.Latest_MoneyLine_Price = {            
+
+          event.Latest_MoneyLine_Price = {
             home: update.opObject.homeOdds / 10000,
             draw: update.opObject.drawOdds / 10000,
             away: update.opObject.awayOdds / 10000,
@@ -848,7 +848,7 @@ const getBetOpenEvents = async (req, res) => {
       };
     }
     res.json({ events: formattedEvents, pages: total <= limit ? 1 : Math.ceil(total / limit) });
-    
+
   } catch (err) {
     console.log(err);
     res.status(500).send(err.message || err);
@@ -1000,7 +1000,7 @@ const getBetUpdates = async (req, res) => {
       //   eventId: `${eventId}`,
       //   visibility: true,
       // }).skip(skip).limit(limit).sort({ createdAt: 1 });
-      
+
       // const bettotals = { results: results_total, pages: total_total <= limit ? 1 : Math.ceil(total_total / limit) };
 
       // const total_spread = await Betspread.find({
@@ -1011,7 +1011,7 @@ const getBetUpdates = async (req, res) => {
       //   eventId: `${eventId}`,
       //   visibility: true,
       // }).skip(skip).limit(limit).sort({ createdAt: 1 });
-            
+
       // const betspreads = { results: results_spread, pages: total_spread <= limit ? 1 : Math.ceil(total_spread / limit) };
       res.json(betupdates);
     } else {
@@ -1053,14 +1053,14 @@ const getData = async (Model, req, res, visibility = true) => {
   try {
     const limit = req.query.limit ? parseInt(req.query.limit, 10) : 1000;
     const skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
-    
+
     if (req.query.eventId) {
       const { eventId } = req.query;
 
       const queryParam = {
         eventId: `${eventId}`,
       };
-  
+
       if (visibility) {
         queryParam.visibility =  true;
       }
@@ -1109,20 +1109,20 @@ const getDataListing = async (Model, actions, results, req, res) => {
   let sort = {
     timeStamp: 1,
   }
-  
-  if (opened_or_completed == 'false'){    
+
+  if (opened_or_completed == 'false'){
     match =  'completed';
     sort = {
       completedAt: -1,
     }
-  } 
+  }
 
   console.log('match', match, sort);
   try {
     const totalParams = [
       {
         $match:{
-          status: match 
+          status: match
         }
       },
       {
@@ -1135,7 +1135,7 @@ const getDataListing = async (Model, actions, results, req, res) => {
     ];
     const total = await Model.aggregate(totalParams);
 
-    const resultParams = [      
+    const resultParams = [
       {
         $match:{
           status: match
@@ -1143,7 +1143,7 @@ const getDataListing = async (Model, actions, results, req, res) => {
       },
       {
         $addFields: { convertedTimestamp: { $toLong: "$timeStamp" } }
-      }, 
+      },
       {
         $group: {
           _id: '$eventId',
@@ -1151,18 +1151,18 @@ const getDataListing = async (Model, actions, results, req, res) => {
             $push: '$$ROOT',
           },
         },
-      },     
+      },
       {
         $project: {
           _id: '$_id',
           events: '$events',
-          timeStamp: { $max: '$events.convertedTimestamp'},     
-          completedAt: { $max: '$events.completedAt'},     
+          timeStamp: { $max: '$events.convertedTimestamp'},
+          completedAt: { $max: '$events.completedAt'},
         },
       },
       {
         $sort: sort
-      }, 
+      },
       {
         $skip: skip,
       }, {
@@ -1175,7 +1175,7 @@ const getDataListing = async (Model, actions, results, req, res) => {
           foreignField: 'eventId',
           as: 'actions',
         },
-      }, 
+      },
       {
         $lookup: {
           from: results,
@@ -1397,7 +1397,7 @@ const getBetEventInfo = async (req, res) => {
       visibility: true,
       betChoose: "Totals - Under",
     });
-    
+
     let H2HEvents = [];
     let BetTotals = [];
     let BetSpreads = [];
@@ -1424,12 +1424,12 @@ const getBetEventInfo = async (req, res) => {
           const h2hevent_results = await BetResult.find({
             eventId: H2HEvents_Home[i].eventId,
             visibility: true,
-          }).sort({ createdAt: 1 });       
-          console.log(H2HEvents_Home[i]);           
+          }).sort({ createdAt: 1 });
+          console.log(H2HEvents_Home[i]);
           event_item = H2HEvents_Home[i].toObject();
           event_item.results = h2hevent_results;
           H2HEvents.push(event_item);
-        }        
+        }
       }
 
 
@@ -1437,17 +1437,17 @@ const getBetEventInfo = async (req, res) => {
         eventId: `${eventId}`,
         visibility: true,
       }).sort({ createdAt: 1 });
-      
+
       for (i=0; i<results_total.length; i++){
         total_item = results_total[i].toObject();
         BetTotals.push(total_item);
       }
-      
+
       const results_spread = await Betspread.find({
         eventId: `${eventId}`,
         visibility: true,
       }).sort({ createdAt: 1 });
-            
+
       for (i=0; i<results_spread.length; i++){
         spread_item = results_spread[i].toObject();
         BetSpreads.push(spread_item);
@@ -1622,7 +1622,7 @@ const getDataQuery = async (Model, actions, results, req, res) => {
   const resultMatches = {
     $and: [],
   };
-  
+
   if (sport) {
     totalMatches.$and.push({ 'transaction.sport': { $regex: `.*${sport || search}.*`, $options: 'i' }});
     resultMatches.$and.push({ 'transaction.sport': { $regex: `.*${sport || search}.*`, $options: 'i' }});
@@ -1745,26 +1745,26 @@ const getBettotalUSD = async (req, res) => {
   req.clearTimeout();
   const qry = [
     {
-      $group: { 
-        _id: null, 
-        total: { 
-            $sum: "$betValueUSD" 
-        } 
-      }     
+      $group: {
+        _id: null,
+        total: {
+            $sum: "$betValueUSD"
+        }
+      }
     }
   ];
 
   const result = await BetAction.aggregate(qry).allowDiskUse(true);
   console.log('result', result);
   const total = result[0].total + 8482657;
-  return res.json({totalUSD:total});    
+  return res.json({totalUSD:total});
 }
 
 const getBetStats = async (req, res) => {
   req.clearTimeout();
   let start_time = req.query.start_time ? req.query.start_time : null;
   let end_time = req.query.end_time ? req.query.end_time : null;
-  const duration = req.query.duration ? req.query.duration : null;  
+  const duration = req.query.duration ? req.query.duration : null;
   const games = req.query.games ? parseInt(req.query.games, 10) : 0;
   const team1 = req.query.team1? req.query.team1: '';
   const team2 = req.query.team2? req.query.team2: '';
@@ -1790,7 +1790,7 @@ const getBetStats = async (req, res) => {
             $and: [
               {createdAt: {$gte: new Date(start_time * 1000)}},
               {createdAt: {$lte: new Date(end_time * 1000)}}
-            ]            
+            ]
           }
         },
         {
@@ -1807,21 +1807,21 @@ const getBetStats = async (req, res) => {
         }
       ];
       if (league != ''){
-        qry.push({ 
+        qry.push({
           $match: {
             "events.league": league
           }
         });
       }
       if (sport != ''){
-        qry.push({ 
+        qry.push({
           $match: {
             "events.transaction.sport": sport
           }
         });
       }
       if (team1 != '' && team2 != ''){
-        qry.push({ 
+        qry.push({
           $match: {
             $or: [
               { $and: [ { "events.homeTeam": team1 }, { "events.awayTeam": team2 } ] },
@@ -1830,18 +1830,18 @@ const getBetStats = async (req, res) => {
           }
         });
       } else if (team1 != '') {
-        qry.push({ 
+        qry.push({
           $match: {
             $or: [
               { "events.homeTeam": team1 }, { "events.awayTeam": team1 }
             ]
           }
         });
-      } 
+      }
 
-      const results = await BetAction.aggregate(qry).allowDiskUse(true);  
+      const results = await BetAction.aggregate(qry).allowDiskUse(true);
 
-      let volume = { 
+      let volume = {
         total: {
           totalBetWagerr: 0,
           totalBetUSD: 0
@@ -1858,16 +1858,16 @@ const getBetStats = async (req, res) => {
 
       console.log(start_time, end_time, results.length);
       let i=0;
-      
-      for (i=0; i<results.length; i++){                        
-        const action = results[i];   
+
+      for (i=0; i<results.length; i++){
+        const action = results[i];
         const event = action.events[0];
         if (typeof event === "undefined"){
           undefined_count++;
-          console.log('undefined event', action,  undefined_count);          
+          console.log('undefined event', action,  undefined_count);
           continue;
-        } 
-        
+        }
+
         if (typeof volume[event.transaction.sport] == "undefined"){
           volume[event.transaction.sport] = {}
           volume[event.transaction.sport].totalBetWagerr = 0;
@@ -1877,14 +1877,14 @@ const getBetStats = async (req, res) => {
         if (typeof events[event.transaction.sport] == "undefined"){
           events[event.transaction.sport] = 0
         }
-        
+
         if (typeof bets[event.transaction.sport] == "undefined"){
           bets[event.transaction.sport] = 0
         }
 
         if (!backup_events.includes(event.eventId)){
-          backup_events.push(event.eventId);         
-          events.total++; 
+          backup_events.push(event.eventId);
+          events.total++;
           events[event.transaction.sport]++;
         }
 
@@ -1904,19 +1904,19 @@ const getBetStats = async (req, res) => {
         // if (prices.length > 0){
         //   volume.total.totalBetUSD = volume.total.totalBetUSD + prices[0].doc.usd * action.betValue;
         //   volume[event.transaction.sport].totalBetUSD = volume[event.transaction.sport].totalBetUSD + prices[0].doc.usd * action.betValue;
-        // }         
+        // }
       }
-      return res.json({stats: {volume: volume, events:events, bets: bets}, start_time: start_time,  end_time:end_time});    
+      return res.json({stats: {volume: volume, events:events, bets: bets}, start_time: start_time,  end_time:end_time});
     } else if (games > 0) {
       qry = [{
         $match: {
           status: "completed"
         }
-      }        
+      }
       ];
 
       if (team1 != '' && team2 != ''){
-        qry.push({ 
+        qry.push({
           $match: {
             $or: [
               { $and: [ { "homeTeam": team1 }, { "awayTeam": team2 } ] },
@@ -1925,17 +1925,17 @@ const getBetStats = async (req, res) => {
           }
         });
       } else if (team1 != '') {
-        qry.push({ 
+        qry.push({
           $match: {
             $or: [
               { "homeTeam": team1 }, { "awayTeam": team1 }
             ]
           }
         });
-      } 
+      }
 
       if (sport != ''){
-        qry.push({ 
+        qry.push({
           $match: {
             "transaction.sport": sport
           }
@@ -1943,7 +1943,7 @@ const getBetStats = async (req, res) => {
       }
 
       if (league != ''){
-        qry.push({ 
+        qry.push({
           $match: {
             "league": league
           }
@@ -1966,8 +1966,8 @@ const getBetStats = async (req, res) => {
           }
         }
       ]);
-      
-      const results = await BetEvent.aggregate(qry).allowDiskUse(true);  
+
+      const results = await BetEvent.aggregate(qry).allowDiskUse(true);
       console.log('qry', qry);
       let totalBetWagerr = 0;
       let totalBetUSD = 0;
@@ -1983,16 +1983,16 @@ const getBetStats = async (req, res) => {
           //   {$limit: 1}
           // ]);
 
-          // if (prices.length > 0){            
+          // if (prices.length > 0){
           //   totalBetUSD = totalBetUSD + prices[0].doc.usd * action.betValue;
-          // }         
+          // }
         }
       }
-      return res.json({totalBetWagerr: totalBetWagerr, totalBetUSD: totalBetUSD});    
+      return res.json({totalBetWagerr: totalBetWagerr, totalBetUSD: totalBetUSD});
     } else {
       data = [];
-      return res.json(data);  
-    }    
+      return res.json(data);
+    }
   } catch (err) {
     console.log(err);
     res.status(500).send(err.message || err);
@@ -2001,25 +2001,25 @@ const getBetStats = async (req, res) => {
 
 const getTeamEventInfo = async (req, res) => {
   const team = req.query.team ? req.query.team:null;
-  const limit = req.query.limit? (req.query.limit > 50? 50: parseInt(req.query.limit)) : 50;
-  const skip = req.query.skip? parseInt(req.query.skip):0; 
-  const sport = req.query.sport? req.query.sport:null; 
-  if (!team){    
+  const limit = req.query.limit? (req.query.limit > 200? 200: parseInt(req.query.limit)) : 200;
+  const skip = req.query.skip? parseInt(req.query.skip):0;
+  const sport = req.query.sport? req.query.sport:null;
+  if (!team){
     res.status(500).send("team field is missed");
   }
-  
+
   let qry = [
-    { 
+    {
       $match: {
         $or: [
-          { "homeTeam": team}, { "awayTeam": team},          
+          { "homeTeam": team}, { "awayTeam": team},
         ]
       }
     }
   ];
 
   if (sport){
-    qry.push({ 
+    qry.push({
       $match: {
         "transaction.sport": sport
       }
@@ -2038,12 +2038,12 @@ const getTeamEventInfo = async (req, res) => {
     $limit: limit
   }]);
 
-  const events = await BetEvent.aggregate(qry).allowDiskUse(true);  
+  const events = await BetEvent.aggregate(qry).allowDiskUse(true);
   let formattedEvents = [];
-  if (events.length > 0) {      
+  if (events.length > 0) {
     for (let i=0; i<events.length; i++){
       let e = events[i];
-      e = JSON.parse(JSON.stringify(e));  
+      e = JSON.parse(JSON.stringify(e));
       let event = {}
       event.status = e.status == "completed" ? e.status : "open"
       event.timeStamp = e.timeStamp;
@@ -2053,10 +2053,10 @@ const getTeamEventInfo = async (req, res) => {
       const betupdates = await BetUpdate.find({
         eventId: event.eventId,
         visibility: true
-      }).sort({createdAt: 1});        
+      }).sort({createdAt: 1});
       if (betupdates.length > 0){
-        const update = JSON.parse(JSON.stringify(betupdates[betupdates.length-1]));        
-        event.moneyline = {            
+        const update = JSON.parse(JSON.stringify(betupdates[betupdates.length-1]));
+        event.moneyline = {
           home: update.opObject.homeOdds / 10000,
           draw: update.opObject.drawOdds / 10000,
           away: update.opObject.awayOdds / 10000,
@@ -2080,7 +2080,7 @@ const getTeamEventInfo = async (req, res) => {
           awayPoints: `${displayNum(betspreads[betspreads.length-1].awayPoints, 10)}`,
           home: betspreads[betspreads.length-1].homeOdds / 10000,
           away: betspreads[betspreads.length-1].awayOdds / 10000,
-        }        
+        }
       }
 
       const bettotals = await Bettotal.find({
@@ -2101,9 +2101,9 @@ const getTeamEventInfo = async (req, res) => {
         visibility: true
       }).sort({createdAt: 1});
 
-      if (betresults.length > 0){        
-        const result = JSON.parse(JSON.stringify(betresults[betresults.length-1]))        
-        event.result = {            
+      if (betresults.length > 0){
+        const result = JSON.parse(JSON.stringify(betresults[betresults.length-1]))
+        event.result = {
           homePoints: result.transaction.homeScore/10,
           awayPoints: result.transaction.awayScore/10
         }
@@ -2112,7 +2112,7 @@ const getTeamEventInfo = async (req, res) => {
     };
   }
 
-  return res.json({matches: formattedEvents});   
+  return res.json({matches: formattedEvents});
 }
 
 const getStatisticPerWeek = () => {
@@ -2172,7 +2172,6 @@ const getStatisticPerWeek = () => {
       ];
 
       cache = await Statistic.aggregate(qry);
-      console.log('cache',cache);
       cutOff = moment()
         .utc()
         .add(90, 'seconds')
