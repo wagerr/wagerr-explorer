@@ -11,26 +11,26 @@ import connect from 'react-redux/es/connect/connect'
 const CardSpreadEvent = ({eventInfo, t}) => {
   if (eventInfo) {
     let SpreadsBets = { home: [], away: [], draw: [] };
-
-    const sortHomeBets = eventInfo.homeBets.map((event) => {
+    console.log('eventInfo', eventInfo);
+    const sortHomeBets = eventInfo.spreadHomeBets.map((event) => {
       if (event.betChoose.includes('Spreads - Home')) {
         SpreadsBets.home.push(event);
       }
     });
-    const sortAwayBets = eventInfo.awayBets.map((event) => {
+    const sortAwayBets = eventInfo.spreadAwayBets.map((event) => {
       if (event.betChoose.includes('Spreads - Away')) {
         SpreadsBets.away.push(event);
       }
     });
-    const sortDrawBets = eventInfo.drawBets.map((event) => {
-      if (event.betChoose.includes('Spreads - Draw')) {
-        MoneyLineBets.draw.push(event);
-      }
-    });
+    // const sortDrawBets = eventInfo.drawBets.map((event) => {
+    //   if (event.betChoose.includes('Spreads - Draw')) {
+    //     SpreadsBets.draw.push(event);
+    //   }
+    // });
 
     const SHomeBetAmount = SpreadsBets.home.reduce((acc, bet) => acc + bet.betValue, 0.0);
     const SAwayBetAmount = SpreadsBets.away.reduce((acc, bet) => acc + bet.betValue, 0.0);
-    const SDrawBetAmount = SpreadsBets.draw.reduce((acc, bet) => acc + bet.betValue, 0.0);
+    //const SDrawBetAmount = SpreadsBets.draw.reduce((acc, bet) => acc + bet.betValue, 0.0);
 
     return <Card className="card--status">
       {/* <Card title={t('betEvent')} className="card--status"> */}
