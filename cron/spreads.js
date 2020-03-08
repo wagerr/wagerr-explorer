@@ -75,7 +75,7 @@ async function resyncRemainingActions() {
     'transaction.outcome': { $in: [4, 5] },
   });
   
-  log(`${actions.length} betactions found that need to be resynced`);
+  //log(`${actions.length} betactions found that need to be resynced`);
 
   // Once we have the actions, we are going to loop through each of them
   // We are going to store eventIds into a dictionary to reduce the amount of calls being made

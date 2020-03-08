@@ -2026,6 +2026,19 @@ const getTeamEventInfo = async (req, res) => {
     });
   }
 
+  let totalParams = qry.concat([    
+    {
+      $group: {
+        _id: '$eventId',
+      },
+    }, {
+      $count: 'count',
+    },
+  ]);
+
+  const total = await BetEvent.aggregate(totalParams);
+  const pages = total && total[0] ? (total[0].count <= limit ? 1 : Math.ceil(total[0].count / limit)) : 1;
+
   qry = qry.concat([{
     $addFields: { convertedTimestamp: { $toLong: "$timeStamp" } }
   },{
@@ -2049,6 +2062,7 @@ const getTeamEventInfo = async (req, res) => {
       event.timeStamp = e.timeStamp;
       event.eventId = e.eventId;
       event.homeTeam = e.homeTeam;
+      event.league = e.league;
       event.awayTeam = e.awayTeam;
       const betupdates = await BetUpdate.find({
         eventId: event.eventId,
@@ -2112,7 +2126,7 @@ const getTeamEventInfo = async (req, res) => {
     };
   }
 
-  return res.json({matches: formattedEvents});
+  return res.json({matches: formattedEvents, pages: pages});
 }
 
 const getStatisticPerWeek = () => {
