@@ -43,7 +43,7 @@ export default class CardStatus extends Component {
         <Card className="card--market" title="Market">
           <p className="card__data-main bariol">
             <CountUp
-              decimals={3}
+              decimals={2}
               duration={1}
               end={this.props.usd}
               prefix={'WGR $'}
