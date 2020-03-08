@@ -23,6 +23,7 @@ const { log } = console;
 log('Running coin cron job');
 
 async function syncPayoutData() {
+  console.log('syncPayoutData');
   const betresults = await BetResult.find({ payoutTx: null });
 
   for (let x = 0; x < betresults.length; x += 1) {
@@ -77,17 +78,103 @@ async function syncPayoutData() {
  * like price coinmarketcap.com data.
  */
 async function syncCoin() {
+  console.log('syncCoin');
   const date = moment().utc().startOf('minute').toDate();
-  rpc.timeout(20000)
-  const info = await rpc.call('getinfo');
+
+  const coins = await Coin.find({}).sort({createdAt: -1}).limit(1);
+  console.log(coins);
+
+  let last_date = moment('1970-01-01T00:00:00.000+00:00').toDate();
+
+  if (typeof coins[0].lastResultCreatedAt != "undefined") {
+    console.log('abc');
+    last_date = moment(coins[0].lastResultCreatedAt).toDate();
+  }
+  console.log(last_date);
+
+  const queryResults = await BetResult.aggregate([
+    {
+      $match:{
+        createdAt: {$gt: last_date}
+      }
+    },
+    {
+      $group: {
+        _id: '$eventId',
+        results: {
+          $push: '$$ROOT'
+        },
+      },
+    },{
+      $project: {
+        _id: '$_id',
+        createdAt: { $max: '$results.createdAt'},
+      },
+    },{
+      $sort: {
+        createdAt: -1
+      }
+    },
+    {
+      $lookup: {
+        from: 'betactions',
+        localField: '_id',
+        foreignField: 'eventId',
+        as: 'actions'
+      }
+    }, {
+      $lookup: {
+        from: 'betresults',
+        localField: '_id',
+        foreignField: 'eventId',
+        as: 'results'
+      }
+    }
+  ]).allowDiskUse(true);
+
+  console.log(queryResults);
+
+  let totalBet = 0;
+  let totalMint = 0;
+ 
+  queryResults.forEach(queryResult => {
+    queryResult.actions.forEach(action => {
+      totalBet += action.betValue
+    })
+    queryResult.results.forEach(result => {
+      // const { payoutTx } = result;
+      let startIndex = 2
+      if (result.payoutTx && result.payoutTx.vout.length < 3) {
+        console.log(result.payoutTx);
+      } else {
+        if (result.payoutTx.vout[1].address === result.payoutTx.vout[2].address) {
+          startIndex = 3
+        }
+        for (let i = startIndex; i < result.payoutTx.vout.length - 1; i++) {
+          totalMint += result.payoutTx.vout[i].value
+        }
+      }
+    })
+  })
+
+  // if (typeof coins[0].lastResultCreatedAt != "undefined") {
+  //   totalMint = coins[0].totalMint +  totalMint;
+  //   totalBet = coins[0].totalBet +  totalBet;
+  // }
+
+  console.log('syncCoin4', totalMint, totalBet);
+  
+  rpc.timeout(50000)
+  const info = await rpc.call('getinfo');  
   const masternodes = await rpc.call('getmasternodecount');
+  console.log('syncCoin1');
   const nethashps = await rpc.call('getnetworkhashps');
   const utxo = await UTXO.aggregate([
     {$match: {address: {$ne: 'ZERO_COIN_MINT'}}},
     {$match: {address: {$not: /OP_RETURN/}}},
     {$group: {_id: 'supply', total: {$sum: '$value'}}}
   ])
-
+  console.log('syncCoin2');
   const lastSentFromOracle = (await TX.find({'vin.address': config.coin.oracle_payout_address})
     .sort({blockHeight: -1})
     .limit(1).exec())[0]
@@ -117,81 +204,48 @@ async function syncCoin() {
     }, 0.0), 0.0)
     payoutPerSecond = payout / (moment().unix() - moment(lastSentFromOracle.createdAt).unix())
   }
+  console.log('syncCoin3');
 
-  const queryResults = await BetResult.aggregate([
-    {
-      $group: {
-        _id: '$eventId',
-        results: {
-          $push: '$$ROOT'
-        },
-      },
-    },
-    {
-      $lookup: {
-        from: 'betactions',
-        localField: '_id',
-        foreignField: 'eventId',
-        as: 'actions'
-      }
-    }, {
-      $lookup: {
-        from: 'betresults',
-        localField: '_id',
-        foreignField: 'eventId',
-        as: 'results'
-      }
-    }
-  ])
 
-  let totalBet = 0;
-  let totalMint = 0;
 
-  queryResults.forEach(queryResult => {
-    queryResult.actions.forEach(action => {
-      totalBet += action.betValue
-    })
-    queryResult.results.forEach(result => {
-      // const { payoutTx } = result;
-      let startIndex = 2
-      if (result.payoutTx && result.payoutTx.vout.length < 3) {
-        console.log(result.payoutTx);
-      } else {
-        if (result.payoutTx.vout[1].address === result.payoutTx.vout[2].address) {
-          startIndex = 3
-        }
-        for (let i = startIndex; i < result.payoutTx.vout.length - 1; i++) {
-          totalMint += result.payoutTx.vout[i].value
-        }
-      }
-    })
-
-  })
-
-  // Setup the coinmarketcap.com api url.
-  const eurUrl = `https://api.coinmarketcap.com/v2/ticker/${ config.coinMarketCap.tickerId }/?convert=EUR`;
-  const btcUrl = `https://api.coinmarketcap.com/v2/ticker/${ config.coinMarketCap.tickerId }/?convert=BTC`;
-
-  let eurMarket = await fetch(eurUrl);
+  const usdUrl = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${ config.coinMarketCap.tickerId }&CMC_PRO_API_KEY=5ca8732a-1676-4d5b-807b-eae694fee117&convert=USD`;
+  const btcUrl = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${ config.coinMarketCap.tickerId }&CMC_PRO_API_KEY=9fb9f39e-e942-4fc9-a699-47efcc622ea0&convert=BTC`;
+  const eurUrl = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${ config.coinMarketCap.tickerId }&CMC_PRO_API_KEY=937ce6ea-d220-4a0c-9439-23f9e28993b3&convert=EUR`;
+  
+  let usdMarket = await fetch(usdUrl);
   let btcMarket = await fetch(btcUrl);
-
-  if (eurMarket.data) {
-    eurMarket = eurMarket.data ? eurMarket.data : {};
+  let eurMarket = await fetch(eurUrl);
+  
+  if (usdMarket.data) {
+    usdMarket = usdMarket.data ? usdMarket.data[`${ config.coinMarketCap.tickerId }`] : {};
   }
 
   if (btcMarket.data) {
-    btcMarket = btcMarket.data ? btcMarket.data : {};
+    btcMarket = btcMarket.data ? btcMarket.data[`${ config.coinMarketCap.tickerId }`] : {};
   }
 
-  const nextSuperBlock = await rpc.call('getnextsuperblock')
+  if (eurMarket.data) {
+    eurMarket = eurMarket.data ? eurMarket.data[`${ config.coinMarketCap.tickerId }`] : {};
+  }
 
+  
+  console.log(btcMarket, eurMarket, usdMarket);
+  console.log('syncCoin5');
+  
+  const nextSuperBlock = await rpc.call('getnextsuperblock')
+  if (queryResults.length > 0 && typeof queryResults[0].createdAt != "undefined"){
+    console.log(queryResults[0]);
+    last_date = moment(queryResults[0].createdAt).toDate();
+  }
+  
   const coin = new Coin({
-    cap: eurMarket.quotes.USD.market_cap,
-    capEur: eurMarket.quotes.EUR.market_cap,
+    cap: usdMarket.quote.USD.market_cap,
+    capEur: eurMarket.quote.EUR.market_cap,
     createdAt: date,
     blocks: info.blocks,
-    btc: btcMarket.quotes.BTC.market_cap,
-    btcPrice: btcMarket.quotes.BTC.price,
+    lastResultCreatedAt: last_date,
+    btc: btcMarket.quote.BTC.market_cap,
+    btcPrice: btcMarket.quote.BTC.price,
     diff: info.difficulty,
     mnsOff: masternodes.total - masternodes.stable,
     mnsOn: masternodes.stable,
@@ -199,8 +253,8 @@ async function syncCoin() {
     peers: info.connections,
     status: 'Online',
     supply: info.moneysupply,
-    usd: eurMarket.quotes.USD.price,
-    eur: eurMarket.quotes.EUR.price,
+    usd: usdMarket.quote.USD.price,
+    eur: eurMarket.quote.EUR.price,
     totalBet: totalBet + 99071397.1752,
     totalMint: totalMint + 102107516.1294,
     oracleProfitPerSecond: payoutPerSecond,

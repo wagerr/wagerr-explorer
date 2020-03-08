@@ -14,6 +14,7 @@ const Coin = mongoose.model('Coin', new mongoose.Schema({
   cap: { required: true, type: Number },
   capEur: { required: true, type: Number },
   createdAt: { index: true, required: true, type: Date },
+  lastResultCreatedAt: { type: Date },
   diff: { required: true, type: Number },
   mnsOff: { required: true, type: Number },
   mnsOn: { required: true, type: Number },
