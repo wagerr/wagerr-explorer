@@ -254,15 +254,12 @@ const getCoinHistory = (req, res) => {
     .limit(req.query.limit ? parseInt(req.query.limit, 10) : 12) // 12x5=60 mins
     .sort({ createdAt: -1 })
     .then((docs) => {
-      console.log('coins',docs)
       res.json(docs);
     })
     .catch((err) => {
       console.log(err);
       res.status(500).send(err.message || err);
     });
-
-    
 };
 
 /**
