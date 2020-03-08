@@ -720,8 +720,8 @@ const getBetEvents = async (req, res) => {
 
 const getBetOpenEvents = async (req, res) => {
   try {
-    let limit = req.query.limit ? parseInt(req.query.limit, 10) : 50;
-    if (limit > 50) limit = 50;
+    let limit = req.query.limit ? parseInt(req.query.limit, 10) : 200;
+    if (limit > 200) limit = 200;
     const skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
     let timestamp = Date.now() + (20 * 60 * 1000);
 
