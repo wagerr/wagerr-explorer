@@ -37,13 +37,13 @@ export default class CardStatus extends Component {
     }
     const isPos = growth >= 0;
     const dirArrow = isPos ? 'arrow-up' : 'arrow-down';
-
+    console.log('usd', this.props.usd, this.props.btcPrice);
     return (
       <div className="animated fadeInUp">
         <Card className="card--market" title="Market">
           <p className="card__data-main bariol">
             <CountUp
-              decimals={2}
+              decimals={3}
               duration={1}
               end={this.props.usd}
               prefix={'WGR $'}
