@@ -157,10 +157,10 @@ async function syncCoin() {
     })
   })
 
-  // if (typeof coins[0].lastResultCreatedAt != "undefined") {
-  //   totalMint = coins[0].totalMint +  totalMint;
-  //   totalBet = coins[0].totalBet +  totalBet;
-  // }
+  if (typeof coins[0].lastResultCreatedAt != "undefined") {
+    totalMint = coins[0].totalMint +  totalMint;
+    totalBet = coins[0].totalBet +  totalBet;
+  }
 
   console.log('syncCoin4', totalMint, totalBet);
   
@@ -255,8 +255,8 @@ async function syncCoin() {
     supply: info.moneysupply,
     usd: usdMarket.quote.USD.price,
     eur: eurMarket.quote.EUR.price,
-    totalBet: totalBet + 99071397.1752,
-    totalMint: totalMint + 102107516.1294,
+    totalBet: totalBet,
+    totalMint: totalMint,
     oracleProfitPerSecond: payoutPerSecond,
     nextSuperBlock:nextSuperBlock
   });
