@@ -79,13 +79,13 @@ class BetEventList extends Component {
       };
 
       if (this.state.filterBy !== 'All') {
-        getMethod = this.props.getBetQuery;
+        getMethod = this.props.getBetEventsInfo;
         params.sport = this.state.filterBy;
       }
 
 
       if (this.state.search) {
-        getMethod = this.props.getBetQuery;
+        getMethod = this.props.getBetEventsInfo;
         params.search = this.state.search;
       }
 

@@ -57,7 +57,7 @@ const CardBetResult = ({eventInfo, data, t}) => {
     
     eventInfo.drawBets.map((event) => {
       if (event.betChoose.includes('Spreads - Draw')) {
-        MoneyLineBets.draw.push(event);
+        SpreadsBets.draw.push(event);
       }
     });
 
