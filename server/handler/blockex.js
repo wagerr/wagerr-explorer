@@ -1103,7 +1103,34 @@ const getDataListing = async (Model, actions, results, req, res) => {
   const limit = req.query.limit ? parseInt(req.query.limit, 10) : 1000;
   const skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
   const opened_or_completed = req.query.opened_or_completed;
-  console.log(opened_or_completed);
+  const { query } = req;
+  const { search } = query;
+  const { sport } = query;
+
+  const orParams = [];
+
+  if (isNaN(search)) {
+    orParams.push({ txId: search },);
+    orParams.push({ homeTeam: { $regex: `.*${search}.*`, $options: 'i' } });
+    orParams.push({ awayTeam: { $regex: `.*${search}.*`, $options: 'i' } });
+    orParams.push({ tournament: { $regex: `.*${search}.*`, $options: 'i' } });
+    orParams.push({ 'transaction.tournament': { $regex: `.*${search}.*`, $options: 'i' } });
+  } else {
+    orParams.push({ blockHeight: search });
+    orParams.push({ eventId: search });
+  }
+
+  const totalMatches = {
+    $and: [],
+  };
+
+  if (sport) {
+    totalMatches.$and.push({ 'transaction.sport': { $regex: `.*${sport || search}.*`, $options: 'i' }});    
+  }
+
+  if (search) {
+    totalMatches.$and.push({ $or: orParams });
+  }
 
   let match =  {$ne: 'completed'};
   let sort = {
@@ -1112,18 +1139,19 @@ const getDataListing = async (Model, actions, results, req, res) => {
 
   if (opened_or_completed == 'false'){
     match =  'completed';
+
     sort = {
       completedAt: -1,
     }
   }
 
+  totalMatches.$and.push({'status': match})
+
   console.log('match', match, sort);
   try {
     const totalParams = [
       {
-        $match:{
-          status: match
-        }
+        $match: totalMatches,
       },
       {
         $group: {
@@ -1137,9 +1165,7 @@ const getDataListing = async (Model, actions, results, req, res) => {
 
     const resultParams = [
       {
-        $match:{
-          status: match
-        }
+        $match: totalMatches,
       },
       {
         $addFields: { convertedTimestamp: { $toLong: "$timeStamp" } }
