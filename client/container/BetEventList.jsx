@@ -272,7 +272,7 @@ class BetEventList extends Component {
             if (event.results.length > 1) {
               for (const result of event.results) {
                 if (result.result.indexOf('REFUND') !== -1) {
-                  betStatus = <span className={`badge badge-info`}>REFUND</span>
+                  betStatus = <span className={`badge badge-info`}>{result.result}</span>
                 }
               }
             }
@@ -295,7 +295,7 @@ class BetEventList extends Component {
                 }
 
                 if (result.result && result.result.includes('Refund')) {
-                  outcome = 'Refund';
+                  outcome = result.result;
                 }
 
                 if (outcome) {
