@@ -788,11 +788,22 @@ const getBetOpenEvents = async (req, res) => {
     })
 
     const formattedEvents = [];
-
+    const counters = {};
     if (events.length > 0) {
       for (let i=0; i<events.length; i++){
         const e = events[i];
         const event = JSON.parse(JSON.stringify(e));
+        
+        if (counters[event.transaction.sport] == undefined){          
+          console.log(counters[event.transaction.sport]); 
+          counters[event.transaction.sport] = {};
+        }
+        
+        if (counters[event.transaction.sport][event.league] == undefined){
+          counters[event.transaction.sport][event.league] = 0;
+        }
+        
+        counters[event.transaction.sport][event.league]++;
 
         event.homeOdds = event.transaction.homeOdds;
         event.awayOdds = event.transaction.awayOdds;
@@ -847,7 +858,7 @@ const getBetOpenEvents = async (req, res) => {
         formattedEvents.push(event);
       };
     }
-    res.json({ events: formattedEvents, pages: total <= limit ? 1 : Math.ceil(total / limit) });
+    res.json({ events: formattedEvents, counters: counters, pages: total <= limit ? 1 : Math.ceil(total / limit) });
 
   } catch (err) {
     console.log(err);
