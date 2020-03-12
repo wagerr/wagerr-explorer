@@ -47,7 +47,8 @@ class BetEventList extends Component {
       size: 50,
       filterBy: 'All',
       search: '',
-      toggleSwitch: true
+      toggleSwitch: true,
+      toggleSwitchOdds: false,      
     }
   };
 
@@ -173,6 +174,11 @@ class BetEventList extends Component {
     console.log(toggleSwitch);
   }
 
+  handleToggleChangeOdds = (toggleSwitchOdds) => {
+    this.setState({ toggleSwitchOdds });
+    console.log(toggleSwitchOdds);
+  }
+
   render () {
     const { props } = this;
 
@@ -227,35 +233,66 @@ class BetEventList extends Component {
           <Icon name="search" className="search__icon" />
         </div>
       </div>
-    );
+    )
+    ;
+
 
     return (
       <div>
         {searchBar}
-        <div style={{alignItems:'center',marginTop:'20px'}}>
-          <span>Completed / Opened</span>
+        <div className="row">
+          <div class="col-6">
+            <div style={{alignItems:'center',marginTop:'20px'}}>
+              <span>Completed / Opened</span>
+            </div>
+            <label htmlFor="material-switch" style={{marginTop:'10px'}}>
+              <Switch
+                checked={this.state.toggleSwitch}
+                onChange={this.handleToggleChange}
+                onColor="#86d3ff"
+                onHandleColor="#2693e6"
+                handleDiameter={30}
+                uncheckedIcon={false}
+                checkedIcon={false}
+                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                height={20}
+                width={48}
+                className="react-switch"
+                id="material-switch"
+            />
+            </label>       
+          </div>
+          <div class="col-6" style={{textAlign:'right'}}>
+            <div style={{alignItems:'center',marginTop:'20px'}}>
+              <span>On Chain Odds / Effective Odds</span>
+            </div>
+            <label htmlFor="material-switch" style={{marginTop:'10px'}}>
+              <Switch
+                checked={this.state.toggleSwitchOdds}
+                onChange={this.handleToggleChangeOdds}
+                onColor="#86d3ff"
+                onHandleColor="#2693e6"
+                handleDiameter={30}
+                uncheckedIcon={false}
+                checkedIcon={false}
+                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                height={20}
+                width={48}
+                className="react-switch"
+                id="material-switch"
+            />
+            </label>       
+          </div>
         </div>
-        <label htmlFor="material-switch" style={{marginTop:'10px'}}>
-          <Switch
-            checked={this.state.toggleSwitch}
-            onChange={this.handleToggleChange}
-            onColor="#86d3ff"
-            onHandleColor="#2693e6"
-            handleDiameter={30}
-            uncheckedIcon={false}
-            checkedIcon={false}
-            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-            height={20}
-            width={48}
-            className="react-switch"
-            id="material-switch"
-          />
-        </label> 
+        
         <HorizontalRule
           select={select}
           filterSport={filterSport}
           title={t('title')}/>
+        {this.state.events.length == 0  &&  this.renderError('No search results found within provided filters') } 
+        {this.state.events.length > 0  &&  
         <Table
           className={'table-responsive table--for-betevents'}
           cols={cols}
@@ -318,6 +355,16 @@ class BetEventList extends Component {
             let homeOdds = (event.events[0].homeOdds / 10000)
             let drawOdds = (event.events[0].drawOdds / 10000)
             let awayOdds = (event.events[0].awayOdds / 10000)
+
+            if (this.state.toggleSwitchOdds){
+              homeOdds = 1 + (homeOdds - 1) * 0.94;
+              homeOdds = homeOdds == 0 ? homeOdds : homeOdds.toFixed(2);
+              drawOdds = 1 + (drawOdds - 1) * 0.94;
+              drawOdds = drawOdds == 0 ? drawOdds : drawOdds.toFixed(2);
+              awayOdds = 1 + (awayOdds - 1) * 0.94;
+              awayOdds = awayOdds == 0 ? awayOdds : awayOdds.toFixed(2);
+            }
+                        
             if (event.events.length > 1) {
               const lastHomeOdds = (event.events[1].homeOdds / 10000)
               const lastDrawOdds = (event.events[1].drawOdds / 10000)
@@ -364,12 +411,13 @@ class BetEventList extends Component {
               betStatus: betStatus,
               seeDetail: <Link to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
             }
-          })} />
-        <Pagination
+          })} />}
+        
+        {this.state.pages > 0 && <Pagination
           current={this.state.page}
           className="float-right"
           onPage={this.handlePage}
-          total={this.state.pages} />
+          total={this.state.pages} />}
         <div className="clearfix" />
       </div>
     )

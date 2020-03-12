@@ -793,7 +793,7 @@ const getBetOpenEvents = async (req, res) => {
       for (let i=0; i<events.length; i++){
         const e = events[i];
         const event = JSON.parse(JSON.stringify(e));
-        
+
         if (counters[event.transaction.sport] == undefined){          
           console.log(counters[event.transaction.sport]); 
           counters[event.transaction.sport] = {};
@@ -1224,10 +1224,11 @@ const getDataListing = async (Model, actions, results, req, res) => {
     ];
 
     let result = await Model.aggregate(resultParams);
+    let pages = total.length > 0 ? (total[0].count <= limit ? 1 : Math.ceil(total[0].count / limit)): 0;
     //console.log('result', result);
     return res.json({
       data: result,
-      pages: total[0].count <= limit ? 1 : Math.ceil(total[0].count / limit),
+      pages: pages,
     });
   } catch (err) {
     console.log(err);
