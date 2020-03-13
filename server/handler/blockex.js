@@ -723,9 +723,9 @@ const getBetOpenEvents = async (req, res) => {
     let limit = req.query.limit ? parseInt(req.query.limit, 10) : 200;
     if (limit > 200) limit = 200;
     const skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
-    let timestamp = Date.now() + (20 * 60 * 1000);
+    let timestamp = Date.now() - (2000 * 60 * 1000);
 
-    let query = {};
+    let query = [];
     if (req.query.max_time){
       if (req.query.max_time < timestamp)  {
         res.json({events:[]});
@@ -734,76 +734,142 @@ const getBetOpenEvents = async (req, res) => {
           if (req.query.min_time < timestamp){
             req.query.min_time = timestamp;
           }
-          query = {
-            $expr:{
-              $and:[
-                {$lt: [{ $toDouble: "$timeStamp" }, Number(req.query.max_time)]},
-                {$gt: [{ $toDouble: "$timeStamp" }, Number(req.query.min_time)]},
-              ]
+          query = [
+            {
+              $addFields: {
+                convertedTimestamp: {
+                  $toDouble: "$timeStamp"
+                }
+              }
+            }, 
+            {
+              $match:{
+                convertedTimestamp: {
+                  $lt: Number(req.query.max_time),
+                  $gt: Number(req.query.min_time)
+                }
+              }
             }
-          }
+          ]
         } else {
-          query = {
-            $expr:{
-              $and:[
-                {$lt: [{ $toDouble: "$timeStamp" }, Number(req.query.max_time)]},
-                {$gt: [{ $toDouble: "$timeStamp" }, Number(timestamp)]},
-              ]
+          query = [
+            {
+              $addFields: {
+                convertedTimestamp: {
+                  $toDouble: "$timeStamp"
+                }
+              }
+            },
+            {
+              $match:{
+                convertedTimestamp: {
+                  $lt: Number(req.query.max_time),
+                  $gt: timestamp
+                }
+              }
             }
-          }
+          ]
         }
       }
     } else {
-      query={$expr: {$gt: [{ $toDouble: "$timeStamp" }, timestamp]}};
+      query=[
+        {
+          $addFields: {
+            convertedTimestamp: {
+              $toLong: "$timeStamp"
+            }
+          }
+        },
+        {
+          $match: {
+            convertedTimestamp: {$gt: timestamp}
+          }
+        }
+      ];
     }
-
-    query.visibility = true;
-
+    
+    query.push({
+      $match: {
+        "visibility": true
+      }
+    });
 
     if (req.query.sport){
-      query['transaction.sport'] = req.query.sport;
+      query.push({
+        $match: {
+          "transaction.sport": req.query.sport
+        }
+      });
     }
 
     if (req.query.league){
-      query['league'] = req.query.league;
+      query.push({
+        $match: {
+          "league": req.query.league
+        }
+      });
     }
 
-    console.log(JSON.parse(JSON.stringify(query)), timestamp);
+    let counterquery  = query;
+    counterquery = counterquery.concat([{
+        $group:{
+          _id: {
+            "sport": '$transaction.sport',
+            "league": '$league'
+          }, 
+          'count':{$sum:1}     
+        }
+      }      
+    ]);    
 
-    // query = {
-    //   visibility: true,
-    //   $expr:{
-    //     $and:[
-    //       { $gt: [ { '$toDouble': '$timeStamp' }, 1581084996293 ] },
-    //       { $lt: [ { '$toDouble': '$timeStamp' }, 1681175800000 ] },
-    //     ]
-    //   }
-    // };
-    let total = await BetEvent.find(query).countDocuments();
+    let counterdata = await BetEvent.aggregate(counterquery);  
+    let totalquery = query;
+    
+    totalquery = totalquery.concat([{
+      $count: "totalcount"
+    }]);    
+    
+    let total = await BetEvent.aggregate(totalquery);
+    total = total[0].totalcount;
+    
+    query = query.concat([
+      {
+        $sort: {
+          convertedTimestamp: 1,
+        }
+      },{
+        $skip: skip,
+      },{
+        $limit: limit
+      }
+    ]);
 
-    let events = await BetEvent.find(query).skip(skip).limit(limit);
-
+    let events = await BetEvent.aggregate(query);
     events.sort(function(a,b){
       return Number(a.timeStamp) - Number(b.timeStamp);
     })
 
     const formattedEvents = [];
     const counters = {};
+
+    if (counterdata.length > 0){
+      for (let k=0; k < counterdata.length; k++){
+        const item = counterdata[k]._id;        
+        console.log(item);
+        if (counters[item.sport] == undefined){                    
+          counters[item.sport] = {};
+        }
+        
+        if (counters[item.sport][item.league] == undefined){
+          counters[item.sport][item.league] = counterdata[k].count;
+        }        
+      }
+    }
+
     if (events.length > 0) {
       for (let i=0; i<events.length; i++){
         const e = events[i];
         const event = JSON.parse(JSON.stringify(e));
-
-        if (counters[event.transaction.sport] == undefined){          
-          console.log(counters[event.transaction.sport]); 
-          counters[event.transaction.sport] = {};
-        }
-        
-        if (counters[event.transaction.sport][event.league] == undefined){
-          counters[event.transaction.sport][event.league] = 0;
-        }
-        
-        counters[event.transaction.sport][event.league]++;
 
         event.homeOdds = event.transaction.homeOdds;
         event.awayOdds = event.transaction.awayOdds;
@@ -858,7 +924,7 @@ const getBetOpenEvents = async (req, res) => {
         formattedEvents.push(event);
       };
     }
-    res.json({ events: formattedEvents, counters: counters, pages: total <= limit ? 1 : Math.ceil(total / limit) });
+    res.json({ events: formattedEvents, pages: total <= limit ? 1 : Math.ceil(total / limit), counters: counters});
 
   } catch (err) {
     console.log(err);
