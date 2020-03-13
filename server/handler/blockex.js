@@ -830,7 +830,8 @@ const getBetOpenEvents = async (req, res) => {
     }]);    
     
     let total = await BetEvent.aggregate(totalquery);
-    total = total[0].totalcount;
+
+    total = total.length > 0?total[0].totalcount : 0;
     
     query = query.concat([
       {
