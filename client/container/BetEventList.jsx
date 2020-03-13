@@ -357,12 +357,9 @@ class BetEventList extends Component {
             let awayOdds = (event.events[0].awayOdds / 10000)
 
             if (this.state.toggleSwitchOdds){
-              homeOdds = 1 + (homeOdds - 1) * 0.94;
-              homeOdds = homeOdds == 0 ? homeOdds : homeOdds.toFixed(2);
-              drawOdds = 1 + (drawOdds - 1) * 0.94;
-              drawOdds = drawOdds == 0 ? drawOdds : drawOdds.toFixed(2);
-              awayOdds = 1 + (awayOdds - 1) * 0.94;
-              awayOdds = awayOdds == 0 ? awayOdds : awayOdds.toFixed(2);
+              homeOdds = homeOdds == 0 ? homeOdds : (1 + (homeOdds - 1) * 0.94).toFixed(2);              
+              drawOdds = drawOdds == 0 ? drawOdds : (1 + (drawOdds - 1) * 0.94).toFixed(2);              
+              awayOdds = awayOdds == 0 ? awayOdds : (1 + (awayOdds - 1) * 0.94).toFixed(2);              
             }
                         
             if (event.events.length > 1) {
