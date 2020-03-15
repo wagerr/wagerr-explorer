@@ -288,7 +288,7 @@ class BetEventList extends Component {
             <div style={{alignItems:'center',marginTop:'20px'}}>
               <span>Decimal Odds/ American Odds</span>
             </div>
-            <label htmlFor="material-switch" style={{marginTop:'10px'}}>
+            <label htmlFor="material-switch1" style={{marginTop:'10px'}}>
               <Switch
                 checked={this.state.toggleSwitchOddsStyle}
                 onChange={this.handleToggleChangeOddsStyle}
@@ -310,7 +310,7 @@ class BetEventList extends Component {
             <div style={{alignItems:'center',marginTop:'20px'}}>
               <span>On Chain Odds / Effective Odds</span>
             </div>
-            <label htmlFor="material-switch" style={{marginTop:'10px', alignItems:'center'}}>
+            <label htmlFor="material-switch2" style={{marginTop:'10px', alignItems:'center'}}>
               <Switch
                 checked={this.state.toggleSwitchOdds}
                 onChange={this.handleToggleChangeOdds}
