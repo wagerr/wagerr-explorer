@@ -794,6 +794,12 @@ const getBetOpenEvents = async (req, res) => {
       }
     });
 
+    query.push({
+      $match:{ 
+        status: { $ne: 'completed' } 
+      }      
+    });
+    
     if (req.query.sport){
       query.push({
         $match: {
