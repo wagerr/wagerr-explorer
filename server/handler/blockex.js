@@ -1225,7 +1225,7 @@ const getDataListing = async (Model, actions, results, req, res) => {
     match =  'completed';
 
     sort = {
-      completedAt: -1,
+      timeStamp: -1,
     }
   }
 

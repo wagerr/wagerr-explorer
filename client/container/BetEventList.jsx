@@ -62,9 +62,9 @@ class BetEventList extends Component {
       size: 50,
       filterBy: 'All',
       search: '',
-      toggleSwitch: true,
-      toggleSwitchOdds: false,      
-      toggleSwitchOddsStyle: false,
+      toggleSwitch: localStorage.getItem('toggleCompletedAndOpen') != undefined? localStorage.getItem('toggleCompletedAndOpen') : true,
+      toggleSwitchOdds: localStorage.getItem('toggleOddsFee') != undefined? localStorage.getItem('toggleOddsFee') : false,      
+      toggleSwitchOddsStyle: localStorage.getItem('toggleOddsStyle') != undefined? localStorage.getItem('toggleOddsStyle') : false,
     }
   };
 
@@ -186,16 +186,19 @@ class BetEventList extends Component {
   }
 
   handleToggleChange = (toggleSwitch) => {
+    localStorage.setItem('toggleCompletedAndOpen', toggleSwitch);
     this.setState({ toggleSwitch }, this.getBetEventsInfo);
     console.log(toggleSwitch);
   }
 
   handleToggleChangeOdds = (toggleSwitchOdds) => {
+    localStorage.setItem('toggleOddsFee', toggleSwitchOdds);
     this.setState({ toggleSwitchOdds });
     console.log(toggleSwitchOdds);
   }
 
   handleToggleChangeOddsStyle = (toggleSwitchOddsStyle) => {
+    localStorage.setItem('toggleOddsStyle', toggleSwitchOddsStyle);
     this.setState({ toggleSwitchOddsStyle });
     console.log(toggleSwitchOddsStyle);
   }
