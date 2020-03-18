@@ -23,17 +23,17 @@ import { compose } from 'redux'
 import { translate } from 'react-i18next'
 
 const convertToAmericanOdds = (odds) => {
-  console.log('s:', odds);
+  
   odds = parseFloat(odds);
   let ret = parseInt((odds - 1) * 100);
-  console.log('ret1:', ret);
+  
   if (odds < 2)
     ret = Math.round((-100) / (odds - 1));
-  console.log('ret2:', ret);
+  
   if (odds == 0) ret = 0;
 
   if (ret > 0)  ret = `+${ret}`  
-  console.log('e:', ret);
+  
   return ret;
 }
 
@@ -62,13 +62,14 @@ class BetEventList extends Component {
       size: 50,
       filterBy: 'All',
       search: '',
-      toggleSwitch: localStorage.getItem('toggleCompletedAndOpen') != undefined? localStorage.getItem('toggleCompletedAndOpen') : true,
-      toggleSwitchOdds: localStorage.getItem('toggleOddsFee') != undefined? localStorage.getItem('toggleOddsFee') : false,      
-      toggleSwitchOddsStyle: localStorage.getItem('toggleOddsStyle') != undefined? localStorage.getItem('toggleOddsStyle') : false,
+      toggleSwitch: localStorage.getItem('toggleCompletedAndOpen') != undefined? localStorage.getItem('toggleCompletedAndOpen') == 'true' : true,
+      toggleSwitchOdds: localStorage.getItem('toggleOddsFee') != undefined? localStorage.getItem('toggleOddsFee') == 'true' : false,      
+      toggleSwitchOddsStyle: localStorage.getItem('toggleOddsStyle') != undefined? localStorage.getItem('toggleOddsStyle') == 'true' : false,
     }
   };
 
   componentDidMount() {
+
     this.getBetEventsInfo()
   };
 
@@ -260,7 +261,9 @@ class BetEventList extends Component {
     )
     ;
 
-
+    console.log(localStorage.getItem('toggleCompletedAndOpen'), this.state.toggleSwitch)
+    console.log(localStorage.getItem('toggleOddsFee'), this.state.toggleSwitchOdds)
+    console.log(localStorage.getItem('toggleOddsStyle'), this.state.toggleSwitchOddsStyle) 
     return (
       <div>
         {searchBar}
@@ -415,11 +418,11 @@ class BetEventList extends Component {
             }
                         
             if (this.state.toggleSwitchOddsStyle){
-              console.log('----', homeOdds, awayOdds, drawOdds)
+              //console.log('----', homeOdds, awayOdds, drawOdds)
               homeOdds = convertToAmericanOdds(homeOdds);
               drawOdds = convertToAmericanOdds(drawOdds);
               awayOdds = convertToAmericanOdds(awayOdds);
-              console.log(homeOdds, awayOdds, drawOdds)
+              //console.log(homeOdds, awayOdds, drawOdds)
             }
 
             if (event.events.length > 1) {
