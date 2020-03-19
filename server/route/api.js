@@ -29,6 +29,7 @@ router.get('/tx/:hash', blockex.getTX);
 router.get('/bet/listevents', blockex.getListEvents);
 router.get('/bet/events', blockex.getBetEvents);
 router.get('/bet/openevents', blockex.getBetOpenEvents);
+router.get('/bet/hotevents', blockex.getBetHotEvents);
 router.get('/bet/events/query', blockex.getBetQuery);
 router.get('/bet/actions', blockex.getBetActions);
 router.get('/bet/results', blockex.getBetResults);
