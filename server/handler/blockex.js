@@ -717,7 +717,193 @@ const getBetEvents = async (req, res) => {
     res.status(500).send(err.message || err);
   }
 };
+const getBetHotEvents = async (req, res) => {
+  try {
+    let limit = req.query.limit ? parseInt(req.query.limit, 10) : 200;
+    if (limit > 200) limit = 200;
+    const skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
+    let timestamp = Date.now() - (2000 * 60 * 1000);
 
+    let query = [];
+    if (req.query.max_time){
+      if (req.query.max_time < timestamp)  {
+        res.json({events:[]});
+      } else {
+        if (req.query.min_time){
+          if (req.query.min_time < timestamp){
+            req.query.min_time = timestamp;
+          }
+          query = [
+            {
+              $addFields: {
+                convertedTimestamp: {
+                  $toDouble: "$timeStamp"
+                }
+              }
+            }, 
+            {
+              $match:{
+                convertedTimestamp: {
+                  $lt: Number(req.query.max_time),
+                  $gt: Number(req.query.min_time)
+                }
+              }
+            }
+          ]
+        } else {
+          query = [
+            {
+              $addFields: {
+                convertedTimestamp: {
+                  $toDouble: "$timeStamp"
+                }
+              }
+            },
+            {
+              $match:{
+                convertedTimestamp: {
+                  $lt: Number(req.query.max_time),
+                  $gt: timestamp
+                }
+              }
+            }
+          ]
+        }
+      }
+    } else {
+      query=[
+        {
+          $addFields: {
+            convertedTimestamp: {
+              $toLong: "$timeStamp"
+            }
+          }
+        },
+        {
+          $match: {
+            convertedTimestamp: {$gt: timestamp}
+          }
+        }
+      ];
+    }
+
+    query.push({
+      $match: {
+        "visibility": true
+      }
+    });
+
+    query.push({
+      $match:{ 
+        status: { $ne: 'completed' } 
+      }      
+    });
+
+    let totalquery = query;
+    totalquery = totalquery.concat([{
+      $count: "totalcount"
+    }]);    
+    
+    let total = await BetEvent.aggregate(totalquery);
+
+    total = total.length > 0?total[0].totalcount : 0;
+
+    query = query.concat([
+      {
+        $skip: skip,
+      },{
+        $limit: limit
+      }
+    ]);
+
+    query.push({
+      $lookup: {
+        from: 'betactions',
+        localField: 'eventId',
+        foreignField: 'eventId',
+        as: 'actions',
+      },
+    });
+
+    query.push({
+      $addFields: {
+        totalBetAmount: {
+          $sum: "$actions.betValue"
+        }
+      }
+    });
+
+    query.push({
+      $sort: {totalBetAmount: -1}        
+    });
+
+    console.log(query);
+    let events = await BetEvent.aggregate(query);
+    let formattedEvents = []
+    if (events.length > 0) {
+      for (let i=0; i<events.length; i++){
+        const e = events[i];
+        const event = JSON.parse(JSON.stringify(e));
+
+        event.homeOdds = event.transaction.homeOdds;
+        event.awayOdds = event.transaction.awayOdds;
+        event.drawOdds = event.transaction.drawOdds;
+
+        const betupdates = await BetUpdate.find({
+          eventId: event.eventId,
+          visibility: true
+        }).sort({createdAt: 1});
+        if (betupdates.length > 0){
+          const update = JSON.parse(JSON.stringify(betupdates[betupdates.length-1]));
+
+          event.Latest_MoneyLine_Price = {
+            home: update.opObject.homeOdds / 10000,
+            draw: update.opObject.drawOdds / 10000,
+            away: update.opObject.awayOdds / 10000,
+          };
+        } else {
+          event.Latest_MoneyLine_Price = {
+            home: event.homeOdds / 10000,
+            draw: event.drawOdds / 10000,
+            away: event.awayOdds / 10000,
+          };
+        }
+
+        const betspreads = await Betspread.find({
+          eventId: event.eventId,
+          visibility: true
+        }).sort({createdAt: 1});
+
+        if (betspreads.length > 0){
+          event.Latest_Spread_Number = `${displayNum(betspreads[betspreads.length-1].homePoints, 10)}/${displayNum(betspreads[betspreads.length-1].awayPoints, 10)}`;
+          event.Latest_Spread_Price = {
+            home: betspreads[betspreads.length-1].homeOdds / 10000,
+            away: betspreads[betspreads.length-1].awayOdds / 10000,
+          }
+        }
+
+        const bettotals = await Bettotal.find({
+          eventId: event.eventId,
+          visibility: true
+        }).sort({createdAt: 1});
+
+        if (bettotals.length > 0){
+          event.Latest_Total_Number = bettotals[bettotals.length-1].points / 10;
+          event.Latest_Total_Price = {
+            over: bettotals[bettotals.length-1].overOdds / 10000,
+            under: bettotals[bettotals.length-1].underOdds / 10000,
+          }
+        }
+
+        formattedEvents.push(event);
+      };
+    } 
+    res.json({ events: formattedEvents, pages: total <= limit ? 1 : Math.ceil(total / limit)});
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message || err);
+  }
+};
 const getBetOpenEvents = async (req, res) => {
   try {
     let limit = req.query.limit ? parseInt(req.query.limit, 10) : 200;
@@ -2363,5 +2549,6 @@ module.exports = {
   getLottoEventInfo,
   getBetStats,
   getTeamEventInfo,
-  getBettotalUSD
+  getBettotalUSD,
+  getBetHotEvents
 };
