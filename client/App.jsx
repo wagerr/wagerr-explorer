@@ -38,7 +38,7 @@ import Loading from './component/Loading';
 import Menu from './component/Menu';
 import Notification from './component/Notification';
 import SearchBar from './component/SearchBar';
-
+import SearchEventBar from './component/SearchEventBar';
 class App extends Component {
   static propTypes = {
     // Dispatch
@@ -53,7 +53,7 @@ class App extends Component {
     this.state = {
       init: true,
       limit: 10,
-      searches: []
+      searches: [],
     };
     this.timer = { coins: null, txs: null };
   };
@@ -148,6 +148,11 @@ class App extends Component {
     }
   };
 
+  handleEventSearch = (term) => {    
+    if (term == '') document.location.href = `/#/betevents`    
+    else document.location.href = `/#/betevents?search=${term}`    
+  }
+
   render() {
     if (this.state.init) {
       return (
@@ -169,6 +174,10 @@ class App extends Component {
               <SearchBar
                 className="d-none d-md-block mb-3"
                 onSearch={ this.handleSearch } />
+              <SearchEventBar
+                className="d-none d-md-block mb-3"
+                onSearch={ this.handleEventSearch } 
+              />  
               <div className="content__inner-wrapper">
                 <Switch>
                   <Route exact path="/" component={ Overview } />

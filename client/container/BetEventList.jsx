@@ -21,6 +21,7 @@ import { timeStamp24Format } from '../../lib/date'
 import numeral from 'numeral'
 import { compose } from 'redux'
 import { translate } from 'react-i18next'
+import queryString from 'query-string'
 
 const convertToAmericanOdds = (odds) => {
   
@@ -69,9 +70,21 @@ class BetEventList extends Component {
   };
 
   componentDidMount() {
-
-    this.getBetEventsInfo()
+    const values = queryString.parse(this.props.location.search); //this.props.match ? this.props.match.params : '';
+    console.log('values',values);
+    const search = values.search ? values.search : '';
+    console.log('search',search);
+    this.setState({ search }, this.getBetEventsInfo)
   };
+
+  componentWillReceiveProps(nextProps) {
+      const nextvalues = queryString.parse(nextProps.location.search);
+      const nextsearch = nextvalues.search ? nextvalues.search : '';
+      console.log('componentWillReceiveProps',  nextsearch, this.state.search);
+      if (nextsearch !== this.state.search) {
+        this.setState({ search:nextsearch }, this.getBetEventsInfo);
+      }
+  }
 
   componentWillUnmount() {
     if (this.debounce) {
@@ -85,8 +98,6 @@ class BetEventList extends Component {
       if (this.debounce) {
         clearTimeout(this.debounce)
       }
-
-      const searchValue = this.state.search;
 
       let getMethod = this.props.getBetEventsInfo;
 
@@ -245,28 +256,25 @@ class BetEventList extends Component {
         options={selectFilterOptions} />
     );
 
-    const searchBar = (
-      <div className="animated fadeIn" style={{ width: '100%' }}>
-        <div className={ `search ${ props.className ? props.className : '' }` }>
-          <input
-            className="search__input"
-            onKeyPress={ e => this.handleKeyPress(e) }
-            onChange={ e => this.handleChange(e) }
-            placeholder={ props.placeholder }
-            value={this.state.search}
-          />
-          <Icon name="search" className="search__icon" />
-        </div>
-      </div>
-    )
-    ;
+    // const searchBar = (
+    //   <div className="animated fadeIn" style={{ width: '100%' }}>
+    //     <div className={ `search ${ props.className ? props.className : '' }` }>
+    //       <input
+    //         className="search__input"
+    //         onKeyPress={ e => this.handleKeyPress(e) }
+    //         onChange={ e => this.handleChange(e) }
+    //         placeholder={ props.placeholder }
+    //         value={this.state.search}
+    //       />
+    //       <Icon name="search" className="search__icon" />
+    //     </div>
+    //   </div>
+    // )
+    // ;
 
-    console.log(localStorage.getItem('toggleCompletedAndOpen'), this.state.toggleSwitch)
-    console.log(localStorage.getItem('toggleOddsFee'), this.state.toggleSwitchOdds)
-    console.log(localStorage.getItem('toggleOddsStyle'), this.state.toggleSwitchOddsStyle) 
+
     return (
       <div>
-        {searchBar}
         <div className="row">
           <div class="col-4">
             <div style={{alignItems:'center',marginTop:'20px'}}>

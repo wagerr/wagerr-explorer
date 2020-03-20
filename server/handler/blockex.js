@@ -723,7 +723,7 @@ const getBetHotEvents = async (req, res) => {
     if (limit > 200) limit = 200;
     const skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
     let timestamp = Date.now() - (2000 * 60 * 1000);
-
+    
     let query = [];
     if (req.query.max_time){
       if (req.query.max_time < timestamp)  {
