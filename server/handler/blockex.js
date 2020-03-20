@@ -808,13 +808,7 @@ const getBetHotEvents = async (req, res) => {
 
     total = total.length > 0?total[0].totalcount : 0;
 
-    query = query.concat([
-      {
-        $skip: skip,
-      },{
-        $limit: limit
-      }
-    ]);
+
 
     query.push({
       $lookup: {
@@ -836,6 +830,14 @@ const getBetHotEvents = async (req, res) => {
     query.push({
       $sort: {totalBetAmount: -1}        
     });
+    
+    query = query.concat([
+      {
+        $skip: skip,
+      },{
+        $limit: limit
+      }
+    ]);
 
     console.log(query);
     let events = await BetEvent.aggregate(query);
