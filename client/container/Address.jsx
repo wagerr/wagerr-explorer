@@ -55,6 +55,7 @@ class Address extends Component {
       this.props
         .getAddress({ address })
         .then(({ balance, sent, staked, received, txs }) => {
+          console.log(balance, sent, staked, received);
           this.setState({
             address,
             balance,

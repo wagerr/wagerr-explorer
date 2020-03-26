@@ -12,7 +12,7 @@ export default class SearchEventBar extends Component {
   static propTypes = {
     onSearch: PropTypes.func.isRequired,
     placeholder: PropTypes.string.isRequired,
-    defaultValue: PropTypes.string.isRequired
+    defaultValue: PropTypes.string
   };
 
   handleKeyPress = (ev) => {
