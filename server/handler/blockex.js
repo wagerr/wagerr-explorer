@@ -47,6 +47,7 @@ const displayNum = (num, divider) => {
  * @param {Object} res The response object.
  */
 const getAddress = async (req, res) => {
+  req.clearTimeout();
   try {
     const txs = await TX
       .aggregate([
