@@ -62,7 +62,7 @@ async function syncBlocks(start, stop, clean = false) {
  * Handle locking.
  */
 async function update() {
-  const type = 'block';
+  const type = 'orphan_block';
   let code = 0;
 
   try {
