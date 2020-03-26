@@ -41,13 +41,6 @@ async function logError(err, height) {
 async function syncBlocks(start, stop, clean = false) {
   log(start, stop);
 
-  if (clean) {
-    await Block.deleteMany({ height: { $gte: start, $lte: stop } });
-    await TX.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
-    await UTXO.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
-    await STXO.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
-  }
-
   for(let height = start; height <= stop; height++) {
     const hash = await rpc.call('getblockhash', [height]);
     const rpcblock = await rpc.call('getblock', [hash]);
