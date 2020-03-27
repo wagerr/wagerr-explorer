@@ -30,11 +30,27 @@ class Movement extends Component {
       size: 10,
       txs: []
     };
+
+    this.props.history.listen((location, action) => {
+      console.log(location)
+      let page = location.pathname.split('/movement/')[1];
+      if (typeof page == 'undefined') page = 1;
+      setTimeout(this.updatePage(page));
+    });
   };
 
   componentDidMount() {
-    this.getTXs();
+    console.log('componentDidMount', this.props.match.params);
+    let page = this.props.match.params.page;
+    if (typeof page == 'undefined') page = 1;
+
+    this.setState({ page:parseInt(page) }, this.getTXs);
   };
+
+  updatePage = (page) => {
+    console.log('page', page);
+    this.setState({ page:parseInt(page) }, this.getTXs);
+  }
 
   componentWillUnmount() {
     if (this.debounce) {
@@ -70,7 +86,10 @@ class Movement extends Component {
     });
   };
 
-  handlePage = page => this.setState({ page }, this.getTXs);
+  handlePage = page => {
+    this.props.history.push('/movement/'+page)
+    //this.setState({ page }, this.getTXs);
+  }
 
   handleSize = size => this.setState({ size, page: 1 }, this.getTXs);
 

@@ -191,6 +191,7 @@ class App extends Component {
                   <Route exact path="/betevents" component={ BetEventList } />
                   <Route exact path="/lottos" component={ LottoList } />
                   <Route exact path="/movement" component={ Movement } />
+                  <Route exact path="/movement/:page" component={ Movement } />
                   <Route exact path="/peer" component={ Peer } />
                   <Route exact path="/statistics" component={ Statistics } />
                   <Route exact path="/top" component={ Top100 } />
