@@ -188,7 +188,9 @@ class App extends Component {
                   <Route exact path="/faq" component={ FAQ } />
                   <Route exact path="/governance" component={ Governance } />
                   <Route exact path="/masternode" component={ Masternode } />
+                  <Route exact path="/masternode/:page" component={ Masternode } />
                   <Route exact path="/betevents" component={ BetEventList } />
+                  <Route exact path="/betevents/:page" component={ BetEventList } />
                   <Route exact path="/lottos" component={ LottoList } />
                   <Route exact path="/movement" component={ Movement } />
                   <Route exact path="/movement/:page" component={ Movement } />

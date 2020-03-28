@@ -41,11 +41,27 @@ class Masternode extends Component {
       page: 1,
       size: 10
     };
+
+
+    this.props.history.listen((location, action) => {
+      console.log(location)
+      let page = location.pathname.split('/masternode/')[1];
+      if (typeof page == 'undefined') page = 1;
+      setTimeout(this.updatePage(page));
+    });
   };
 
   componentDidMount() {
-    this.getMNs();
+    let page = this.props.match.params.page;
+    if (typeof page == 'undefined') page = 1;
+
+    this.setState({ page:parseInt(page) }, this.getMNs);
   };
+
+  updatePage = (page) => {
+    console.log('page', page);
+    this.setState({ page:parseInt(page) }, this.getMNs);
+  }
 
   componentWillUnmount() {
     if (this.debounce) {
@@ -74,9 +90,11 @@ class Masternode extends Component {
           .catch(error => this.setState({ error, loading: false }));
       }, 800);
     });
-  };
+  };  
 
-  handlePage = page => this.setState({ page }, this.getMNs);
+  handlePage = page => {
+    this.props.history.push('/masternode/'+page) 
+  }
 
   handleSize = size => this.setState({ size, page: 1 }, this.getMNs);
 
