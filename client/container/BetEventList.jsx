@@ -67,6 +67,13 @@ class BetEventList extends Component {
       toggleSwitchOdds: localStorage.getItem('toggleOddsFee') != undefined? localStorage.getItem('toggleOddsFee') == 'true' : false,      
       toggleSwitchOddsStyle: localStorage.getItem('toggleOddsStyle') != undefined? localStorage.getItem('toggleOddsStyle') == 'true' : false,
     }
+
+    this.props.history.listen((location, action) => {
+      console.log(location)
+      let page = location.pathname.split('/betevents/')[1];
+      if (typeof page == 'undefined') page = 1;
+      setTimeout(this.updatePage(page));
+    });
   };
 
   componentDidMount() {
@@ -74,8 +81,17 @@ class BetEventList extends Component {
     console.log('values',values);
     const search = values.search ? values.search : '';
     console.log('search',search);
-    this.setState({ search }, this.getBetEventsInfo)
+
+    let page = this.props.match.params.page;
+    if (typeof page == 'undefined') page = 1;
+
+    this.setState({ search, page }, this.getBetEventsInfo)
   };
+
+  updatePage = (page) => {
+    console.log('page', page);
+    this.setState({ page:parseInt(page) }, this.getBetEventsInfo);
+  }
 
   componentWillReceiveProps(nextProps) {
       const nextvalues = queryString.parse(nextProps.location.search);
@@ -179,9 +195,11 @@ class BetEventList extends Component {
       this.getBetEventsInfo()
     });
   });
-
-  handlePage = page => this.setState({ page }, this.getBetEventsInfo)
   
+  handlePage = page => {
+    this.props.history.push('/betevents/'+page) 
+  }
+
   handleSize = size => this.setState({size, page: 1})
 
 

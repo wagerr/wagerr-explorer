@@ -87,8 +87,7 @@ class Movement extends Component {
   };
 
   handlePage = page => {
-    this.props.history.push('/movement/'+page)
-    //this.setState({ page }, this.getTXs);
+    this.props.history.push('/movement/'+page) 
   }
 
   handleSize = size => this.setState({ size, page: 1 }, this.getTXs);
