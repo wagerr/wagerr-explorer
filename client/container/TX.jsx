@@ -30,17 +30,27 @@ class TX extends Component {
         vout: []
       }
     };
+
+    this.props.history.listen((location, action) => {
+      const { params: { hash } } = this.props.match;
+      console.log('tx update', hash);
+      if (!!this.state.tx.txId && hash !== this.state.tx.txId) {
+        setTimeout(this.getTX());
+      }
+    });
   };
 
-  componentDidMount() {
+  componentDidMount() {    
     this.getTX();
   };
 
   componentDidUpdate() {
-    const { params: { hash } } = this.props.match;
-    if (!!this.state.tx.txId && hash !== this.state.tx.txId) {
-      this.getTX();
-    }
+    
+    // const { params: { hash } } = this.props.match;
+    // console.log('componentDidUpdate', hash);
+    // if (!!this.state.tx.txId && hash !== this.state.tx.txId) {
+    //   setTimeout(this.getTX());
+    // }
   };
 
   getTX() {
