@@ -25,9 +25,7 @@ async function startfromJsonFile(){
         price.save();
         console.log(row.createdAt);
       });
-    })
-
-        
+    })        
   } catch (err){
     console.log(err);
   }
