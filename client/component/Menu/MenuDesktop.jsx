@@ -30,7 +30,23 @@ export default class MenuDesktop extends Component {
     return props.links.map((i, idx) => {
       const isActive = (props.location.pathname === i.href);
       const iconSource = i.icon.split('.svg')[0] + '_white.svg';
-
+      if (i.label == 'Get Started'){
+        return (
+          <a
+            target="_blank"
+            key={ idx }
+            className={ `menu-desktop__item ${ isActive? 'menu-desktop__item--is-active' : '' }` }
+            href={ i.href }>
+            <img
+              alt={ i.label }
+              className="menu-desktop__item-icon"
+              src={ iconSource }
+              title={ this.state.isOpen ? null : i.label } />
+            <span className="menu-desktop__item-label" >{ i.label }</span>
+            <Icon name="caret-left" className="menu-desktop__item-indicator" />
+          </a>
+        )
+      }
       return (
         <Link
           key={ idx }
