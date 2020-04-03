@@ -848,6 +848,10 @@ const getBetHotEvents = async (req, res) => {
         const e = JSON.parse(JSON.stringify(events[i]));
         const event = {};
         event.eventId = e.eventId;
+        event.timeStamp = e.timeStamp;
+        event.league = e.league;
+        event.homeTeam = e.homeTeam;
+        event.awayTeam = e.awayTeam;
         event.homeOdds = e.transaction.homeOdds;
         event.awayOdds = e.transaction.awayOdds;
         event.drawOdds = e.transaction.drawOdds;
