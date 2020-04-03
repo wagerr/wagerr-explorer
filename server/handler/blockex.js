@@ -844,16 +844,15 @@ const getBetHotEvents = async (req, res) => {
     let events = await BetEvent.aggregate(query);
     let formattedEvents = []
     if (events.length > 0) {
-      for (let i=0; i<events.length; i++){
-        const e = events[i];
-        const event = JSON.parse(JSON.stringify(e));
-
-        event.homeOdds = event.transaction.homeOdds;
-        event.awayOdds = event.transaction.awayOdds;
-        event.drawOdds = event.transaction.drawOdds;
+      for (let i=0; i<events.length; i++){        
+        const e = JSON.parse(JSON.stringify(events[i]));
+        const event = {};
+        event.homeOdds = e.transaction.homeOdds;
+        event.awayOdds = e.transaction.awayOdds;
+        event.drawOdds = e.transaction.drawOdds;
 
         const betupdates = await BetUpdate.find({
-          eventId: event.eventId,
+          eventId: e.eventId,
           visibility: true
         }).sort({createdAt: 1});
         if (betupdates.length > 0){
@@ -873,7 +872,7 @@ const getBetHotEvents = async (req, res) => {
         }
 
         const betspreads = await Betspread.find({
-          eventId: event.eventId,
+          eventId: e.eventId,
           visibility: true
         }).sort({createdAt: 1});
 
@@ -886,7 +885,7 @@ const getBetHotEvents = async (req, res) => {
         }
 
         const bettotals = await Bettotal.find({
-          eventId: event.eventId,
+          eventId: e.eventId,
           visibility: true
         }).sort({createdAt: 1});
 
