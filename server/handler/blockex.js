@@ -855,7 +855,7 @@ const getBetHotEvents = async (req, res) => {
         event.homeOdds = e.transaction.homeOdds;
         event.awayOdds = e.transaction.awayOdds;
         event.drawOdds = e.transaction.drawOdds;
-
+        event.sport = e.transaction.sport;
         const betupdates = await BetUpdate.find({
           eventId: e.eventId,
           visibility: true
