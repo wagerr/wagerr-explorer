@@ -112,9 +112,9 @@ async function verifyBetOdds(record, rtype) {
         eventId: `${eventId}`,
         createdAt: { $gt: record.createdAt },
       });
-
+ 
       const nextUpdate = updates[0];
-      const queryParams = { $gte: record.createdAt };
+      const queryParams = { $gt: record.createdAt };
 
       if (nextUpdate) {
         queryParams['$lt'] = nextUpdate.createdAt;
@@ -359,8 +359,7 @@ async function getEventData(block, eventId, waitTime = 50) {
     if (event === null) {
       recheck = await waitForData(eventId, 100);
       event = recheck[0];
-    }
-    console.log('lastTotal', lastTotal);
+    }    
     event.points = lastTotal ? lastTotal.points : 0;
     event.overOdds = lastTotal ? lastTotal.overOdds : 0;
     event.underOdds = lastTotal? lastTotal.underOdds : 0;
@@ -474,7 +473,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         opObject: transaction,
         matched: true,
       });
-
+      
       verifyBetOdds(createResponse, 'update');
     } catch (e) {
       logError(e, 'creating event update', block.height, transaction);
@@ -485,8 +484,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
 
   if (['peerlessBet'].includes(transaction.txType)) {
     const _id = `${transaction.eventId}${transaction.outcome}${rpctx.get('txid')}${block.height}`;
-    const betExists = await recordCheck(BetAction, _id);
-
+    const betExists = await recordCheck(BetAction, _id);    
     if (betExists) {
       // log(`Bet update ${_id} already on record`);
       return betExists;
@@ -494,7 +492,12 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
     
     try {
       const { event, originalRecord } = await getEventData(block, transaction.eventId, waitTime);
-
+      if (rpctx.get('txid') == 'd97122769e8063b4b62b2d97c01fed5b507011c5b14e3790d8db1fb87894d042'){
+        console.log('*************************************');        
+        console.log('event: ', event);
+        console.log('*************************************');
+      }
+        
       const eventRecord = event || {};
       let lastSpread;
 
@@ -506,7 +509,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         });
 
         lastSpread = spreadRecords[spreadRecords.length - 1];
-        //console.log('lastSpread', lastSpread);
+        console.log('lastSpread', lastSpread);
       }
 
       try {
