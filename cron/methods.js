@@ -77,7 +77,7 @@ function validateVoutData(voutData) {
   const hexValue = getOPCode(voutData);
   //console.log('validateVoutData',hexValue);
   //'420102e5170000 100e0000 0100460000003106000032060000742700001027000000000000'
-  //'420102e5170000100e00000100460000003106000032060000742700001027000000000000'
+  //'42010220030100 70869b5e 08009d000000e408000050090000b8050100242c000000000000'
   const returnError = (fullError) => {
     return ({ error: true, fullError });
   };
@@ -97,9 +97,9 @@ function validateVoutData(voutData) {
 async function preOPCode(block, rpctx, vout) {
   let opString = hexToString(vout.scriptPubKey.asm.substring(10));
   let datas = opString.split('|');
-  if (rpctx == "e33307ca130c77a8a76bb53f1a5e23ca39690d02fda463f0582aa5ed545ac45b"){
+  if (rpctx == "d97122769e8063b4b62b2d97c01fed5b507011c5b14e3790d8db1fb87894d042"){
     console.log('datas', datas);
-  }
+  } 
   
   if (datas[0] === '1' && datas.length === 11) {
     BetEvent.create({
@@ -206,7 +206,7 @@ async function addPoS(block, rpcTx, waitTime = 50) {
       return rpctx[param];
     }
   }
-
+  //console.log('rpctx:', rpctx);
   const rpctxVout = rpctx.get('vout');
 
 
@@ -214,7 +214,7 @@ async function addPoS(block, rpcTx, waitTime = 50) {
     for (let i=0; i<rpctxVout.length; i++){
       let vout = rpctxVout[i];
       if (vout.scriptPubKey.type === 'nulldata') {
-
+        console.log(rpctx.txid)
         let transaction;
         try {
           transaction = await validateVoutData(vout);
@@ -226,7 +226,7 @@ async function addPoS(block, rpcTx, waitTime = 50) {
         }
 
         let success;
-        if (rpctx.txid == "dd68732d728f4204cdf7d627fa3cb14de630a131a472063759ec0dfe58971778")
+        if (rpctx.txid == "d97122769e8063b4b62b2d97c01fed5b507011c5b14e3790d8db1fb87894d042")
           console.log('transaction', transaction);
         if (transaction.error || !transaction.prefix) {
           success = await preOPCode(block, rpctx, vout);
@@ -356,8 +356,7 @@ async function resolveErrors() {
 
               // If match found, we find the BetAction record and update it
               if (event) {
-                const betaction = await BetAction.findById(thisError.txErrorId.replace('error-', ''));
-
+                const betaction = await BetAction.findById(thisError.txErrorId.replace('error-', ''));                
                 betaction.homeOdds = event.homeOdds,
                   betaction.awayOdds = event.awayOdds,
                   betaction.drawOdds = event.drawOdds,
