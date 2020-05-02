@@ -36,8 +36,7 @@ export default class CardStatus extends Component {
       growth = 0.0;
     }
     const isPos = growth >= 0;
-    const dirArrow = isPos ? 'arrow-up' : 'arrow-down';
-    console.log('usd', this.props.usd, this.props.btcPrice);
+    const dirArrow = isPos ? 'arrow-up' : 'arrow-down';    
     return (
       <div className="animated fadeInUp">
         <Card className="card--market" title="Market">

@@ -10,8 +10,7 @@ import connect from 'react-redux/es/connect/connect'
 
 const CardSpreadEvent = ({eventInfo, t}) => {
   if (eventInfo) {
-    let SpreadsBets = { home: [], away: [], draw: [] };
-    console.log('eventInfo', eventInfo);
+    let SpreadsBets = { home: [], away: [], draw: [] };    
     const sortHomeBets = eventInfo.spreadHomeBets.map((event) => {
       if (event.betChoose.includes('Spreads - Home')) {
         SpreadsBets.home.push(event);

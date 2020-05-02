@@ -44,7 +44,6 @@ class Masternode extends Component {
 
 
     this.props.history.listen((location, action) => {
-      console.log(location)
       let page = location.pathname.split('/masternode/')[1];
       if (typeof page == 'undefined') page = 1;
       setTimeout(this.updatePage(page));
@@ -59,7 +58,6 @@ class Masternode extends Component {
   };
 
   updatePage = (page) => {
-    console.log('page', page);
     this.setState({ page:parseInt(page) }, this.getMNs);
   }
 

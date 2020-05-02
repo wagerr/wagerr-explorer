@@ -60,8 +60,6 @@ class LottoEvent extends Component {
         this.props.getLottoEventInfo(this.state.eventId),
         this.props.getLottoBets(this.state.eventId),
       ]).then((res) => {
-        console.log('This is the event data');
-        console.log(res);
         sortBy(res[0].events,['blockHeight']).forEach(event => {
           res[1]
             .results

@@ -54,8 +54,7 @@ class Address extends Component {
       const address = this.props.match.params.hash;
       this.props
         .getAddress({ address })
-        .then(({ balance, sent, staked, received, txs }) => {
-          console.log(balance, sent, staked, received);
+        .then(({ balance, sent, staked, received, txs }) => {          
           this.setState({
             address,
             balance,

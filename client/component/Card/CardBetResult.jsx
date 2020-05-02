@@ -64,8 +64,7 @@ const CardBetResult = ({eventInfo, data, t}) => {
     const SHomeBetAmount = SpreadsBets.home.reduce((acc, bet) => acc + bet.betValue, 0.0);
     const SAwayBetAmount = SpreadsBets.away.reduce((acc, bet) => acc + bet.betValue, 0.0);
     //const SDrawBetAmount = SpreadsBets.draw.reduce((acc, bet) => acc + bet.betValue, 0.0);
-
-    console.log('SpreadBets', SpreadsBets, SHomeBetAmount, SAwayBetAmount);
+    
     totalBet +=  SHomeBetAmount + SAwayBetAmount; //+ SDrawBetAmount;
 
     // Over / Under
