@@ -205,8 +205,7 @@ class LottoList extends Component {
         <Table
           className={'table-responsive table--for-lotto'}
           cols={cols}
-          data={this.state.events.map((event) => {
-            // console.log(event);
+          data={this.state.events.map((event) => {            
             const betAmount = event.actions.reduce((acc, action) => {
                   return acc+ action.betValue
               },0.0

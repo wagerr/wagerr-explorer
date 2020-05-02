@@ -42,7 +42,6 @@ class Statistics extends Component {
         this.props.getBetPerWeek()
       ])
       .then((res) => {
-        console.log('res', res);
         this.setState({
           coins: res[0], // 7 days at 5 min = 2016 coins
           loading: false,
@@ -59,8 +58,6 @@ class Statistics extends Component {
     } else if (this.state.loading) {
       return this.renderLoading();
     }
-
-    console.log(this.state);
 
     let tTX = 0;
     this.state.txs.forEach((tx) => {

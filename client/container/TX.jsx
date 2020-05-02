@@ -32,8 +32,7 @@ class TX extends Component {
     };
 
     this.props.history.listen((location, action) => {
-      const { params: { hash } } = this.props.match;
-      console.log('tx update', hash);
+      const { params: { hash } } = this.props.match;      
       if (!!this.state.tx.txId && hash !== this.state.tx.txId) {
         setTimeout(this.getTX());
       }

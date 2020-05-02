@@ -35,8 +35,7 @@ worker.onmessage = (ev) => {
 };
 
 const getFromWorker = (type, resolve, reject, query = null) => {
-  promises.set(type, { resolve, reject });
-  console.log('getFromWorker', query, type);
+  promises.set(type, { resolve, reject });  
   worker.postMessage({ query, type });
   return true;
 };
@@ -222,6 +221,7 @@ export const getBetUpdates = (query) => {
   });
 };
 export const getBetEventInfo = (query) => {
+  //console.log('call getBetEventInfo', query)  
   return new promise((resolve, reject) => {
     return getFromWorker('beteventinfo', resolve, reject, query);
   });

@@ -37,22 +37,27 @@ class BetEventTable extends Component {
   };
 
   componentDidMount() {
-    this.setState({
-      eventId: this.props.match.params.eventId,
-    });
-    this.getBetData();
-    this.sortBetData();
-
-  };
-
-  componentDidUpdate(prevProps) {
-    const { params: { eventId } } = this.props.match
-    if (prevProps.match.params.eventId !== eventId) {
+    if (this.props.match.params.eventId !== this.state.eventId){
+      //console.log('componentDidMount - BetEventTable', this.props.match.params.eventId);
       this.setState({
         eventId: this.props.match.params.eventId,
-      });
-      this.getBetData();
-      this.sortBetData();
+      }, this.RefreshData(3));  
+    }
+  };
+
+  RefreshData = (flag = 1) => {
+    //this.getBetData(flag);
+    this.sortBetData();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { params: { eventId } } = this.props.match
+    if (prevProps.match.eventId === eventId) return;
+    if (prevState.eventId !== eventId) {
+      //console.log('componentDidUpdate - BetEventTable', eventId);
+      this.setState({
+        eventId: this.props.match.params.eventId,
+      },this.RefreshData(2));      
     }
   };
 
@@ -75,13 +80,12 @@ class BetEventTable extends Component {
         Totals,
         Spreads,
       });      
-    });
-
-    console.log('sortBetData', MoneyLineBetData); 
+    });    
   };
 
-  getBetData = () => {
+  getBetData = (flag) => {
     this.setState({loading: true}, () => {
+      //console.log('getBetData', this.state.eventId, flag);
       Promise.all([
         this.props.getBetEventInfo(this.state.eventId),
         this.props.getBetActions(this.state.eventId),
@@ -165,13 +169,6 @@ class BetEventTable extends Component {
       {key: 'value', title: t('value')},
       {key: 'txId', title: t('txId')},
     ]
-
-    // console.log('AAAAAAAA', this.props.data.eventInfo.events)
-    // console.log('BBBBBBB', this.state.MoneyLine)
-    // console.log('CCCCCCCC', this.props.data.betSpreads)
-    // console.log('DDDDDDDDDD', this.state.Spreads)
-    // console.log('EEEEEEEE', this.props.data.betTotals)
-    // console.log('FFFFFFFF', this.state.Totals)
 
     const displayNum = (num, divider) => {
       const value = num > 0 ? `+${num / divider}` : `${num / divider}`;

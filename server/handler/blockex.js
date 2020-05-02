@@ -1629,7 +1629,7 @@ const getBetActioinsWeek = () => {
 };
 
 const getBetEventInfo = async (req, res) => {
-  const { eventId } = req.params;
+  const { eventId } = req.params;  
   let results;
   try {
     results = await BetResult.find({
@@ -1799,7 +1799,7 @@ const getBetEventInfo = async (req, res) => {
         } */
       });
     }
-
+    console.log('getBetEventInfo', eventId, events[0].eventId);
     res.json({
       events: formattedEvents,
       homeBets,

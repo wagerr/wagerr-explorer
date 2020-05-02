@@ -56,15 +56,17 @@ class BetEvent extends Component {
   };
 
   componentDidMount () {
+    console.log('componentDidMount-BetEvent', this.props.match.params.eventId)
     this.setState({
       eventId: this.props.match.params.eventId,
     });
     this.getBetData();
   };
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate (prevProps) {    
     const {params: {eventId}} = this.props.match
     if (prevProps.match.params.eventId !== eventId) {
+      console.log('componentDidUpdate-BetEvent', eventId)
       this.setState({
         eventId: this.props.match.params.eventId,
       });
@@ -94,18 +96,18 @@ class BetEvent extends Component {
                 action.odds = action.drawOdds / 10000
               }
             })
-        this.setState({
-          eventInfo: res[0], // 7 days at 5 min = 2016 coins
-          betActions: res[1].actions,
-          betSpreads: res[2].results,
-          betTotals: res[3].results,
-          loading: false,
+          this.setState({
+            eventInfo: res[0], // 7 days at 5 min = 2016 coins
+            betActions: res[1].actions,
+            betSpreads: res[2].results,
+            betTotals: res[3].results,
+            loading: false,
+          })
         })
       })
-
+      .catch((err) => console.log(err))
     })
-    .catch((err) => console.log(err))
-  })}
+  }
 
   toggle(tab) {
     if (this.state.activeTab !== tab) {

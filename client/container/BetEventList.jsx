@@ -68,8 +68,7 @@ class BetEventList extends Component {
       toggleSwitchOddsStyle: localStorage.getItem('toggleOddsStyle') != undefined? localStorage.getItem('toggleOddsStyle') == 'true' : false,
     }
 
-    this.props.history.listen((location, action) => {
-      console.log(location)
+    this.props.history.listen((location, action) => {      
       let page = location.pathname.split('/betevents/')[1];
       if (typeof page == 'undefined') page = 1;
       setTimeout(this.updatePage(page));
@@ -77,10 +76,8 @@ class BetEventList extends Component {
   };
 
   componentDidMount() {
-    const values = queryString.parse(this.props.location.search); //this.props.match ? this.props.match.params : '';
-    console.log('values',values);
-    const search = values.search ? values.search : '';
-    console.log('search',search);
+    const values = queryString.parse(this.props.location.search); //this.props.match ? this.props.match.params : '';    
+    const search = values.search ? values.search : '';    
 
     let page = this.props.match.params.page;
     if (typeof page == 'undefined') page = 1;
@@ -88,15 +85,13 @@ class BetEventList extends Component {
     this.setState({ search, page }, this.getBetEventsInfo)
   };
 
-  updatePage = (page) => {
-    console.log('page', page);
+  updatePage = (page) => {    
     this.setState({ page:parseInt(page) }, this.getBetEventsInfo);
   }
 
   componentWillReceiveProps(nextProps) {
       const nextvalues = queryString.parse(nextProps.location.search);
-      const nextsearch = nextvalues.search ? nextvalues.search : '';
-      console.log('componentWillReceiveProps',  nextsearch, this.state.search);
+      const nextsearch = nextvalues.search ? nextvalues.search : '';      
       if (nextsearch !== this.state.search) {
         this.setState({ search:nextsearch }, this.getBetEventsInfo);
       }
@@ -217,20 +212,17 @@ class BetEventList extends Component {
 
   handleToggleChange = (toggleSwitch) => {
     localStorage.setItem('toggleCompletedAndOpen', toggleSwitch);
-    this.setState({ toggleSwitch }, this.getBetEventsInfo);
-    console.log(toggleSwitch);
+    this.setState({ toggleSwitch }, this.getBetEventsInfo);    
   }
 
   handleToggleChangeOdds = (toggleSwitchOdds) => {
     localStorage.setItem('toggleOddsFee', toggleSwitchOdds);
-    this.setState({ toggleSwitchOdds });
-    console.log(toggleSwitchOdds);
+    this.setState({ toggleSwitchOdds });    
   }
 
   handleToggleChangeOddsStyle = (toggleSwitchOddsStyle) => {
     localStorage.setItem('toggleOddsStyle', toggleSwitchOddsStyle);
-    this.setState({ toggleSwitchOddsStyle });
-    console.log(toggleSwitchOddsStyle);
+    this.setState({ toggleSwitchOddsStyle });    
   }
 
   render () {
@@ -443,12 +435,10 @@ class BetEventList extends Component {
               awayOdds = awayOdds == 0 ? awayOdds : (1 + (awayOdds - 1) * 0.94).toFixed(2);              
             }
                         
-            if (this.state.toggleSwitchOddsStyle){
-              //console.log('----', homeOdds, awayOdds, drawOdds)
+            if (this.state.toggleSwitchOddsStyle){              
               homeOdds = convertToAmericanOdds(homeOdds);
               drawOdds = convertToAmericanOdds(drawOdds);
-              awayOdds = convertToAmericanOdds(awayOdds);
-              //console.log(homeOdds, awayOdds, drawOdds)
+              awayOdds = convertToAmericanOdds(awayOdds);              
             }
 
             if (event.events.length > 1) {

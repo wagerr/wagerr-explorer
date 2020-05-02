@@ -32,7 +32,6 @@ class Movement extends Component {
     };
 
     this.props.history.listen((location, action) => {
-      console.log(location)
       let page = location.pathname.split('/movement/')[1];
       if (typeof page == 'undefined') page = 1;
       setTimeout(this.updatePage(page));
@@ -40,7 +39,6 @@ class Movement extends Component {
   };
 
   componentDidMount() {
-    console.log('componentDidMount', this.props.match.params);
     let page = this.props.match.params.page;
     if (typeof page == 'undefined') page = 1;
 
@@ -48,7 +46,6 @@ class Movement extends Component {
   };
 
   updatePage = (page) => {
-    console.log('page', page);
     this.setState({ page:parseInt(page) }, this.getTXs);
   }
 
