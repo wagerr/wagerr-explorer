@@ -86,7 +86,7 @@ async function syncCoin() {
 
   let last_date = moment('1970-01-01T00:00:00.000+00:00').toDate();
 
-  if (typeof coins[0].lastResultCreatedAt != "undefined") {
+  if (coins.length > 0 && typeof coins[0].lastResultCreatedAt != "undefined") {
     console.log('abc');
     last_date = moment(coins[0].lastResultCreatedAt).toDate();
   }
@@ -157,7 +157,7 @@ async function syncCoin() {
     })
   })
 
-  if (typeof coins[0].lastResultCreatedAt != "undefined") {
+  if (coins.length > 0 && typeof coins[0].lastResultCreatedAt != "undefined") {
     totalMint = coins[0].totalMint +  totalMint;
     totalBet = coins[0].totalBet +  totalBet;
   }
