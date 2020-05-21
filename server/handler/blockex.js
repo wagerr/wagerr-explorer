@@ -1440,7 +1440,7 @@ const getDataListing = async (Model, actions, results, req, res) => {
     ];
     const total = await Model.aggregate(totalParams);
 
-    const resultParams = [
+    const resultParams = [      
       {
         $match: totalMatches,
       },
@@ -1448,13 +1448,16 @@ const getDataListing = async (Model, actions, results, req, res) => {
         $addFields: { convertedTimestamp: { $toLong: "$timeStamp" } }
       },
       {
+        $addFields: { convertedTimestamp: { $toLong: "$timeStamp" } }
+      }, 
+      {
         $group: {
           _id: '$eventId',
           events: {
             $push: '$$ROOT',
           },
         },
-      },
+      },     
       {
         $project: {
           _id: '$_id',
