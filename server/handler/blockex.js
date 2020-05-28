@@ -543,9 +543,59 @@ const getTX = async (req, res) => {
       vout = tx.vout[i];
       if (vout.address.indexOf('OP_RETURN 1|') == -1 || vout.address.indexOf('OP_RETURN 2|') == -1 || vout.address.indexOf('OP_RETURN 3|') == -1) {
         if (vout.address.indexOf('OP_RETURN') !== -1){
+          console.log('parlay-vout', vout);
           let betaction = await BetAction.findOne({txId: tx.txId});
           if (betaction){
-            console.log('betaction', betaction);
+            if (betaction.betChoose.includes('Parlay')){
+              let betactions = await BetAction.find({txId: tx.txId});
+              tx.vout[i].betdata = [];
+              for (let j = 0; j < betactions.length; j++){
+                betaction = betactions[j];           
+                const itemdata = {};     
+                if (betaction.betChoose.includes('Home')) {
+                  betaction.odds = betaction.homeOdds / 10000
+                } else if (betaction.betChoose.includes('Away')) {
+                  betaction.odds = betaction.awayOdds / 10000
+                } else {
+                  betaction.odds = betaction.drawOdds / 10000
+                }
+                if (betaction.betChoose.includes('Money Line')) {
+                  itemdata.price = betaction.odds;
+                } else if (betaction.betChoose.includes('Spreads')) {
+                  const betChoose = betaction.betChoose.replace('Spreads - ', '');
+                  itemdata.price = betChoose == 'Away' ? betaction.spreadAwayOdds / 10000 : betaction.spreadHomeOdds / 10000;
+                  itemdata.Spread = betChoose == 'Away' ? displayNum(betaction.spreadAwayPoints, 10) : displayNum(betaction.spreadHomePoints, 10);
+                } else if (betaction.betChoose.includes('Totals')) {
+                  itemdata.price = betaction.betChoose.includes('Over') ? betaction.overOdds / 10000 : betaction.underOdds / 10000
+                  itemdata.Total = (betaction.points / 10).toFixed(1)
+                };
+                itemdata.market = betaction.betChoose;
+                itemdata.eventId = betaction.eventId;
+    
+                const prices = await Price.aggregate([
+                  {$project: {diff: {$abs: {$subtract: [betaction.createdAt, '$createdAt']}}, doc: '$$ROOT'}},
+                  {$sort: {diff: 1}},
+                  {$limit: 1}
+                ]);
+    
+                itemdata.betValue = betaction.betValue;
+                itemdata.betValueUSD = 0;
+                if (prices.length > 0){
+                  itemdata.betValueUSD = prices[0].doc.usd * betaction.betValue;
+                }
+    
+    
+                betevent = await BetEvent.findOne({eventId: betaction.eventId});
+                if (betevent){
+                  itemdata.homeTeam = betevent.homeTeam
+                  itemdata.awayTeam = betevent.awayTeam
+                  itemdata.league = betevent.league
+                }
+
+                tx.vout[i].betdata.push(itemdata);
+              }
+              continue;
+            }
             if (betaction.betChoose.includes('Home')) {
               betaction.odds = betaction.homeOdds / 10000
             } else if (betaction.betChoose.includes('Away')) {

@@ -482,6 +482,89 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
     return createResponse;
   }
 
+  if (['peerlessParlayBet'].includes(transaction.txType)) {
+    console.log('-------peerlessParlayBet----------');
+    for (let legindex=0; legindex < transaction.legCounts; legindex++){
+      const eventId = transaction.betdata[legindex].eventId;
+      const outcome = transaction.betdata[legindex].outcome;
+      const _id = `${eventId}${outcome}${rpctx.get('txid')}${block.height}`;
+      const betExists = await recordCheck(BetAction, _id);    
+      if (betExists) {
+        // log(`Bet update ${_id} already on record`);
+        return betExists;
+      }
+      
+      try {
+        const { event, originalRecord } = await getEventData(block, eventId, waitTime);
+        if (rpctx.get('txid') == 'fb0aa37ebc40bf98e5d8cd39d7f8dcc7ead2f6f5ce42f6bb09afdf8b17ebca47'){
+          console.log('*************************************');        
+          console.log('event: ', event);
+          console.log('*************************************');
+        }
+          
+        const eventRecord = event || {};
+        let lastSpread;
+  
+        if ([4, 5].includes(outcome)) {
+          const spreadRecords = await Betspread.find({
+            eventId: eventId,
+            blockHeight: { $lt: block.height },
+            createdAt: { $lt: block.createdAt },
+          });
+  
+          lastSpread = spreadRecords[spreadRecords.length - 1];
+          console.log('lastSpread', lastSpread);
+        }
+  
+        try {
+          const prices = await Price.aggregate([
+            {$project: {diff: {$abs: {$subtract: [block.createdAt, '$createdAt']}}, doc: '$$ROOT'}},
+            {$sort: {diff: 1}},
+            {$limit: 1}
+          ]);
+          
+          const betValueUSD = prices[0].doc.usd * vout.value;
+          
+          
+          createResponse = await BetAction.create({
+            _id,
+            txId: rpctx.get('txid'),
+            blockHeight: block.height,
+            createdAt: block.createdAt,
+            eventId: eventId,
+            betChoose: `Parlay - ${outcomeMapping[outcome]}`,
+            betValue: vout.value,
+            betValueUSD: betValueUSD,
+            opString: JSON.stringify(transaction),
+            opCode: transaction.opCode,
+            homeOdds: eventRecord.homeOdds || 0,
+            awayOdds: eventRecord.awayOdds || 0,
+            drawOdds: eventRecord.drawOdds || 0,
+            points: eventRecord.points || 0,
+            overOdds: eventRecord.overOdds || 0,
+            underOdds: eventRecord.underOdds || 0,
+            spreadHomePoints: lastSpread ? lastSpread.homePoints : 0,
+            spreadAwayPoints: lastSpread ? lastSpread.awayPoints : 0,
+            spreadHomeOdds: lastSpread ? lastSpread.homeOdds : 0,
+            spreadAwayOdds: lastSpread ? lastSpread.awayOdds : 0,
+            transaction,
+            matched: !event ? false : true,
+          }); 
+          console.log('peerlessParlayBet - create Action', createResponse);
+          if (!event) {
+            log(`Error finding event#${eventId} data. Creating transaction error record at height ${block.height}`);
+            await createError(_id, rpctx, block, transaction, 'BetAction');
+          }
+        } catch (e) {
+          logError(e, 'creating bet action ', block.height, transaction, originalRecord, event);
+        }
+      } catch (e) {
+        logError(e, 'retrieving event data ', block.height, transaction);
+      }  
+    }
+    return true;
+  }
+
   if (['peerlessBet'].includes(transaction.txType)) {
     const _id = `${transaction.eventId}${transaction.outcome}${rpctx.get('txid')}${block.height}`;
     const betExists = await recordCheck(BetAction, _id);    
@@ -544,7 +627,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
           spreadAwayOdds: lastSpread ? lastSpread.awayOdds : 0,
           transaction,
           matched: !event ? false : true,
-        });
+        }); 
 
         if (!event) {
           log(`Error finding event#${transaction.eventId} data. Creating transaction error record at height ${block.height}`);
