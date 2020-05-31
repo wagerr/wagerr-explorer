@@ -37,6 +37,7 @@ async function deleteBetData(start, stop) {
   await BetEvent.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
   await BetResult.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
   await Betupdate.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
+  await Betspread.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
 }
 
 
@@ -421,17 +422,13 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
     const _id = `${transaction.eventId}${rpctx.get('txid')}${block.height}`;
 
     const updateExists = await recordCheck(Betupdate, _id);
-    if (transaction.eventId == "6117"){
-      console.log('updateExists', updateExists)
-    }
+
     if (updateExists) {
       return updateExists;
     }
     
     const resultExists = await recordCheck(BetResult, `${transaction.eventId}`, 'eventId');
-    if (transaction.eventId == "6117"){
-      console.log('resultExists', resultExists)
-    }
+
     if (!resultExists) {
       try {
         const event = await BetEvent.findOne({eventId: `${transaction.eventId}`}).sort({
@@ -442,9 +439,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
           event.homeOdds = `${transaction.homeOdds}`;
           event.awayOdds = `${transaction.awayOdds}`;
           event.drawOdds = `${transaction.drawOdds}`;
-          if (transaction.eventId == "6117"){
-            console.log('event', event)
-          }
+
           // if (transaction.eventId == "6118"){
           //   console.log('transaction.homeOdds', transaction.homeOdds)
           // }
@@ -483,7 +478,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
   }
 
   if (['peerlessParlayBet'].includes(transaction.txType)) {
-    console.log('-------peerlessParlayBet----------');
+    //console.log('-------peerlessParlayBet----------');
     for (let legindex=0; legindex < transaction.legCounts; legindex++){
       const eventId = transaction.betdata[legindex].eventId;
       const outcome = transaction.betdata[legindex].outcome;
@@ -496,11 +491,11 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
       
       try {
         const { event, originalRecord } = await getEventData(block, eventId, waitTime);
-        if (rpctx.get('txid') == 'fb0aa37ebc40bf98e5d8cd39d7f8dcc7ead2f6f5ce42f6bb09afdf8b17ebca47'){
-          console.log('*************************************');        
-          console.log('event: ', event);
-          console.log('*************************************');
-        }
+        // if (rpctx.get('txid') == 'fb0aa37ebc40bf98e5d8cd39d7f8dcc7ead2f6f5ce42f6bb09afdf8b17ebca47'){
+        //   console.log('*************************************');        
+        //   console.log('event: ', event);
+        //   console.log('*************************************');
+        // }
           
         const eventRecord = event || {};
         let lastSpread;
@@ -513,7 +508,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
           });
   
           lastSpread = spreadRecords[spreadRecords.length - 1];
-          console.log('lastSpread', lastSpread);
+          //console.log('lastSpread', lastSpread);
         }
   
         try {
@@ -550,7 +545,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
             transaction,
             matched: !event ? false : true,
           }); 
-          console.log('peerlessParlayBet - create Action', createResponse);
+          //console.log('peerlessParlayBet - create Action', createResponse);
           if (!event) {
             log(`Error finding event#${eventId} data. Creating transaction error record at height ${block.height}`);
             await createError(_id, rpctx, block, transaction, 'BetAction');
@@ -575,11 +570,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
     
     try {
       const { event, originalRecord } = await getEventData(block, transaction.eventId, waitTime);
-      if (rpctx.get('txid') == 'd97122769e8063b4b62b2d97c01fed5b507011c5b14e3790d8db1fb87894d042'){
-        console.log('*************************************');        
-        console.log('event: ', event);
-        console.log('*************************************');
-      }
+
         
       const eventRecord = event || {};
       let lastSpread;
@@ -592,7 +583,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         });
 
         lastSpread = spreadRecords[spreadRecords.length - 1];
-        console.log('lastSpread', lastSpread);
+        //console.log('lastSpread', lastSpread);
       }
 
       try {
@@ -644,20 +635,19 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
   }
 
   if (['peerlessSpreadsMarket'].includes(transaction.txType)) {
-    const _id = `SM${transaction.eventId}${rpctx.get('txid')}${block.height}`;
-
-    
+    const _id = `SM${transaction.eventId}${rpctx.get('txid')}${block.height}`;    
     const spreadExists = await recordCheck(Betspread, _id);
     let mhomeOdds;
     let mawayOdds;
     let matched;
-
+    
     if (spreadExists) {
       return spreadExists;
     }
     
+    console.log('peerlessSpreadsMarket', transaction);
     const { spreadPoints } = transaction;
-
+    
     const moneyLine = await Betupdate.find({
       eventId: transaction.eventId,
       createdAt: { $lte: block.createdAt },
@@ -692,8 +682,11 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
     // mhomeOdds = lastMoneyLine.opObject.get('homeOdds');
     // mawayOdds = lastMoneyLine.opObject.get('awayOdds');
 
-    const homePoints = (mhomeOdds < mawayOdds) ? -(spreadPoints) : spreadPoints;
-    const awayPoints = (mhomeOdds > mawayOdds) ? -(spreadPoints) : spreadPoints;
+    //const homePoints = (mhomeOdds < mawayOdds) ? -(spreadPoints) : spreadPoints;
+    //const awayPoints = (mhomeOdds > mawayOdds) ? -(spreadPoints) : spreadPoints;
+
+    const homePoints = spreadPoints;
+    const awayPoints = -(spreadPoints);
 
     try {
       createResponse = await Betspread.create({
