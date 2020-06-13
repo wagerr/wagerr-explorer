@@ -52,7 +52,7 @@ async function syncBlocks(start, stop, clean = false) {
     const hash = await rpc.call('getblockhash', [height]);
     const rpcblock = await rpc.call('getblock', [hash]);
 
-    if (rpcblock.confirmations < 1) break; 
+    if (rpcblock.confirmations < 5) break; 
     const block = new Block({
       hash,
       height,
