@@ -132,6 +132,7 @@ class BetEventList extends Component {
       this.debounce = setTimeout(() => {
         getMethod(params)
           .then(({ data, pages }) => {
+            console.log(data, pages);
             if (this.debounce) {              
               data.map(item => {
                 let totalBet = 0;

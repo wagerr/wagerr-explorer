@@ -62,9 +62,9 @@ export default class CardTxOutOpCodeRow extends Component {
   render() {    
     let txAddress;
 
-    if (typeof this.props.tx.betdata !== "undefined"){
+    if (typeof this.props.tx.legs !== "undefined"){
       let totalPrice = 1;
-      for (const item of this.props.tx.betdata){
+      for (const item of this.props.tx.legs){
         totalPrice = totalPrice * item.price;
       }
 
@@ -83,7 +83,7 @@ export default class CardTxOutOpCodeRow extends Component {
           </div>  
           <div className="card--block" style={{fontWeight:'bold'}}>
             {
-              this.props.tx.betdata.map((betItem, legIndex) =>       
+              this.props.tx.legs.map((betItem, legIndex) =>       
                   <div className="card--block" key={betItem.eventId}>
                   <div className="card__row">        
                     <span style={{fontWeight: 'bold'}}>
@@ -133,7 +133,7 @@ export default class CardTxOutOpCodeRow extends Component {
             </div>  
             <div className="card__row">
                <span className="card__label">BetValue</span>
-               <span className="card__result">{ this.props.tx.betdata[0].betValue } WGR / { this.props.tx.betdata[0].betValueUSD.toFixed(3) } USD</span>
+               <span className="card__result">{ this.props.tx.betValue } WGR / { this.props.tx.betValueUSD.toFixed(3) } USD</span>
             </div>  
           </div>
 
@@ -146,7 +146,7 @@ export default class CardTxOutOpCodeRow extends Component {
             <BetModal buttonLabel={txAddress = this.props.tx.address} className="test" address={this.props.tx.address} />
           </div>        
           {
-            (typeof this.props.tx.eventId != "undefined" && typeof this.props.tx.betdata == "undefined") && <div className="card--block" style={{padding:'5px 10px'}}>
+            (typeof this.props.tx.eventId != "undefined" && typeof this.props.tx.legs == "undefined") && <div className="card--block" style={{padding:'5px 10px'}}>
             <div className="card__row">
               <span className="card__label">Event ID</span>
               <span className="card__result">{ this.props.tx.eventId }</span>
