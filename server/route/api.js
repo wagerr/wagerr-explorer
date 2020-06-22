@@ -38,6 +38,7 @@ router.get('/bet/totals', blockex.getBetTotals);
 router.get('/bet/moneyline', blockex.getBetUpdates);
 router.get('/bet/event/:eventId/info', blockex.getBetEventInfo);
 router.get('/bet/events/info', blockex.getBetEventsInfo);
+router.get('/bet/parlaybets', blockex.getBetParlayBetsInfo);
 router.get('/bet/stats', blockex.getBetStats);
 router.get('/bet/totalUSD', blockex.getBettotalUSD);
 router.get('/bet/team-events', blockex.getTeamEventInfo);

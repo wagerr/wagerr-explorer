@@ -6,6 +6,7 @@ export const genMenuData = (t) => {
     {label: t('masternode'), icon: '/img/masternodes.svg', href: '/masternode'},
     // {label: t('governance'), icon: '/img/governance.svg', href: '/governance'},
     {label: t('Sports Betting'), icon: '/img/betevent.svg', href: '/betevents'},
+    {label: t('Parlay Betting'), icon: '/img/betevent.svg', href: '/betparlays'},
     {label: t('Chain Games'), icon: '/img/betevent.svg', href: '/lottos'},
     {label: t('Get Started'), icon: '/img/monitor.svg', href: 'https://wagerr.com/en/get-wallet'},
     {label: t('connections'), icon: '/img/connections.svg', href: '/peer'},
