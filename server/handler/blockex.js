@@ -622,7 +622,7 @@ const getTX = async (req, res) => {
               };
               leg_item.eventId = leg.eventId;
               leg_item.homeTeam = leg.homeTeam;
-              leg_item.awayTeam = leg.homeTeam;
+              leg_item.awayTeam = leg.awayTeam;
               leg_item.league = leg.league;
               leg_item.market = leg.market;
               leg_item.outcome = leg.outcome;
@@ -2414,6 +2414,47 @@ const getBetStats = async (req, res) => {
   }
 }
 
+
+const getBetInfoByPayout = async (req, res) => {
+  const payoutTx = req.query.payoutTx ? req.query.payoutTx:null;
+  const nOut = req.query.nOut ? req.query.nOut:null;
+  if (!payoutTx || !nOut){
+    res.status(500).send("Param is missed");
+  }
+
+  try {
+    const params = [
+      {txHash: payoutTx, nOut: parseInt(nOut)}
+    ];
+    const info = await rpc.call('getpayoutinfo', [params]);
+    if (info && info.length > 0 && info[0].found){
+      const payoutInfo = info[0].payoutInfo;
+      const betinfo = await rpc.call('getbetbytxid', [payoutInfo.betTxHash]);
+      if (betinfo && betinfo.length > 0){
+        res.json(betinfo[0]);
+        return;
+      }
+        
+      // const betaction = await BetAction.findOne({txId: payoutInfo.betTxHash});
+      // if (betaction){
+      //   res.json(betaction);
+      //   return;
+      // }
+
+      // const betparlay = await BetParlay.findOne({txId: payoutInfo.betTxHash});
+      // if (betparlay){
+      //   res.json(betparlay);
+      //   return;
+      // }
+    }    
+    res.json([]);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message || err);
+  }
+
+}
+
 const getTeamEventInfo = async (req, res) => {
   const team = req.query.team ? req.query.team:null;
   const limit = req.query.limit? (req.query.limit > 200? 200: parseInt(req.query.limit)) : 200;
@@ -2669,5 +2710,6 @@ module.exports = {
   getBetStats,
   getTeamEventInfo,
   getBettotalUSD,
-  getBetHotEvents
+  getBetHotEvents,
+  getBetInfoByPayout
 };

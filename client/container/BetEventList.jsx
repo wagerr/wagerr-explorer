@@ -22,6 +22,7 @@ import numeral from 'numeral'
 import { compose } from 'redux'
 import { translate } from 'react-i18next'
 import queryString from 'query-string'
+import SearchEventBar from '../component/SearchEventBar';
 
 const convertToAmericanOdds = (odds) => {
   
@@ -226,6 +227,10 @@ class BetEventList extends Component {
     this.setState({ toggleSwitchOddsStyle });    
   }
 
+  handleEventSearch = (term) => {
+    this.props.onEventSearch(term);
+  }
+  
   render () {
     const { props } = this;
 
@@ -287,6 +292,11 @@ class BetEventList extends Component {
     return (
       <div>
         <div className="row">
+          <div class="col-12">
+            <SearchEventBar
+                className="d-none d-md-block mb-3"
+                onSearch={ this.handleEventSearch } />
+          </div>
           <div class="col-4">
             <div style={{alignItems:'center',marginTop:'20px'}}>
               <span>Completed / Opened</span>
