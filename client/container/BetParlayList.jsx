@@ -22,7 +22,7 @@ import numeral from 'numeral'
 import { compose } from 'redux'
 import { translate } from 'react-i18next'
 import queryString from 'query-string'
-
+import SearchParlayBetBar from '../component/SearchParlayBetBar';
 const convertToAmericanOdds = (odds) => {
   
   odds = parseFloat(odds);
@@ -57,7 +57,7 @@ class BetParlayList extends Component {
       size: 50,
       filterBy: 'All',
       search: '',
-      toggleSwitch: localStorage.getItem('toggleCompletedAndOpen') != undefined? localStorage.getItem('toggleCompletedAndOpen') == 'true' : true,          
+      toggleSwitch: localStorage.getItem('toggleCompletedAndOpen') != undefined? localStorage.getItem('toggleCompletedAndOpen') == 'true' : false,          
       toggleSwitchOdds: localStorage.getItem('toggleOddsFee') != undefined? localStorage.getItem('toggleOddsFee') == 'true' : false,      
       toggleSwitchOddsStyle: localStorage.getItem('toggleOddsStyle') != undefined? localStorage.getItem('toggleOddsStyle') == 'true' : false,
     }
@@ -76,6 +76,8 @@ class BetParlayList extends Component {
     let page = this.props.match.params.page;
     if (typeof page == 'undefined') page = 1;
 
+    const toggleSwitch = localStorage.getItem('toggleCompletedAndOpen') != undefined? localStorage.getItem('toggleCompletedAndOpen') == 'true' : false;       
+    console.log('componentDidMount', toggleSwitch);
     this.setState({ search, page }, this.getParlayBetsInfo)
   };
 
@@ -104,8 +106,7 @@ class BetParlayList extends Component {
         clearTimeout(this.debounce)
       }
 
-      let getMethod = this.props.getParlayBetsInfo;
-
+      let getMethod = this.props.getParlayBetsInfo;      
       const params = {
         limit: this.state.size,
         skip: (this.state.page - 1) * this.state.size,
@@ -119,11 +120,9 @@ class BetParlayList extends Component {
 
       this.debounce = setTimeout(() => {
         getMethod(params)
-          .then(({ data, pages }) => {
-            console.log(data, pages);
+          .then(({ data, pages }) => {            
             if (this.debounce) {              
-              data.map(item => {
-                console.log(item);
+              data.map(item => {                
                 let totalBet = item.betValue;
                 let totalMint = 0;
                 if (item.completed){
@@ -164,8 +163,9 @@ class BetParlayList extends Component {
   handleSize = size => this.setState({size, page: 1})
 
   handleToggleChange = (toggleSwitch) => {
+    console.log("handleToggleChange", toggleSwitch);
     localStorage.setItem('toggleCompletedAndOpen', toggleSwitch);
-    this.setState({ toggleSwitch }, this.props.history.push('/betparlays'));         
+    this.setState({toggleSwitch, page:1}, this.getParlayBetsInfo);        
   }
 
   handleToggleChangeOdds = (toggleSwitchOdds) => {
@@ -178,6 +178,10 @@ class BetParlayList extends Component {
     this.setState({ toggleSwitchOddsStyle });    
   }
 
+  handleParlayBetSearch = (term) => {
+    this.props.onParlaySearch(term);
+  }
+  
   render () {
     const { props } = this;
 
@@ -195,7 +199,7 @@ class BetParlayList extends Component {
       { key: 'betStatus', title: t('betStatus') },
       { key: 'seeDetail', title: t('detail') },
     ];
-      
+    console.log('toggle Switch render:', this.state.toggleSwitch) 
     
     if (!!this.state.error) {
       return this.renderError(this.state.error)
@@ -214,6 +218,12 @@ class BetParlayList extends Component {
     return (
       <div>
         <div className="row">
+          <div class="col-12">
+            <SearchParlayBetBar
+                className="d-none d-md-block mb-3"
+                onSearch={ this.handleParlayBetSearch } 
+            />
+          </div>
           <div class="col-4">
             <div style={{alignItems:'center',marginTop:'20px'}}>
               <span>Completed / Opened</span>

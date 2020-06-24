@@ -39,8 +39,6 @@ import Loading from './component/Loading';
 import Menu from './component/Menu';
 import Notification from './component/Notification';
 import SearchBar from './component/SearchBar';
-import SearchEventBar from './component/SearchEventBar';
-import SearchParlayBetBar from './component/SearchParlayBetBar';
 class App extends Component {
   static propTypes = {
     // Dispatch
@@ -56,6 +54,7 @@ class App extends Component {
       init: true,
       limit: 10,
       searches: [],
+      page_type: 0
     };
     this.timer = { coins: null, txs: null };
   };
@@ -166,7 +165,7 @@ class App extends Component {
         <Loading />
       );
     }
-
+    console.log('href', document.location.href.includes('/betparlays'));
     return (
       <HashRouter>
         <div className="page-wrapper">
@@ -181,15 +180,6 @@ class App extends Component {
               <SearchBar
                 className="d-none d-md-block mb-3"
                 onSearch={ this.handleSearch } />
-              {!document.location.href.includes('/betparlays') && <SearchEventBar
-                className="d-none d-md-block mb-3"
-                onSearch={ this.handleEventSearch } 
-              /> }
-
-              {document.location.href.includes('/betparlays') && <SearchParlayBetBar
-                className="d-none d-md-block mb-3"
-                onSearch={ this.handleParlayBetSearch } 
-              /> }
 
               <div className="content__inner-wrapper">
                 <Switch>
@@ -202,10 +192,10 @@ class App extends Component {
                   <Route exact path="/governance" component={ Governance } />
                   <Route exact path="/masternode" component={ Masternode } />
                   <Route exact path="/masternode/:page" component={ Masternode } />
-                  <Route exact path="/betevents" component={ BetEventList } />                  
-                  <Route exact path="/betevents/:page" component={ BetEventList } />
-                  <Route exact path="/betparlays" component={ BetParlayList } />
-                  <Route exact path="/betparlays/:page" component={ BetParlayList } />
+                  <Route exact path="/betevents" render={(props) => <BetEventList {...props} onEventSearch={(term) => this.handleEventSearch(term)} />}/>                 
+                  <Route exact path="/betevents/:page" render={(props) => <BetEventList {...props} onEventSearch={(term) => this.handleEventSearch(term)} />}/>
+                  <Route exact path="/betparlays" render={(props) => <BetParlayList {...props} onParlaySearch={(term) => this.handleParlayBetSearch(term)} />}/> 
+                  <Route exact path="/betparlays/:page" render={(props) => <BetParlayList {...props} onParlaySearch={(term) => this.handleParlayBetSearch(term)} />}/> 
                   <Route exact path="/lottos" component={ LottoList } />
                   <Route exact path="/movement" component={ Movement } />
                   <Route exact path="/movement/:page" component={ Movement } />
