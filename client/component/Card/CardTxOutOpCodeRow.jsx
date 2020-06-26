@@ -89,11 +89,11 @@ export default class CardTxOutOpCodeRow extends Component {
                     <span style={{fontWeight: 'bold'}}>
                       Leg {legIndex+1}
                     </span>
-                  </div>
+                  </div> 
                   <div className="card--block" key={betItem.eventId} style={{padding:'0px 15px'}}>
                   <div className="card__row">
                     <span className="card__label">Event ID</span>
-                    <span className="card__result">{ betItem.eventId }</span>
+                    <span className="card__result"><Link to={`/bet/event/${encodeURIComponent(betItem.eventId)}`}>{ betItem.eventId }</Link></span>
                   </div>  
                   <div className="card__row">
                     <span className="card__label">League</span>
@@ -149,7 +149,7 @@ export default class CardTxOutOpCodeRow extends Component {
             (typeof this.props.tx.eventId != "undefined" && typeof this.props.tx.legs == "undefined") && <div className="card--block" style={{padding:'5px 10px'}}>
             <div className="card__row">
               <span className="card__label">Event ID</span>
-              <span className="card__result">{ this.props.tx.eventId }</span>
+              <span className="card__result"><Link to={`/bet/event/${encodeURIComponent(this.props.tx.eventId)}`}>{ this.props.tx.eventId }</Link></span>
             </div>  
             <div className="card__row">
               <span className="card__label">League</span>
