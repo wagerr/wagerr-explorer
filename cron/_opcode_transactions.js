@@ -716,15 +716,14 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
 
   if (['peerlessBet'].includes(transaction.txType)) {
     const _id = `${transaction.eventId}${transaction.outcome}${rpctx.get('txid')}${block.height}`;
-    const betExists = await recordCheck(BetAction, _id);    
+    const betExists = await recordCheck(BetAction, _id);        
     if (betExists) {
       // log(`Bet update ${_id} already on record`);
       return betExists;
     }
-    
+  
     try {
-      const { event, originalRecord } = await getEventData(block, transaction.eventId, waitTime);
-
+      const { event, originalRecord } = await getEventData(block, transaction.eventId, waitTime);      
         
       const eventRecord = event || {};
       let lastSpread;
@@ -748,7 +747,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         ]);
         
         const betValueUSD = prices[0].doc.usd * vout.value;
-        
+        console.log('peerlessBet', lastSpread);
         createResponse = await BetAction.create({
           _id,
           txId: rpctx.get('txid'),
