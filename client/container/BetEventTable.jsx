@@ -221,11 +221,12 @@ class BetEventTable extends Component {
             <Table
               cols={topTwoCols}
               data={sortBy(this.props.data.betSpreads.map((action) => {
+                console.log('betSpreads', action);
                 return {
                   ...action,
                   createdAt: date24Format(action.createdAt),
                   homeOdds: action.homeOdds / 10000,
-                  spread: `${displayNum(action.homePoints, 1)}/${displayNum(action.awayPoints, 1)}`,
+                  spread: `${displayNum(action.homePoints, 10)}/${displayNum(action.awayPoints, 10)}`,
                   awayOdds: action.awayOdds / 10000,
                   txId: (
                     <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>

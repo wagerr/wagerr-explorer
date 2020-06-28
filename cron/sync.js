@@ -30,11 +30,11 @@ async function exec() {
       log('[3] RUNNING ERRORS CHECK WORKER..');
       return errorUpdates();
     })
-    .then(() => {
-      log('------------------------------');
-      log('[4]CHECKING UNMATCHED SPREADS...');
-      return unmatchedSpreads();
-    })
+    // .then(() => {
+    //   log('------------------------------');
+    //   log('[4]CHECKING UNMATCHED SPREADS...');
+    //   return unmatchedSpreads();
+    // })
     .then(() => {
       log('------------------------------');
       log('SYNC FUNCTIONS COMPLETED');

@@ -271,44 +271,44 @@ async function verifyBetOdds(record, rtype) {
       }
 
       // Updates betspreads data
-      const betspreads = await Betspread.find({
-        eventId: `${eventId}`        
-      });
+      // const betspreads = await Betspread.find({
+      //   eventId: `${eventId}`        
+      // });
 
-      if (betspreads.length > 0) {
-        for (let y = 0; y < betspreads.length; y += 1) {
-          const thisSpread = betspreads[y];
-          const res = await rpc.call('getbetbytxid', [thisSpread.txId]);  
+      // if (betspreads.length > 0) {
+      //   for (let y = 0; y < betspreads.length; y += 1) {
+      //     const thisSpread = betspreads[y];
+      //     const res = await rpc.call('getbetbytxid', [thisSpread.txId]);  
 
-          if (res && res.length > 0){     
-            let updated = false;            
-            const betinfo = res[0].legs[0];
-            if (thisSpread.mhomeOdds != betinfo.lockedEvent.homeOdds) {
-              updated = true;
-              thisSpread.mhomeOdds = betinfo.lockedEvent.homeOdds;
-            }
+      //     if (res && res.length > 0){     
+      //       let updated = false;            
+      //       const betinfo = res[0].legs[0];
+      //       if (thisSpread.mhomeOdds != betinfo.lockedEvent.homeOdds) {
+      //         updated = true;
+      //         thisSpread.mhomeOdds = betinfo.lockedEvent.homeOdds;
+      //       }
   
-            if (thisSpread.mawayOdds != betinfo.lockedEvent.awayOdds) {
-              updated = true;
-              thisSpread.mawayOdds = betinfo.lockedEvent.awayOdds;
-            }
+      //       if (thisSpread.mawayOdds != betinfo.lockedEvent.awayOdds) {
+      //         updated = true;
+      //         thisSpread.mawayOdds = betinfo.lockedEvent.awayOdds;
+      //       }
   
-            const spreadPoints = betinfo.lockedEvent.spreadPoints;
+      //       const spreadPoints = betinfo.lockedEvent.spreadPoints;
   
-            const homePoints = spreadPoints;
-            const awayPoints = -spreadPoints;
+      //       const homePoints = spreadPoints;
+      //       const awayPoints = -spreadPoints;
   
-            thisSpread.matched = true;
-            thisSpread.homePoints = homePoints;
-            thisSpread.awayPoints = awayPoints;
+      //       thisSpread.matched = true;
+      //       thisSpread.homePoints = homePoints;
+      //       thisSpread.awayPoints = awayPoints;
   
   
-            if (updated) {
-              await thisSpread.save()
-            }
-          }
-        }
-      }
+      //       if (updated) {
+      //         await thisSpread.save()
+      //       }
+      //     }
+      //   }
+      // }
 
 
       const betparlays = await BetParlay.find({
@@ -379,17 +379,17 @@ async function verifySpreadActions(record, rtype) {
 
   try {
     if (rtype === 'update' || rtype === 'create') {
-      const updates = await Betspread.find({
-        eventId: `${eventId}`,
-        createdAt: { $gt: record.createdAt },
-      });
+      // const updates = await Betspread.find({
+      //   eventId: `${eventId}`,
+      //   createdAt: { $gt: record.createdAt },
+      // });
 
-      const nextUpdate = updates[0];
-      const queryParams = { $gte: record.createdAt };
+      // const nextUpdate = updates[0];
+      // const queryParams = { $gte: record.createdAt };
 
-      if (nextUpdate) {
-        queryParams['$lt'] = nextUpdate.createdAt;
-      }
+      // if (nextUpdate) {
+      //   queryParams['$lt'] = nextUpdate.createdAt;
+      // }
 
       const actions = await BetAction.find({
         eventId: `${eventId}`,
@@ -783,35 +783,63 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         ]);
         
         const betValueUSD = prices[0].doc.usd * vout.value;
-        console.log('peerlessBet', lastSpread);
-        createResponse = await BetAction.create({
-          _id,
-          txId: rpctx.get('txid'),
-          blockHeight: block.height,
-          createdAt: block.createdAt,
-          eventId: transaction.eventId,
-          betChoose: outcomeMapping[transaction.outcome],
-          betValue: vout.value,
-          betValueUSD: betValueUSD,
-          opString: JSON.stringify(transaction),
-          opCode: transaction.opCode,
-          homeOdds: eventRecord.homeOdds || 0,
-          awayOdds: eventRecord.awayOdds || 0,
-          drawOdds: eventRecord.drawOdds || 0,
-          points: eventRecord.points || 0,
-          overOdds: eventRecord.overOdds || 0,
-          underOdds: eventRecord.underOdds || 0,
-          spreadHomePoints: lastSpread ? lastSpread.homePoints : 0,
-          spreadAwayPoints: lastSpread ? lastSpread.awayPoints : 0,
-          spreadHomeOdds: lastSpread ? lastSpread.homeOdds : 0,
-          spreadAwayOdds: lastSpread ? lastSpread.awayOdds : 0,
-          transaction,
-          matched: !event ? false : true,
-        }); 
 
-        if (!event) {
-          log(`Error finding event#${transaction.eventId} data. Creating transaction error record at height ${block.height}`);
-          await createError(_id, rpctx, block, transaction, 'BetAction');
+        const res = await rpc.call('getbetbytxid', [rpctx.get('txid')]);  
+        if (res && res.length > 0){              
+          const leg = res[0].legs[0];
+          console.log('peerlessbet', leg);
+
+          // eventId: leg['event-id'],  
+          // outcome: leg.outcome,  
+          // market: `${outcomeMapping[leg.outcome]}`,
+          // resultType: leg.legResultType,  
+          // eventResultType: leg.lockedEvent.eventResultType, 
+          // homeOdds: leg.lockedEvent.homeOdds, 
+          // drawOdds: leg.lockedEvent.drawOdds,
+          // awayOdds: leg.lockedEvent.awayOdds,
+          // spreadHomePoints: leg.lockedEvent.spreadPoints,                        
+          // spreadAwayPoints: -leg.lockedEvent.spreadPoints,                        
+          // spreadHomeOdds: leg.lockedEvent.spreadHomeOdds,
+          // spreadAwayOdds: leg.lockedEvent.spreadAwayOdds,
+          // totalPoints: leg.lockedEvent.totalPoints,
+          // totalOverOdds: leg.lockedEvent.totalOverOdds,
+          // totalUnderOdds: leg.lockedEvent.totalUnderOdds,
+          // startingTime: leg.lockedEvent.starting,
+          // homeTeam: leg.lockedEvent.home,
+          // awayTeam: leg.lockedEvent.away,
+          // league: leg.lockedEvent.tournament,
+          // homeScore: leg.lockedEvent.homeScore,
+          // awayScore: leg.lockedEvent.awayScore
+
+          createResponse = await BetAction.create({
+            _id,
+            txId: rpctx.get('txid'),
+            blockHeight: block.height,
+            createdAt: block.createdAt,
+            eventId: transaction.eventId,
+            betChoose: outcomeMapping[transaction.outcome],
+            betValue: vout.value,
+            betValueUSD: betValueUSD,
+            opString: JSON.stringify(transaction),
+            opCode: transaction.opCode,
+            homeOdds: leg.lockedEvent.homeOdds || 0,
+            awayOdds: leg.lockedEvent.awayOdds || 0,
+            drawOdds: leg.lockedEvent.drawOdds || 0,
+            points: eventRecord.points || 0,
+            overOdds: eventRecord.overOdds || 0,
+            underOdds: eventRecord.underOdds || 0,
+            spreadHomePoints: leg.lockedEvent.spreadPoints || 0,
+            spreadAwayPoints: -leg.lockedEvent.spreadPoints || 0,
+            spreadHomeOdds: leg.lockedEvent.spreadHomeOdds || 0,
+            spreadAwayOdds: leg.lockedEvent.spreadAwayOdds || 0,
+            transaction,
+            matched: !event ? false : true,
+          }); 
+  
+          if (!event) {
+            log(`Error finding event#${transaction.eventId} data. Creating transaction error record at height ${block.height}`);
+            await createError(_id, rpctx, block, transaction, 'BetAction');
+          }
         }
       } catch (e) {
         logError(e, 'creating bet action ', block.height, transaction, originalRecord, event);
@@ -982,21 +1010,25 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
       if (betactions && betactions.length > 0){
         for (const action of betactions){
           if (action != null){  
-            action.completed = betinfo.completed == 'yes'? true: false;
-            action.betResultType = betinfo.betResultType;
-            action.payout = betinfo.payout;  
-            action.payoutTxId = betinfo.payoutTxHash;                      
-            action.payoutNout = betinfo.payoutTxOut;   
-            console.log('action saving', action)
-            try {
-              await action.save()       
-            } catch (e_save){
-              console.log(e_save);
-            }
+            const res = await rpc.call('getbetbytxid', [betItem.txId]);  
+            if (res){                  
+              const betinfo = res[0];
+              action.completed = betinfo.completed == 'yes' ? true : false;
+              action.betResultType = betinfo.betResultType;
+              action.payout = betinfo.payout != 'pending' ? betinfo.payout : 0;
+              action.payoutTxId = betinfo.payoutTxHash;
+              action.payoutNout = betinfo.payoutTxOut != 'pending' ? betinfo.payoutTxOut : 0;
+              console.log('action saving', action)
+              try {
+                await action.save()
+              } catch (e_save) {
+                console.log(e_save);
+              }
+            }            
           } 
         }
       }
-     
+      
       const betparlays = await BetParlay.find({"legs.eventId": `${transaction.eventId}`});      
       if (betparlays && betparlays.length > 0){
         try {                                 
@@ -1008,9 +1040,9 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
                   if (betinfo.legs.length > 1){                                                            
                     betItem.completed = betinfo.completed == 'yes'? true: false;
                     betItem.betResultType = betinfo.betResultType;
-                    betItem.payout = betinfo.payout;  
+                    betItem.payout = betinfo.payout != 'pending' ? betinfo.payout : 0;  
                     betItem.payoutTxId = betinfo.payoutTxHash;                      
-                    betItem.payoutNout = betinfo.payoutTxOut;  
+                    betItem.payoutNout = betinfo.payoutTxOut != 'pending' ? betinfo.payoutTxOut : 0;
                     const legs = [];
                     for (const leg of betinfo.legs){                    
                       const item = {
