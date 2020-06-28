@@ -126,10 +126,10 @@ class BetParlayList extends Component {
                 let totalBet = item.betValue;
                 let totalMint = 0;
                 if (item.completed){
-                  totalMint = item.payout;
+                  totalMint = item.payout * 97 / 94;
                 }
-                item.totalBet = item.totalBet;
-                item.totalBet = item.totalMint;
+                item.totalBet = totalBet;
+                item.totalMint = totalMint;
               })
               this.setState({ parlaybets: data, pages, loading: false })
             }
@@ -319,6 +319,7 @@ class BetParlayList extends Component {
               }
             }
             const supplyChange = numeral(bet.totalMint - bet.totalBet).format('0,0.00');
+            console.log(supplyChange, bet.totalMint, bet.totalMint)
             return {              
               betTime: betTime,
               txId: (
