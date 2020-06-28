@@ -393,45 +393,81 @@ async function verifySpreadActions(record, rtype) {
 
       const actions = await BetAction.find({
         eventId: `${eventId}`,
-        createdAt: queryParams,
+        //createdAt: queryParams,
         'transaction.outcome': { $in: [4, 5] },
       });
 
       if (actions.length > 0) {
-        for (let x = 0; x < actions.length; x += 1) {
+        for (let x = 0; x < actions.length; x += 1) {                    
           const thisAction = actions[x];
-          let updated = false;
 
-          if (thisAction.spreadHomeOdds != record.homeOdds) {
-            updated = true;
-            thisAction.homeOdds = record.homeOdds;
-          }
-
-          if (thisAction.spreadAwayOdds != record.awayOdds) {
-            updated = true;
-            thisAction.spreadAwayOdds = record.awayOdds;
-          }
-
-          if (thisAction.spreadHomePoints != record.homePoints) {
-            updated = true;
-            thisAction.spreadHomePoints = record.homePoints;
-          }
-
-
-          if (thisAction.spreadAwayPoints != record.awayPoints) {
-            updated = true;
-            thisAction.spreadAwayPoints = record.awayPoints;
-          }
-
-          if (updated) {
-            await thisAction.save()
-            if (rtype == 'create') {
-              // log('Event create update');
+          const res = await rpc.call('getbetbytxid', [thisAction.txId]);  
+          if (res && res.length > 0){    
+            const betinfo = res[0].legs[0];
+            let updated = false;
+  
+            if (thisAction.spreadHomeOdds != betinfo.lockedEvent.spreadHomeOdds) {
+              updated = true;
+              thisAction.spreadHomeOdds = betinfo.lockedEvent.spreadHomeOdds;
             }
-            // log(`Spread data for event#${thisAction.eventId} action was updated`);
-          }
+  
+            if (thisAction.spreadAwayOdds != betinfo.lockedEvent.spreadAwayOdds) {
+              updated = true;
+              thisAction.spreadAwayOdds = betinfo.lockedEvent.spreadAwayOdds;
+            }
+  
+            if (thisAction.spreadHomePoints != betinfo.lockedEvent.spreadHomePoints) {
+              updated = true;
+              thisAction.spreadHomePoints = betinfo.lockedEvent.spreadHomePoints;
+            }
+
+            if (thisAction.spreadAwayPoints != betinfo.lockedEvent.spreadAwayPoints) {
+              updated = true;
+              thisAction.spreadAwayPoints = betinfo.lockedEvent.spreadAwayPoints;
+            }
+  
+            if (updated) {
+              await thisAction.save()
+            }
+          }           
         }
       }
+      
+      // if (actions.length > 0) {
+      //   for (let x = 0; x < actions.length; x += 1) {
+      //     const thisAction = actions[x];
+      //     let updated = false;
+
+      //     if (thisAction.spreadHomeOdds != record.homeOdds) {
+      //       updated = true;
+      //       thisAction.spreadHomeOdds = record.homeOdds;
+      //     }
+
+      //     if (thisAction.spreadAwayOdds != record.awayOdds) {
+      //       updated = true;
+      //       thisAction.spreadAwayOdds = record.awayOdds;
+      //     }
+
+      //     if (thisAction.spreadHomePoints != record.homePoints) {
+      //       updated = true;
+      //       thisAction.spreadHomePoints = record.homePoints;
+      //     }
+
+
+      //     if (thisAction.spreadAwayPoints != record.awayPoints) {
+      //       updated = true;
+      //       thisAction.spreadAwayPoints = record.awayPoints;
+      //     }
+
+      //     if (updated) {
+      //       await thisAction.save()
+      //       if (rtype == 'create') {
+      //         // log('Event create update');
+      //       }
+      //       // log(`Spread data for event#${thisAction.eventId} action was updated`);
+      //     }
+      //   }
+      // }
 
       return record;
     }
