@@ -1780,6 +1780,7 @@ const getBetEventInfo = async (req, res) => {
       visibility: true,
       betChoose: { $in: homeTeamNames },
     });
+    
     const awayBets = await BetAction.find({
       eventId,
       visibility: true,

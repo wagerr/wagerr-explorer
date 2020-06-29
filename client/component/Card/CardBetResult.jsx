@@ -39,7 +39,12 @@ const CardBetResult = ({eventInfo, data, t}) => {
     const MLAwayBetAmount = MoneyLineBets.away.reduce((acc, bet) => acc + bet.betValue, 0.0);
     const MLDrawBetAmount = MoneyLineBets.draw.reduce((acc, bet) => acc + bet.betValue, 0.0);
 
+    const MLHomeBetPayout = MoneyLineBets.home.reduce((acc, bet) => acc + bet.payout, 0.0);
+    const MLAwayBetPayout = MoneyLineBets.away.reduce((acc, bet) => acc + bet.payout, 0.0);
+    const MLDrawBetPayout = MoneyLineBets.draw.reduce((acc, bet) => acc + bet.payout, 0.0);
+    
     totalBet += MLHomeBetAmount + MLAwayBetAmount + MLDrawBetAmount;
+    totalMint += MLHomeBetPayout + MLAwayBetPayout + MLDrawBetPayout;
 
     // Spreads
     let SpreadsBets = { home: [], away: [], draw: [] };
@@ -63,9 +68,13 @@ const CardBetResult = ({eventInfo, data, t}) => {
 
     const SHomeBetAmount = SpreadsBets.home.reduce((acc, bet) => acc + bet.betValue, 0.0);
     const SAwayBetAmount = SpreadsBets.away.reduce((acc, bet) => acc + bet.betValue, 0.0);
+
+    const SHomeBetPayout = SpreadsBets.home.reduce((acc, bet) => acc + bet.payout, 0.0);
+    const SAwayBetPayout = SpreadsBets.away.reduce((acc, bet) => acc + bet.payout, 0.0);
     //const SDrawBetAmount = SpreadsBets.draw.reduce((acc, bet) => acc + bet.betValue, 0.0);
     
     totalBet +=  SHomeBetAmount + SAwayBetAmount; //+ SDrawBetAmount;
+    totalMint += SHomeBetPayout + SAwayBetPayout;
 
     // Over / Under
     let over = [];
@@ -82,22 +91,27 @@ const CardBetResult = ({eventInfo, data, t}) => {
     const THomeBetAmount = over.reduce((acc, bet) => acc + bet.betValue, 0.0);
     const TAwayBetAmount = under.reduce((acc, bet) => acc + bet.betValue, 0.0);
     
+    const THomeBetPayout = over.reduce((acc, bet) => acc + bet.payout, 0.0);
+    const TAwayBetPayout = under.reduce((acc, bet) => acc + bet.payout, 0.0);
+
+    console.log('eventInfo', eventInfo);
+    console.log('data', data);
     totalBet += THomeBetAmount + TAwayBetAmount;
+    totalMint += THomeBetPayout + TAwayBetPayout;
 
     // End of calculations here
   
-    if (eventInfo.results.length > 0) {
-      eventInfo.results.forEach(result =>{
-        let startIndex = 2
-        if (result.payoutTx.vout[1].address === result.payoutTx.vout[2].address) {
-          startIndex = 3
-        }
-        for (let i = startIndex; i < result.payoutTx.vout.length - 1; i++) {
-          totalMint += result.payoutTx.vout[i].value
-        }
-      })
-    }
-
+    // if (eventInfo.results.length > 0) {
+    //   eventInfo.results.forEach(result =>{
+    //     let startIndex = 2
+    //     if (result.payoutTx.vout[1].address === result.payoutTx.vout[2].address) {
+    //       startIndex = 3
+    //     }
+    //     for (let i = startIndex; i < result.payoutTx.vout.length - 1; i++) {
+    //       totalMint += result.payoutTx.vout[i].value
+    //     }
+    //   })
+    // }    
     const supplyChange = totalMint - totalBet
     const resultDisplay = (resultData) => {
       const { transaction } = resultData;

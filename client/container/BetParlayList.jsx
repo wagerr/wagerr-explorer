@@ -125,11 +125,18 @@ class BetParlayList extends Component {
               data.map(item => {                
                 let totalBet = item.betValue;
                 let totalMint = 0;
+                item.supplyChange = 0;
                 if (item.completed){
-                  totalMint = item.payout * 97 / 94;
+                  totalMint = item.payout;
                 }
-                item.totalBet = totalBet;
-                item.totalMint = totalMint;
+                if (item.betResultType == 'lose'){
+                  item.supplyChange = -totalBet;  
+                } else if (item.betResultType == 'refund'){
+                  item.supplyChange = 0;  
+                } else {
+                  item.supplyChange = (totalMint - totalBet) * 97 / 94;    
+                }    
+                console.log('item', item);
               })
               this.setState({ parlaybets: data, pages, loading: false })
             }
@@ -318,8 +325,7 @@ class BetParlayList extends Component {
                 legs[j] = '';
               }
             }
-            const supplyChange = numeral(bet.totalMint - bet.totalBet).format('0,0.00');
-            console.log(supplyChange, bet.totalMint, bet.totalMint)
+            const supplyChange = numeral(bet.supplyChange).format('0,0.00');            
             return {              
               betTime: betTime,
               txId: (
@@ -332,7 +338,7 @@ class BetParlayList extends Component {
               leg3: <span className={`badge badge-${legs[2] == 'lose' ? 'danger' : legs[2] == 'pending'  ?  'info' : legs[2] == 'win' ? 'success' : 'warning'}`}>{legs[2]}</span>,
               leg4: <span className={`badge badge-${legs[3] == 'lose' ? 'danger' : legs[3] == 'pending'  ?  'info' : legs[3] == 'win' ? 'success' : 'warning'}`}>{legs[3]}</span>,
               leg5: <span className={`badge badge-${legs[4] == 'lose' ? 'danger' : legs[4] == 'pending'  ?  'info' : legs[4] == 'win' ? 'success' : 'warning'}`}>{legs[4]}</span>,
-              supplyChange: <span className={`badge badge-${bet.totalMint - bet.totalBet < 0 ? 'danger' : 'success'}`}>
+              supplyChange: <span className={`badge badge-${bet.supplyChange < 0 ? 'danger' : 'success'}`}>
                 {supplyChange}
               </span>,
               betAmount: <span className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,

@@ -345,8 +345,8 @@ async function verifyBetOdds(record, rtype) {
                   homeTeam: leg.lockedEvent.home,
                   awayTeam: leg.lockedEvent.away,
                   league: leg.lockedEvent.tournament,
-                  homeScore: leg.lockedEvent.homeScore,
-                  awayScore: leg.lockedEvent.awayScore
+                  homeScore: leg.lockedEvent.homeScore != 'undefined' ? leg.lockedEvent.homeScore : 0,
+                  awayScore: leg.lockedEvent.awayScore != 'undefined' ? leg.lockedEvent.awayScore : 0
                 };                      
                 legs.push(item);
               }
@@ -1006,13 +1006,15 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         logError(e, 'saving status update', block.height, transaction);
       }
 
-      const betactions = BetAction.findOne({eventId: `${transaction.eventId}`});
-      if (betactions && betactions.length > 0){
-        for (const action of betactions){
-          if (action != null){  
-            const res = await rpc.call('getbetbytxid', [betItem.txId]);  
+      const actions = await BetAction.find({eventId: `${transaction.eventId}`});
+      console.log('here', actions)
+      if (actions && actions.length > 0){        
+        for (const action of actions){        
+          if (action != null){              
+            const res = await rpc.call('getbetbytxid', [action.txId]);  
             if (res){                  
               const betinfo = res[0];
+              console.log('betinfo:', betinfo);
               action.completed = betinfo.completed == 'yes' ? true : false;
               action.betResultType = betinfo.betResultType;
               action.payout = betinfo.payout != 'pending' ? betinfo.payout : 0;
@@ -1065,8 +1067,8 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
                         homeTeam: leg.lockedEvent.home,
                         awayTeam: leg.lockedEvent.away,
                         league: leg.lockedEvent.tournament,
-                        homeScore: leg.lockedEvent.homeScore,
-                        awayScore: leg.lockedEvent.awayScore
+                        homeScore: leg.lockedEvent.homeScore != "undefined" ? leg.lockedEvent.homeScore : 0,
+                        awayScore: leg.lockedEvent.awayScore != "undefined" ? leg.lockedEvent.awayScore : 0
                       };                      
                       legs.push(item);
                     }                    
