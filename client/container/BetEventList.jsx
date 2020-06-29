@@ -139,21 +139,22 @@ class BetEventList extends Component {
                 let totalBet = 0;
                 let totalMint = 0;
                 item.actions.forEach(action => totalBet += action.betValue)
-                if (item.results) {
-                  item.results.forEach(result => {
-                    let startIndex = 2
-                    if (
-                      result.payoutTx.vout[1] &&
-                      result.payoutTx.vout[2] &&
-                      result.payoutTx.vout[1].address === result.payoutTx.vout[2].address
-                    ) {
-                      startIndex = 3
-                    }
-                    for (let i = startIndex; i < result.payoutTx.vout.length - 1; i++) {
-                      totalMint += result.payoutTx.vout[i].value
-                    }
-                  })
-                }
+                item.actions.forEach(action => totalMint += action.payout)
+                // if (item.results) {
+                //   item.results.forEach(result => {
+                //     let startIndex = 2
+                //     if (
+                //       result.payoutTx.vout[1] &&
+                //       result.payoutTx.vout[2] &&
+                //       result.payoutTx.vout[1].address === result.payoutTx.vout[2].address
+                //     ) {
+                //       startIndex = 3
+                //     }
+                //     for (let i = startIndex; i < result.payoutTx.vout.length - 1; i++) {
+                //       totalMint += result.payoutTx.vout[i].value
+                //     }
+                //   })
+                // }
                 item.totalBet = totalBet
                 item.totalMint = totalMint
                 item.events.sort(function(a,b){
