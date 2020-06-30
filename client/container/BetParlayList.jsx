@@ -136,7 +136,7 @@ class BetParlayList extends Component {
                 } else {
                   item.supplyChange = (totalMint - totalBet) * 97 / 94;    
                 }    
-                console.log('item', item);
+                //console.log('item', item);
               })
               this.setState({ parlaybets: data, pages, loading: false })
             }
@@ -193,7 +193,7 @@ class BetParlayList extends Component {
     const { props } = this;
 
     const { t } = props;
-    const cols = [
+    let cols = [
       { key: 'betTime', title: t('BetTime') },
       { key: 'txId', title: t('TxId') },
       { key: 'leg1', title: t('Leg1') },
@@ -206,7 +206,10 @@ class BetParlayList extends Component {
       { key: 'betStatus', title: t('betStatus') },
       { key: 'seeDetail', title: t('detail') },
     ];
-    console.log('toggle Switch render:', this.state.toggleSwitch) 
+    
+    if (this.state.toggleSwitch){
+      delete cols[7];      
+    }    
     
     if (!!this.state.error) {
       return this.renderError(this.state.error)
@@ -225,13 +228,13 @@ class BetParlayList extends Component {
     return (
       <div>
         <div className="row">
-          <div class="col-12">
+          <div className="col-12">
             <SearchParlayBetBar
                 className="d-none d-md-block mb-3"
                 onSearch={ this.handleParlayBetSearch } 
             />
           </div>
-          <div class="col-4">
+          <div className="col-4">
             <div style={{alignItems:'center',marginTop:'20px'}}>
               <span>Completed / Opened</span>
             </div>

@@ -578,7 +578,8 @@ const getTX = async (req, res) => {
             // if (prices.length > 0){
             //   tx.vout[i].betValueUSD = prices[0].doc.usd * betaction.betValue;
             // }
-
+            tx.vout[i].betResultType = betaction.betResultType;
+            tx.vout[i].completed = betaction.completed;
             tx.vout[i].payout = betaction.payout;
             tx.vout[i].payoutTxId = betaction.payoutTxId;
             tx.vout[i].payoutNout = betaction.payoutNout;
@@ -598,6 +599,8 @@ const getTX = async (req, res) => {
             tx.vout[i].payoutNout = betparlay.payoutNout;
             tx.vout[i].betValueUSD = betparlay.betValueUSD;
             tx.vout[i].betValue = betparlay.betValue;
+            tx.vout[i].completed = betparlay.completed;
+            tx.vout[i].betResultType = betparlay.betResultType;
             tx.vout[i].isParlay = 1;
             tx.vout[i].market = 'Parlay';
             const legs = [];
@@ -1780,7 +1783,7 @@ const getBetEventInfo = async (req, res) => {
       visibility: true,
       betChoose: { $in: homeTeamNames },
     });
-    
+
     const awayBets = await BetAction.find({
       eventId,
       visibility: true,

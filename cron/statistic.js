@@ -10,6 +10,7 @@ const Statistic = require('../model/statistic')
 const TX = require('../model/tx')
 const BetResult = require('../model/betresult')
 const BetAction = require('../model/betaction')
+const BetParlay = require('../model/betparlay')
 
 
 console.log('Running statistic cron job');
@@ -29,7 +30,7 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
     let totalBet = 0
 
     const actionData = await BetAction.aggregate([
-      {$match: {blockHeight: { $lte: height , $gte: 290000}}},
+      {$match: {blockHeight: { $lte: height , $gte: start}}},
       { $group: { _id: 'totalBet', total: { $sum: '$betValue' } } }
     ]);
 
@@ -37,8 +38,17 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
       totalBet = actionData[0].total
     }
 
+    const parlayData = await BetParlay.aggregate([
+      {$match: {blockHeight: { $lte: height , $gte: start}}},
+      { $group: { _id: 'totalBet', total: { $sum: '$betValue' } } }
+    ]);
+
+    if (parlayData.length!==0){
+      totalBet = parlayData[0].total
+    }
+
     const resultData = await BetResult.aggregate([
-      {$match: {blockHeight: {$lte: height, $gte: 290000}}},
+      {$match: {blockHeight: {$lte: height, $gte: start}}},
     ]);
 
     let totalMint = 0
@@ -93,7 +103,7 @@ async function update () {
     const betResult = await BetResult.findOne().sort({blockHeight: -1})
 
     let clean = true // Always clear for now.
-    let dbStatisticHeight =  statistic && statistic.blockHeight ? statistic.blockHeight : 290000
+    let dbStatisticHeight =  statistic && statistic.blockHeight ? statistic.blockHeight : 10000
 
     let startHeight = dbStatisticHeight
 
@@ -119,7 +129,7 @@ async function update () {
     }
     // If starting from genesis skip.
     else if (startHeight === 0) {
-      startHeight = 290000
+      startHeight = 10000
     }
 
     locker.lock(type)
