@@ -117,6 +117,14 @@ async function syncCoin() {
     },
     {
       $lookup: {
+        from: 'betparlays',
+        localField: '_id',
+        foreignField: 'eventId',
+        as: 'parlays'
+      }
+    },
+    {
+      $lookup: {
         from: 'betactions',
         localField: '_id',
         foreignField: 'eventId',
@@ -139,6 +147,9 @@ async function syncCoin() {
  
   queryResults.forEach(queryResult => {
     queryResult.actions.forEach(action => {
+      totalBet += action.betValue
+    })
+    queryResult.parlays.forEach(action => {
       totalBet += action.betValue
     })
     queryResult.results.forEach(result => {

@@ -16,52 +16,9 @@ export default class CardTxOutOpCodeRow extends Component {
     super(props);
   };
 
-  renderParlayBetItem(betItem) {
-    return (
-    <div className="card--block" style={{padding:'5px 20px'}}>
-      <div className="card__row">
-      <span className="card__label">Event ID</span>
-      <span className="card__result">{ betItem.eventId }</span>
-    </div>  
-    <div className="card__row">
-      <span className="card__label">League</span>
-      <span className="card__result">{ betItem.league }</span>
-    </div>  
-    <div className="card__row">
-      <span className="card__label">Home</span>
-      <span className="card__result">{ betItem.homeTeam }</span>
-    </div> 
-    <div className="card__row">
-      <span className="card__label">Away</span>
-      <span className="card__result">{ betItem.awayTeam }</span>
-    </div> 
-    <div className="card__row">
-      <span className="card__label">Market</span>
-      <span className="card__result">{ betItem.market }</span>
-    </div>  
-    {(typeof betItem.Total != "undefined") && <div className="card__row">
-      <span className="card__label">Total</span>
-      <span className="card__result">{ betItem.Total}</span>
-    </div>}
-    {(typeof betItem.Spread != "undefined") && <div className="card__row">
-      <span className="card__label">Spread</span>
-      <span className="card__result">{ betItem.Spread}</span>
-    </div>}
-    <div className="card__row">
-      <span className="card__label">Price</span>
-      <span className="card__result">{ betItem.price }</span>
-    </div>  
-    <div className="card__row">
-      <span className="card__label">BetValue</span>
-      <span className="card__result">{ betItem.betValue } WGR / { betItem.betValueUSD.toFixed(3) } USD</span>
-    </div>           
-  </div>   
-    )
-  }
-
   render() {    
     let txAddress;
-
+    console.log('tx', this.props.tx);
     if (typeof this.props.tx.legs !== "undefined"){
       let totalPrice = 1;
       for (const item of this.props.tx.legs){
@@ -122,7 +79,7 @@ export default class CardTxOutOpCodeRow extends Component {
                   <div className="card__row">
                     <span className="card__label">Price</span>
                     <span className="card__result">{ betItem.price }</span>
-                  </div>           
+                  </div>     
                   </div>
                 </div>
               )
@@ -135,8 +92,19 @@ export default class CardTxOutOpCodeRow extends Component {
                <span className="card__label">BetValue</span>
                <span className="card__result">{ this.props.tx.betValue } WGR / { this.props.tx.betValueUSD.toFixed(3) } USD</span>
             </div>  
+            {(this.props.tx.completed == true) && <div className="card__row">
+              <span className="card__label">Result</span>
+              <span className="card__result">{this.props.tx.betResultType}</span>
+            </div>}
+            {(this.props.tx.completed == true && this.props.tx.betResultType == "win") && <div className="card__row">
+              <span className="card__label">Payout</span>
+              <span className="card__result">{this.props.tx.payout}</span>
+            </div>}
+            {(this.props.tx.completed == true && this.props.tx.betResultType == "win") && <div className="card__row">
+              <span className="card__label">Payout Tx</span>
+              <span className="card__result"><a href={`/#/tx/${encodeURIComponent(this.props.tx.payoutTxId)}`}>{ this.props.tx.payoutTxId.substr(0, 10) + '...'}</a></span>
+            </div>}   
           </div>
-
         </div>
       )
     } else {
@@ -182,7 +150,19 @@ export default class CardTxOutOpCodeRow extends Component {
             <div className="card__row">
               <span className="card__label">BetValue</span>
               <span className="card__result">{ this.props.tx.betValue } WGR / { this.props.tx.betValueUSD.toFixed(3) } USD</span>
-            </div>           
+            </div>  
+            {(this.props.tx.completed == true) && <div className="card__row">
+              <span className="card__label">Result</span>
+              <span className="card__result">{this.props.tx.betResultType}</span>
+            </div>}
+            {(this.props.tx.completed == true && this.props.tx.betResultType == "win") && <div className="card__row">
+              <span className="card__label">Payout</span>
+              <span className="card__result">{this.props.tx.payout}</span>
+            </div>}
+            {(this.props.tx.completed == true && this.props.tx.betResultType == "win") && <div className="card__row">
+              <span className="card__label">Payout Tx</span>
+              <span className="card__result"><a href={`/#/tx/${encodeURIComponent(this.props.tx.payoutTxId)}`}>{ this.props.tx.payoutTxId.substr(0, 10) + '...'}</a></span>
+            </div>}           
           </div>        
           }        
         </div>      
