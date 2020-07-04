@@ -590,6 +590,11 @@ const getTX = async (req, res) => {
               tx.vout[i].awayTeam = betevent.awayTeam
               tx.vout[i].league = betevent.league
             }
+
+            if (betaction.completed){
+              tx.vout[i].homeScore = betaction.homeScore
+              tx.vout[i].awayScore = betaction.awayScore
+            }
             continue;
           }          
           let betparlay = await BetParlay.findOne({txId: tx.txId});
@@ -631,6 +636,10 @@ const getTX = async (req, res) => {
               leg_item.outcome = leg.outcome;
               leg_item.betResult = leg.resultType;
               leg_item.eventResult = leg.eventResultType;
+              if (betparlay.completed){
+                leg_item.homeScore = leg.homeScore;
+                leg_item.awayScore = leg.awayScore;
+              }
               legs.push(leg_item);
             }  
             tx.vout[i].legs = legs;          
