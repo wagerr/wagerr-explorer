@@ -1020,6 +1020,11 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
               action.payout = betinfo.payout != 'pending' ? betinfo.payout : 0;
               action.payoutTxId = betinfo.payoutTxHash;
               action.payoutNout = betinfo.payoutTxOut != 'pending' ? betinfo.payoutTxOut : 0;
+              if (betinfo.legs.length > 0){
+                const leg = betinfo.legs[0]
+                action.homeScore = leg.lockedEvent.homeScore != "undefined" ? leg.lockedEvent.homeScore : 0,
+                action.awayScore = leg.lockedEvent.awayScore != "undefined" ? leg.lockedEvent.awayScore : 0
+              }              
               console.log('action saving', action)
               try {
                 await action.save()

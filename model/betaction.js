@@ -35,6 +35,8 @@ const BetAction = mongoose.model('BetAction', new mongoose.Schema({
   payout: { required: false, type: Number },
   payoutTxId: { required: false, type: String },
   payoutNout: { required: false, type: Number },
+  homeScore: {  required: false, type: Number },
+  awayScore: {  required: false, type: Number },
 }, { versionKey: false }), 'betactions');
 
 module.exports =  BetAction;
