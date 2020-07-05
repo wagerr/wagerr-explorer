@@ -582,7 +582,7 @@ const getTX = async (req, res) => {
             tx.vout[i].completed = betaction.completed;
             tx.vout[i].payout = betaction.payout;
             tx.vout[i].payoutTxId = betaction.payoutTxId;
-            tx.vout[i].payoutNout = betaction.payoutNout;
+            tx.vout[i].payoutNout = parseInt(betaction.payoutNout);
 
             betevent = await BetEvent.findOne({eventId: betaction.eventId});
             if (betevent){
@@ -601,7 +601,7 @@ const getTX = async (req, res) => {
           if (betparlay){
             tx.vout[i].payout = betparlay.payout;
             tx.vout[i].payoutTxId = betparlay.payoutTxId;
-            tx.vout[i].payoutNout = betparlay.payoutNout;
+            tx.vout[i].payoutNout = parseInt(betparlay.payoutNout);
             tx.vout[i].betValueUSD = betparlay.betValueUSD;
             tx.vout[i].betValue = betparlay.betValue;
             tx.vout[i].completed = betparlay.completed;
