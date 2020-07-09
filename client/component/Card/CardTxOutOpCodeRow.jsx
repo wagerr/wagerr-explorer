@@ -96,6 +96,10 @@ export default class CardTxOutOpCodeRow extends Component {
               <span className="card__label">Result</span>
               <span className="card__result">{this.props.tx.betResultType}</span>
             </div>}
+            {(this.props.tx.completed == false) && <div className="card__row">
+              <span className="card__label">Result</span>
+              <span className="card__result">Pending</span>
+            </div>}
             {(this.props.tx.completed == true && this.props.tx.betResultType == "win") && <div className="card__row">
               <span className="card__label">Payout</span>
               <span className="card__result">{this.props.tx.payout}</span>
@@ -154,6 +158,10 @@ export default class CardTxOutOpCodeRow extends Component {
             {(this.props.tx.completed == true) && <div className="card__row">
               <span className="card__label">Result</span>
               <span className="card__result">{this.props.tx.betResultType}</span>
+            </div>}
+            {(this.props.tx.completed == false) && <div className="card__row">
+              <span className="card__label">Result</span>
+              <span className="card__result">Pending</span>
             </div>}
             {(this.props.tx.completed == true && this.props.tx.betResultType == "win") && <div className="card__row">
               <span className="card__label">Payout</span>
