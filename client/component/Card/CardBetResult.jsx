@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import numeral from 'numeral'
 import { compose } from 'redux'
 import { translate } from 'react-i18next'
-
+import { OpcodeChangedBlock } from '../../constants';
 const CardBetResult = ({eventInfo, data, t}) => {
   if (eventInfo.results.length !== 0) {
     const results = eventInfo.results
@@ -114,31 +114,35 @@ const CardBetResult = ({eventInfo, data, t}) => {
     // }    
     const supplyChange = totalMint - totalBet
     const resultDisplay = (resultData) => {
-      const { transaction } = resultData;
-      // return `${resultData.result}  | \n\n Home ${transaction.homeScore / 10} Away ${transaction.awayScore / 10}`;
+      const { transaction } = resultData;      
+      let scoreDivider = 10
+      if (transaction.blockHeight > OpcodeChangedBlock){
+        scoreDivider = 100
+      }
       let resultSection;
       if (transaction.homeScore > transaction.awayScore) {
+        console.log('card betresult transaction:', transaction);
         resultSection = (
           <span>
             {`${resultData.result}`} <br />
-            <strong>{`Home ${transaction.homeScore / 10} `}</strong>
-            {`Away ${transaction.awayScore / 10}`}
+            <strong>{`Home ${transaction.homeScore / scoreDivider} `}</strong>
+            {`Away ${transaction.awayScore / scoreDivider}`}
           </span>
         );
       } else if (transaction.homeScore < transaction.awayScore) {
         resultSection = (
           <span>
             {resultData.result} <br />
-            {`Home ${transaction.homeScore / 10} `}
-            <strong>{`Away ${transaction.awayScore / 10}`}</strong>
+            {`Home ${transaction.homeScore / scoreDivider} `}
+            <strong>{`Away ${transaction.awayScore / scoreDivider}`}</strong>
           </span>
         );
       } else {
         resultSection = (
           <span>
             {resultData.result} <br />
-            {`Home ${transaction.homeScore / 10} `}
-            {`Away ${transaction.awayScore / 10}`}
+            {`Home ${transaction.homeScore / scoreDivider} `}
+            {`Away ${transaction.awayScore / scoreDivider}`}
           </span>
         );
       }

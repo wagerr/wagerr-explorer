@@ -58,7 +58,8 @@ function hexToString(hexx) {
 }
 
 function getOPCode(voutData) {
-  const { type, asm } = voutData.scriptPubKey;
+  //console.log('getOPCode:', voutData.scriptPubKey);
+  const { type, asm, hex } = voutData.scriptPubKey;
 
   if (!type || type !== 'nulldata') {
     return { error: false, message: 'Incorrect type', type };
@@ -68,8 +69,12 @@ function getOPCode(voutData) {
     return { error: false, message: 'Missing asm data', asm };
   }
 
-  const hexValue = asm.replace('OP_RETURN ', '');
-
+  if (!hex) {
+    return { error: false, message: 'Missing hex data', hex };
+  }
+  //hexValue.substr(currentPos, 2);
+  //const hexValue = asm.replace('OP_RETURN ', '');
+  const hexValue = hex.substr(4);
   return hexValue;
 }
 
@@ -83,7 +88,7 @@ function validateVoutData(voutData) {
   };
 
   if (hexValue.error) return returnError(hexValue);
-
+  //console.log('hexvalue',hexValue);
   const opData = isOPCode(hexValue);
 
   if (!opData.valid) {

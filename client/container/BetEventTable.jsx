@@ -4,7 +4,7 @@ import numeral from 'numeral';
 import { date24Format } from '../../lib/date';
 import Table from '../component/Table';
 import { Link } from 'react-router-dom';
-
+import { OpcodeChangedBlock } from '../constants';
 // actions
 import PropTypes from 'prop-types';
 import Actions, { getBetEventInfo, getBetTotals } from '../core/Actions';
@@ -237,14 +237,13 @@ class BetEventTable extends Component {
             <Table
               cols={bottomTwoCols}
               data={sortBy(this.state.Spreads.map((action) => {
-                const betChoose = action.betChoose.replace('Spreads - ', '');
-                const spreadNum = Math.abs(parseInt(action.spreadAwayPoints, 10)) / 10;
-
+                const betChoose = action.betChoose.replace('Spreads - ', '');                
+                const divider = action.blockHeight > OpcodeChangedBlock ? 100 : 10;
                 return {
                   ...action,
                   createdAt: date24Format(action.createdAt),
                   bet: betChoose, // `${action.homeOdds / 10000}/${action.awayOdds / 10000}`,
-                  spread: betChoose == 'Away' ? displayNum(action.spreadAwayPoints, 10) : displayNum(action.spreadHomePoints, 10),
+                  spread: betChoose == 'Away' ? displayNum(action.spreadAwayPoints, divider) : displayNum(action.spreadHomePoints, divider),
                   odds: betChoose == 'Away' ? action.spreadAwayOdds / 10000 : action.spreadHomeOdds / 10000,
                   value: action.betValue
                     ? (<span
@@ -263,11 +262,12 @@ class BetEventTable extends Component {
           <Table
             cols={topThreeCols}
             data={sortBy(this.props.data.betTotals.map((action) => {
+              const divider = action.blockHeight > OpcodeChangedBlock ? 100 : 10;
               return {
                 ...action,
                 createdAt: date24Format(action.createdAt),
                 overOdds: action.overOdds / 10000,
-                overUnder: action.points / 10,
+                overUnder: action.points / divider,
                 underOdds: action.underOdds / 10000,
                 txId: (
                   <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
@@ -278,12 +278,13 @@ class BetEventTable extends Component {
           <Table
             cols={bottomThreeCols}
             data={sortBy(this.state.Totals.map((action) => {
+              const divider = action.blockHeight > OpcodeChangedBlock ? 100 : 10;
               return {
                 ...action,
                 createdAt: date24Format(action.createdAt),
                 bet: action.betChoose.replace('Money Line - ', ''),
                 // overUnder: ((action.homeOdds / action.awayOdds + action.homeOdds) * 100).toFixed(1),
-                overUnder: (action.points / 10).toFixed(1),
+                overUnder: (action.points / divider).toFixed(2),
                 odds: action.betChoose.includes('Over') ? action.overOdds / 10000 : action.underOdds / 10000,
                 value: action.betValue
                   ? (<span className="badge badge-danger">-{numeral(action.betValue).format('0,0.00000000')} WGR</span>) : '',
