@@ -33,6 +33,7 @@ const Bettotal = require('../../model/bettotal');
 const LottoEvent = require('../../model/lottoevent');
 const LottoBet = require('../../model/lottobet');
 const LottoResult = require('../../model/lottoresult');
+const OpcodeChangedBlock = 62080
 
 // util functions
 
@@ -561,7 +562,8 @@ const getTX = async (req, res) => {
               tx.vout[i].Spread = betChoose == 'Away' ? displayNum(betaction.spreadAwayPoints, 10) : displayNum(betaction.spreadHomePoints, 10);
             } else if (betaction.betChoose.includes('Totals')) {
               tx.vout[i].price = betaction.betChoose.includes('Over') ? betaction.overOdds / 10000 : betaction.underOdds / 10000
-              tx.vout[i].Total = (betaction.points / 10).toFixed(1)
+              const divider = betaction.blockHeight > OpcodeChangedBlock ? 100 : 10;
+              tx.vout[i].Total = (betaction.points / divider).toFixed(1)
             };
             tx.vout[i].market = betaction.betChoose;
             tx.vout[i].eventId = betaction.eventId;
@@ -626,7 +628,8 @@ const getTX = async (req, res) => {
                 leg_item.Spread = betChoose == 'Away' ? displayNum(leg.spreadAwayPoints, 10) : displayNum(leg.spreadHomePoints, 10);
               } else if (leg.market.includes('Totals')) {
                 leg_item.price = leg.market.includes('Over') ? leg.totalOverOdds / 10000 : leg.totalUnderOdds / 10000
-                leg_item.Total = (leg.totalPoints / 10).toFixed(1)
+                const divider = betparlay.blockHeight > OpcodeChangedBlock ? 100 : 10;
+                leg_item.Total = (leg.totalPoints / divider).toFixed(1)
               };
               leg_item.eventId = leg.eventId;
               leg_item.homeTeam = leg.homeTeam;
@@ -953,7 +956,8 @@ const getBetHotEvents = async (req, res) => {
         }).sort({createdAt: 1});
 
         if (bettotals.length > 0){
-          event.Latest_Total_Number = bettotals[bettotals.length-1].points / 10;
+          const divider = bettotals[bettotals.length-1].blockHeight > OpcodeChangedBlock ? 100 : 10
+          event.Latest_Total_Number = bettotals[bettotals.length-1].points / divider;
           event.Latest_Total_Price = {
             over: bettotals[bettotals.length-1].overOdds / 10000,
             under: bettotals[bettotals.length-1].underOdds / 10000,
@@ -1159,7 +1163,8 @@ const getBetOpenEvents = async (req, res) => {
         }).sort({createdAt: 1});
 
         if (betspreads.length > 0){
-          event.Latest_Spread_Number = `${displayNum(betspreads[betspreads.length-1].homePoints, 10)}/${displayNum(betspreads[betspreads.length-1].awayPoints, 10)}`;
+          const divider = betspreads[betspreads.length-1].blockHeight > OpcodeChangedBlock ? 100 : 10;
+          event.Latest_Spread_Number = `${displayNum(betspreads[betspreads.length-1].homePoints, divider)}/${displayNum(betspreads[betspreads.length-1].awayPoints, divider)}`;
           event.Latest_Spread_Price = {
             home: betspreads[betspreads.length-1].homeOdds / 10000,
             away: betspreads[betspreads.length-1].awayOdds / 10000,
@@ -1172,7 +1177,8 @@ const getBetOpenEvents = async (req, res) => {
         }).sort({createdAt: 1});
 
         if (bettotals.length > 0){
-          event.Latest_Total_Number = bettotals[bettotals.length-1].points / 10;
+          const divider = bettotals[bettotals.length-1].blockHeight > OpcodeChangedBlock ? 100 : 10;
+          event.Latest_Total_Number = bettotals[bettotals.length-1].points / divider;
           event.Latest_Total_Price = {
             over: bettotals[bettotals.length-1].overOdds / 10000,
             under: bettotals[bettotals.length-1].underOdds / 10000,
@@ -2559,9 +2565,10 @@ const getTeamEventInfo = async (req, res) => {
       }).sort({createdAt: 1});
 
       if (betspreads.length > 0){
+        const divider = betspreads[betspreads.length-1].blockHeight > OpcodeChangedBlock ? 100 : 10;
         event.spread = {
-          homePoints: `${displayNum(betspreads[betspreads.length-1].homePoints, 10)}`,
-          awayPoints: `${displayNum(betspreads[betspreads.length-1].awayPoints, 10)}`,
+          homePoints: `${displayNum(betspreads[betspreads.length-1].homePoints, divider)}`,
+          awayPoints: `${displayNum(betspreads[betspreads.length-1].awayPoints, divider)}`,
           home: betspreads[betspreads.length-1].homeOdds / 10000,
           away: betspreads[betspreads.length-1].awayOdds / 10000,
         }
@@ -2573,8 +2580,9 @@ const getTeamEventInfo = async (req, res) => {
       }).sort({createdAt: 1});
 
       if (bettotals.length > 0){
+        const divider = bettotals[bettotals.length-1].blockHeight > OpcodeChangedBlock ? 100 : 10;
         event.totals = {
-          totalsLine: bettotals[bettotals.length-1].points / 10,
+          totalsLine: bettotals[bettotals.length-1].points / divider,
           overOdds: bettotals[bettotals.length-1].overOdds / 10000,
           underOdds: bettotals[bettotals.length-1].underOdds / 10000,
         }
@@ -2587,9 +2595,10 @@ const getTeamEventInfo = async (req, res) => {
 
       if (betresults.length > 0){
         const result = JSON.parse(JSON.stringify(betresults[betresults.length-1]))
+        const divider = result.blockHeight > OpcodeChangedBlock ? 100 : 10;
         event.result = {
-          homePoints: result.transaction.homeScore/10,
-          awayPoints: result.transaction.awayScore/10
+          homePoints: result.transaction.homeScore/divider,
+          awayPoints: result.transaction.awayScore/divider
         }
       }
       formattedEvents.push(event);
