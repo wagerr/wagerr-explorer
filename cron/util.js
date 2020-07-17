@@ -115,11 +115,13 @@ async function vout(rpctx, blockHeight) {
     rpctx.vout.forEach((vout) => {
       var address;
       if (vout.scriptPubKey.type == 'nulldata') {
+        //console.log(vout.scriptPubKey);
         if(_.startsWith(vout.scriptPubKey.asm, 'OP_RETURN 317c') || _.startsWith(vout.scriptPubKey.asm, 'OP_RETURN 327c')
          || _.startsWith(vout.scriptPubKey.asm, 'OP_RETURN 337c')){
           address = "OP_RETURN "+hexToString(vout.scriptPubKey.asm.substring(10))
-        }else{
-          address = "OP_RETURN "+vout.scriptPubKey.asm.substring(10)
+        }else{          
+          address = "OP_RETURN "+ vout.scriptPubKey.hex.substr(4)  //vout.scriptPubKey.asm.substring(10) 
+          //console.log(address);
         }
       }else if (vout.scriptPubKey.type == 'zerocoinmint') {
         address = 'ZERO_COIN_MINT'
