@@ -547,6 +547,7 @@ const getTX = async (req, res) => {
         if (vout.address.indexOf('OP_RETURN') !== -1){          
           let betaction = await BetAction.findOne({txId: tx.txId});
           if (betaction){
+            const divider = betaction.blockHeight > OpcodeChangedBlock ? 100 : 10;
             if (betaction.betChoose.includes('Home')) {
               betaction.odds = betaction.homeOdds / 10000
             } else if (betaction.betChoose.includes('Away')) {
@@ -559,10 +560,10 @@ const getTX = async (req, res) => {
             } else if (betaction.betChoose.includes('Spreads')) {
               const betChoose = betaction.betChoose.replace('Spreads - ', '');
               tx.vout[i].price = betChoose == 'Away' ? betaction.spreadAwayOdds / 10000 : betaction.spreadHomeOdds / 10000;
-              tx.vout[i].Spread = betChoose == 'Away' ? displayNum(betaction.spreadAwayPoints, 10) : displayNum(betaction.spreadHomePoints, 10);
+              tx.vout[i].Spread = betChoose == 'Away' ? displayNum(betaction.spreadAwayPoints, divider) : displayNum(betaction.spreadHomePoints, divider);
             } else if (betaction.betChoose.includes('Totals')) {
               tx.vout[i].price = betaction.betChoose.includes('Over') ? betaction.overOdds / 10000 : betaction.underOdds / 10000
-              const divider = betaction.blockHeight > OpcodeChangedBlock ? 100 : 10;
+              
               tx.vout[i].Total = (betaction.points / divider).toFixed(1)
             };
             tx.vout[i].market = betaction.betChoose;
@@ -601,6 +602,7 @@ const getTX = async (req, res) => {
           }          
           let betparlay = await BetParlay.findOne({txId: tx.txId});
           if (betparlay){
+            const divider = betparlay.blockHeight > OpcodeChangedBlock ? 100 : 10;
             tx.vout[i].payout = betparlay.payout;
             tx.vout[i].payoutTxId = betparlay.payoutTxId;
             tx.vout[i].payoutNout = parseInt(betparlay.payoutNout);
@@ -625,11 +627,10 @@ const getTX = async (req, res) => {
               } else if (leg.market.includes('Spreads')) {
                 const betChoose = leg.market.replace('Spreads - ', '');
                 leg_item.price = betChoose == 'Away' ? leg.spreadAwayOdds / 10000 : leg.spreadHomeOdds / 10000;
-                leg_item.Spread = betChoose == 'Away' ? displayNum(leg.spreadAwayPoints, 10) : displayNum(leg.spreadHomePoints, 10);
+                leg_item.Spread = betChoose == 'Away' ? displayNum(leg.spreadAwayPoints, divider) : displayNum(leg.spreadHomePoints, divider);
               } else if (leg.market.includes('Totals')) {
-                leg_item.price = leg.market.includes('Over') ? leg.totalOverOdds / 10000 : leg.totalUnderOdds / 10000
-                const divider = betparlay.blockHeight > OpcodeChangedBlock ? 100 : 10;
-                leg_item.Total = (leg.totalPoints / divider).toFixed(1)
+                leg_item.price = leg.market.includes('Over') ? leg.totalOverOdds / 10000 : leg.totalUnderOdds / 10000                
+                leg_item.Total = (leg.totalPoints / divider).toFixed(2)
               };
               leg_item.eventId = leg.eventId;
               leg_item.homeTeam = leg.homeTeam;
