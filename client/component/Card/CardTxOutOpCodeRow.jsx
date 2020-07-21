@@ -115,7 +115,7 @@ export default class CardTxOutOpCodeRow extends Component {
       return (
         <div className="card--block opcode">
           <div className="card__row">        
-            <BetModal buttonLabel={txAddress = this.props.tx.address} className="test" address={this.props.tx.address} />
+            <BetModal buttonLabel={txAddress = this.props.tx.address} className="test" address={this.props.tx.address} height={this.props.height} />
           </div>        
           {
             (typeof this.props.tx.eventId != "undefined" && typeof this.props.tx.legs == "undefined") && <div className="card--block" style={{padding:'5px 10px'}}>

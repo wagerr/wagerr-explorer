@@ -75,11 +75,11 @@ class TX extends Component {
         <div className="row">
           <div className="col">
             <HorizontalRule title="Sending Addresses" />
-            <CardTXIn txs={ this.state.tx.vin } />
+            <CardTXIn txs={ this.state.tx.vin } height={ this.props.tx.blockHeight }/>
           </div>
           <div className="col">
             <HorizontalRule title="Recipients" />
-            <CardTXOut txs={ this.state.tx.vout } />
+            <CardTXOut txs={ this.state.tx.vout } height={ this.props.tx.blockHeight }/>
           </div>
         </div>
       </div>

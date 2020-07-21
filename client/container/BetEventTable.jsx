@@ -215,18 +215,19 @@ class BetEventTable extends Component {
           />
       </div>
       }
-      {
+      {        
         this.props.data.activeTab == 2 &&
         <div>
             <Table
               cols={topTwoCols}
               data={sortBy(this.props.data.betSpreads.map((action) => {
-                console.log('betSpreads', action);
+                const divider = action.blockHeight > OpcodeChangedBlock ? 100 : 10;
+                //console.log('betSpreads', action);
                 return {
                   ...action,
                   createdAt: date24Format(action.createdAt),
                   homeOdds: action.homeOdds / 10000,
-                  spread: `${displayNum(action.homePoints, 10)}/${displayNum(action.awayPoints, 10)}`,
+                  spread: `${displayNum(action.homePoints, divider)}/${displayNum(action.awayPoints, divider)}`,
                   awayOdds: action.awayOdds / 10000,
                   txId: (
                     <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
@@ -239,6 +240,7 @@ class BetEventTable extends Component {
               data={sortBy(this.state.Spreads.map((action) => {
                 const betChoose = action.betChoose.replace('Spreads - ', '');                
                 const divider = action.blockHeight > OpcodeChangedBlock ? 100 : 10;
+                console.log('spread divider:', divider);
                 return {
                   ...action,
                   createdAt: date24Format(action.createdAt),
