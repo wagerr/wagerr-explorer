@@ -1197,6 +1197,20 @@ const getBetOpenEvents = async (req, res) => {
   }
 };
 
+const getBetLatestActions = async (req, res) => {
+  try {
+    const range = req.query.range ? parseInt(req.query.range, 10) : 30;
+    let timestamp = Date.now() - range * 60 * 1000;
+    const actions = await BetAction.find({      
+      createdAt: {$gt: timestamp}  
+    }).sort({ createdAt: -1 });
+    res.json({ actions });    
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message || err);
+  }
+};
+
 const getBetActions = async (req, res) => {
   try {
     const limit = req.query.limit ? parseInt(req.query.limit, 10) : 1000;
@@ -2734,5 +2748,6 @@ module.exports = {
   getTeamEventInfo,
   getBettotalUSD,
   getBetHotEvents,
-  getBetInfoByPayout
+  getBetInfoByPayout,
+  getBetLatestActions
 };
