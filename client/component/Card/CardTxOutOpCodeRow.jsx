@@ -19,12 +19,12 @@ export default class CardTxOutOpCodeRow extends Component {
   render() {    
     let txAddress;
     console.log('tx', this.props.tx);
+    console.log('payoutId', this.props.tx.payoutTxId);
     if (typeof this.props.tx.legs !== "undefined"){
       let totalPrice = 1;
       for (const item of this.props.tx.legs){
         totalPrice = totalPrice * item.price;
-      }
-
+      }        
       return (
         <div className="card--block opcode">
           <div className="card__row">        
@@ -104,7 +104,7 @@ export default class CardTxOutOpCodeRow extends Component {
               <span className="card__label">Payout</span>
               <span className="card__result">{this.props.tx.payout}</span>
             </div>}
-            {(this.props.tx.completed == true && this.props.tx.betResultType == "win") && <div className="card__row">
+            {(this.props.tx.completed == true && this.props.tx.betResultType == "win" && typeof this.props.tx.payoutTxId != "undefined") && <div className="card__row">
               <span className="card__label">Payout Tx</span>
               <span className="card__result"><a href={`/#/tx/${encodeURIComponent(this.props.tx.payoutTxId)}`}>{ this.props.tx.payoutTxId.substr(0, 10) + '...'}</a></span>
             </div>}   
@@ -167,7 +167,7 @@ export default class CardTxOutOpCodeRow extends Component {
               <span className="card__label">Payout</span>
               <span className="card__result">{this.props.tx.payout}</span>
             </div>}
-            {(this.props.tx.completed == true && this.props.tx.betResultType == "win") && <div className="card__row">
+            {(this.props.tx.completed == true && this.props.tx.betResultType == "win" && typeof this.props.tx.payoutTxId != "undefined") && <div className="card__row">
               <span className="card__label">Payout Tx</span>
               <span className="card__result"><a href={`/#/tx/${encodeURIComponent(this.props.tx.payoutTxId)}`}>{ this.props.tx.payoutTxId.substr(0, 10) + '...'}</a></span>
             </div>}           

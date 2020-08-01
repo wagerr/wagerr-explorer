@@ -1204,7 +1204,20 @@ const getBetLatestActions = async (req, res) => {
     const actions = await BetAction.find({      
       createdAt: {$gt: timestamp}  
     }).sort({ createdAt: -1 });
-    res.json({ actions });    
+
+    const result = []
+    for (const action of actions){
+      const item = {
+        eventId: action.eventId,
+        betValue: action.betValue,
+        betChoose: action.betChoose,
+        createdAt: action.createdAt
+      }
+      result.push(item)
+    }
+
+    res.json({ result });    
+
   } catch (err) {
     console.log(err);
     res.status(500).send(err.message || err);
