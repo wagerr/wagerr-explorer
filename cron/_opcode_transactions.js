@@ -523,6 +523,9 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
 
         if (betupdateRecords.length > 0){
           const betupdate = betupdateRecords[betupdateRecords.length - 1];
+          console.log('betupdate homeOdds', betupdate.opObject.get('homeOdds'));
+          console.log('betupdate drawOdds', betupdate.opObject.get('drawOdds'));
+          console.log('betupdate awayOdds', betupdate.opObject.get('awayOdds'));
           if (betupdate){
             if (eventRecord.homeOdds != betupdate.opObject.get('homeOdds')) {
               eventRecord.homeOdds = betupdate.opObject.get('homeOdds');
@@ -536,8 +539,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
               eventRecord.awayOdds = betupdate.opObject.get('awayOdds');
             }
           }
-        }
-
+        }        
         createResponse = await BetAction.create({
           _id,
           txId: rpctx.get('txid'),
