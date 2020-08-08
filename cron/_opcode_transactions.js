@@ -112,7 +112,7 @@ async function verifyBetOdds(record, rtype) {
         eventId: `${eventId}`,
         createdAt: { $gt: record.createdAt },
       });
- 
+
       const nextUpdate = updates[0];
       const queryParams = { $gt: record.createdAt };
 
@@ -136,7 +136,9 @@ async function verifyBetOdds(record, rtype) {
           if (!opObject) {
             opObject = record.transaction;
           }
-
+          if (rtype === 'update'){
+            console.log('verifyBetOdds', opObject)
+          }
           if (thisAction.homeOdds != opObject.get('homeOdds')) {
             updated = true;
             thisAction.homeOdds = opObject.get('homeOdds');
@@ -421,17 +423,12 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
     const _id = `${transaction.eventId}${rpctx.get('txid')}${block.height}`;
 
     const updateExists = await recordCheck(Betupdate, _id);
-    if (transaction.eventId == "6117"){
-      console.log('updateExists', updateExists)
-    }
+
     if (updateExists) {
       return updateExists;
     }
     
     const resultExists = await recordCheck(BetResult, `${transaction.eventId}`, 'eventId');
-    if (transaction.eventId == "6117"){
-      console.log('resultExists', resultExists)
-    }
     if (!resultExists) {
       try {
         const event = await BetEvent.findOne({eventId: `${transaction.eventId}`}).sort({
@@ -442,9 +439,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
           event.homeOdds = `${transaction.homeOdds}`;
           event.awayOdds = `${transaction.awayOdds}`;
           event.drawOdds = `${transaction.drawOdds}`;
-          if (transaction.eventId == "6117"){
-            console.log('event', event)
-          }
+
           // if (transaction.eventId == "6118"){
           //   console.log('transaction.homeOdds', transaction.homeOdds)
           // }
@@ -492,11 +487,11 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
     
     try {
       const { event, originalRecord } = await getEventData(block, transaction.eventId, waitTime);
-      if (rpctx.get('txid') == 'd97122769e8063b4b62b2d97c01fed5b507011c5b14e3790d8db1fb87894d042'){
-        console.log('*************************************');        
-        console.log('event: ', event);
-        console.log('*************************************');
-      }
+      // if (rpctx.get('txid') == 'd97122769e8063b4b62b2d97c01fed5b507011c5b14e3790d8db1fb87894d042'){
+      //   console.log('*************************************');        
+      //   console.log('event: ', event);
+      //   console.log('*************************************');
+      // }
         
       const eventRecord = event || {};
       let lastSpread;
@@ -520,7 +515,29 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         ]);
         
         const betValueUSD = prices[0].doc.usd * vout.value;
-        
+        const betupdateRecords = await Betupdate.find({
+          eventId: transaction.eventId,
+          blockHeight: { $lt: block.height },
+          createdAt: { $lt: block.createdAt },
+        });
+
+        if (betupdateRecords.length > 0){
+          const betupdate = betupdateRecords[betupdateRecords.length - 1];
+          if (betupdate){
+            if (eventRecord.homeOdds != betupdate.opObject.get('homeOdds')) {
+              eventRecord.homeOdds = betupdate.opObject.get('homeOdds');
+            }
+    
+            if (eventRecord.drawOdds != betupdate.opObject.get('drawOdds')) {
+              eventRecord.drawOdds = betupdate.opObject.get('drawOdds');
+            }
+    
+            if (eventRecord.awayOdds != betupdate.opObject.get('awayOdds')) {
+              eventRecord.awayOdds = betupdate.opObject.get('awayOdds');
+            }
+          }
+        }
+
         createResponse = await BetAction.create({
           _id,
           txId: rpctx.get('txid'),
