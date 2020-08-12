@@ -399,6 +399,7 @@ class BetEventList extends Component {
                 }
 
                 if (result.result && result.result.includes('Refund')) {
+                  console.log('result',result);
                   outcome = result.result;
                 }
 

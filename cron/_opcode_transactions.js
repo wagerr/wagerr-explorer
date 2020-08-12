@@ -33,6 +33,7 @@ async function getBetData() {
 }
 
 async function deleteBetData(start, stop) {
+  console.log('deleteBetData', start, stop);
   await BetAction.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
   await BetEvent.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
   await BetResult.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
@@ -523,6 +524,8 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
 
         if (betupdateRecords.length > 0){
           const betupdate = betupdateRecords[betupdateRecords.length - 1];
+          console.log('block.height', block.height);
+          console.log('transaction.eventId', transaction.eventId);
           console.log('betupdate homeOdds', betupdate.opObject.get('homeOdds'));
           console.log('betupdate drawOdds', betupdate.opObject.get('drawOdds'));
           console.log('betupdate awayOdds', betupdate.opObject.get('awayOdds'));
@@ -693,18 +696,16 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
     return createResponse;
   }
 
-  if (['peerlessResult'].includes(transaction.txType)) {
+  if (['peerlessResult'].includes(transaction.txType)) {    
     const _id = `${transaction.eventId}${rpctx.get('txid')}${block.height}`;
-    const resultExists = await recordCheck(BetResult, _id);
-
+    const resultExists = await recordCheck(BetResult, _id);    
     if (resultExists) {
       return resultExists;
     }
 
-
+    console.log('betresult creating..', resultExists);
     try {
-      let resultPayoutTxs = await TX.find({ blockHeight: block.height + 1 });
-
+      let resultPayoutTxs = await TX.find({ blockHeight: block.height + 1 });      
       createResponse = await BetResult.create({
         _id,
         txId: rpctx.get('txid'),
@@ -717,7 +718,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         transaction,
         matched: true,
       });
-
+      console.log('betresult created..');
       const events = await BetEvent.find({eventId: `${transaction.eventId}`})
       try {
         if (events.length > 0){
