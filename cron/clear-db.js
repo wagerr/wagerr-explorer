@@ -14,6 +14,7 @@ const BetAction = require('../model/betaction');
 const BetEvent = require('../model/betevent');
 const BetPayout = require('../model/betpayout');
 const BetResult = require('../model/betresult');
+const BetParlay = require('../model/betparlay');
 const ListEvent = require('../model/listevent');
 const STXO = require('../model/stxo');
 
@@ -34,6 +35,7 @@ async function clearDatabase() {
   await BetResult.deleteMany({});
   await ListEvent.deleteMany({});
   await STXO.deleteMany({});
+  await BetParlay.deleteMany({});
 }
 
 /**
