@@ -26,7 +26,7 @@ export const FILTER_EVENTS_OPTIONS = [
   { label: 'Esports', value: 'Esports' },
 ];
 
-export const OpcodeChangedBlock = 62080
+export const OpcodeChangedBlock = 0
 export default {
   COIN,
   COINS,
