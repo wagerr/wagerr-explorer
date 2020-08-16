@@ -116,9 +116,10 @@ const CardBetResult = ({eventInfo, data, t}) => {
     const resultDisplay = (resultData) => {
       const { transaction } = resultData;      
       let scoreDivider = 10
-      if (transaction.blockHeight > OpcodeChangedBlock){
+      if (resultData.blockHeight > OpcodeChangedBlock){
         scoreDivider = 100
       }
+      console.log('card betresult transaction scoreDivider:', scoreDivider);
       let resultSection;
       if (transaction.homeScore > transaction.awayScore) {
         console.log('card betresult transaction:', transaction);
