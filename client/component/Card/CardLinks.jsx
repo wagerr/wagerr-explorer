@@ -6,7 +6,7 @@ import Card from './Card';
 const CardLinks = () => (
   <Card title="Links">
     <a href="https://wagerr.com/" target="_blank">Website</a><br />
-    <a href="https://bitcointalk.org/index.php?topic=1911583.0" target="_blank">Bitcointalk</a><br />
+    <a href="https://bitcointalk.org/index.php?topic=5186141" target="_blank">Bitcointalk</a><br />
     <a href="https://github.com/wagerr" target="_blank">Github</a><br />
     <a href="https://www.reddit.com/r/Wagerr/" target="_blank">Reddit</a><br />
     <a href="https://discord.gg/vvvvDbv" target="_blank">Discord</a><br />
