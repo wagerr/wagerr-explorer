@@ -1,7 +1,21 @@
 .search {
 
 	position: relative;
-	width: 100%;
+	width: 60%;
+	float: right;
+	margin-top:15px;
+	margin-right:15px;
+	@media (max-width: 1855px) {
+		width: 55%;
+	}
+
+	@media (max-width: 1647px) {
+		width: 50%;
+	}
+
+	@media (max-width: 1500px) {
+		width: 47%;
+	}
 
 	&:hover {
 		

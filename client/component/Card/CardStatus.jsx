@@ -37,7 +37,7 @@ export default class CardStatus extends Component {
       <Card title="Status" className="card--status" >
         <div className="card__row">
           <span className="card__label">Chain:</span>
-          {config.coin.testnet ? 'MainNet' : 'TestNet' }
+          <span className="card__result">{config.coin.testnet ? 'MainNet' : 'TestNet' }</span>          
         </div>
         <div className="card__row">
           <span className="card__label">Status:</span>

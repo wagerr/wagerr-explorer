@@ -34,7 +34,7 @@ export default class SearchBar extends Component {
     const { props } = this;
 
     return (
-      <div className="animated fadeIn" style={{ width: '100%' }}>
+      <div className="animated fadeIn">
         <div className={ `search ${ props.className ? props.className : '' }` }>
           <input
             className="search__input"

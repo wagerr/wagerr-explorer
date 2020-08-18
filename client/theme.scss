@@ -86,8 +86,10 @@ $pagination-disabled-border-color:  $gray;
 @import "./sass/loading";
 @import "./sass/menu-desktop";
 @import "./sass/menu-mobile";
+@import "./sass/global-menu-desktop";
 @import "./sass/qrcode";
 @import "./sass/watch-list";
+@import "./sass/ui-update";
 
 /* Containers */
 @import "./sass/api";
@@ -130,7 +132,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .page-wrapper {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	height: 100%;
 
 	@include media-breakpoint-down(sm) {
@@ -139,9 +141,10 @@ h1, h2, h3, h4, h5, h6 {
 
 }
 
-.menu-wrapper {
-	display: flex;
+.menu-wrapper {	
 	z-index: $zindex-fixed;
+	display: flex;
+    flex-direction: row;
 }
 
 .badge {
@@ -176,13 +179,15 @@ h1, h2, h3, h4, h5, h6 {
 
 // Content Wrapper
 .content {
+	display: flex;
+    flex-direction: row;
 	flex: 1;
-	overflow-y: auto;
+	//overflow-y: auto;
 
-	@media (min-width: 1600px) {
-		padding-left: $menu-width-open;
-		padding-right: $menu-width-open;
-	}
+	// @media (min-width: 1600px) {
+	// 	padding-left: $menu-width-open;
+	// 	padding-right: $menu-width-open;
+	// }
 
 	@include media-breakpoint-down(sm) {
 		margin-top: $menu-mobile-height;
@@ -203,7 +208,7 @@ h1, h2, h3, h4, h5, h6 {
 	}
 
     &__wrapper {
-		background-color: $white;
+		//background-color: $white;
 	    margin: 0 auto;
 		min-height: 80vh;
 		overflow-x: hidden;

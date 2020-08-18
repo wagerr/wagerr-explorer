@@ -9,7 +9,11 @@ import CardExchanges from '../component/Card/CardExchanges';
 import CardLinks from '../component/Card/CardLinks';
 import CardROI from '../component/Card/CardROI';
 import HorizontalRule from '../component/HorizontalRule';
-
+import ExplorerMenu from '../component/Menu/ExplorerMenu';
+import CoinSummary from '../container/CoinSummary';
+import SearchBar from '../component/SearchBar';
+import SearchEventBar from '../component/SearchEventBar';
+import Footer from '../component/Footer';
 class CoinInfo extends Component {
   static propTypes = {
     coin: PropTypes.object.isRequired
@@ -17,25 +21,49 @@ class CoinInfo extends Component {
 
   render() {
     return (
-      <div>
-        <HorizontalRule title="Coin Info" />
-        <div className="row">
-          <div className="col-md-12 col-lg-8">
-            <div>
-              <img className="img-fluid" src="/img/largelogo.svg" />
-            </div>
-            <div className="row">
-              <div className="col-sm-12 col-md-3">
-                <CardLinks />
-                <CardExchanges />
-              </div>
-              <div className="col-sm-12 col-md-9">
-                <CardEarnings coin={ this.props.coin } />
-              </div>
-            </div>
+      <div className="content" id="body-content">
+        <ExplorerMenu onSearch={ this.props.handleSearch } />        
+        <div className="content__wrapper_total">          
+          <div className="content_search_wrapper">                      
+            {/* <SearchBar
+              className="d-none d-md-block"
+              onSearch={this.props.handleSearch} />           */}
+            <div className="content_page_title">
+              <span>Coin Info</span>
+            </div>              
           </div>
-          <div className="col-md-12 col-lg-4">
-            <CardROI coin={ this.props.coin } />
+          <div className="content__wrapper">
+            <CoinSummary
+              onRemove={this.props.handleRemove}
+              onSearch={this.props.handleSearch}
+              searches={this.props.searches} />
+            {/* <SearchEventBar
+              className="d-none d-md-block mb-3"
+              onSearch={this.props.handleEventSearch}
+            /> */}
+            <div>
+              <HorizontalRule title="Coin Info" />
+              <div className="row">
+                <div className="col-md-12 col-lg-8">
+                  <div>
+                    <img className="img-fluid" src="/img/largelogo.svg" />
+                  </div>
+                  <div className="row">
+                    <div className="col-sm-12 col-md-3">
+                      <CardLinks />
+                      <CardExchanges />
+                    </div>
+                    <div className="col-sm-12 col-md-9">
+                      <CardEarnings coin={ this.props.coin } />
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-12 col-lg-4">
+                  <CardROI coin={ this.props.coin } />
+                </div>
+              </div>
+             </div>
+            <Footer />
           </div>
         </div>
       </div>

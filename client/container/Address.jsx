@@ -12,7 +12,11 @@ import Pagination from '../component/Pagination';
 import Select from '../component/Select';
 
 import { PAGINATION_PAGE_SIZE } from '../constants';
-
+import ExplorerMenu from '../component/Menu/ExplorerMenu';
+import CoinSummary from '../container/CoinSummary';
+import SearchBar from '../component/SearchBar';
+import SearchEventBar from '../component/SearchEventBar';
+import Footer from '../component/Footer';
 class Address extends Component {
   static propTypes = {
     getAddress: PropTypes.func.isRequired,
@@ -96,26 +100,50 @@ class Address extends Component {
     let end = start + this.state.size;
 
     return (
-      <div>
-        <HorizontalRule title="Wallet Info" />
-        <CardAddress
-          address={ this.state.address }
-          balance={ this.state.balance }
-          sent={ this.state.sent }
-          staked={ this.state.staked }
-          received={ this.state.received }
-          txs={ this.state.txs }
-        />
-        <HorizontalRule select={ select } title="Wallet Transactions" />
-        <CardAddressTXs
-          address={ this.state.address }
-          txs={ this.state.txs.slice(start, end) }/>
-        <Pagination
-          current={ this.state.page }
-          className="float-right"
-          onPage={ this.handlePage }
-          total={ this.state.pages } />
-        <div className="clearfix" />
+      <div className="content" id="body-content">
+        <ExplorerMenu onSearch={ this.props.handleSearch } />        
+        <div className="content__wrapper_total">          
+          <div className="content_search_wrapper">                      
+            {/* <SearchBar
+              className="d-none d-md-block"
+              onSearch={this.props.handleSearch} />           */}
+            <div className="content_page_title">
+              <span>Overview</span>
+            </div>              
+          </div>
+          <div className="content__wrapper">
+            <CoinSummary
+              onRemove={this.props.handleRemove}
+              onSearch={this.props.handleSearch}
+              searches={this.props.searches} />
+            {/* <SearchEventBar
+              className="d-none d-md-block mb-3"
+              onSearch={this.props.handleEventSearch}
+            /> */}
+            <div>
+              <HorizontalRule title="Wallet Info" />
+              <CardAddress
+                address={ this.state.address }
+                balance={ this.state.balance }
+                sent={ this.state.sent }
+                staked={ this.state.staked }
+                received={ this.state.received }
+                txs={ this.state.txs }
+              />
+              <HorizontalRule select={ select } title="Wallet Transactions" />
+              <CardAddressTXs
+                address={ this.state.address }
+                txs={ this.state.txs.slice(start, end) }/>
+              <Pagination
+                current={ this.state.page }
+                className="float-right"
+                onPage={ this.handlePage }
+                total={ this.state.pages } />
+              <div className="clearfix" />
+            </div>
+            <Footer />
+          </div>
+        </div>
       </div>
     );
   };

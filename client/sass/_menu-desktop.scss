@@ -1,8 +1,9 @@
 .menu-desktop {
 
-	background: $wgreen;
+	background: url('/img/uiupdate/sidebar_back.png');
+	background-size: cover;
 
-	box-shadow: #7d7d7d 0px 0px 16px;
+	box-shadow: 5px 5px 16px 0px #7d7d7d ;
 	color: $white;
     float: left;
 	font-weight: lighter;
@@ -84,6 +85,10 @@
 	&__title {
 		margin: 0;
 		text-align: center;
+		color: #d40101;
+		font-weight: bold;
+		padding: 10px 0px;
+		font-size: 20px;
 	}
 
 	&__item {
@@ -92,7 +97,7 @@
 		color: $white;
 		line-height: 1;
 		margin: 0;
-		padding: 0;
+		padding: 10px;
 		position: relative;
 		transition: all 1s cubic-bezier(0, 1, .5, 1);
 
@@ -144,7 +149,8 @@
 	/*Opened modifier*/
 	&--open {
 		transition: all 1s cubic-bezier(0, 1, .5, 1);
-		width: $menu-width-open;
+		width: 245px;
+		min-height: 1500px;
 	}
 
 	&--open &__toggle {

@@ -602,16 +602,17 @@ const getTX = async (req, res) => {
  * @param {Object} res The response object.
  */
 const getTXs = async (req, res) => {
+  req.clearTimeout();
   try {
     const limit = req.query.limit ? parseInt(req.query.limit, 10) : 10;
     const skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
     const total = await TX.find().sort({ blockHeight: -1 }).countDocuments();
-    const txs = await TX.find().skip(skip).limit(limit).sort({ blockHeight: -1 });
+    const txs = await TX.find().sort({ blockHeight: -1 }).skip(skip).limit(limit);
 
-    res.json({ txs, pages: total <= limit ? 1 : Math.ceil(total / limit) });
+    return res.json({ txs, pages: total <= limit ? 1 : Math.ceil(total / limit) });
   } catch (err) {
     console.log(err);
-    res.status(500).send(err.message || err);
+    return res.status(500).send(err.message || err);
   }
 };
 

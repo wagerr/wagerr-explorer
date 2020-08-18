@@ -47,12 +47,16 @@ export default class CardOracleProfit extends Component {
       <div className="animated fadeInUp">
       <Card title="Estimated Oracle Earnings(COIN/BTC/USD)" className="card--status" >
         <div className="card__row">
-          <span className="card__label-small">DAILY</span>
-          <Link to={`/address/${ config.coin.oracle_payout_address }`}>{numeral(profitPerDay).format('0,0.00')} WGR / {numeral(profitPerDayBtc).format('0,0.00000000')} BTC / {numeral(profitPerDayUsd).format('0,0.00')} USD </Link>
+          <span className="card__label">DAILY</span>
+          <span className="card__result">
+            <Link to={`/address/${ config.coin.oracle_payout_address }`}>{numeral(profitPerDay).format('0,0.00')} WGR / {numeral(profitPerDayBtc).format('0,0.00000000')} BTC / {numeral(profitPerDayUsd).format('0,0.00')} USD </Link>
+          </span>          
         </div>
         <div className="card__row">
-          <span className="card__label-small">WEEKLY</span>
-          <Link to={`/address/${ config.coin.oracle_payout_address }`}>{numeral(profitPerWeek).format('0,0.00')} WGR / {numeral(profitPerWeekBtc).format('0,0.00000000')} BTC / {numeral(profitPerWeekUsd).format('0,0.00')} USD </Link>
+          <span className="card__label">WEEKLY</span>
+          <span className="card__result">
+            <Link to={`/address/${ config.coin.oracle_payout_address }`}>{numeral(profitPerWeek).format('0,0.00')} WGR / {numeral(profitPerWeekBtc).format('0,0.00000000')} BTC / {numeral(profitPerWeekUsd).format('0,0.00')} USD </Link>
+          </span>          
         </div>
         {/*<div className="card__row">*/}
           {/*<span className="card__label-small">MONTYLY</span>*/}
@@ -63,7 +67,7 @@ export default class CardOracleProfit extends Component {
           {/*<Link to={`/address/${ config.coin.oracle_payout_address }`}>{numeral(profitPerYear).format('0,0.00')} WGR / {numeral(profitPerYearyBtc).format('0,0.00000000')} BTC / {numeral(profitPerYearUsd).format('0,0.00')} USD </Link>*/}
         {/*</div>*/}
         <div className="card__row">
-          <span  style={{color:"rgba(0, 0, 0,.5)"}} className="card__label">* Estimates based on current block subsidy and active masternodes</span>
+          <span  style={{color:"rgba(0, 0, 0,.5)", fontSize: '15px', padding: '5px 0px'}}> Estimates based on current block subsidy and active masternodes</span>
         </div>
       </Card>
       </div>

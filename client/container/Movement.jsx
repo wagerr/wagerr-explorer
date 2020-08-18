@@ -11,6 +11,11 @@ import Pagination from '../component/Pagination';
 import Select from '../component/Select';
 
 import { PAGINATION_PAGE_SIZE } from '../constants';
+import ExplorerMenu from '../component/Menu/ExplorerMenu';
+import CoinSummary from '../container/CoinSummary';
+import SearchBar from '../component/SearchBar';
+import SearchEventBar from '../component/SearchEventBar';
+import Footer from '../component/Footer';
 
 class Movement extends Component {
   static propTypes = {
@@ -103,21 +108,37 @@ class Movement extends Component {
         selectedValue={ this.state.size }
         options={ selectOptions } />
     );
-
     return (
-      <div>
-        <HorizontalRule
-          select={ select }
-          title="Movement" />
-        <CardTXs txs={ this.state.txs } />
-        <Pagination
-          current={ this.state.page }
-          className="float-right"
-          onPage={ this.handlePage }
-          total={ this.state.pages } />
-        <div className="clearfix" />
+      <div className="content" id="body-content">
+        <ExplorerMenu onSearch={ this.props.handleSearch } />        
+        <div className="content__wrapper_total">          
+          <div className="content_search_wrapper">                      
+            <div className="content_page_title">
+              <span>Movement</span>
+            </div>              
+          </div>
+          <div className="content__wrapper">
+            <CoinSummary
+              onRemove={this.props.handleRemove}
+              onSearch={this.props.handleSearch}
+              searches={this.props.searches} />
+            <div>
+              <HorizontalRule
+                select={ select }
+                title="Movement" />
+              <CardTXs txs={ this.state.txs } />
+              <Pagination
+                current={ this.state.page }
+                className="float-right"
+                onPage={ this.handlePage }
+                total={ this.state.pages } />
+              <div className="clearfix" />
+            </div>
+            <Footer />
+          </div>
+        </div>
       </div>
-    );
+    );   
   };
 }
 

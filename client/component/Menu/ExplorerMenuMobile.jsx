@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import Icon from '../Icon';
 import SearchBar from '../SearchBar';
 
-export default class MenuMobile extends Component {
+export default class ExplorerMenuMobile extends Component {
   static propTypes = {
     links: PropTypes.array
   };

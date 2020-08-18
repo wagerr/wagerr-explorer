@@ -8,12 +8,15 @@ import moment from 'moment';
 import numeral from 'numeral';
 import PropTypes from 'prop-types';
 import React from 'react';
-
 import HorizontalRule from '../component/HorizontalRule';
 import Table from '../component/Table';
 import { compose } from 'redux'
 import { translate } from 'react-i18next';
-
+import ExplorerMenu from '../component/Menu/ExplorerMenu';
+import CoinSummary from '../container/CoinSummary';
+import SearchBar from '../component/SearchBar';
+import SearchEventBar from '../component/SearchEventBar';
+import Footer from '../component/Footer';
 class Overview extends Component {
   static propTypes = {
     txs: PropTypes.array.isRequired
@@ -58,11 +61,35 @@ class Overview extends Component {
     });
 
     return (
-      <div>
-        <HorizontalRule title={t('latestBlocks')} />
-        <Table
-          cols={ this.state.cols }
-          data={ txs } />
+      <div className="content" id="body-content">
+        <ExplorerMenu onSearch={ this.props.handleSearch } />        
+        <div className="content__wrapper_total">          
+          <div className="content_search_wrapper">                      
+            {/* <SearchBar
+              className="d-none d-md-block"
+              onSearch={this.props.handleSearch} />           */}
+            <div className="content_page_title">
+              <span>Overview</span>
+            </div>              
+          </div>
+          <div className="content__wrapper">
+            <CoinSummary
+              onRemove={this.props.handleRemove}
+              onSearch={this.props.handleSearch}
+              searches={this.props.searches} />
+            {/* <SearchEventBar
+              className="d-none d-md-block mb-3"
+              onSearch={this.props.handleEventSearch}
+            /> */}
+            <div>
+              <HorizontalRule title={t('latestBlocks')} />
+              <Table
+                cols={this.state.cols}
+                data={txs} />
+            </div>
+            <Footer />
+          </div>
+        </div>
       </div>
     );
   };

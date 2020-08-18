@@ -1,0 +1,86 @@
+.content {
+	margin-top: -77px;
+}
+
+.content_search_wrapper {
+	display: flex;
+	flex-direction: row;
+}	
+
+.content__wrapper{
+	margin: 0px !important;
+}
+
+.content__wrapper_total{
+	width:100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.content_search_wrapper .animated.fadeIn{
+	width: 60%;
+	display: flex;	
+	// //background: url("/img/uiupdate/search_back.png");
+	// //background-position: center; /* Center the image */
+  	// background-repeat: no-repeat; /* Do not repeat the image */
+  	// background-size: cover; /* Resize the background image to cover the entire container */
+	padding: 10px 15px 10px 50px;
+}
+
+.content_saerch_wrapper_space{
+	display: flex;
+}
+
+.content_page_title{
+	text-align: left;
+	display:flex;
+	width: 40%;
+	padding: 30px 0px 0px 35px;
+}
+
+.content_page_title span{
+	font-size: 27px;
+	font-weight: bold;
+	color: black;
+}
+
+.card__title{
+	background: #b40101;
+	color: white;
+	padding: 5px 15px 5px 15px;
+	text-align:center;
+	font-size: 20px;
+	font-weight: 600;
+	margin: 0px;
+}
+.card__body{
+	padding: 0px;	
+	font-size: 18px;
+	font-weight: 600;
+}
+
+.card__row{
+	border-bottom: 1px solid #d4d4d4;
+	padding: 5px 10px;
+}
+
+.card__label {
+	width: 30%;
+}
+.card__result{
+	width: 70%;
+	text-align: right;
+}
+
+.card{
+	min-height: 100px;
+}
+
+.card--market .card__body{
+	padding: 20px 15px;
+}
+
+.card__info-source{
+	color: rgba(0, 0, 0,.5) !important;
+	font-size: 14px;	
+}
