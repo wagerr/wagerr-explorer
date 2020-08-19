@@ -25,7 +25,7 @@ export default class CardBetStatus extends Component {
     return (
       <div className="animated fadeInUp">
       <Card title="Bet Status" className="card--status" >
-        <div className="card__row">
+        <div className="card__row bg-eee">
           <span className="card__label">TOTAL BET:</span>
           <span className="card__result">{numeral(this.props.totalBet).format('0,0.00000000')} WGR</span>
         </div>
@@ -33,7 +33,7 @@ export default class CardBetStatus extends Component {
           <span className="card__label">TOTAL MINT:</span>
           <span className="card__result">{numeral(this.props.totalMint).format('0,0.00000000')} WGR</span>
         </div>
-        <div className="card__row">
+        <div className="card__row bg-eee">
           <span className="card__label">NET SUPPLY CHANGE:</span>
           <span className="card__result">{numeral(this.props.totalMint - this.props.totalBet).format('0,0.00000000')} WGR</span>
         </div>

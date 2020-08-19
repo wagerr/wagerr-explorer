@@ -71,9 +71,9 @@ export default class GlobalMenuDesktop extends Component {
             </div>
           </div>
         </div>
-        <SearchBar
+        {/* <SearchBar
               className="d-none d-md-block"
-              onSearch={this.props.handleSearch} /> 
+              onSearch={this.props.handleSearch} />  */}
       </div>
     )
   }

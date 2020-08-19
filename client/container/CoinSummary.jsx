@@ -14,6 +14,7 @@ import CardStatus from '../component/Card/CardStatus';
 import WatchList from '../component/WatchList';
 import CardOracleProfit from '../component/Card/CardOracleProfit'
 import CardBetStatus from '../component/Card/CardBetStatus'
+import CardLatestBlocks from '../component/Card/CardLatestBlocks';
 
 class CoinSummary extends Component {
   static propTypes = {
@@ -74,6 +75,9 @@ class CoinSummary extends Component {
                 <CardBetStatus totalBet={coin.totalBet} totalMint={coin.totalMint} />
               </div>
             </div>
+          </div>
+          <div className="col-md-12 col-lg-12">
+            <CardLatestBlocks totalBet={coin.totalBet} totalMint={coin.totalMint} />
           </div>
           {/*<div className="col-md-12 col-lg-3">
             <WatchList

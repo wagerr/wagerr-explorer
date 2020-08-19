@@ -39,6 +39,9 @@ import GlobalMenu from './component/Menu/GlobalMenu';
 import Notification from './component/Notification';
 import SearchBar from './component/SearchBar';
 import SearchEventBar from './component/SearchEventBar';
+import Lottos from './container/Lottos';
+import Bethistory from './container/Bethistory';
+import Betting from './container/Betting';
 class App extends Component {
   static propTypes = {
     // Dispatch
@@ -185,6 +188,11 @@ class App extends Component {
                   <Route exact path="/explorer/tx/:hash" render={(props) => <TX {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />
                   <Route exact path="/explorer/bet/event/:eventId" render={(props) => <BetEvent {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />
                   <Route exact path="/explorer/lotto/event/:eventId" render={(props) => <LottoEvent {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />
+                  
+                  <Route exact path="/bethistory" render={(props) => <Bethistory {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
+                  <Route exact path="/betting" render={(props) => <Betting {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
+                  <Route exact path="/lottos" render={(props) => <Lottos {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
+
                   <Route component={ Error404 } />
           </Switch>          
         </div>
