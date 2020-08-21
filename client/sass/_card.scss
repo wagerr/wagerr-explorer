@@ -153,6 +153,24 @@
 		color: $gray;
 	}
 
+	&__tag {
+		border: 1px solid #BEBEBE;
+		border-radius: 4px;
+		background: #E9E9E9;
+		justify-content: center;
+		align-items: center;
+		height: 41px;
+		margin: 12px;
+		font-size: 15px;
+		font-weight: 500;
+		box-shadow: 0 0 0 rgba(0,0,0,0.1), 0 1px 0 rgba(0,0,0,0.1);
+	}
+
+	&__empty {
+		background: #fff;
+		border: none;
+		box-shadow: none
+	}
 }
 
 .indicator {
@@ -185,4 +203,44 @@
 
 .bg-eee {
 	background: #eee;
+}
+
+.bet-black-card {
+	font-size: 20px;
+	line-height: 1.25;
+	margin-top: 16px;
+	margin-bottom: 16px;
+	height: 100%;
+	min-height: 1390px;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+	transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+	border-radius: 5px;
+	&:hover {
+		box-shadow: 0 8px 14px rgba(0,0,0,0.20), 0 4px 4px rgba(0,0,0,0.18);
+	}
+
+	&__title {
+		padding: 10px 15px 0px 15px;
+		font-size: 17px;
+		font-weight: 500;
+		text-transform: capitalize;
+		background: black;
+		height: 40px;
+		color: #fff
+	}
+
+	&__body {
+		font-family: $fontLarge;
+		height: 100%;
+		padding: 15px;
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+}
+
+.mt-12 {
+	margin-top: 12px
 }

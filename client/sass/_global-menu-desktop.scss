@@ -90,10 +90,42 @@
 .wallet_connection_status_mark{
 	margin-right: 5px;
 	display: inline-block;
-	//background-color:greenyellow;
 	background-color:grey;
 	width: 10px;
 	height: 10px;
 	border: 1px solid black;
 	border-radius: 5px;
+}
+.betting-menu {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	height: 30px;
+	padding-left: 12px;
+	padding-right: 12px;
+	margin-top: 2px;
+}
+.menu-betting-label {
+	margin-left: 25px;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.betting-menu-desktop__item-icon{
+	height: 17px;
+	width: 17px	
+}
+.betting-menu--active {
+	background: #000;
+	border-left: 2px solid #bd0000
+}
+.p-0 {
+	padding: 0;
+}
+.flex-1 {
+	flex: 1
+}
+.ft-12 {
+	font-size: 12px;
 }

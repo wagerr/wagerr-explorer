@@ -42,6 +42,7 @@ import SearchEventBar from './component/SearchEventBar';
 import Lottos from './container/Lottos';
 import Bethistory from './container/Bethistory';
 import Betting from './container/Betting';
+import Help from './container/Help';
 class App extends Component {
   static propTypes = {
     // Dispatch
@@ -190,8 +191,22 @@ class App extends Component {
                   <Route exact path="/explorer/lotto/event/:eventId" render={(props) => <LottoEvent {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />
                   
                   <Route exact path="/bethistory" render={(props) => <Bethistory {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
-                  <Route exact path="/betting" render={(props) => <Betting {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
                   <Route exact path="/lottos" render={(props) => <Lottos {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
+                  <Route exact path="/help" render={(props) => <Help {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
+
+                  <Route exact path="/betting" render={(props) => <Betting {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
+                  <Route exact path="/betting/allevent" render={(props) => <Betting {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
+                  <Route exact path="/betting/soccor" render={(props) => <Betting {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
+                  <Route exact path="/betting/esport" render={(props) => <Betting {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
+                  <Route exact path="/betting/baseball" render={(props) => <Betting {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
+                  <Route exact path="/betting/basketball" render={(props) => <Betting {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
+                  <Route exact path="/betting/football" render={(props) => <Betting {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
+                  <Route exact path="/betting/hockey" render={(props) => <Betting {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
+                  <Route exact path="/betting/aussie_rules" render={(props) => <Betting {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
+                  <Route exact path="/betting/cricket" render={(props) => <Betting {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
+                  <Route exact path="/betting/mma" render={(props) => <Betting {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
+                  <Route exact path="/betting/rugby_league" render={(props) => <Betting {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
+                  <Route exact path="/betting/rugby_union" render={(props) => <Betting {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />                                
 
                   <Route component={ Error404 } />
           </Switch>          
