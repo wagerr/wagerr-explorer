@@ -33,15 +33,17 @@ export default class GlobalMenuDesktop extends Component {
       const iconSource = i.icon;
       return (
         <Link
-          key={ idx }
-          className={ `global-menu-desktop__item ${ isActive? 'global-menu-desktop__item--is-active' : '' }` }
-          to={ i.href }>
+          key={idx}
+          className={`global-menu-desktop__item ${isActive ? 'global-menu-desktop__item--is-active' : ''}`}
+          to={i.href}
+
+        >
           <img
-            alt={ i.label }
+            alt={i.label}
             className="global-menu-desktop__item-icon"
-            src={ iconSource }
-            title={ this.state.isOpen ? null : i.label } />
-          <span className="global-menu-desktop__item-label" >{ i.label }</span>          
+            src={iconSource}
+            title={this.state.isOpen ? null : i.label} />
+          <span className="global-menu-desktop__item-label" >{i.label}</span>
         </Link>
       )
     })
@@ -50,16 +52,18 @@ export default class GlobalMenuDesktop extends Component {
   handleToggle = () => this.setState({ isOpen: !this.state.isOpen });
 
   render() {
+    const { pathname } = this.props.location;
+    const explore_class = !pathname.includes('explorer') && 'global-menu-desktop-explore'
     return (
-      <div className={ `global-menu-desktop` }>
+      <div className={`global-menu-desktop ${explore_class}`}>
         <div className="global-menu-desktop__content-wrapper">
           <div className="global-menu-desktop__header">
             <div className="global-menu-desktop_logo_section">
               <img src="/img/uiupdate/logo.png" className="global-menu-desktop__logo" />
             </div>
             <div className="global-menu-desktop_links">
-              { this.getLinks() }
-            </div>                                    
+              {this.getLinks()}
+            </div>
             <div className="global-menu-desktop_wallet_setion">
               <div className="global-menu-desktop_wallet_connection">
                 <span className="global-menu-desktop_wallet_balance">0 WGR</span>
@@ -71,9 +75,12 @@ export default class GlobalMenuDesktop extends Component {
             </div>
           </div>
         </div>
-        {/* <SearchBar
-              className="d-none d-md-block"
-              onSearch={this.props.handleSearch} />  */}
+        {
+          pathname.includes('explorer') &&
+          <SearchBar
+            className="d-none d-md-block"
+            onSearch={this.props.handleSearch}
+          />}
       </div>
     )
   }

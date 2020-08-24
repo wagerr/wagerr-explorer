@@ -4,17 +4,19 @@
 	width: 60%;
 	float: right;
 	margin-top:15px;
-	margin-right:15px;
+	margin-right:10px;
 	@media (max-width: 1855px) {
 		width: 55%;
 	}
 
 	@media (max-width: 1647px) {
 		width: 50%;
+		margin-right: 20px;
 	}
 
 	@media (max-width: 1500px) {
 		width: 47%;
+		margin-right: 30px;
 	}
 
 	&:hover {
@@ -46,6 +48,11 @@
 			& + svg {
 				opacity: 1;
 			}
+		}
+
+		&__icon {
+			padding-left: 80px;
+			margin-bottom: 30px;	
 		}
 
 	}

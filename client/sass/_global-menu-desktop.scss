@@ -4,10 +4,19 @@
 }
 
 .global-menu-desktop {
-	background:url('/img/uiupdate/header_back.png');
+	background:url('/img/uiupdate/header_back1.png');
 	background-repeat: no-repeat;
 	background-size: cover;
 	width: 100%;
+	height: 170px;
+	@media (max-width: 1450px) {
+		background:url('/img/uiupdate/header_back1.png');
+		height: 89px;
+	}
+}
+
+.global-menu-desktop-explore {
+	background:url('/img/uiupdate/header_back.png');
 	height: 93px;
 }
 
@@ -47,6 +56,9 @@
 
 .global-menu-desktop__item.global-menu-desktop__item--is-active{
 	background: #570502;
+	@media (max-width: 1450px) {
+		height: 89px;
+	}
 }
 
 .global-menu-desktop__item-icon{
@@ -118,7 +130,7 @@
 }
 .betting-menu--active {
 	background: #000;
-	border-left: 2px solid #bd0000
+	border-left: 2px solid #bd0000;
 }
 .p-0 {
 	padding: 0;
