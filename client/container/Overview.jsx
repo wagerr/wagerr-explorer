@@ -38,7 +38,7 @@ class Overview extends Component {
   };
 
   render() {
-    const { t, i18n } = this.props;
+    const { t, i18n, location } = this.props;
 
     // Setup the list of transactions with age since created.
     const txs = this.props.txs.map(tx => {
@@ -60,8 +60,10 @@ class Overview extends Component {
       });
     });
 
+    const explore_class = location.pathname.includes('explorer') && 'content-top';
+
     return (
-      <div className="content content-top" id="body-content">
+      <div className={`content ${explore_class}`} id="body-content">
         <ExplorerMenu onSearch={ this.props.handleSearch } />        
         <div className="content__wrapper_total">          
           <div className="content_search_wrapper">                      

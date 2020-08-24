@@ -56,11 +56,15 @@
 
 .global-menu-desktop__item.global-menu-desktop__item--is-active{
 	background: #570502;
+	height: 93px;
 	@media (max-width: 1450px) {
 		height: 89px;
 	}
 }
-
+.global-menu-desktop__item.global-menu-desktop__item2--is-active{
+	background: #570502;
+	height: 93px;
+}
 .global-menu-desktop__item-icon{
 	margin: auto;
 	display: flex;

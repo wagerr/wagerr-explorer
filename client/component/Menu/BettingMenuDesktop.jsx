@@ -74,5 +74,4 @@ const demo_sports = [
   { id: 10, label: 'MMA', count: 0, href: 'mma'},
   { id: 11, label: 'Rugby League', count: 0, href: 'rugby_league'},
   { id: 12, label: 'Rugby Union', count: 3, href: 'rugby_union'},
-
 ]

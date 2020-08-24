@@ -1,14 +1,7 @@
 
 import Component from '../../core/Component';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
-import config from '../../../config';
-
-import Card from './Card';
-import CountUp from '../CountUp';
-import numeral from 'numeral'
-import CardTable from './CardTable';
 
 export default class CardLatestBlocks extends Component {
   static defaultProps = {
@@ -24,34 +17,36 @@ export default class CardLatestBlocks extends Component {
   render() {
 
     return (
-      <div className="animated fadeInUp">
-      <CardTable title="Bet Status" className="card--status" >
-        <div className="card__row bg-eee">
-          <span className="w-10">936217</span>
-          <span className="w-40">fbef8932kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf</span>
-          <span className="w-10">112.37000000</span>
-          <span className="w-10">-97 seconds</span>
-          <span className="w-10">3</span>
-          <span className="w-20">2019-12-12 12:12:12 UTC</span>
-        </div>
-        <div className="card__row">
-          <span className="w-10">936217</span>
-          <span className="w-40">fbef8932kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf</span>
-          <span className="w-10">112.37000000</span>
-          <span className="w-10">-97 seconds</span>
-          <span className="w-10">3</span>
-          <span className="w-20">2019-12-12 12:12:12 UTC</span>
-        </div>
-        <div className="card__row bg-eee">
-          <span className="w-10">936217</span>
-          <span className="w-40">fbef8932kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf</span>
-          <span className="w-10">112.37000000</span>
-          <span className="w-10">-97 seconds</span>
-          <span className="w-10">3</span>
-          <span className="w-20">2019-12-12 12:12:12 UTC</span>
-        </div>
-      </CardTable>
+      <div className="animated fadeInUp w3-tables w3-responsive">
+        <table className="w3-table-all">
+          <tbody>
+            <tr className="table-header">
+              <th className=''>HEIGHT</th>
+              <th className=''>TRANSACTION HASH</th>
+              <th className=''>VALUE</th>
+              <th className=''>AGE</th>
+              <th className=''>RECIPIENTS</th>
+              <th className=''>CREATED</th>
+            </tr>
+            {
+              MOKEDATA.map((item, index) =>
+                <tr key={index} >
+                  <td className="">{item.height}</td>
+                  <td className="cell-ellipsis">{item.hash}</td>
+                  <td className="">{item.value}</td>
+                  <td className="">{item.age}</td>
+                  <td className="">{item.recipents}</td>
+                  <td className="">{item.created}</td>
+                </tr>)}
+          </tbody>
+        </table>
       </div>
     );
   };
 }
+
+const MOKEDATA = [
+  { id: 1, height: '126217', hash: 'fbef8932kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujffbef8932kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf', value: '112.3700000', age: '-97 seconds', recipents: '12', created: '2019-12-12 12:12:12 UTC' },
+  { id: 2, height: '234432', hash: 'ceewf23fdec 32jhkejf23847324fj349823rrjf23ru23ujffbef8932kfj32r23432jhkejf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf23847324fj349823rrjf23ru23ujf', value: '42.37023000', age: '-2 seconds', recipents: '3', created: '2019-12-12 12:12:12 UTC' },
+  { id: 3, height: '036217', hash: '3243523ddxd432jhkejf23847324fj349823rrjf23ru23ujffbef8932kfj32r23432jhkejf23847324fj349823rrjf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf23ru23ujf', value: '112.7002340003', age: '-31 seconds', recipents: '43', created: '2019-12-12 12:12:12 UTC' },
+]

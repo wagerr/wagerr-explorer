@@ -34,9 +34,8 @@ export default class GlobalMenuDesktop extends Component {
       return (
         <Link
           key={idx}
-          className={`global-menu-desktop__item ${isActive ? 'global-menu-desktop__item--is-active' : ''}`}
+          className={`global-menu-desktop__item ${isActive ? (props.location.pathname.includes('explorer') ? 'global-menu-desktop__item--is-active' : 'global-menu-desktop__item2--is-active') : ''}`}
           to={i.href}
-
         >
           <img
             alt={i.label}
@@ -52,8 +51,10 @@ export default class GlobalMenuDesktop extends Component {
   handleToggle = () => this.setState({ isOpen: !this.state.isOpen });
 
   render() {
+    
     const { pathname } = this.props.location;
-    const explore_class = !pathname.includes('explorer') && 'global-menu-desktop-explore'
+    const explore_class = !pathname.includes('explorer') && 'global-menu-desktop-explore';
+
     return (
       <div className={`global-menu-desktop ${explore_class}`}>
         <div className="global-menu-desktop__content-wrapper">
