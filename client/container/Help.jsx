@@ -42,21 +42,28 @@ export default class Help extends Component {
 
           <div className='help__step'>
             <div className='help__step__title'>Step by Step</div>
-            {STEPS.map((item, index) => <div key={index} onClick={() => this.setState({ action: index })} className='help__step__item'>
-              <div>
-                <span className='help__step__item__title'>{item.id + 1}</span>
-                <span className='help__step__item__desc'>{item.title}</span> <br />
-                {
-                  item.id === action &&
+            {
+              STEPS.map((item, index) =>
+                <div
+                  key={index}
+                  onClick={() => this.setState({ action: index })}
+                  className='help__step__item'
+                >
                   <div>
-                    <span className='help__step__item__note'>{item.description}</span>
-                    <ul>
-                      <li>Chrome</li>
-                      <li>Firefox</li>
-                    </ul>
-                  </div>}
-              </div>
-            </div>)}
+                    <span className='help__step__item__title'>{item.id + 1}</span>
+                    <span className='help__step__item__desc'>{item.title}</span> <br />
+                    {
+                      item.id === action &&
+                      <div>
+                        <span className='help__step__item__note'>{item.description}</span>
+                        <ul>
+                          <li>Chrome</li>
+                          <li>Firefox</li>
+                        </ul>
+                      </div>
+                    }
+                  </div>
+                </div>)}
           </div>
 
           <div className='card card__help row'>

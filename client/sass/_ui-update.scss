@@ -161,12 +161,35 @@ h2 {
 .m-t-50 {
 	margin-top: 50px
 }
+.m-t-20 {
+	margin-top: 20px
+}
+.m-h-20 {
+	margin-left: 20px;
+	margin-right: 20px
+}
 .p-20 {
 	padding: 20px
 }
 .p-12 {
 	padding: 12px
 }
+.font-17 {
+	font-size: 17px;
+}
+.font-14 {
+	font-size: 14px;
+}
+.font-weight-500 {
+	font-weight: 500;
+}
+.m-t--16 {
+	margin-top: -16px
+}
+.mr-10 {
+	margin-right: 10px;
+}
+
 .display-none {
 	display: none;
 }
@@ -297,21 +320,7 @@ h2 {
 	top: 16px;
 	right: 12px
 }
-.font-17 {
-	font-size: 17px;
-}
-.font-14 {
-	font-size: 14px;
-}
-.font-weight-500 {
-	font-weight: 500;
-}
-.m-t--16 {
-	margin-top: -16px
-}
-.mr-10 {
-	margin-right: 10px;
-}
+
 /* chain-game */
 .help {
 	display: flex;
@@ -343,6 +352,7 @@ h2 {
 		}
 	}
 	&__step {
+		transition: all 0.8s cubic-bezier(.25,.8,.25,1);
 		&__title {
 			align-self: center;
 			font-weight: 600;
@@ -355,7 +365,7 @@ h2 {
 			border-top: 1px solid #C4C6C8;
 			font-size: 12px;
 			padding: 12px;
-			transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+			transition: all 0.8s cubic-bezier(.25,.8,.25,1);
 			&:hover {
 				cursor: pointer;
 			}
@@ -500,7 +510,7 @@ tr.table-header-long {
 }
 .table-hover {
 	&:hover {
-		cursor: pointer;
+		// cursor: pointer;
 		outline: 1px solid #ED1B24;
 		opacity: 0.7;
 	}

@@ -172,6 +172,15 @@
 		box-shadow: none
 	}
 
+	&__snap {
+		background: #B50102;
+		border-radius: 4px;
+		padding: 2px 12px;
+		color: #fff;
+		width: 95px;
+		float: right
+	}
+
 	&__help {
 		margin-top: 30px;
 		padding: 20px;
@@ -212,6 +221,35 @@
 				margin-top: 1px;
 				
 			}
+		}
+	}
+	&__pane {
+		display: flex;
+		flex-direction: row;
+		color: #fff;
+		background: #DEE2E6;
+		&__tab {
+			background: #B50102;
+			width: 33.33333%;
+			height: 40px;
+			border: 1px solid #DEE2E6;
+			border-top-left-radius: 10px;
+			border-top-right-radius: 10px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			&:hover {
+				cursor: pointer;
+				border-bottom: 7px solid #00D614;
+				margin-top: -7px;
+				height: 47px;
+				transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+			}
+		}
+		&__tabActive {
+			border-bottom: 7px solid #00D614;
+			margin-top: -7px;
+			height: 47px;
 		}
 	}
 }
