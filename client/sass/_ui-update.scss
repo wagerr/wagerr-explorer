@@ -59,6 +59,10 @@
 	font-weight: 600;
 	margin: 0px;
 	height: 34px;
+	@media (max-width: 900px) {
+		font-size: 16px;
+		height: 27px;
+	}
 }
 .card__body{
 	padding: 0px;	
@@ -84,10 +88,18 @@
 
 .card__label {
 	width: 30%;
+	@media (max-width: 900px) {
+		width: 40%;
+		font-size: 12px;
+	}
 }
 .card__result{
 	width: 70%;
 	text-align: right;
+	@media (max-width: 900px) {
+		width: 60%;
+		font-size: 12px;
+	}
 }
 
 .card{
@@ -107,7 +119,10 @@
 	height: 27px;
 	font-size: 15px;
 }
-
+ 
+.bg-eee {
+	background: #eee;
+}
 .direction-row {
 	width: 100%;
 	display: flex;
@@ -144,6 +159,9 @@ h2 {
 	width: 20%;
 	display: flex;
 	align-items: flex-start;
+	@media (max-width: 900px) {
+		width: 26.6%;
+	}
 }
 .w-33 {
 	width: 33.3%;
@@ -154,15 +172,24 @@ h2 {
 	width: 40%;
 	display: flex;
 	align-items: flex-start;
+	@media (max-width: 900px) {
+		width: 20%;
+	}
 }
 .m-20 {
-	margin: 20px
+	margin: 20px;
+	@media (max-width: 900px) {
+		margin: 16px;
+	}
 }
-.m-t-50 {
-	margin-top: 50px
+.m-t-10 {
+	margin-top: 10px
 }
 .m-t-20 {
 	margin-top: 20px
+}
+.m-t-50 {
+	margin-top: 50px
 }
 .m-h-20 {
 	margin-left: 20px;
@@ -172,10 +199,17 @@ h2 {
 	padding: 20px
 }
 .p-12 {
-	padding: 12px
+	padding: 12px;
+	@media (max-width: 900px) {
+		padding: 0 2px;
+		padding-top: 8px
+	}
 }
 .font-17 {
 	font-size: 17px;
+	@media (max-width: 900px) {
+		font-size: 14px;
+	}
 }
 .font-14 {
 	font-size: 14px;
@@ -188,6 +222,9 @@ h2 {
 }
 .mr-10 {
 	margin-right: 10px;
+}
+.h-140 {
+	height: 140px;
 }
 
 .display-none {
@@ -214,6 +251,13 @@ h2 {
 	height: 70px;
 }
 
+.bet-history {
+	margin-top: 20px;
+	@media (max-width: 767px) {
+		margin-top: 90px;
+	}
+}
+
 /* chain-game */
 .chain-game {
 	position: relative;
@@ -226,6 +270,8 @@ h2 {
 	margin-bottom: 22px;
 	padding-right: 40px;
 	@media (max-width: 767px) {
+		margin-top: 70px;
+		margin-right: 12px;
 		height: auto;
 		padding-right: 0;
 	}
@@ -308,10 +354,14 @@ h2 {
 	input {
 		min-width: 400px;
 		margin-left: 20px;
-		color: #BFC0C3;
 		border: none;
 		border-bottom: 1px solid #BFC0C3;
 		padding: 0;
+		background: #DEE2E6;
+		color: #111!important;
+		@media (max-width: 1000px) {
+			min-width: 200px;
+		}
 	}
 }
 
@@ -326,7 +376,6 @@ h2 {
 	display: flex;
 	flex: 1;
 	h2 {
-		margin-top: 20px;
 		margin-bottom: 40px;
 	}
 	&__item {
@@ -409,20 +458,33 @@ h2 {
 tr.table-header {
 	background: #b40202!important;
 	color: #fff;
+	@media (max-width: 900px){
+		font-size: 15px!important;
+	}
 }
 tr.table-header-long {
 	background: #545454!important;
 	color: #fff;
 	text-align: center;
+	@media (max-width: 900px){
+		font-size: 15px!important;
+	}
+}
+tr.table-item {
+	font-size: 16px;
+	@media (max-width: 900px){
+		font-size: 12px!important;
+	}
 }
 .w3-table-all {
-	border: none
+	border: none;
 }
 .w3-tables {
 	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 	transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 	border-radius: 5px;
 	margin-bottom: 30px;
+	margin-top: 20px;
 	&:hover {
 		box-shadow: 0 8px 14px rgba(0,0,0,0.20), 0 4px 4px rgba(0,0,0,0.18);
 	}
@@ -483,11 +545,14 @@ tr.table-header-long {
 	@media (max-width: 1330px) {
 		max-width: 300px;
 	}
-	@media (max-width: 1090px) {
-		max-width: 100px;
+	@media (max-width: 1200px) {
+		max-width: 150px;
 	}
 	@media (max-width: 800px) {
 		max-width: 100px;
+	}
+	@media (max-width: 760px) {
+		max-width: 400px;
 	}
 }
 .td-supply {

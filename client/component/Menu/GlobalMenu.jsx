@@ -5,19 +5,19 @@ import React from 'react';
 import { withRouter } from 'react-router';
 
 import GlobalMenuDesktop from './GlobalMenuDesktop';
-//import GlobalMenuDesktop from './GolbalMenuMobile';
+import ExplorerMenuMobile from './ExplorerMenuMobile';
 import { compose } from 'redux'
 import { translate } from 'react-i18next'
 import connect from 'react-redux/es/connect/connect'
-import { genMenuData } from './globalMenuData'
-
+import { globalMenuData } from './globalMenuData'
 
 class GlobalMenu extends Component {
   render() {
     const { t } = this.props;
-    const menuData = genMenuData(t)
+    const menuData = globalMenuData(t);
     return (
-      <div className="global-menu-wrapper">        
+      <div className="global-menu-wrapper">
+        <ExplorerMenuMobile links={menuData} onSearch={ this.props.onSearch } />
         <GlobalMenuDesktop links={ menuData } location={ this.props.location } handleSearch={this.props.handleSearch} />
       </div>
     )

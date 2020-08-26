@@ -31,17 +31,19 @@ class Footer extends Component {
     const selected = i18n.language;
 
     return (
-      <div className="footer">
-        <div className="footer__block">
+      <div className="footer row">
+        <div className='col-lg-3 col-md-6 col-sm-12 m-t-20'>
           <img className="footer__logo" src="/img/footerlogo.svg" />
-          <span className="footer__legal">
+        </div>
+        <div className='col-lg-3 col-md-6 col-sm-12 m-t-20'>
+        <span className="footer__legal">
             <div>Copyright &copy; 2019 <a href="https://wagerr.com/">Wagerr</a></div>
             <div>Site design &copy; 2018 <a href="https://bulwarkcrypto.com/">Bulwark Cryptocurrency</a></div>
             <div>Logo &copy; 2018 <a href="https://wagerr.com/">Wagerr</a></div>
           </span>
         </div>
-        <div className="footer__block">
-          <div className="footer__data-wrapper">
+        <div className='col-lg-3 col-md-6 col-sm-12 m-t-20'>
+        <div className="footer__data-wrapper">
             <div className="footer__data-block">
               <p className="footer__data-title">Locale</p>
               <p>
@@ -69,10 +71,10 @@ class Footer extends Component {
             </div>
           </div>
         </div>
-        <div className="footer__block">
-          <div className="footer__social-media-wrapper">
+        <div className='col-lg-3 col-md-6 col-sm-12 m-t-20'>
+        <div className="footer__social-media-wrapper">
             <div className="footer__social-title">Social Media</div>
-            <div>
+            <div style={{ marginLeft: -6}}>
               <a href="https://bitcointalk.org/index.php?topic=1911583.0" target="_blank">
                 <Icon name="bitcoin" className="fab footer__social-media-icon" />
               </a>
@@ -95,7 +97,7 @@ class Footer extends Component {
                 <Icon name="facebook" className="fab footer__social-media-icon" />
               </a>
             </div>
-          </div>
+          </div>        
         </div>
       </div>
     );

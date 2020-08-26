@@ -135,7 +135,7 @@ h1, h2, h3, h4, h5, h6 {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-
+	
 	@include media-breakpoint-down(sm) {
 		flex-direction: column;
 	}
@@ -216,6 +216,9 @@ h1, h2, h3, h4, h5, h6 {
 		padding: 1em 2em 2em;
 	    position: relative;
 		transition: all 1s cubic-bezier(0, 1, .5, 1);
+		// @media (max-width: 900px) {
+		// 	padding: 0.5em;
+		// }
     }
 
     /*Set margin for content offset*/

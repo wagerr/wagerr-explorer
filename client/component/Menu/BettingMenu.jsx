@@ -20,7 +20,7 @@ class BettingMenu extends Component {
     const menuData = genMenuData(t)
     return (
       <div className="menu-wrapper">
-        <BettingMenuMobile links={menuData} onSearch={this.props.onSearch} />
+        {/* <BettingMenuMobile links={menuData} onSearch={this.props.onSearch} /> */}
         <BettingMenuDesktop links={menuData} location={this.props.location} />
       </div>
     )

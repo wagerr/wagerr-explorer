@@ -1,4 +1,4 @@
-export const genMenuData = (t) => {
+export const globalMenuData = (t) => {
   return [
     { label: t('Explorer'), icon: '/img/uiupdate/header_explorer.png', href: '/explorer' },
     { label: t('Bet History'), icon: '/img/uiupdate/header_bet_history.png', href: '/bethistory' },
@@ -8,12 +8,12 @@ export const genMenuData = (t) => {
       label: t('Help'), icon: '/img/uiupdate/header_help.png', href: '/help',
       submenu: [
         { label: 'Chart with us', href: '/helpus' },
-        { label: 'How to bet here', href: '/helpbet' }
+        { label: 'How to bet here', href: '/help' }
       ]
     }
   ]
 }
 
 export default {
-  genMenuData
+  globalMenuData
 }

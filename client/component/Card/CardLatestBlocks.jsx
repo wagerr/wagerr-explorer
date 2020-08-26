@@ -30,13 +30,13 @@ export default class CardLatestBlocks extends Component {
             </tr>
             {
               MOKEDATA.map((item, index) =>
-                <tr key={index} >
+                <tr key={index} className='table-item'>
                   <td className="">{item.height}</td>
                   <td className="cell-ellipsis">{item.hash}</td>
-                  <td className="">{item.value}</td>
-                  <td className="">{item.age}</td>
+                  <td style={{ minWidth: 110 }}>{item.value}</td>
+                  <td style={{ minWidth: 110 }}>{item.age}</td>
                   <td className="">{item.recipents}</td>
-                  <td className="">{item.created}</td>
+                  <td style={{ minWidth: 160 }}>{item.created}</td>
                 </tr>)}
           </tbody>
         </table>

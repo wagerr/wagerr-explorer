@@ -12,7 +12,6 @@
 	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 	transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 	border-radius: 5px;
-
 	&:hover {
 		box-shadow: 0 8px 14px rgba(0,0,0,0.20), 0 4px 4px rgba(0,0,0,0.18);
 		}
@@ -38,7 +37,6 @@
 
 	&__row {
 		display: flex;
-
 	}
 
 	&__data-sub {
@@ -164,6 +162,18 @@
 		font-size: 15px;
 		font-weight: 500;
 		box-shadow: 0 0 0 rgba(0,0,0,0.1), 0 1px 0 rgba(0,0,0,0.1);
+		@media (max-width: 900px) {
+			margin: 6px;
+			height: 32px;
+			font-size: 12px;
+		}
+	}
+
+	&__content {
+		font-size: 20px;
+		@media (max-width: 900px) {
+			font-size: 16px;
+		}
 	}
 
 	&__empty {
@@ -282,9 +292,6 @@
 	min-width: 100px;
 } 
 
-.bg-eee {
-	background: #eee;
-}
 
 .bet-black-card {
 	font-size: 20px;
@@ -296,6 +303,12 @@
 	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 	transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 	border-radius: 5px;
+	@media (max-width: 991px) {
+		min-height: 900px;
+	}
+	@media (max-width: 500px) {
+		min-height: 400px;
+	}
 	&:hover {
 		box-shadow: 0 8px 14px rgba(0,0,0,0.20), 0 4px 4px rgba(0,0,0,0.18);
 	}

@@ -74,11 +74,12 @@ class CoinSummary extends Component {
               <div className="col-md-12 col-lg-6">
                 <CardBetStatus totalBet={coin.totalBet} totalMint={coin.totalMint} />
               </div>
+              <div className="col-md-12 col-lg-12">
+                <CardLatestBlocks totalBet={coin.totalBet} totalMint={coin.totalMint} />
+              </div>
             </div>
           </div>
-          <div className="col-md-12 col-lg-12">
-            <CardLatestBlocks totalBet={coin.totalBet} totalMint={coin.totalMint} />
-          </div>
+         
           {/*<div className="col-md-12 col-lg-3">
             <WatchList
               items={watchlist}
@@ -86,6 +87,7 @@ class CoinSummary extends Component {
               onRemove={this.props.onRemove} />
           </div>*/}
         </div>
+        
       </div>
     );
   };

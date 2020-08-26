@@ -6,7 +6,7 @@ import Card from '../component/Card';
 export default class Bethistory extends Component {
   render() {
     return (
-      <div className='m-20'>
+      <div className='m-20 bet-history'>
         <h2>Bet Transaction History</h2>
         <Card>
           <div className='m-20 flex-center'>

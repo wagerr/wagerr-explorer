@@ -1,17 +1,15 @@
 
 .menu-mobile {
-
 	display: flex;
 	flex-direction: column;
-
-	box-shadow: #7d7d7d 0px 0px 16px;
 	color: $white;
 	flex: 1;
 	font-weight: lighter;
     margin: 0;
 	position: fixed;
 	width: 100%;
-
+	z-index: 10000;
+	// margin-top: -69px;
 	@include media-breakpoint-up(md) {
 		display: none;
 	}
@@ -33,29 +31,31 @@
 	}
 
 	&__item-wrapper {
-		background-color: $white;
+		background-color: #AB0000;
+		color: #fff;
 		/*height: 0;*/
   		/*overflow: hidden;*/
   		display: none;
 		transition: all .1s cubic-bezier(0, 1, .5, 1);
+		width: 200px;
 	}
 
 	&__item {
 		display: flex;
 		align-items: center;
-		border-bottom: 1px solid $gray;
 		line-height: 1;
-		margin: 0 auto;
 		padding: 1em;
 		position: relative;
 		transition: all 1s cubic-bezier(0, 1, .5, 1);
-		width: 95%;
+		height: 40px;
+	}
 
+	&__note {
+		margin: 0.5em 0 0.5em 1em ;
 		&:hover {
 			color: $wgreen;
-			text-decoration: none;
+			background: #330000;
 		}
-
 	}
 
 	a.menu-mobile__item:last-child {

@@ -10,6 +10,7 @@ import { compose } from 'redux'
 import { translate } from 'react-i18next'
 import connect from 'react-redux/es/connect/connect'
 import { genMenuData } from './explorerMenuData'
+import { globalMenuData } from './globalMenuData'
 
 
 class ExplorerMenu extends Component {
@@ -20,9 +21,11 @@ class ExplorerMenu extends Component {
   render() {
     const { t } = this.props;
     const menuData = genMenuData(t)
+    const navData = globalMenuData(t)
+
     return (
       <div className="menu-wrapper">
-        <ExplorerMenuMobile links={menuData} onSearch={ this.props.onSearch } />
+        {/* <ExplorerMenuMobile links={navData} onSearch={ this.props.onSearch } /> */}
         <ExplorerMenuDesktop links={ menuData } location={ this.props.location } />
       </div>
     )

@@ -15,7 +15,7 @@ export default class Betting extends Component {
         <BettingMenu onSearch={this.props.handleSearch} />
         <div className="content__wrapper_total m-20">
           <div className="row">
-            <div className="col-sm-9">
+            <div className="col-lg-9 col-md-12">
               <div className="bet-search">
                 <div>Showing 80 events 1</div>
                 <input placeholder={'Search...'} />
@@ -24,9 +24,8 @@ export default class Betting extends Component {
               <CardBettingTable />
               <CardBettingTable />
               <CardBettingTable />
-
             </div>
-            <div className="col-sm-3">
+            <div className="col-lg-3 col-md-12">
               <div className='bet-black-card'>
                 <div className='bet-black-card__title'>BET SLIP</div>
                 <div className='bet-black-card__body'>

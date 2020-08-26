@@ -13,6 +13,9 @@
 		background:url('/img/uiupdate/header_back1.png');
 		height: 89px;
 	}
+	@media (max-width: 768px) {
+		display: none
+	}
 }
 
 .global-menu-desktop-explore {
@@ -20,7 +23,7 @@
 	height: 93px;
 }
 
-.global-menu-desktop__header{	
+.global-menu-desktop__header{
 	display: flex;
 	height: 93px;
 }
@@ -36,8 +39,10 @@
 
 .global-menu-desktop_logo_section{
 	padding: 0px 76px;
-	//width: 400px;
 	text-align: center;
+	@media (max-width: 956px) {
+		padding: 0px;
+	}
 }
 
 .global-menu-desktop__item-icon{
@@ -52,6 +57,22 @@
 	align-items: center;
 	text-align: center;
 	width: 100px;
+	&__submenu {
+		background: #27221C;
+		margin-top: 24px;
+		color: #fff;
+		font-size: 12.5px;
+		z-index: 100;
+		&__text{
+			padding: 3px 0 5px 0;
+			// border: 1px solid yellow;
+			color: #fff;
+			&:hover {
+				cursor: pointer;
+				color: gray;
+			}
+		}
+	}
 }
 
 .global-menu-desktop__item.global-menu-desktop__item--is-active{
@@ -73,6 +94,7 @@
 .global-menu-desktop__item-label{
 	color:white;
 	margin:auto;
+	font-size: 14px;
 }
 
 .global-menu-desktop_wallet_setion{

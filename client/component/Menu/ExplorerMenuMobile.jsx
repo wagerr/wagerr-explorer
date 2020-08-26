@@ -29,27 +29,32 @@ export default class ExplorerMenuMobile extends Component {
     const { props } = this;
 
     return props.links.map((i, idx) => {
-      if (i.label == 'Get Started'){
+      if (i.label == 'Get Started') {
         return (
-                <a target="_blank" key={ idx } className="menu-mobile__item" href={ i.href } onClick={ this.handleToggle } >
-                  <img
-                    alt={ i.label }
-                    className="menu-mobile__icon"
-                    src={ i.icon }
-                    title={ this.state.isOpen ? null : i.label } />
-                  <span className="menu-mobile__item-label" >{ i.label }</span>
-                </a>
+          <a target="_blank" key={idx} className="menu-mobile__item" href={i.href} onClick={this.handleToggle} >
+            <img
+              alt={i.label}
+              className="menu-mobile__icon"
+              src={i.icon}
+              title={this.state.isOpen ? null : i.label} />
+            <span className="menu-mobile__item-label" >{i.label}</span>
+          </a>
         )
       }
       return (
-        <Link key={ idx } className="menu-mobile__item" to={ i.href } onClick={ this.handleToggle } >
-          <img
-            alt={ i.label }
-            className="menu-mobile__icon"
-            src={ i.icon }
-            title={ this.state.isOpen ? null : i.label } />
-          <span className="menu-mobile__item-label" >{ i.label }</span>
-        </Link>
+        <div className="menu-mobile__note">
+          <Link key={idx} className="menu-mobile__item" to={i.href} onClick={this.handleToggle} >
+            <img
+              alt={i.label}
+              className="menu-mobile__icon"
+              src={i.icon}
+              title={this.state.isOpen ? null : i.label} />
+            <span className="menu-mobile__item-label" style={{ color: '#fff', marginLeft: -14 }}>{i.label}</span>
+          </Link>
+          {i.submenu && <ul style={{ marginLeft: 24}}>
+            {i.submenu.map((item, index) => <li key={index}><Link to={item.href} style={{ color: '#fff' }}>{item.label}</Link></li>)}
+          </ul>}
+        </div>
       )
     })
   };
@@ -58,18 +63,18 @@ export default class ExplorerMenuMobile extends Component {
 
   render() {
     return (
-      <div className={ `menu-mobile ${ this.state.isOpen ? 'menu-mobile--open' : 'menu-mobile--close' }` }>
+      <div className={`menu-mobile ${this.state.isOpen ? 'menu-mobile--open' : 'menu-mobile--close'}`}>
         <div className="menu-mobile__search-wrapper">
-          <SearchBar
+          {/* <SearchBar
             className="search--mobile mr-3"
             onSearch={ this.props.onSearch }
-            placeholder="Search Blockchain" />
-          <a onClick={ this.handleToggle } >
-            <Icon name="bars" className="menu-mobile__toggle" onClick={ this.handleToggle } />
+            placeholder="Search Blockchain" /> */}
+          <a onClick={this.handleToggle} >
+            <Icon name="bars" className="menu-mobile__toggle" onClick={this.handleToggle} />
           </a>
         </div>
         <div className="menu-mobile__item-wrapper" >
-          { this.getLinks() }
+          {this.getLinks()}
         </div>
       </div>
     )

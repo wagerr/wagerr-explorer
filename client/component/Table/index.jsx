@@ -74,7 +74,7 @@ export default class TableWrapper extends Component {
         <div className="table-wrapper__shadow-margin">
           <Table className={ `${ this.props.hasDivider ? 'table--has-divider' : '' } ${ this.props.className || 'animated fadeIn' }` }>
             <TableHeader cols={ props.cols } />
-            { this.getBody() }
+            {/* { this.getBody() } */}
           </Table>
         </div>
       </div>
