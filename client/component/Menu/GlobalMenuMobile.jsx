@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import Icon from '../Icon';
 import SearchBar from '../SearchBar';
 
-export default class ExplorerMenuMobile extends Component {
+export default class GlobalMenuMobile extends Component {
   static propTypes = {
     links: PropTypes.array
   };
@@ -51,7 +51,7 @@ export default class ExplorerMenuMobile extends Component {
               title={this.state.isOpen ? null : i.label} />
             <span className="menu-mobile__item-label" style={{ color: '#fff', marginLeft: -14 }}>{i.label}</span>
           </Link>
-          {i.submenu && <ul style={{ marginLeft: 24}}>
+          {i.submenu && <ul style={{ marginLeft: 24 }}>
             {i.submenu.map((item, index) => <li key={index}><Link to={item.href} style={{ color: '#fff' }}>{item.label}</Link></li>)}
           </ul>}
         </div>
@@ -72,6 +72,17 @@ export default class ExplorerMenuMobile extends Component {
           <a onClick={this.handleToggle} >
             <Icon name="bars" className="menu-mobile__toggle" onClick={this.handleToggle} />
           </a>
+          <img src="/img/uiupdate/logo.png" class="global-menu-desktop__logo" className='mobile-logo'/>
+          <div className="global-menu-desktop_wallet_setion">
+            <div className="global-menu-desktop_wallet_connection">
+              <span className="global-menu-desktop_wallet_balance">0 WGR</span>
+              <div className="desktop_wallet_connection_status">
+                <div className="wallet_connection_status_mark"></div>
+                <span className="wallet_connection_status_text">Wallet Connected</span>
+              </div>
+            </div>
+          </div>
+          
         </div>
         <div className="menu-mobile__item-wrapper" >
           {this.getLinks()}

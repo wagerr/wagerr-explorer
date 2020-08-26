@@ -12,6 +12,7 @@ import CoinSummary from '../container/CoinSummary';
 import SearchBar from '../component/SearchBar';
 import SearchEventBar from '../component/SearchEventBar';
 import Footer from '../component/Footer';
+import ExplorerOverviewMenu from '../component/Menu/ExplorerOverviewMenu';
 class Peer extends Component {
   static propTypes = {
     getPeers: PropTypes.func.isRequired
@@ -46,9 +47,11 @@ class Peer extends Component {
     }
 
     return (
-      <div className="content" id="body-content">
+      <div className="content content-top" id="body-content">
         <ExplorerMenu onSearch={ this.props.handleSearch } />        
-        <div className="content__wrapper_total">          
+        <div className="content__wrapper_total">    
+        <ExplorerOverviewMenu />
+      
           <div className="content_search_wrapper">                      
             {/* <SearchBar
               className="d-none d-md-block"

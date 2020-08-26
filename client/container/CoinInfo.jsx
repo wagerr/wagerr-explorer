@@ -14,6 +14,7 @@ import CoinSummary from '../container/CoinSummary';
 import SearchBar from '../component/SearchBar';
 import SearchEventBar from '../component/SearchEventBar';
 import Footer from '../component/Footer';
+import ExplorerOverviewMenu from '../component/Menu/ExplorerOverviewMenu';
 class CoinInfo extends Component {
   static propTypes = {
     coin: PropTypes.object.isRequired
@@ -21,9 +22,11 @@ class CoinInfo extends Component {
 
   render() {
     return (
-      <div className="content" id="body-content">
+      <div className="content content-top" id="body-content">
         <ExplorerMenu onSearch={ this.props.handleSearch } />        
-        <div className="content__wrapper_total">          
+        <div className="content__wrapper_total">    
+          <ExplorerOverviewMenu />
+      
           <div className="content_search_wrapper">                      
             {/* <SearchBar
               className="d-none d-md-block"

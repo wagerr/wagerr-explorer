@@ -3,12 +3,12 @@ import Component from 'core/Component';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { withRouter } from 'react-router';
-import ExplorerMenuDesktop from './ExplorerMenuDesktop';
 import { compose } from 'redux'
 import { translate } from 'react-i18next'
 import { genMenuData } from './explorerMenuData'
+import { Link } from 'react-router-dom';
 
-class ExplorerMenu extends Component {
+class ExplorerOverviewMenu extends Component {
   static propTypes = {
     onSearch: PropTypes.func.isRequired
   };
@@ -17,8 +17,17 @@ class ExplorerMenu extends Component {
     const { t } = this.props;
     const menuData = genMenuData(t)
     return (
-      <div className="menu-wrapper">
-        <ExplorerMenuDesktop links={ menuData } location={ this.props.location } />
+      <div className='menu-explorer'>
+        {
+          menuData.map((i, index) =>
+            <div
+              className='menu-explorer__item' 
+              key={index}
+            >
+              <img src={i.icon.split('.svg')[0] + '_white.svg'} />
+              <Link to={i.href} style={{ color: '#fff'}}>{i.label}</Link>
+            </div>)
+        }
       </div>
     )
   }
@@ -27,5 +36,5 @@ class ExplorerMenu extends Component {
 export default compose(
   translate('menu'),
   withRouter
-)(ExplorerMenu);
+)(ExplorerOverviewMenu);
 

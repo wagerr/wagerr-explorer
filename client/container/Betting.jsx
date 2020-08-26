@@ -4,6 +4,7 @@ import React from 'react';
 import Card from '../component/Card';
 import BettingMenu from '../component/Menu/BettingMenu';
 import CardBettingTable from '../component/Card/CardBettingTable';
+import BettingMobileMenu from '../component/Menu/BettingMobileMenu';
 
 export default class Betting extends Component {
   state = {
@@ -13,8 +14,9 @@ export default class Betting extends Component {
     return (
       <div className='content'>
         <BettingMenu onSearch={this.props.handleSearch} />
-        <div className="content__wrapper_total m-20">
-          <div className="row">
+        <div className="content__wrapper_total">
+          <BettingMobileMenu />
+          <div className="row m-20">
             <div className="col-lg-9 col-md-12">
               <div className="bet-search">
                 <div>Showing 80 events 1</div>

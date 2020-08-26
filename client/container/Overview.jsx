@@ -1,4 +1,3 @@
-
 import Actions from '../core/Actions';
 import Component from '../core/Component';
 import { connect } from 'react-redux';
@@ -17,6 +16,7 @@ import CoinSummary from '../container/CoinSummary';
 import SearchBar from '../component/SearchBar';
 import SearchEventBar from '../component/SearchEventBar';
 import Footer from '../component/Footer';
+import ExplorerOverviewMenu from '../component/Menu/ExplorerOverviewMenu';
 class Overview extends Component {
   static propTypes = {
     txs: PropTypes.array.isRequired
@@ -65,7 +65,8 @@ class Overview extends Component {
     return (
       <div className={`content ${explore_class}`} id="body-content">
         <ExplorerMenu onSearch={ this.props.handleSearch } />        
-        <div className="content__wrapper_total">          
+        <div className="content__wrapper_total">     
+          <ExplorerOverviewMenu />     
           <div className="content_search_wrapper">                      
             {/* <SearchBar
               className="d-none d-md-block"

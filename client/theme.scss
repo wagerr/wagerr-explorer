@@ -22,7 +22,7 @@ $menu-gradient-main: #295af5;
 $menu-gradient-secondary: #595ff5;
 $menu-width-open: 240px;
 $menu-width-close: 110px;
-$menu-mobile-height: 70px;
+$menu-mobile-height: 60px;
 
 /* Bootstrap override */
 $card-border-width: 0;
@@ -216,9 +216,9 @@ h1, h2, h3, h4, h5, h6 {
 		padding: 1em 2em 2em;
 	    position: relative;
 		transition: all 1s cubic-bezier(0, 1, .5, 1);
-		// @media (max-width: 900px) {
-		// 	padding: 0.5em;
-		// }
+		@media (max-width: 768px) {
+			padding: 0.2em 1.4em 1em 0.3em;
+		}
     }
 
     /*Set margin for content offset*/
