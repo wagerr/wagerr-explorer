@@ -16,9 +16,9 @@ export default class Lottos extends Component {
               <div className='chain-title'>LOTTO JACKPOT</div>
               <br/>
               <div className='chain-sm-title'>Game Start:</div>
-              <div>Dec 2nd 2019 07:06 AM</div>
+              <div className='chain-sm-date'>Dec 2nd 2019 07:06 AM</div>
               <div className='chain-sm-title'>Game End:</div>
-              <div>Dec 9th 2019 07:06 AM</div>
+              <div className='chain-sm-date'>Dec 9th 2019 07:06 AM</div>
               <div className='chain-btn'>BUY TICKET</div>
               <div className='chain-italic'>(Entry Fee: 100 WGR)</div>
             </div>

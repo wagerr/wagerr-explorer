@@ -30,7 +30,7 @@ export default class CardBetEvents extends Component {
     return (
       <div className="animated fadeInUp w3-tables w3-responsive" style={{ width: width > 767 ? width-320 : width-27 }}>
         
-        <div className="w3-tables__title" style={{ width: width < 1640 && (width < 767 ? 1283 : 1320)  }}>
+        <div className="w3-tables__title" style={{ width: width < 1640 && (width < 767 ? 1438 : 1467)  }}>
           <div>BET EVENTS </div>
           <div className="align-row-center">
             <span className="mr-10">Net Odds:</span>
@@ -45,7 +45,7 @@ export default class CardBetEvents extends Component {
           </div>
         </div>
 
-        <div className="slick-slider" style={{ width: width < 1640 && (width < 767 ? 1283 : 1320) }}>
+        <div className="slick-slider" style={{ width: width < 1640 && (width < 767 ? 1438 : 1467) }}>
           <div className="slick-slider__leftarrow">
             <img src={'/img/uiupdate/left_arrow.png'} alt={'left arrow'} />
           </div>
@@ -63,7 +63,7 @@ export default class CardBetEvents extends Component {
           </div>
         </div>
 
-        <div className="slick-slider" style={{ width: width < 1640 && (width < 767 ? 1283 : 1320) }}>
+        <div className="slick-slider" style={{ width: width < 1640 && (width < 767 ? 1438 : 1467) }}>
           <div className="slick-slider__leftarrow">
             <img src={'/img/uiupdate/left_arrow.png'} alt={'left arrow'} />
           </div>
@@ -92,9 +92,9 @@ export default class CardBetEvents extends Component {
               <th className="text-center">1</th>
               <th className="text-center">X</th>
               <th className="text-center">2</th>
-              <th className="text-center">SUPPLY CHANGE</th>
-              <th className="text-center">BET AMOUNT</th>
-              <th className="text-center">BET STATUS</th>
+              <th className="text-center" style={{ minWidth: 151 }}>SUPPLY CHANGE</th>
+              <th className="text-center" style={{ minWidth: 125 }}>BET AMOUNT</th>
+              <th className="text-center" style={{ minWidth: 120 }}>BET STATUS</th>
               <th className="text-center">DETAIL</th>
             </tr>
             {
@@ -131,7 +131,7 @@ export default class CardBetEvents extends Component {
           </tbody>
         </table>
         
-        <div className="table-footer" style={{ width: width < 1640 && (width < 767 ? 1283 : 1320) }}>
+        <div className="table-footer" style={{ width: width < 1640 && (width < 767 ? 1438 : 1467) }}>
           <div className="table-footer__icon">{'<<'}</div>
           <div className="table-footer__icon">{'<'}</div>
           <div className="table-footer__row">

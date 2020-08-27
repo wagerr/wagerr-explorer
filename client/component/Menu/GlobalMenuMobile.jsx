@@ -49,7 +49,12 @@ export default class GlobalMenuMobile extends Component {
             <span className="menu-mobile__item-label" style={{ color: '#fff', marginLeft: -14 }}>{i.label}</span>
           </Link>
           {i.submenu && <ul style={{ marginLeft: 24 }}>
-            {i.submenu.map((item, index) => <li key={index}><Link to={item.href} style={{ color: '#fff' }}>{item.label}</Link></li>)}
+            {i.submenu.map((item, index) => <li key={index}>
+              <Link to={item.href} style={{ color: '#fff' }} onClick={()=>this.setState({isOpen: false})} >
+                {item.label}
+              </Link>
+            </li>
+            )}
           </ul>}
         </div>
       )
@@ -69,7 +74,7 @@ export default class GlobalMenuMobile extends Component {
           <a onClick={this.handleToggle} >
             <Icon name="bars" className="menu-mobile__toggle" onClick={this.handleToggle} />
           </a>
-          <h5 style={{ color: '#FFF', fontWeight: '600'}}>{UtilService.getHeader(window.location.hash)}</h5>
+          <h5 style={{ color: '#FFF', fontWeight: 700 }}>{UtilService.getHeader(window.location.hash)}</h5>
           <img src="/img/uiupdate/logo.png" className="global-menu-desktop__logo" className='mobile-logo'/>
           <div className="global-menu-desktop_wallet_setion">
             <div className="global-menu-desktop_wallet_connection">
@@ -82,7 +87,7 @@ export default class GlobalMenuMobile extends Component {
           </div>
           
         </div>
-        <div className="menu-mobile__item-wrapper" >
+        <div className="menu-mobile__item-wrapper" onMouseLeave={()=>this.setState({isOpen: false})} >
           {this.getLinks()}
         </div>
       </div>

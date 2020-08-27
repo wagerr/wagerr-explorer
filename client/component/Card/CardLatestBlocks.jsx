@@ -36,7 +36,7 @@ export default class CardLatestBlocks extends Component {
                   <td >{item.value}</td>
                   <td className="mobile-age">{item.age}</td>
                   <td className="">{item.recipents}</td>
-                  <td style={{ minWidth: 110 }}>{item.created}</td>
+                  <td style={{ minWidth: 160 }}>{item.created}</td>
                 </tr>)}
           </tbody>
         </table>
