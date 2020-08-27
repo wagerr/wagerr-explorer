@@ -2,11 +2,9 @@
 import Component from 'core/Component';
 import PropTypes from 'prop-types';
 import React from 'react';
-
 import { Link } from 'react-router-dom';
-
 import Icon from '../Icon';
-import SearchBar from '../SearchBar';
+import UtilService from '../API/utils';
 
 export default class GlobalMenuMobile extends Component {
   static propTypes = {
@@ -27,7 +25,6 @@ export default class GlobalMenuMobile extends Component {
 
   getLinks = () => {
     const { props } = this;
-
     return props.links.map((i, idx) => {
       if (i.label == 'Get Started') {
         return (
@@ -61,7 +58,7 @@ export default class GlobalMenuMobile extends Component {
 
   handleToggle = () => this.setState({ isOpen: !this.state.isOpen });
 
-  render() {
+  render() {    
     return (
       <div className={`menu-mobile ${this.state.isOpen ? 'menu-mobile--open' : 'menu-mobile--close'}`}>
         <div className="menu-mobile__search-wrapper">
@@ -72,7 +69,8 @@ export default class GlobalMenuMobile extends Component {
           <a onClick={this.handleToggle} >
             <Icon name="bars" className="menu-mobile__toggle" onClick={this.handleToggle} />
           </a>
-          <img src="/img/uiupdate/logo.png" class="global-menu-desktop__logo" className='mobile-logo'/>
+          <h5 style={{ color: '#FFF', fontWeight: '600'}}>{UtilService.getHeader(window.location.hash)}</h5>
+          <img src="/img/uiupdate/logo.png" className="global-menu-desktop__logo" className='mobile-logo'/>
           <div className="global-menu-desktop_wallet_setion">
             <div className="global-menu-desktop_wallet_connection">
               <span className="global-menu-desktop_wallet_balance">0 WGR</span>

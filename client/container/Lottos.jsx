@@ -8,7 +8,7 @@ export default class Lottos extends Component {
     return (
       <div className='m-20'>
         <div>
-          <div className='row chain-game'>
+          <div className='row chain-game animated fadeInUp'>
             <img src={'/img/uiupdate/quote.png'} alt={'WGR'} className='quote-img'/>
             <div className='col-md-4 col-sm-12 align-center p-20'>
               <br/>
@@ -62,12 +62,14 @@ export default class Lottos extends Component {
             </div>
           </div>
         </div>
-        <h2>CG Lotto Bet History</h2>
-        <Card>
-          <div className='m-20 flex-center'>
-            <div>No Chain Games transactions to list. Buy a ticket to enter the lotto.</div>
-          </div>
-        </Card>
+        <div className='m-12'>
+          <h2>CG Lotto Bet History</h2>
+          <Card>
+            <div className='m-20 flex-center'>
+              <div className='card__chain'>No Chain Games transactions to list. Buy a ticket to enter the lotto.</div>
+            </div>
+          </Card>
+        </div>
       </div>
     );
   };

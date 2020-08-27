@@ -73,7 +73,7 @@ class NewBetEvent extends Component {
               </div>
               <div className="col-md-12 col-lg-6">
                 <Card title={'Bet Result'}>
-                  <div className='space-between direction-row p-12'>
+                  <div className='space-between direction-row p-13'>
                     <div>Result:</div>
                     <div>Waiting For Oracle</div>
                   </div>
@@ -87,15 +87,15 @@ class NewBetEvent extends Component {
                 <tbody>
                   <tr className="table-header">
                     <th className=''>TIME</th>
-                    <th className='text-center'>HOME ODDS</th>
-                    <th className='text-center'>DRAW ODDS</th>
-                    <th className='text-center'>AWAY ODDS</th>
+                    <th style={{ minWidth: 100 }} className='text-center'>HOME ODDS</th>
+                    <th style={{ minWidth: 100 }} className='text-center'>DRAW ODDS</th>
+                    <th style={{ minWidth: 100 }} className='text-center'>AWAY ODDS</th>
                     <th className=''>TX ID</th>
                   </tr>
                   {
                     MOKEDATA.map((item, index) =>
                       <tr key={index} >
-                        <td className="">{item.time}</td>
+                        <td style={{ minWidth: 210 }}>{item.time}</td>
                         <td className="text-center">{item.home}</td>
                         <td className="text-center">{item.draw}</td>
                         <td className="text-center">{item.away}</td>

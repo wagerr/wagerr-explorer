@@ -1,24 +1,13 @@
 .search {
 
 	position: relative;
-	width: 60%;
+	width: var(--width);
 	float: right;
 	margin-top:15px;
-	margin-right:10px;
-	@media (max-width: 1855px) {
-		width: 55%;
+	margin-right: 20px!important;
+	@media (max-width: 1600px) {
+		margin-right: 30px!important;
 	}
-
-	@media (max-width: 1647px) {
-		width: 50%;
-		margin-right: 20px;
-	}
-
-	@media (max-width: 1500px) {
-		width: 47%;
-		margin-right: 30px;
-	}
-
 	&:hover {
 		
 	}

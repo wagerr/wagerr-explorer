@@ -209,7 +209,6 @@ h1, h2, h3, h4, h5, h6 {
 	}
 
     &__wrapper {
-		//background-color: $white;
 	    margin: 0 auto;
 		min-height: 80vh;
 		overflow-x: hidden;
@@ -219,7 +218,7 @@ h1, h2, h3, h4, h5, h6 {
 		@media (max-width: 768px) {
 			padding: 0.2em 1.4em 1em 0.3em;
 		}
-    }
+	}
 
     /*Set margin for content offset*/
 	& + div .menu-desktop--close + & {

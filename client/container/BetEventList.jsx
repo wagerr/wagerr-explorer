@@ -310,7 +310,7 @@ class BetEventList extends Component {
             /> */}
             <div>
               <div className="row">
-                <div class="col-4">
+                <div className="col-4">
                   <div style={{alignItems:'center',marginTop:'20px'}}>
                     <span>Completed / Opened</span>
                   </div>
@@ -332,7 +332,7 @@ class BetEventList extends Component {
                   />
                   </label>       
                 </div>
-                <div class="col-4" style={{textAlign:'center'}}>
+                <div className="col-4" style={{textAlign:'center'}}>
                   <div style={{alignItems:'center',marginTop:'20px'}}>
                     <span>Decimal Odds/ American Odds</span>
                   </div>
@@ -354,7 +354,7 @@ class BetEventList extends Component {
                   />
                   </label>       
                 </div>
-                <div class="col-4" style={{textAlign:'right'}}>
+                <div className="col-4" style={{textAlign:'right'}}>
                   <div style={{alignItems:'center',marginTop:'20px'}}>
                     <span>On Chain Odds / Effective Odds</span>
                   </div>

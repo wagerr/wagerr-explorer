@@ -10,28 +10,28 @@ export default class Help extends Component {
     const { action } = this.state;
     return (
       <div className='help'>
-        <div className='container'>
-          <h2>How to bet here</h2>
+        <div className='container animated fadeInUp'>
+          <h2 >How to bet here</h2>
           <div className='row'>
 
-            <div className='help__item col-lg-3 col-md-6 col-sm-12'>
+            <div className='help__item col-lg-3 col-sm-6 col-xs-6'>
               <img src={'/img/uiupdate/help_icon_1.png'} alt={'help_icon_1'} />
               <div className='help__item__title'>A computer</div>
               <div className='help__item__description'>You'll need a computer to set up your digital wallet and buy, sell, trade crpto assets with.</div>
             </div>
-            <div className='help__item col-lg-3 col-md-6 col-sm-12'>
+            <div className='help__item col-lg-3 col-sm-6 col-xs-6'>
               <img src={'/img/uiupdate/help_icon_2.png'} alt={'help_icon_1'} />
               <div className='help__item__title'>Chrome or Firefox</div>
               <div className='help__item__description'>You'll need to use Chrome or Firefox as your internet browser to enable Wagerr Extension Wallet</div>
               <div className='help__item__note'>Download Chrome <span>or</span> Firefox</div>
             </div>
-            <div className='help__item col-lg-3 col-md-6 col-sm-12'>
+            <div className='help__item col-lg-3 col-sm-6 col-xs-6'>
               <img src={'/img/uiupdate/help_icon_3.png'} alt={'help_icon_1'} />
               <div className='help__item__title'>Wagerr Extension Wallet</div>
               <div className='help__item__description'>The wagerr Extension wallet Browser Extension turns your browser into a secure Wagerr Wallet</div>
               <div className='help__item__note'>Wagerr Extension Wallet</div>
             </div>
-            <div className='help__item col-lg-3 col-md-6 col-sm-12'>
+            <div className='help__item col-lg-3 col-sm-6 col-xs-6'>
               <img src={'/img/uiupdate/help_icon_4.png'} alt={'help_icon_1'} />
               <div className='help__item__title'>Wagerr</div>
               <div className='help__item__description'>Wagerr is your digital currency and what you will use to bet here</div>

@@ -5,7 +5,7 @@ export const globalMenuData = (t) => {
     { label: t('Betting'), icon: '/img/uiupdate/header_betting.png', href: '/betting' },
     { label: t('Chain Games'), icon: '/img/uiupdate/header_chain_games.png', href: '/lottos' },
     {
-      label: t('Help'), icon: '/img/uiupdate/header_help.png', href: '/help',
+      label: t('Help'), icon: '/img/uiupdate/header_help.png', href: '#',
       submenu: [
         { label: 'Chart with us', href: '/helpus' },
         { label: 'How to bet here', href: '/help' }

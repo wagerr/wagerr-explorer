@@ -29,8 +29,7 @@ export default class GlobalMenuDesktop extends Component {
     const { props, state } = this;
 
     return props.links.map((i, idx) => {
-      console.log(props.location.pathname, i.href);
-      const isActive = props.location.pathname.includes(i.href);
+      const isActive = props.location.pathname.includes(i.href === '#' ? 'help': i.href);
       const iconSource = i.icon;
       return (
         <div
@@ -39,25 +38,25 @@ export default class GlobalMenuDesktop extends Component {
           <Link
             key={idx}
             to={i.href}
+            className="w3-dropdown-hover"
           >
             <img
               alt={i.label}
-              className="global-menu-desktop__item-icon"
+              className="global-menu-desktop__item-icon "
               src={iconSource}
               title={this.state.isOpen ? null : i.label} />
-            <span className="global-menu-desktop__item-label" >{i.label}</span>
-          </Link>
-          {
-            i.submenu && isActive &&
-            <div className='global-menu-desktop__item__submenu'>
-              {i.submenu.map((x, key) =>
+            <span className="w3-button global-menu-desktop__item-label " >{i.label}</span>
+            {
+              i.submenu && <div className="w3-dropdown-content w3-bar-block ">
+                {i.submenu.map((x, key) =>
                 <Link to={x.href} key={key} >
                   <div className='global-menu-desktop__item__submenu__text'>
                     {x.label}
                   </div>
                 </Link>
               )}
-            </div>}
+              </div>}
+          </Link>
         </div>
       )
     })

@@ -27,7 +27,7 @@ export default class Betting extends Component {
               <CardBettingTable />
               <CardBettingTable />
             </div>
-            <div className="col-lg-3 col-md-12">
+            <div className="col-lg-3 col-md-12 animated fadeInUp">
               <div className='bet-black-card'>
                 <div className='bet-black-card__title'>BET SLIP</div>
                 <div className='bet-black-card__body'>

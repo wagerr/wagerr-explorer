@@ -25,7 +25,7 @@ export default class CardLatestBlocks extends Component {
               <th className=''>TRANSACTION HASH</th>
               <th className=''>VALUE</th>
               <th className=''>AGE</th>
-              <th className=''>RECIPIENTS</th>
+              <th className='mobile-recipents'></th>
               <th className=''>CREATED</th>
             </tr>
             {
@@ -33,10 +33,10 @@ export default class CardLatestBlocks extends Component {
                 <tr key={index} className='table-item'>
                   <td className="">{item.height}</td>
                   <td className="cell-ellipsis">{item.hash}</td>
-                  <td style={{ minWidth: 110 }}>{item.value}</td>
-                  <td style={{ minWidth: 110 }}>{item.age}</td>
+                  <td >{item.value}</td>
+                  <td className="mobile-age">{item.age}</td>
                   <td className="">{item.recipents}</td>
-                  <td style={{ minWidth: 160 }}>{item.created}</td>
+                  <td style={{ minWidth: 110 }}>{item.created}</td>
                 </tr>)}
           </tbody>
         </table>
@@ -46,7 +46,7 @@ export default class CardLatestBlocks extends Component {
 }
 
 const MOKEDATA = [
-  { id: 1, height: '126217', hash: 'fbef8932kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujffbef8932kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf', value: '112.3700000', age: '-97 seconds', recipents: '12', created: '2019-12-12 12:12:12 UTC' },
-  { id: 2, height: '234432', hash: 'ceewf23fdec 32jhkejf23847324fj349823rrjf23ru23ujffbef8932kfj32r23432jhkejf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf23847324fj349823rrjf23ru23ujf', value: '42.37023000', age: '-2 seconds', recipents: '3', created: '2019-12-12 12:12:12 UTC' },
-  { id: 3, height: '036217', hash: '3243523ddxd432jhkejf23847324fj349823rrjf23ru23ujffbef8932kfj32r23432jhkejf23847324fj349823rrjf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf23ru23ujf', value: '112.7002340003', age: '-31 seconds', recipents: '43', created: '2019-12-12 12:12:12 UTC' },
+  { id: 1, height: '126217', hash: 'fbef8932kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujffbef8932kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf', value: '112.3700000', age: '-97', recipents: '12', created: '2019-12-12 12:12:12 UTC' },
+  { id: 2, height: '234432', hash: 'ceewf23fdec 32jhkejf23847324fj349823rrjf23ru23ujffbef8932kfj32r23432jhkejf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf23847324fj349823rrjf23ru23ujf', value: '42.37023000', age: '-2', recipents: '3', created: '2019-12-12 12:12:12 UTC' },
+  { id: 3, height: '036217', hash: '3243523ddxd432jhkejf23847324fj349823rrjf23ru23ujffbef8932kfj32r23432jhkejf23847324fj349823rrjf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf23ru23ujf', value: '112.70003', age: '-31', recipents: '43', created: '2019-12-12 12:12:12 UTC' },
 ]

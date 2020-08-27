@@ -21,11 +21,11 @@ class BettingMobileMenu extends Component {
         {
           menuData.map((i, index) =>
             <div
-              className='menu-explorer__item' 
+              className='menu-explorer__item'
               key={index}
             >
-              <img src={'/img/uiupdate/' + i.icon} />
-              <div style={{ color: '#fff'}}>{i.label}</div>
+              <img src={`/img/uiupdate/betting_${i.href}_${this.props.location.pathname.includes(i.href) ? 'red' : 'white'}.png`} />
+              <Link to={'/betting/' + i.href} style={{ color: this.props.location.pathname.includes(i.href) ? '#B50102' : '#FFF' }}>{i.label}</Link>
             </div>)
         }
       </div>
