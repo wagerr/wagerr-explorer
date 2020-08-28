@@ -339,6 +339,14 @@
 			}
 		}
 	}
+
+	&__blocks {
+		height: 32px;
+		@media (max-width: 767px) {
+			height: 24px;
+
+		}
+	}
 }
 
 .indicator {
