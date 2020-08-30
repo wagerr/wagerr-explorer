@@ -416,14 +416,14 @@ async function verifySpreadActions(record, rtype) {
               thisAction.spreadAwayOdds = betinfo.lockedEvent.spreadAwayOdds;
             }
   
-            if (thisAction.spreadHomePoints != betinfo.lockedEvent.spreadHomePoints) {
+            if (thisAction.spreadHomePoints != betinfo.lockedEvent.spreadPoints) {
               updated = true;
-              thisAction.spreadHomePoints = betinfo.lockedEvent.spreadHomePoints;
+              thisAction.spreadHomePoints = betinfo.lockedEvent.spreadPoints;
             }
 
-            if (thisAction.spreadAwayPoints != betinfo.lockedEvent.spreadAwayPoints) {
+            if (thisAction.spreadAwayPoints != -betinfo.lockedEvent.spreadPoints) {
               updated = true;
-              thisAction.spreadAwayPoints = betinfo.lockedEvent.spreadAwayPoints;
+              thisAction.spreadAwayPoints = -betinfo.lockedEvent.spreadPoints;
             }
   
             if (updated) {
