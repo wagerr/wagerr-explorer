@@ -1,19 +1,26 @@
-
 import React from 'react';
-
 import Card from './Card';
 
+const ExchangesData = [
+    {href: 'https://crex24.com/exchange/WGR-BTC', title: 'Crex24'},
+    {href: 'https://coinsuper.com/', title: 'CoinSuper'},
+    {href: 'https://chainex.io/', title: 'ChainEx'},
+    {href: 'https://folex.io/', title: 'Folex'},
+    {href: 'https://www.ionomy.com/', title: 'Ionomy'},
+    {href: 'https://livecoin.net/', title: 'LiveCoin'},
+    {href: 'https://www.blackturtle.eu/', title: 'TurtleNetwork'},
+    {href: 'https://www.gonetcoins.com/', title: 'Netcoins'},
+];
+
 const CardExchanges = () => (
-  <Card title="Exchanges">
-    <a href="https://crex24.com/exchange/WGR-BTC" target="_blank">Crex24</a><br />
-    <a href="https://coinsuper.com/" target="_blank">CoinSuper</a><br />
-    <a href="https://chainex.io/" target="_blank">ChainEx</a><br />
-    <a href="https://folex.io/" target="_blank">Folex</a><br />
-    <a href="https://www.ionomy.com/" target="_blank">Ionomy</a><br />
-    <a href="https://livecoin.net/" target="_blank">LiveCoin</a><br />
-    <a href="https://www.blackturtle.eu/" target="_blank">TurtleNetwork</a><br />
-    <a href="https://www.gonetcoins.com/" target="_blank">Netcoins</a><br /> 
-  </Card>
+    <Card title="Exchanges">
+        {
+            ExchangesData.map((item, index) =>
+                <div key={index} className={index % 2 === 0 ? 'bg-eee p-5-10' : 'p-5-10'}>
+                    <a href={item.href} target="_blank">{item.title}</a><br/>
+                </div>)
+        }
+    </Card>
 );
 
 export default CardExchanges;

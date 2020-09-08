@@ -13,6 +13,7 @@ import SearchBar from '../component/SearchBar';
 import SearchEventBar from '../component/SearchEventBar';
 import Footer from '../component/Footer';
 import ExplorerOverviewMenu from '../component/Menu/ExplorerOverviewMenu';
+import CardBigTable from "../component/Card/CardBigTable";
 class Peer extends Component {
   static propTypes = {
     getPeers: PropTypes.func.isRequired
@@ -71,7 +72,7 @@ class Peer extends Component {
             /> */}
             <div>
               <HorizontalRule title="Connections" />
-              <Table
+              <CardBigTable
                 cols={ this.state.cols }
                 data={ this.state.peers.map(peer => ({
                   ...peer,

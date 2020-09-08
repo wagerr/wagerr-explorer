@@ -2,25 +2,11 @@ import Component from '../core/Component';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-import { TabContent, TabPane, Nav, NavItem, NavLink, Button, Row, Col } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap';
 import classnames from 'classnames';
-
-import CardEarnings from '../component/Card/CardEarnings';
-import CardExchanges from '../component/Card/CardExchanges';
-import CardLinks from '../component/Card/CardLinks';
-import CardROI from '../component/Card/CardROI';
 import HorizontalRule from '../component/HorizontalRule';
 import Actions from '../core/Actions';
-import numeral from 'numeral';
-import { date24Format } from '../../lib/date';
-import Table from '../component/Table';
-import { Link } from 'react-router-dom';
 import sortBy from 'lodash/sortBy';
-import moment from 'moment/moment';
-import config from '../../config';
-import Card from '../component/Card';
-import CardBetEvent from '../component/Card/CardBetEvent';
 import CardBetResult from '../component/Card/CardBetResult';
 import { compose } from 'redux';
 import { translate } from 'react-i18next';
@@ -28,7 +14,6 @@ import CardMoneyLineEvent from '../component/Card/CardMoneyLineEvent';
 import CardSpreadEvent from '../component/Card/CardSpreadEvent';
 import CardOverUnderEvent from '../component/Card/CardOverUnderEvent';
 import BetEventTable from '../container/BetEventTable';
-
 
 class BetEvent extends Component {
   static propTypes = {
@@ -40,8 +25,7 @@ class BetEvent extends Component {
   };
 
   constructor (props) {
-    super(props)
-
+    super(props);
     this.state = {
       eventId: '',
       eventInfo: [],
@@ -56,7 +40,7 @@ class BetEvent extends Component {
   };
 
   componentDidMount () {
-    console.log('componentDidMount-BetEvent', this.props.match.params.eventId)
+    console.log('componentDidMount-BetEvent', this.props.match.params.eventId);
     this.setState({
       eventId: this.props.match.params.eventId,
     });
@@ -64,9 +48,9 @@ class BetEvent extends Component {
   };
 
   componentDidUpdate (prevProps) {    
-    const {params: {eventId}} = this.props.match
+    const {params: {eventId}} = this.props.match;
     if (prevProps.match.params.eventId !== eventId) {
-      console.log('componentDidUpdate-BetEvent', eventId)
+      console.log('componentDidUpdate-BetEvent', eventId);
       this.setState({
         eventId: this.props.match.params.eventId,
       });
@@ -95,7 +79,7 @@ class BetEvent extends Component {
               } else {
                 action.odds = action.drawOdds / 10000
               }
-            })
+            });
           this.setState({
             eventInfo: res[0], // 7 days at 5 min = 2016 coins
             betActions: res[1].actions,
@@ -107,7 +91,7 @@ class BetEvent extends Component {
       })
       .catch((err) => console.log(err))
     })
-  }
+  };
 
   toggle(tab) {
     if (this.state.activeTab !== tab) {
@@ -124,20 +108,6 @@ class BetEvent extends Component {
       return this.renderLoading()
     }
     const { t } = this.props;
-    // const cols = [
-    //   {key: 'createdAt', title: t('time')},
-    //   {key: 'bet', title: t('bet')},
-    //   {key: 'odds', title: t('odds')},
-    //   {key: 'value', title: t('value')},
-    //   {key: 'txId', title: t('txId')},
-    // ]
-    // const oddsCols = [
-    //   {key: 'createdAt', title: t('time')},
-    //   {key: 'homeOdds', title: t('homeOdds')},
-    //   {key: 'drawOdds', title: t('drawOdds')},
-    //   {key: 'awayOdds', title: t('awayOdds')},
-    //   {key: 'txId', title: t('txId')},
-    // ]
     const tableData = {
       t: t,
       eventInfo: this.state.eventInfo,
@@ -227,54 +197,6 @@ class BetEvent extends Component {
             </TabPane>
           </TabContent>
         </div>
-        {/* <div className="row">
-          <div className="col-sm-12 col-md-6">
-            <CardBetEvent eventInfo={this.state.eventInfo}/>
-          </div>
-          <div className="col-sm-12 col-md-6">
-            <CardBetResult eventInfo={this.state.eventInfo}/>
-          </div>
-        </div> */}
-        {/* <div className="row">
-          <div className="col-sm-12 col-md-12">
-            <Table
-              cols={oddsCols}
-              data={sortBy(this.state.eventInfo.events.map((event) => {
-                return {
-                  ...event,
-                  createdAt: date24Format(event.createdAt),
-                  homeOdds: event.homeOdds / 10000,
-                  drawOdds: event.drawOdds / 10000,
-                  awayOdds: event.awayOdds / 10000,
-                  txId: (
-                    <Link to={`/tx/${ event.txId }`}>{event.txId}</Link>
-                  )
-                }
-              }), ['createdAt'])}
-            />
-          </div>
-        </div> */}
-        {/* <div className="row">
-          <div className="col-sm-12 col-md-12">
-            <Table
-              cols={cols}
-              data={sortBy(this.state.betActions.map((action) => {
-                return {
-                  ...action,
-                  createdAt: date24Format(action.createdAt),
-                  bet: action.betChoose.replace('Money Line - ', ''),
-                  odds: action.odds,
-                  value: action.betValue
-                    ? (<span
-                      className="badge badge-danger">-{numeral(action.betValue).format('0,0.00000000')} WGR</span>) : '',
-                  txId: (
-                    <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
-                  )
-                }
-              }), ['createdAt'])}
-            />
-          </div>
-        </div> */}
       </div>
     )
   };

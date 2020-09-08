@@ -17,6 +17,8 @@ import SearchBar from '../component/SearchBar';
 import SearchEventBar from '../component/SearchEventBar';
 import Footer from '../component/Footer';
 import ExplorerOverviewMenu from '../component/Menu/ExplorerOverviewMenu';
+import CardLatestBlocks from "../component/Card/CardLatestBlocks";
+import CardBigTable from "../component/Card/CardBigTable";
 class Overview extends Component {
   static propTypes = {
     txs: PropTypes.array.isRequired
@@ -86,9 +88,21 @@ class Overview extends Component {
             /> */}
             <div>
               <HorizontalRule title={t('latestBlocks')} />
-              <Table
-                cols={this.state.cols}
-                data={txs} />
+              {/*<CardLatestBlocks data={txs}/>*/}
+              <CardBigTable
+                data={txs}
+                cols= {[
+                  {title: 'Height', key: 'blockHeight'},
+                  {title: 'Transaction Hash', key: 'txId', className: 'cell-ellipsis'},
+                  {title: 'Value', key: 'vout'},
+                  {title: 'age', key: 'age', className: 'w-m-80'},
+                  {title: 'recipients', key: 'recipients'},
+                  {title: 'Created', key: 'createdAt', className: 'w-m-160'},
+                ]}
+              />
+              {/*<Table*/}
+              {/*  cols={this.state.cols}*/}
+              {/*  data={txs} />*/}
             </div>
             <Footer />
           </div>

@@ -18,7 +18,7 @@ const CardEarnings = ({ coin }) => {
   
   return (
     <Card title="Estimated Earnings (COIN/BTC/USD)">
-      <div className="row">
+      <div className="row p-5-0 bg-eee">
         <div className="col-sm-12 col-md-3">
           DAILY
         </div>
@@ -26,7 +26,7 @@ const CardEarnings = ({ coin }) => {
           { nbtc(day) } WGR / { nbtc(day * coin.btcPrice) } BTC / { nusd(day * coin.usd) } USD
         </div>
       </div>
-      <div className="row">
+      <div className="row p-5-0">
         <div className="col-sm-12 col-md-3">
           WEEKLY
         </div>
@@ -34,7 +34,7 @@ const CardEarnings = ({ coin }) => {
           { nbtc(week) } WGR / { nbtc(week * coin.btcPrice) } BTC / { nusd(week * coin.usd) } USD
         </div>
       </div>
-      <div className="row">
+      <div className="row p-5-0 bg-eee">
         <div className="col-sm-12 col-md-3">
           MONTHLY
         </div>
@@ -42,7 +42,7 @@ const CardEarnings = ({ coin }) => {
           { nbtc(month) } WGR / { nbtc(month * coin.btcPrice) } BTC / { nusd(month * coin.usd) } USD
         </div>
       </div>
-      <div className="row">
+      <div className="row p-5-0">
         <div className="col-sm-12 col-md-3">
           YEARLY
         </div>
@@ -50,7 +50,7 @@ const CardEarnings = ({ coin }) => {
           { nbtc(year) } WGR / { nbtc(year * coin.btcPrice) } BTC / { nusd(year * coin.usd) } USD
         </div>
       </div>
-      <div className="row">
+      <div className="row p-5-0">
         <div className="col">
           <small className="u--text-gray">
             * Estimates based on current block subsidy and active masternodes.

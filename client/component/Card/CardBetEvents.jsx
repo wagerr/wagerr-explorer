@@ -11,8 +11,8 @@ export default class CardBetEvents extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
   componentDidMount() {
-    this.updateWindowDimensions();
-    window.addEventListener("resize", this.updateWindowDimensions);
+      this.updateWindowDimensions();
+      window.addEventListener("resize", this.updateWindowDimensions);
   }
 
   componentWillUnmount() {
