@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import Table from '../Table';
+import CardBigTable from "./CardBigTable";
 
 export default class CardBlockTXs extends Component {
   static defaultProps = {
@@ -22,7 +23,7 @@ export default class CardBlockTXs extends Component {
       cols: [
         { key: 'txId', title: 'Transaction ID' },
         { key: 'recipients', title: 'Recipients' },
-        { key: 'createdAt', title: 'Time' },
+        { key: 'createdAt', title: 'Time', className: 'w-m-160' },
       ]
     };
   };
@@ -30,7 +31,7 @@ export default class CardBlockTXs extends Component {
   render() {
     return (
       <div className="animated fadeIn">
-      <Table
+      <CardBigTable
         cols={ this.state.cols }
         data={ this.props.txs.map(tx => ({
           ...tx,

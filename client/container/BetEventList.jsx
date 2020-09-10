@@ -492,22 +492,22 @@ class BetEventList extends Component {
                                     }
                                     return {
                                         ...event,
-                                        start: <Link to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>
+                                        start: <Link to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
                                             {timeStamp24Format(event.events[0].timeStamp)} </Link>
                                         ,
                                         event: (
-                                            <Link to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>
+                                            <Link to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
                                                 {event.events[0].eventId}
                                             </Link>
                                         ),
-                                        name: <Link to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>
+                                        name: <Link to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
                                             {event.events[0].league}</Link>,
-                                        round: <Link to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>
+                                        round: <Link to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
                                         </Link>,
                                         homeTeam: <Link
-                                            to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].homeTeam}</Link>,
+                                            to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].homeTeam}</Link>,
                                         awayTeam: <Link
-                                            to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].awayTeam}</Link>,
+                                            to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].awayTeam}</Link>,
                                         homeOdds: homeOdds,
                                         drawOdds: drawOdds,
                                         awayOdds: awayOdds,
@@ -519,7 +519,7 @@ class BetEventList extends Component {
                                             className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
                                         betStatus: betStatus,
                                         seeDetail: <Link
-                                            to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
+                                            to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
                                     }
                                 })}/>}
 

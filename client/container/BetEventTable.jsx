@@ -11,6 +11,7 @@ import Actions, { getBetEventInfo, getBetTotals } from '../core/Actions';
 import { compose } from 'redux';
 import { translate } from 'react-i18next';
 import { connect } from 'react-redux';
+import CardBigTable from "../component/Card/CardBigTable";
 
 class BetEventTable extends Component {
   static propTypes = {
@@ -181,7 +182,7 @@ class BetEventTable extends Component {
       {
         this.props.data.activeTab == 1 &&
         <div>
-          <Table
+          <CardBigTable
             cols={topOneCols}
             data={sortBy(this.props.data.eventInfo.events.map((event) => {
               return {
@@ -196,7 +197,7 @@ class BetEventTable extends Component {
               }
             }), ['createdAt'])}
           />
-          <Table
+          <CardBigTable
             cols={bottomOneCols}
             data={sortBy(this.state.MoneyLine.map((action) => {
               return {
@@ -218,7 +219,7 @@ class BetEventTable extends Component {
       {
         this.props.data.activeTab == 2 &&
         <div>
-            <Table
+            <CardBigTable
               cols={topTwoCols}
               data={sortBy(this.props.data.betSpreads.map((action) => {
                 return {
@@ -233,7 +234,7 @@ class BetEventTable extends Component {
                 }
               }), ['createdAt'])}
             />
-            <Table
+            <CardBigTable
               cols={bottomTwoCols}
               data={sortBy(this.state.Spreads.map((action) => {
                 const betChoose = action.betChoose.replace('Spreads - ', '');
@@ -259,7 +260,7 @@ class BetEventTable extends Component {
       {
         this.props.data.activeTab == 3 &&
         <div>
-          <Table
+          <CardBigTable
             cols={topThreeCols}
             data={sortBy(this.props.data.betTotals.map((action) => {
               return {
@@ -274,7 +275,7 @@ class BetEventTable extends Component {
               }
             }), ['createdAt'])}
           /> 
-          <Table
+          <CardBigTable
             cols={bottomThreeCols}
             data={sortBy(this.state.Totals.map((action) => {
               return {

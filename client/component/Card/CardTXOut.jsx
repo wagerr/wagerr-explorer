@@ -10,6 +10,7 @@ import Table from '../Table';
 import BetModal from '../Modal';
 import CardTxOutOpCodeRow from './CardTxOutOpCodeRow'
 import { TXS } from '../../constants';
+import CardBigTable from "./CardBigTable";
 
 export default class CardTXOut extends Component {
   static defaultProps = {
@@ -33,7 +34,7 @@ export default class CardTXOut extends Component {
   render() {
     let txAddress;
     return (
-      <Table
+      <CardBigTable
         cols={ this.state.cols }
         data={ this.props.txs.map(tx => ({
           ...tx,
