@@ -5,6 +5,7 @@ const faucet = require('../handler/faucet');
 const iquidus = require('../handler/iquidus');
 const custom = require('../handler/custom');
 const opCode = require('../handler/opcode');
+const raw = require('../handler/raw');
 
 const router = express.Router();
 
@@ -72,5 +73,21 @@ router.get('/custom/supply', custom.getCustomSupply);
 
 // OpCode decryption
 router.get('/opcodes/:hex_value', opCode.decodeOP);
+
+router.get('/getblockbyhash', raw.getblockbyhash);
+
+router.get('/gettransaction', raw.gettransaction);
+
+router.get('/getunspenttransactions', raw.getunspenttransactions);
+
+router.get('/getunspenttransactions', raw.getunspenttransactions);
+
+router.get('/getfeeinfo', raw.getfeeinfo);
+
+router.get('/getblocktransactions', raw.getblocktransactions);
+
+router.post('/sendrawtransaction', raw.sendRawTransaction);
+
+router.get('/getaddresstransactioncount/:hash', raw.getAddress);
 
 module.exports =  router;
