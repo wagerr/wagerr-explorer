@@ -56,7 +56,7 @@ const getblockhash = async (req, res) => {
 
 const getblock = async (req, res) => {
   try {
-    if (!req.query.hash || !isNaN(req.query.hash)) {
+    if (!req.query.index || !isNaN(req.query.index)) {
       throw new Error('Block hash must be a string!');
     }
 
