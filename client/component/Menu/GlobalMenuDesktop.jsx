@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 
 import Icon from '../Icon';
 import SearchBar from '../SearchBar';
+import GlobalSwitch from './GlobalSwitch';
 
 export default class GlobalMenuDesktop extends Component {
   static propTypes = {
@@ -80,6 +81,7 @@ export default class GlobalMenuDesktop extends Component {
               <div className="global-menu-desktop_links">
                 {this.getLinks()}
               </div>
+              
               <div className="global-menu-desktop_wallet_setion">
                 <div className="global-menu-desktop_wallet_connection">
                   <span className="global-menu-desktop_wallet_balance">0 WGR</span>

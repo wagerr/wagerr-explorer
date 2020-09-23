@@ -46,6 +46,7 @@ import Help from './container/Help';
 // import NewBetEventList from './container/NewBetEventList';
 import NewBetEvent from './container/NewBetEvent';
 import ExplorerMenu from './component/Menu/ExplorerMenu';
+import GlobalSwitch from './component/Menu/GlobalSwitch';
 
 class App extends Component {
   static propTypes = {
@@ -62,6 +63,10 @@ class App extends Component {
       init: true,
       limit: 10,
       searches: [],
+      toggleSwitch: localStorage.getItem('toggleCompletedAndOpen') != undefined ? localStorage.getItem('toggleCompletedAndOpen') == 'true' : true,
+      toggleSwitchOdds: localStorage.getItem('toggleOddsFee') != undefined ? localStorage.getItem('toggleOddsFee') == 'true' : false,
+      toggleSwitchOddsStyle: localStorage.getItem('toggleOddsStyle') != undefined ? localStorage.getItem('toggleOddsStyle') == 'true' : false,
+ 
     };
     this.timer = { coins: null, txs: null };
   };
@@ -161,6 +166,21 @@ class App extends Component {
     else document.location.href = `/#/betevents?search=${term}`
   }
 
+  handleToggleChange = (toggleSwitch) => {
+    localStorage.setItem('toggleCompletedAndOpen', toggleSwitch);
+    this.setState({toggleSwitch});
+  }
+
+  handleToggleChangeOdds = (toggleSwitchOdds) => {
+    localStorage.setItem('toggleOddsFee', toggleSwitchOdds);
+    this.setState({toggleSwitchOdds});
+  }
+
+  handleToggleChangeOddsStyle = (toggleSwitchOddsStyle) => {
+    localStorage.setItem('toggleOddsStyle', toggleSwitchOddsStyle);
+    this.setState({toggleSwitchOddsStyle});
+  }
+
   render() {
     if (this.state.init) {
       return (
@@ -168,10 +188,20 @@ class App extends Component {
       );
     }
 
+    const { toggleSwitch, toggleSwitchOdds, toggleSwitchOddsStyle } = this.state;
+
     return (
       <HashRouter>
         <div className="page-wrapper">
-          <GlobalMenu handleSearch={this.handleSearch}/>                   
+          <GlobalMenu handleSearch={this.handleSearch}/>   
+          <GlobalSwitch 
+              toggleSwitch={toggleSwitch}
+              toggleSwitchOdds={toggleSwitchOdds}
+              toggleSwitchOddsStyle={toggleSwitchOddsStyle}
+              handleToggleChange={this.handleToggleChange}
+              handleToggleChangeOdds={this.handleToggleChangeOdds}
+              handleToggleChangeOddsStyle={this.handleToggleChangeOddsStyle}
+          />
           <Switch>
             <Route exact path="/" render={(props) => <Overview {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
             <Route exact path="/explorer" render={(props) => <Overview {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
@@ -185,7 +215,8 @@ class App extends Component {
             <Route exact path="/explorer/governance" render={(props) => <Governance {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
             <Route exact path="/explorer/masternode" render={(props) => <Masternode {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
             <Route exact path="/explorer/masternode/:page" render={(props) => <Masternode {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
-            <Route exact path="/explorer/betevents" render={(props) => <BetEventList {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch}/>} />
+            <Route exact path="/explorer/betevents" render={(props) => <BetEventList {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} toggleSwitch={toggleSwitch} toggleSwitchOdds={toggleSwitchOdds} toggleSwitchOddsStyle={toggleSwitchOddsStyle}/>} />
+            
             <Route exact path="/explorer/lottos" render={(props) => <LottoList {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
             <Route exact path="/explorer/peer" render={(props) => <Peer {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
             <Route exact path="/explorer/statistics" render={(props) => <Statistics {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />

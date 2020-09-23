@@ -29,6 +29,7 @@ import SearchEventBar from '../component/SearchEventBar';
 import Footer from '../component/Footer';
 import CardBigTable from "../component/Card/CardBigTable";
 import ExplorerOverviewMenu from "../component/Menu/ExplorerOverviewMenu";
+import GlobalSwitch from "../component/Menu/GlobalSwitch";
 
 const convertToAmericanOdds = (odds) => {
 
@@ -70,10 +71,8 @@ class BetEventList extends Component {
             size: 50,
             filterBy: 'All',
             search: '',
-            toggleSwitch: localStorage.getItem('toggleCompletedAndOpen') != undefined ? localStorage.getItem('toggleCompletedAndOpen') == 'true' : true,
-            toggleSwitchOdds: localStorage.getItem('toggleOddsFee') != undefined ? localStorage.getItem('toggleOddsFee') == 'true' : false,
-            toggleSwitchOddsStyle: localStorage.getItem('toggleOddsStyle') != undefined ? localStorage.getItem('toggleOddsStyle') == 'true' : false,
-        }
+            toggleSwitch: props.toggleSwitch
+         }
 
         this.props.history.listen((location, action) => {
             let page = location.pathname.split('/betevents/')[1];
@@ -101,13 +100,19 @@ class BetEventList extends Component {
         const nextsearch = nextvalues.search ? nextvalues.search : '';
         if (nextsearch !== this.state.search) {
             this.setState({search: nextsearch}, this.getBetEventsInfo);
-        }
+        }      
     }
 
     componentWillUnmount() {
         if (this.debounce) {
             clearTimeout(this.debounce)
             this.debounce = null
+        }
+    };
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.toggleSwitch !== this.props.toggleSwitch) {
+            this.getBetEventsInfo();
         }
     };
 
@@ -122,7 +127,7 @@ class BetEventList extends Component {
             const params = {
                 limit: this.state.size,
                 skip: (this.state.page - 1) * this.state.size,
-                opened_or_completed: this.state.toggleSwitch
+                opened_or_completed: this.props.toggleSwitch
             };
 
             if (this.state.filterBy !== 'All') {
@@ -217,24 +222,9 @@ class BetEventList extends Component {
         return results;
     }
 
-    handleToggleChange = (toggleSwitch) => {
-        localStorage.setItem('toggleCompletedAndOpen', toggleSwitch);
-        this.setState({toggleSwitch}, this.getBetEventsInfo);
-    }
-
-    handleToggleChangeOdds = (toggleSwitchOdds) => {
-        localStorage.setItem('toggleOddsFee', toggleSwitchOdds);
-        this.setState({toggleSwitchOdds});
-    }
-
-    handleToggleChangeOddsStyle = (toggleSwitchOddsStyle) => {
-        localStorage.setItem('toggleOddsStyle', toggleSwitchOddsStyle);
-        this.setState({toggleSwitchOddsStyle});
-    }
-
     render() {
         const {props} = this;
-
+        const { toggleSwitchOddsStyle, toggleSwitch, toggleSwitchOdds } = this.props;
         const {t} = props;
         const cols = [
             {key: 'start', title: t('startingnow'), className: 'w-m-140'},
@@ -273,22 +263,6 @@ class BetEventList extends Component {
                 options={selectFilterOptions}/>
         );
 
-        // const searchBar = (
-        //   <div className="animated fadeIn" style={{ width: '100%' }}>
-        //     <div className={ `search ${ props.className ? props.className : '' }` }>
-        //       <input
-        //         className="search__input"
-        //         onKeyPress={ e => this.handleKeyPress(e) }
-        //         onChange={ e => this.handleChange(e) }
-        //         placeholder={ props.placeholder }
-        //         value={this.state.search}
-        //       />
-        //       <Icon name="search" className="search__icon" />
-        //     </div>
-        //   </div>
-        // )
-        // ;
-
         return (
             <div className="content content-top" id="body-content">
                 <ExplorerMenu onSearch={this.props.handleSearch}/>
@@ -296,9 +270,7 @@ class BetEventList extends Component {
                     <ExplorerOverviewMenu/>
 
                     <div className="content_search_wrapper">
-                        {/* <SearchBar
-              className="d-none d-md-block"
-              onSearch={this.props.handleSearch} />           */}
+                     
                         <div className="content_page_title">
                             <span>Betting Events</span>
                         </div>
@@ -307,86 +279,14 @@ class BetEventList extends Component {
                         <CoinSummary
                             onRemove={this.props.handleRemove}
                             onSearch={this.props.handleSearch}
-                            searches={this.props.searches}/>
-                        {/* <SearchEventBar
-              className="d-none d-md-block mb-3"
-              onSearch={this.props.handleEventSearch}
-            /> */}
+                            searches={this.props.searches}
+                        />
                         <div>
-                            <div className="row">
-                                <div className="col-4">
-                                    <div style={{alignItems: 'center', marginTop: '20px'}}>
-                                        <span>Completed / Opened</span>
-                                    </div>
-                                    <label htmlFor="material-switch" style={{marginTop: '10px'}}>
-                                        <Switch
-                                            checked={this.state.toggleSwitch}
-                                            onChange={this.handleToggleChange}
-                                            onColor="#86d3ff"
-                                            onHandleColor="#2693e6"
-                                            handleDiameter={30}
-                                            uncheckedIcon={false}
-                                            checkedIcon={false}
-                                            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                                            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                                            height={20}
-                                            width={48}
-                                            className="react-switch"
-                                            id="material-switch"
-                                        />
-                                    </label>
-                                </div>
-                                <div className="col-4" style={{textAlign: 'center'}}>
-                                    <div style={{alignItems: 'center', marginTop: '20px'}}>
-                                        <span>Decimal Odds/ American Odds</span>
-                                    </div>
-                                    <label htmlFor="material-switch1" style={{marginTop: '10px'}}>
-                                        <Switch
-                                            checked={this.state.toggleSwitchOddsStyle}
-                                            onChange={this.handleToggleChangeOddsStyle}
-                                            onColor="#86d3ff"
-                                            onHandleColor="#2693e6"
-                                            handleDiameter={30}
-                                            uncheckedIcon={false}
-                                            checkedIcon={false}
-                                            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                                            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                                            height={20}
-                                            width={48}
-                                            className="react-switch"
-                                            id="material-switch"
-                                        />
-                                    </label>
-                                </div>
-                                <div className="col-4" style={{textAlign: 'right'}}>
-                                    <div style={{alignItems: 'center', marginTop: '20px'}}>
-                                        <span>On Chain Odds / Effective Odds</span>
-                                    </div>
-                                    <label htmlFor="material-switch2" style={{marginTop: '10px', alignItems: 'center'}}>
-                                        <Switch
-                                            checked={this.state.toggleSwitchOdds}
-                                            onChange={this.handleToggleChangeOdds}
-                                            onColor="#86d3ff"
-                                            onHandleColor="#2693e6"
-                                            handleDiameter={30}
-                                            uncheckedIcon={false}
-                                            checkedIcon={false}
-                                            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                                            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                                            height={20}
-                                            width={48}
-                                            className="react-switch"
-                                            id="material-switch"
-                                        />
-                                    </label>
-                                </div>
-                            </div>
-
                             <HorizontalRule
                                 select={select}
                                 filterSport={filterSport}
-                                title={t('title')}/>
-
+                                title={t('title')}
+                            />
                             {this.state.events.length == 0 && this.renderError('No search results found within provided filters')}
                             {this.state.events.length > 0 &&
                             <CardBigTable
@@ -444,7 +344,6 @@ class BetEventList extends Component {
                                                     betStatus = <span
                                                         className={`badge badge-warning`}>{t('waitingForOracle')}</span>
                                                 }
-
                                             }
                                         }
                                     }
@@ -458,13 +357,13 @@ class BetEventList extends Component {
                                     let origawayOdds = (event.events[0].awayOdds / 10000)
 
 
-                                    if (this.state.toggleSwitchOdds) {
+                                    if (toggleSwitchOdds) {
                                         homeOdds = homeOdds == 0 ? homeOdds : (1 + (homeOdds - 1) * 0.94).toFixed(2);
                                         drawOdds = drawOdds == 0 ? drawOdds : (1 + (drawOdds - 1) * 0.94).toFixed(2);
                                         awayOdds = awayOdds == 0 ? awayOdds : (1 + (awayOdds - 1) * 0.94).toFixed(2);
                                     }
 
-                                    if (this.state.toggleSwitchOddsStyle) {
+                                    if (toggleSwitchOddsStyle) {
                                         homeOdds = convertToAmericanOdds(homeOdds);
                                         drawOdds = convertToAmericanOdds(drawOdds);
                                         awayOdds = convertToAmericanOdds(awayOdds);
