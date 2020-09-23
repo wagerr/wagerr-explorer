@@ -1,10 +1,12 @@
 const Coin = require('../../model/coin')
+const BetAction = require('../../model/betaction')
+const BetParlay = require('../../model/betparlay')
 const config = require('../../config')
 const TX = require('../../model/tx')
 const { BigNumber } = require('bignumber.js')
 const UTXO = require('../../model/utxo');
 const { rpc } = require('../../lib/cron');
-
+const Price = require('../../model/price');
 const getBetStatus = async (req, res) => {
   try {
     const txs = await TX
@@ -48,7 +50,54 @@ const getCustomSupply = async (req, res) => {
   }
 };
 
+const getTotalPayout = async (req, res) => {
+  try {
+    const betactions = await BetAction.find({completed: true});  
+    const total_bet_wgr = betactions.reduce((sum, action) => {
+      return sum + action.payout;
+    }, 0);
+
+    let total_bet_usd = 0;
+
+    for (action of betactions){
+      const prices = await Price.aggregate([
+        { $project: { diff: { $abs: { $subtract: [action.createdAt, '$createdAt'] } }, doc: '$$ROOT' } },
+        { $sort: { diff: 1 } },
+        { $limit: 1 }
+      ]);
+      total_bet_usd = total_bet_usd + action.payout * prices[0].doc.usd;
+    }
+
+    const betparlays = await BetParlay.find({completed: true});  
+    const total_parlay_wgr = betparlays.reduce((sum, parlay) => {
+      return sum + parlay.payout;
+    }, 0);
+
+    let total_parlay_usd = 0;
+    for (parlay of betparlays){
+      const prices = await Price.aggregate([
+        { $project: { diff: { $abs: { $subtract: [parlay.createdAt, '$createdAt'] } }, doc: '$$ROOT' } },
+        { $sort: { diff: 1 } },
+        { $limit: 1 }
+      ]);
+      total_parlay_usd = total_parlay_usd + parlay.payout * prices[0].doc.usd;
+    }
+
+
+    
+    const total_wgr = total_bet_wgr + total_parlay_wgr;
+    const total_usd = total_bet_usd + total_parlay_usd;
+
+    res.json({totalpayout: {wgr: total_wgr, usd: total_usd}})
+
+  } catch(err) {
+    console.log(err);
+    res.status(500).send(err.message || err);
+  }
+};
+
 module.exports = {
   getBetStatus,
-  getCustomSupply
+  getCustomSupply,
+  getTotalPayout
 }

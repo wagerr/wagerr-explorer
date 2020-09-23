@@ -71,6 +71,8 @@ router.get('/getnetworkhashps', iquidus.getnetworkhashps);
 router.get('/custom/betstatus', custom.getBetStatus);
 router.get('/custom/supply', custom.getCustomSupply);
 
+router.get('/custom/totalpayout', custom.getTotalPayout);
+
 // OpCode decryption
 router.get('/opcodes/:hex_value', opCode.decodeOP);
 
