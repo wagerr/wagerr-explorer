@@ -5,7 +5,7 @@ import Switch from "react-switch";
 
 export default class GlobalSwitch extends Component {
     state = {
-        hidden: false
+        hidden: true
     }
     render() {
         const {
