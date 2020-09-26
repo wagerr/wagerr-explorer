@@ -1,10 +1,13 @@
 const Coin = require('../../model/coin')
+const BetAction = require('../../model/betaction')
+const BetResult = require('../../model/betresult')
+//const BetParlay = require('../../model/betparlay')
 const config = require('../../config')
 const TX = require('../../model/tx')
 const { BigNumber } = require('bignumber.js')
 const UTXO = require('../../model/utxo');
 const { rpc } = require('../../lib/cron');
-
+const Price = require('../../model/price');
 const getBetStatus = async (req, res) => {
   try {
     const txs = await TX
@@ -48,7 +51,25 @@ const getCustomSupply = async (req, res) => {
   }
 };
 
+const getTotalPayout = async (req, res) => {
+  try {
+    const coin = await Coin.findOne()
+    .sort({ createdAt: -1 });
+
+    console.log('coin', coin);
+    const total_wgr = coin.totalMint; //+ total_parlay_wgr;
+    const total_usd = coin.totalMint * coin.usd; // + total_parlay_usd;
+
+    res.json({totalpayout: {wgr: total_wgr, usd: total_usd}})
+
+  } catch(err) {
+    console.log(err);
+    res.status(500).send(err.message || err);
+  }
+};
+
 module.exports = {
   getBetStatus,
-  getCustomSupply
+  getCustomSupply,
+  getTotalPayout
 }
