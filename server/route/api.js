@@ -5,6 +5,7 @@ const faucet = require('../handler/faucet');
 const iquidus = require('../handler/iquidus');
 const custom = require('../handler/custom');
 const opCode = require('../handler/opcode');
+const raw = require('../handler/raw');
 
 const router = express.Router();
 
@@ -39,10 +40,12 @@ router.get('/bet/totals', blockex.getBetTotals);
 router.get('/bet/moneyline', blockex.getBetUpdates);
 router.get('/bet/event/:eventId/info', blockex.getBetEventInfo);
 router.get('/bet/events/info', blockex.getBetEventsInfo);
+router.get('/bet/parlaybets', blockex.getBetParlayBetsInfo);
 router.get('/bet/stats', blockex.getBetStats);
 router.get('/bet/totalUSD', blockex.getBettotalUSD);
 router.get('/bet/team-events', blockex.getTeamEventInfo);
 router.get('/bet/action/week', blockex.getBetActioinsWeek());
+router.get('/bet/infobypayout', blockex.getBetInfoByPayout);
 router.get('/pps/current', blockex.getCurrentProposals);
 router.get('/statistic/perweek', blockex.getStatisticPerWeek());
 
@@ -68,7 +71,25 @@ router.get('/getnetworkhashps', iquidus.getnetworkhashps);
 router.get('/custom/betstatus', custom.getBetStatus);
 router.get('/custom/supply', custom.getCustomSupply);
 
+router.get('/custom/totalpayout', custom.getTotalPayout);
+
 // OpCode decryption
 router.get('/opcodes/:hex_value', opCode.decodeOP);
+
+router.get('/getblockbyhash', raw.getblockbyhash);
+
+router.get('/gettransaction', raw.gettransaction);
+
+router.get('/getunspenttransactions', raw.getunspenttransactions);
+
+router.get('/getunspenttransactions', raw.getunspenttransactions);
+
+router.get('/getfeeinfo', raw.getfeeinfo);
+
+router.get('/getblocktransactions', raw.getblocktransactions);
+
+router.post('/sendrawtransaction', raw.sendRawTransaction);
+
+router.get('/getaddresstransactioncount/:hash', raw.getAddress);
 
 module.exports =  router;

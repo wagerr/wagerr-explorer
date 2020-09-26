@@ -162,7 +162,7 @@ class Masternode extends Component {
                       ),
                       lastPaidAt: isEpoch ? 'N/A' : date24Format(mn.lastPaidAt),
                       txHash: (
-                          <Link to={ `/tx/${ mn.txHash }` }>
+                          <Link to={ `/explorer/tx/${ mn.txHash }` }>
                             { `${ mn.txHash.substr(0, 20) }...` }
                           </Link>
                       )

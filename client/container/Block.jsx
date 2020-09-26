@@ -56,7 +56,7 @@ class Block extends Component {
         }
 
         return (
-            <div className="content" id="body-content">
+            <div className="content content-top" id="body-content">
                 <ExplorerMenu onSearch={this.props.handleSearch}/>
                 <div className="content__wrapper_total">
                   <div className="content__wrapper">

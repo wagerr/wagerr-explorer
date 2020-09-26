@@ -23,6 +23,7 @@ const ListEvent = require('../../model/listevent');
 const BetEvent = require('../../model/betevent');
 const BetUpdate = require('../../model/betupdate');
 const BetAction = require('../../model/betaction');
+const BetParlay = require('../../model/betparlay');
 const BetResult = require('../../model/betresult');
 const Proposal = require('../../model/proposal');
 const Statistic = require('../../model/statistic');
@@ -32,6 +33,7 @@ const Bettotal = require('../../model/bettotal');
 const LottoEvent = require('../../model/lottoevent');
 const LottoBet = require('../../model/lottobet');
 const LottoResult = require('../../model/lottoresult');
+const OpcodeChangedBlock = 0
 
 // util functions
 
@@ -542,10 +544,10 @@ const getTX = async (req, res) => {
     for (let i=0; i<tx.vout.length; i++){
       vout = tx.vout[i];
       if (vout.address.indexOf('OP_RETURN 1|') == -1 || vout.address.indexOf('OP_RETURN 2|') == -1 || vout.address.indexOf('OP_RETURN 3|') == -1) {
-        if (vout.address.indexOf('OP_RETURN') !== -1){
+        if (vout.address.indexOf('OP_RETURN') !== -1){          
           let betaction = await BetAction.findOne({txId: tx.txId});
           if (betaction){
-            console.log('betaction', betaction);
+            const divider = betaction.blockHeight > OpcodeChangedBlock ? 100 : 10;
             if (betaction.betChoose.includes('Home')) {
               betaction.odds = betaction.homeOdds / 10000
             } else if (betaction.betChoose.includes('Away')) {
@@ -558,26 +560,32 @@ const getTX = async (req, res) => {
             } else if (betaction.betChoose.includes('Spreads')) {
               const betChoose = betaction.betChoose.replace('Spreads - ', '');
               tx.vout[i].price = betChoose == 'Away' ? betaction.spreadAwayOdds / 10000 : betaction.spreadHomeOdds / 10000;
-              tx.vout[i].Spread = betChoose == 'Away' ? displayNum(betaction.spreadAwayPoints, 10) : displayNum(betaction.spreadHomePoints, 10);
+              tx.vout[i].Spread = betChoose == 'Away' ? displayNum(betaction.spreadAwayPoints, divider) : displayNum(betaction.spreadHomePoints, divider);
             } else if (betaction.betChoose.includes('Totals')) {
               tx.vout[i].price = betaction.betChoose.includes('Over') ? betaction.overOdds / 10000 : betaction.underOdds / 10000
-              tx.vout[i].Total = (betaction.points / 10).toFixed(1)
+              
+              tx.vout[i].Total = (betaction.points / divider).toFixed(1)
             };
             tx.vout[i].market = betaction.betChoose;
             tx.vout[i].eventId = betaction.eventId;
 
-            const prices = await Price.aggregate([
-              {$project: {diff: {$abs: {$subtract: [betaction.createdAt, '$createdAt']}}, doc: '$$ROOT'}},
-              {$sort: {diff: 1}},
-              {$limit: 1}
-            ]);
+            // const prices = await Price.aggregate([
+            //   {$project: {diff: {$abs: {$subtract: [betaction.createdAt, '$createdAt']}}, doc: '$$ROOT'}},
+            //   {$sort: {diff: 1}},
+            //   {$limit: 1}
+            // ]);
 
             tx.vout[i].betValue = betaction.betValue;
-            tx.vout[i].betValueUSD = 0;
-            if (prices.length > 0){
-              tx.vout[i].betValueUSD = prices[0].doc.usd * betaction.betValue;
-            }
-
+            tx.vout[i].betValueUSD = betaction.betValueUSD;
+            tx.vout[i].isParlay = 0;
+            // if (prices.length > 0){
+            //   tx.vout[i].betValueUSD = prices[0].doc.usd * betaction.betValue;
+            // }
+            tx.vout[i].betResultType = betaction.betResultType;
+            tx.vout[i].completed = betaction.completed;
+            tx.vout[i].payout = betaction.payout;
+            tx.vout[i].payoutTxId = betaction.payoutTxId;
+            tx.vout[i].payoutNout = parseInt(betaction.payoutNout);
 
             betevent = await BetEvent.findOne({eventId: betaction.eventId});
             if (betevent){
@@ -585,7 +593,61 @@ const getTX = async (req, res) => {
               tx.vout[i].awayTeam = betevent.awayTeam
               tx.vout[i].league = betevent.league
             }
-          }
+
+            if (betaction.completed){
+              tx.vout[i].homeScore = betaction.homeScore
+              tx.vout[i].awayScore = betaction.awayScore
+            }
+            continue;
+          }          
+          let betparlay = await BetParlay.findOne({txId: tx.txId});
+          if (betparlay){
+            const divider = betparlay.blockHeight > OpcodeChangedBlock ? 100 : 10;
+            tx.vout[i].payout = betparlay.payout;
+            tx.vout[i].payoutTxId = betparlay.payoutTxId;
+            tx.vout[i].payoutNout = parseInt(betparlay.payoutNout);
+            tx.vout[i].betValueUSD = betparlay.betValueUSD;
+            tx.vout[i].betValue = betparlay.betValue;
+            tx.vout[i].completed = betparlay.completed;
+            tx.vout[i].betResultType = betparlay.betResultType;
+            tx.vout[i].isParlay = 1;
+            tx.vout[i].market = 'Parlay';
+            const legs = [];
+            for (let leg of betparlay.legs){
+              const leg_item = {};
+              let odds = leg.drawOdds / 10000;              
+              if (leg.market.includes('Home')) {
+                odds = leg.homeOdds / 10000
+              } else if (leg.market.includes('Away')) {
+                odds = leg.awayOdds / 10000
+              } 
+
+              if (leg.market.includes('Money Line')) {
+                leg_item.price = odds;
+              } else if (leg.market.includes('Spreads')) {
+                const betChoose = leg.market.replace('Spreads - ', '');
+                leg_item.price = betChoose == 'Away' ? leg.spreadAwayOdds / 10000 : leg.spreadHomeOdds / 10000;
+                leg_item.Spread = betChoose == 'Away' ? displayNum(leg.spreadAwayPoints, divider) : displayNum(leg.spreadHomePoints, divider);
+              } else if (leg.market.includes('Totals')) {
+                leg_item.price = leg.market.includes('Over') ? leg.totalOverOdds / 10000 : leg.totalUnderOdds / 10000                
+                leg_item.Total = (leg.totalPoints / divider).toFixed(2)
+              };
+              leg_item.eventId = leg.eventId;
+              leg_item.homeTeam = leg.homeTeam;
+              leg_item.awayTeam = leg.awayTeam;
+              leg_item.league = leg.league;
+              leg_item.market = leg.market;
+              leg_item.outcome = leg.outcome;
+              leg_item.betResult = leg.resultType;
+              leg_item.eventResult = leg.eventResultType;
+              if (betparlay.completed){
+                leg_item.homeScore = leg.homeScore;
+                leg_item.awayScore = leg.awayScore;
+              }
+              legs.push(leg_item);
+            }  
+            tx.vout[i].legs = legs;          
+          }          
         }
       }
     }
@@ -602,17 +664,16 @@ const getTX = async (req, res) => {
  * @param {Object} res The response object.
  */
 const getTXs = async (req, res) => {
-  req.clearTimeout();
   try {
     const limit = req.query.limit ? parseInt(req.query.limit, 10) : 10;
     const skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
     const total = await TX.find().sort({ blockHeight: -1 }).countDocuments();
-    const txs = await TX.find().sort({ blockHeight: -1 }).skip(skip).limit(limit);
+    const txs = await TX.find().skip(skip).limit(limit).sort({ blockHeight: -1 });
 
-    return res.json({ txs, pages: total <= limit ? 1 : Math.ceil(total / limit) });
+    res.json({ txs, pages: total <= limit ? 1 : Math.ceil(total / limit) });
   } catch (err) {
     console.log(err);
-    return res.status(500).send(err.message || err);
+    res.status(500).send(err.message || err);
   }
 };
 
@@ -896,7 +957,8 @@ const getBetHotEvents = async (req, res) => {
         }).sort({createdAt: 1});
 
         if (bettotals.length > 0){
-          event.Latest_Total_Number = bettotals[bettotals.length-1].points / 10;
+          const divider = bettotals[bettotals.length-1].blockHeight > OpcodeChangedBlock ? 100 : 10
+          event.Latest_Total_Number = bettotals[bettotals.length-1].points / divider;
           event.Latest_Total_Price = {
             over: bettotals[bettotals.length-1].overOdds / 10000,
             under: bettotals[bettotals.length-1].underOdds / 10000,
@@ -1102,7 +1164,8 @@ const getBetOpenEvents = async (req, res) => {
         }).sort({createdAt: 1});
 
         if (betspreads.length > 0){
-          event.Latest_Spread_Number = `${displayNum(betspreads[betspreads.length-1].homePoints, 10)}/${displayNum(betspreads[betspreads.length-1].awayPoints, 10)}`;
+          const divider = betspreads[betspreads.length-1].blockHeight > OpcodeChangedBlock ? 100 : 10;
+          event.Latest_Spread_Number = `${displayNum(betspreads[betspreads.length-1].homePoints, divider)}/${displayNum(betspreads[betspreads.length-1].awayPoints, divider)}`;
           event.Latest_Spread_Price = {
             home: betspreads[betspreads.length-1].homeOdds / 10000,
             away: betspreads[betspreads.length-1].awayOdds / 10000,
@@ -1115,7 +1178,8 @@ const getBetOpenEvents = async (req, res) => {
         }).sort({createdAt: 1});
 
         if (bettotals.length > 0){
-          event.Latest_Total_Number = bettotals[bettotals.length-1].points / 10;
+          const divider = bettotals[bettotals.length-1].blockHeight > OpcodeChangedBlock ? 100 : 10;
+          event.Latest_Total_Number = bettotals[bettotals.length-1].points / divider;
           event.Latest_Total_Price = {
             over: bettotals[bettotals.length-1].overOdds / 10000,
             under: bettotals[bettotals.length-1].underOdds / 10000,
@@ -1402,6 +1466,68 @@ const getData = async (Model, req, res, visibility = true) => {
   }
 };
 
+const getBetParlayBetsInfo = async (req, res) => {
+  req.clearTimeout();
+  const limit = req.query.limit ? parseInt(req.query.limit, 10) : 1000;
+  const skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
+  const opened_or_completed = req.query.opened_or_completed == 'true' ? false: true;
+  const { query } = req;
+  const { search } = query;
+
+  const totalMatches = {
+    $and: [],
+  };
+
+  if (search) {
+    totalMatches.$and.push({ txId: search });
+  }
+  
+  let sort = {
+    createdAt: -1,
+  }
+
+  totalMatches.$and.push({'completed': opened_or_completed});  
+  try {
+    const totalParams = [
+      {
+        $match: totalMatches,
+      },
+      {
+        $count: 'count',
+      },
+    ];
+
+    const total = await BetParlay.aggregate(totalParams);
+
+    const resultParams = [      
+      {
+        $match: totalMatches,
+      },
+      {
+        $sort: sort
+      },
+      {
+        $skip: skip,
+      }, {
+        $limit: limit,
+      }
+    ];
+    console.log('totalMatches',totalMatches);
+    console.log("resultParams", resultParams);
+    let result = await BetParlay.aggregate(resultParams);
+    let pages = total.length > 0 ? (total[0].count <= limit ? 1 : Math.ceil(total[0].count / limit)): 0;
+
+    return res.json({
+      data: result,
+      pages: pages,
+    });
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send(err.message || err);
+  }
+};
+
 // Modified this a bit - kyle h
 const getDataListing = async (Model, actions, results, req, res) => {
   req.clearTimeout();
@@ -1468,7 +1594,7 @@ const getDataListing = async (Model, actions, results, req, res) => {
     ];
     const total = await Model.aggregate(totalParams);
 
-    const resultParams = [
+    const resultParams = [      
       {
         $match: totalMatches,
       },
@@ -1476,13 +1602,16 @@ const getDataListing = async (Model, actions, results, req, res) => {
         $addFields: { convertedTimestamp: { $toLong: "$timeStamp" } }
       },
       {
+        $addFields: { convertedTimestamp: { $toLong: "$timeStamp" } }
+      }, 
+      {
         $group: {
           _id: '$eventId',
           events: {
             $push: '$$ROOT',
           },
         },
-      },
+      },     
       {
         $project: {
           _id: '$_id',
@@ -1697,6 +1826,7 @@ const getBetEventInfo = async (req, res) => {
       visibility: true,
       betChoose: { $in: homeTeamNames },
     });
+
     const awayBets = await BetAction.find({
       eventId,
       visibility: true,
@@ -2331,6 +2461,47 @@ const getBetStats = async (req, res) => {
   }
 }
 
+
+const getBetInfoByPayout = async (req, res) => {
+  const payoutTx = req.query.payoutTx ? req.query.payoutTx:null;
+  const nOut = req.query.nOut ? req.query.nOut:null;
+  if (!payoutTx || !nOut){
+    res.status(500).send("Param is missed");
+  }
+
+  try {
+    const params = [
+      {txHash: payoutTx, nOut: parseInt(nOut)}
+    ];
+    const info = await rpc.call('getpayoutinfo', [params]);
+    if (info && info.length > 0 && info[0].found){
+      const payoutInfo = info[0].payoutInfo;
+      const betinfo = await rpc.call('getbetbytxid', [payoutInfo.betTxHash]);
+      if (betinfo && betinfo.length > 0){
+        res.json(betinfo[0]);
+        return;
+      }
+        
+      // const betaction = await BetAction.findOne({txId: payoutInfo.betTxHash});
+      // if (betaction){
+      //   res.json(betaction);
+      //   return;
+      // }
+
+      // const betparlay = await BetParlay.findOne({txId: payoutInfo.betTxHash});
+      // if (betparlay){
+      //   res.json(betparlay);
+      //   return;
+      // }
+    }    
+    res.json([]);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message || err);
+  }
+
+}
+
 const getTeamEventInfo = async (req, res) => {
   const team = req.query.team ? req.query.team:null;
   const limit = req.query.limit? (req.query.limit > 200? 200: parseInt(req.query.limit)) : 200;
@@ -2422,9 +2593,10 @@ const getTeamEventInfo = async (req, res) => {
       }).sort({createdAt: 1});
 
       if (betspreads.length > 0){
+        const divider = betspreads[betspreads.length-1].blockHeight > OpcodeChangedBlock ? 100 : 10;
         event.spread = {
-          homePoints: `${displayNum(betspreads[betspreads.length-1].homePoints, 10)}`,
-          awayPoints: `${displayNum(betspreads[betspreads.length-1].awayPoints, 10)}`,
+          homePoints: `${displayNum(betspreads[betspreads.length-1].homePoints, divider)}`,
+          awayPoints: `${displayNum(betspreads[betspreads.length-1].awayPoints, divider)}`,
           home: betspreads[betspreads.length-1].homeOdds / 10000,
           away: betspreads[betspreads.length-1].awayOdds / 10000,
         }
@@ -2436,8 +2608,9 @@ const getTeamEventInfo = async (req, res) => {
       }).sort({createdAt: 1});
 
       if (bettotals.length > 0){
+        const divider = bettotals[bettotals.length-1].blockHeight > OpcodeChangedBlock ? 100 : 10;
         event.totals = {
-          totalsLine: bettotals[bettotals.length-1].points / 10,
+          totalsLine: bettotals[bettotals.length-1].points / divider,
           overOdds: bettotals[bettotals.length-1].overOdds / 10000,
           underOdds: bettotals[bettotals.length-1].underOdds / 10000,
         }
@@ -2450,9 +2623,10 @@ const getTeamEventInfo = async (req, res) => {
 
       if (betresults.length > 0){
         const result = JSON.parse(JSON.stringify(betresults[betresults.length-1]))
+        const divider = result.blockHeight > OpcodeChangedBlock ? 100 : 10;
         event.result = {
-          homePoints: result.transaction.homeScore/10,
-          awayPoints: result.transaction.awayScore/10
+          homePoints: result.transaction.homeScore/divider,
+          awayPoints: result.transaction.awayScore/divider
         }
       }
       formattedEvents.push(event);
@@ -2573,6 +2747,7 @@ module.exports = {
   getBetActioinsWeek,
   getBetEventInfo,
   getBetEventsInfo,
+  getBetParlayBetsInfo,
   getCurrentProposals,
   getStatisticPerWeek,
   getBetspreads,
@@ -2586,5 +2761,6 @@ module.exports = {
   getTeamEventInfo,
   getBettotalUSD,
   getBetHotEvents,
+  getBetInfoByPayout,
   getBetLatestActions
 };

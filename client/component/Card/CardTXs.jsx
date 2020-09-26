@@ -49,7 +49,7 @@
 //             ),
 //             createdAt: date24Format(tx.createdAt),
 //             txId: (
-//               <Link to={ `/tx/${ tx.txId }` }>
+//               <Link to={ `/explorer/tx/${ tx.txId }` }>
 //                 { tx.txId }
 //               </Link>
 //             ),

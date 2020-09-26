@@ -192,7 +192,7 @@ class BetEventTable extends Component {
                 drawOdds: event.drawOdds / 10000,
                 awayOdds: event.awayOdds / 10000,
                 txId: (
-                  <Link to={`/tx/${ event.txId }`}>{event.txId}</Link>
+                  <Link to={`/explorer/tx/${ event.txId }`}>{event.txId}</Link>
                 )
               }
             }), ['createdAt'])}
@@ -209,7 +209,7 @@ class BetEventTable extends Component {
                   ? (<span
                     className="badge badge-danger">-{numeral(action.betValue).format('0,0.00000000')} WGR</span>) : 'd',
                 txId: (
-                  <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
+                  <Link to={`/explorer/tx/${ action.txId }`}>{action.txId}</Link>
                 )
               }
             }), ['createdAt'])}
@@ -229,7 +229,7 @@ class BetEventTable extends Component {
                   spread: `${displayNum(action.homePoints, 10)}/${displayNum(action.awayPoints, 10)}`,
                   awayOdds: action.awayOdds / 10000,
                   txId: (
-                    <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
+                    <Link to={`/explorer/tx/${ action.txId }`}>{action.txId}</Link>
                   )
                 }
               }), ['createdAt'])}
@@ -250,7 +250,7 @@ class BetEventTable extends Component {
                     ? (<span
                       className="badge badge-danger">-{numeral(action.betValue).format('0,0.00000000')} WGR</span>) : '',
                   txId: (
-                    <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
+                    <Link to={`/explorer/tx/${ action.txId }`}>{action.txId}</Link>
                   )
                 }
               }), ['createdAt'])}
@@ -270,7 +270,7 @@ class BetEventTable extends Component {
                 overUnder: action.points / 10,
                 underOdds: action.underOdds / 10000,
                 txId: (
-                  <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
+                  <Link to={`/explorer/tx/${ action.txId }`}>{action.txId}</Link>
                 )
               }
             }), ['createdAt'])}
@@ -288,7 +288,7 @@ class BetEventTable extends Component {
                 value: action.betValue
                   ? (<span className="badge badge-danger">-{numeral(action.betValue).format('0,0.00000000')} WGR</span>) : '',
                 txId: (
-                  <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
+                  <Link to={`/explorer/tx/${ action.txId }`}>{action.txId}</Link>
                 )
               }
             }), ['createdAt'])}

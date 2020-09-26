@@ -30,7 +30,7 @@ export default class GlobalMenuDesktop extends Component {
     const { props, state } = this;
 
     return props.links.map((i, idx) => {
-      const isActive = props.location.pathname.includes(i.href === '#' ? 'help': i.href);
+      const isActive = props.location.pathname.includes(i.href === '#' ? 'help': i.href);      
       const iconSource = i.icon;
       return (
         <div

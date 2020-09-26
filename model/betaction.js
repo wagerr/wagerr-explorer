@@ -5,8 +5,6 @@ const mongoose = require('mongoose');
  * BetEvent
  *
  */
-
-
 const BetAction = mongoose.model('BetAction', new mongoose.Schema({
   _id: { required: true, type: String },
   txId: { index: true, required: true, type: String },
@@ -31,8 +29,14 @@ const BetAction = mongoose.model('BetAction', new mongoose.Schema({
   spreadHomePoints: { required: false, type: Number },
   spreadAwayPoints: { required: false, type: Number },
   spreadHomeOdds: { required: false, type: Number },
-  spreadAwayOdds: { required: false, type: Number }
+  spreadAwayOdds: { required: false, type: Number },  
+  completed: { required: true, type: Boolean, default: false },
+  betResultType: { required: true, type: String, default:'pending' },
+  payout: { required: false, type: Number },
+  payoutTxId: { required: false, type: String },
+  payoutNout: { required: false, type: String },
+  homeScore: {  required: false, type: Number },
+  awayScore: {  required: false, type: Number },
 }, { versionKey: false }), 'betactions');
-
 
 module.exports =  BetAction;

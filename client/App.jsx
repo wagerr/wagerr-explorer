@@ -4,7 +4,7 @@ import Component from './core/Component';
 import { connect } from 'react-redux';
 import { HashRouter } from 'react-router-dom';
 import { isAddress, isBlock, isTX } from '../lib/blockchain';
-import { Link, Route, Switch } from 'react-router-dom';
+import { Link, Route, Switch, Redirect } from 'react-router-dom';
 import promise from 'bluebird';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -151,16 +151,16 @@ class App extends Component {
     // Setup path for search.
     let path = '/#/';
     if (isAddress(term)) {
-      document.location.href = `/#/address/${term}`;
+      document.location.href = `/#/explorer/address/${term}`;
     } else if (this.isBetEventId(term)) {
-      document.location.href = `/#/bet/event/${encodeURIComponent(term)}`;
+      document.location.href = `/#/explorer/bet/event/${encodeURIComponent(term)}`;
     } else if (!isNaN(term)) {
-      document.location.href = `/#/block/${term}`;
+      document.location.href = `/#/explorer/block/${term}`;
     } else {
       this.props
         .getIsBlock(term)
         .then((is) => {
-          document.location.href = `/#/${is ? 'block' : 'tx'}/${term}`;
+          document.location.href = `/#/${is ? 'explorer/block' : 'explorer/tx'}/${term}`;
         });
     }
   };
@@ -207,13 +207,15 @@ class App extends Component {
               handleToggleChangeOddsStyle={this.handleToggleChangeOddsStyle}
           />
           <Switch>
-            <Route exact path="/" render={(props) => <Overview {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/">
+              <Redirect to="/explorer" />
+            </Route>
             <Route exact path="/explorer" render={(props) => <Overview {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
             <Route exact path="/explorer/movement" render={(props) => <Movement {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
             <Route exact path="/explorer/movement/:page" render={(props) => <Movement {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
             <Route exact path="/explorer/address/:hash" render={(props) => <Address {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
             <Route exact path="/explorer/api" render={(props) => <API {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
-            <Route exact path="/block/:hash" render={(props) => <Block {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/explorer/block/:hash" render={(props) => <Block {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
             <Route exact path="/explorer/coin" render={(props) => <CoinInfo {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
             <Route exact path="/explorer/faq" render={(props) => <FAQ {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
             <Route exact path="/explorer/governance" render={(props) => <Governance {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
@@ -228,7 +230,7 @@ class App extends Component {
             <Route exact path="/explorer/lottos" render={(props) => <LottoList {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
             <Route exact path="/explorer/peer" render={(props) => <Peer {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
             <Route exact path="/explorer/statistics" render={(props) => <Statistics {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
-            <Route exact path="/tx/:hash" render={(props) => <TX {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/explorer/tx/:hash" render={(props) => <TX {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
             <Route exact path="/explorer/lotto/event/:eventId" render={(props) => <LottoEvent {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
 
             <Route exact path="/bethistory" render={(props) => <Bethistory {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
@@ -240,51 +242,7 @@ class App extends Component {
             <Route component={Error404} />
 
           </Switch>
-        </div>
-        {/*<div className="page-wrapper">
-          <ExplorerMenu onSearch={ this.handleSearch } />
-          <div className="content" id="body-content">
-            <div className="content__wrapper">              
-              {<CoinSummary
-                onRemove={ this.handleRemove }
-                onSearch={ this.handleSearch }
-                searches={ this.state.searches.reverse() } />}
-              <SearchBar
-                className="d-none d-md-block mb-3"
-                onSearch={ this.handleSearch } />
-              <SearchEventBar
-                className="d-none d-md-block mb-3"
-                onSearch={ this.handleEventSearch } 
-              />  
-              <div className="content__inner-wrapper">
-                <Switch>
-                  <Route exact path="/" component={ Overview } />
-                  <Route exact path="/address/:hash" component={ Address } />
-                  <Route exact path="/api" component={ API } />
-                  <Route exact path="/block/:hash" component={ Block } />
-                  <Route exact path="/coin" component={ CoinInfo } />
-                  <Route exact path="/faq" component={ FAQ } />
-                  <Route exact path="/governance" component={ Governance } />
-                  <Route exact path="/masternode" component={ Masternode } />
-                  <Route exact path="/masternode/:page" component={ Masternode } />
-                  <Route exact path="/betevents" component={ BetEventList } />
-                  <Route exact path="/betevents/:page" component={ BetEventList } />
-                  <Route exact path="/lottos" component={ LottoList } />
-                  <Route exact path="/movement" component={ Movement } />
-                  <Route exact path="/movement/:page" component={ Movement } />
-                  <Route exact path="/peer" component={ Peer } />
-                  <Route exact path="/statistics" component={ Statistics } />
-                  <Route exact path="/top" component={ Top100 } />
-                  <Route exact path="/tx/:hash" component={ TX } />
-                  <Route exact path="/bet/event/:eventId" component={ BetEvent } />
-                  <Route exact path="/lotto/event/:eventId" component={ LottoEvent } />
-                  <Route component={ Error404 } />
-                </Switch>
-              </div>
-              <Footer />
-            </div>
-          </div>
-        </div>*/}
+        </div>       
       </HashRouter>
     );
   };

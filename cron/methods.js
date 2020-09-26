@@ -58,7 +58,8 @@ function hexToString(hexx) {
 }
 
 function getOPCode(voutData) {
-  const { type, asm } = voutData.scriptPubKey;
+  //console.log('getOPCode:', voutData.scriptPubKey);
+  const { type, asm, hex } = voutData.scriptPubKey;
 
   if (!type || type !== 'nulldata') {
     return { error: false, message: 'Incorrect type', type };
@@ -68,8 +69,12 @@ function getOPCode(voutData) {
     return { error: false, message: 'Missing asm data', asm };
   }
 
-  const hexValue = asm.replace('OP_RETURN ', '');
-
+  if (!hex) {
+    return { error: false, message: 'Missing hex data', hex };
+  }
+  //hexValue.substr(currentPos, 2);
+  //const hexValue = asm.replace('OP_RETURN ', '');
+  const hexValue = hex.substr(4);
   return hexValue;
 }
 
@@ -83,7 +88,7 @@ function validateVoutData(voutData) {
   };
 
   if (hexValue.error) return returnError(hexValue);
-
+  //console.log('hexvalue',hexValue);
   const opData = isOPCode(hexValue);
 
   if (!opData.valid) {
@@ -97,9 +102,6 @@ function validateVoutData(voutData) {
 async function preOPCode(block, rpctx, vout) {
   let opString = hexToString(vout.scriptPubKey.asm.substring(10));
   let datas = opString.split('|');
-  if (rpctx == "d97122769e8063b4b62b2d97c01fed5b507011c5b14e3790d8db1fb87894d042"){
-    console.log('datas', datas);
-  } 
   
   if (datas[0] === '1' && datas.length === 11) {
     BetEvent.create({
@@ -226,11 +228,10 @@ async function addPoS(block, rpcTx, waitTime = 50) {
         }
 
         let success;
-        if (rpctx.txid == "d97122769e8063b4b62b2d97c01fed5b507011c5b14e3790d8db1fb87894d042")
-          console.log('transaction', transaction);
+
         if (transaction.error || !transaction.prefix) {
           success = await preOPCode(block, rpctx, vout);
-        } else {
+        } else {                    
           success = await saveOPTransaction(block, rpctx, vout, transaction, waitTime);
         }
 

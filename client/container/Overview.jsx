@@ -54,10 +54,10 @@ class Overview extends Component {
       return ({
         ...tx,
         age: diffSeconds < 0 ? "Just Now" : (diffSeconds < 60 ? `${ diffSeconds } seconds` : createdAt.fromNow(true)),
-        blockHeight: (<Link to={ `/block/${ tx.blockHeight }` }>{ tx.blockHeight }</Link>),
+        blockHeight: (<Link to={ `/explorer/block/${ tx.blockHeight }` }>{ tx.blockHeight }</Link>),
         createdAt: date24Format(tx.createdAt),
         recipients: tx.vout.length,
-        txId: (<Link to={ `/tx/${ tx.txId }` }>{ tx.txId }</Link>),
+        txId: (<Link to={ `/explorer/tx/${ tx.txId }` }>{ tx.txId }</Link>),
         vout: numeral(blockValue).format('0,0.00000000')
       });
     });

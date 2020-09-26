@@ -11,9 +11,13 @@ const Rich = require('../model/rich');
 const TX = require('../model/tx');
 const UTXO = require('../model/utxo');
 const BetAction = require('../model/betaction');
+const BetUpdate = require('../model/betupdate');
+const BetTotal = require('../model/bettotal');
+const BetSpread = require('../model/betspread');
 const BetEvent = require('../model/betevent');
 const BetPayout = require('../model/betpayout');
 const BetResult = require('../model/betresult');
+const BetParlay = require('../model/betparlay');
 const ListEvent = require('../model/listevent');
 const STXO = require('../model/stxo');
 
@@ -34,6 +38,10 @@ async function clearDatabase() {
   await BetResult.deleteMany({});
   await ListEvent.deleteMany({});
   await STXO.deleteMany({});
+  await BetParlay.deleteMany({});
+  await BetTotal.deleteMany({});
+  await BetSpread.deleteMany({});
+  await BetUpdate.deleteMany({});
 }
 
 /**
