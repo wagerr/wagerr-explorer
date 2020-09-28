@@ -754,15 +754,24 @@ tr.table-item {
 .slick-slider {
 	background: #000;
 	color: #fff;
-	height: 67px;
-	display: flex;
-	flex-direction: row;
-	border-bottom: 1px solid #fff;
+	padding: 0 17px;
 	&__item {
-		padding: 4px;
+		position:relative;
 		width: 126px;
 		min-width: 126px;
-		border-right: 0.4px solid #fff; 
+		padding: 8px;
+		&__active {
+			border-bottom: 3px solid #B40102; 
+		}
+	}
+	&__item:after {
+		content:"";
+		position:absolute;
+		top:20%;
+		right:0;
+		width:1px;
+		height:60%;
+		background:#fff;
 	}
 	&__cup {
 		padding: 4px 18px;
@@ -778,12 +787,7 @@ tr.table-item {
 		}
 	}
 	&__row {
-		display: flex;
-		flex-direction: row;
-		flex: 1;
-		padding: 8px;
 		font-size: 14px;
-		overflow: hidden;
 	}
 	&__leftarrow {
 		border-right: 1px solid #fff;
@@ -814,7 +818,6 @@ tr.table-item {
 }
 .w3-dropdown-hover:first-child, .w3-dropdown-click:hover {
     background-color: transparent!important;
-    // color: #000;
 }
 .w3-button:hover {
 	background: transparent!important;
@@ -823,7 +826,6 @@ tr.table-item {
 .w3-bar-block {
 	background: #27221C;
 	margin-left: -25px;
-	// margin-top: 2px;
 	width: 50px;
 	color: #FFF;
 }
@@ -942,4 +944,16 @@ th.mobile-recipents::after {
 	&.shown {
 		right: -20px;
 	}
+}
+
+.slick-prev {
+	left: -10px;
+}
+
+.slick-next {
+    right: -10px;
+}
+.slick-list {
+	border-left: 1px solid;
+	border-right: 1px solid;
 }

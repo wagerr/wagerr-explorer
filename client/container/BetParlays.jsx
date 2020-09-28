@@ -250,18 +250,18 @@ class BetParlays extends Component {
             { key: 'betStatus', title: t('betStatus'), className: 'w-m-100' },
             { key: 'seeDetail', title: t('detail'), className: 'w-m-80' },
         ] : [
-            { key: 'start', title: 'bettime', className: 'w-m-140' },
-            { key: 'event', title: 'txid' },
-            { key: 'homeTeam', title: 'leg1' },
-            { key: 'awayTeam', title: 'leg2' },
-            { key: 'homeOdds', title: 'leg3' },
-            { key: 'drawOdds', title: 'leg4' },
-            { key: 'awayOdds', title: 'leg5' },
-            { key: 'supplyChange', title: t('supplyChange'), className: 'w-m-120' },
-            { key: 'betAmount', title: t('betAmount'), className: 'w-m-100' },
-            { key: 'betStatus', title: t('betStatus'), className: 'w-m-100' },
-            { key: 'seeDetail', title: t('detail'), className: 'w-m-80' },
-        ]
+                { key: 'start', title: 'bettime', className: 'w-m-140' },
+                { key: 'event', title: 'txid' },
+                { key: 'homeTeam', title: 'leg1' },
+                { key: 'awayTeam', title: 'leg2' },
+                { key: 'homeOdds', title: 'leg3' },
+                { key: 'drawOdds', title: 'leg4' },
+                { key: 'awayOdds', title: 'leg5' },
+                { key: 'supplyChange', title: t('supplyChange'), className: 'w-m-120' },
+                { key: 'betAmount', title: t('betAmount'), className: 'w-m-100' },
+                { key: 'betStatus', title: t('betStatus'), className: 'w-m-100' },
+                { key: 'seeDetail', title: t('detail'), className: 'w-m-80' },
+            ]
         if (!!this.state.error) {
             return this.renderError(this.state.error)
         } else if (this.state.loading) {
@@ -309,8 +309,8 @@ class BetParlays extends Component {
                                 title={'PARLAY BETS'}
                             />
                             {this.state.events.length == 0 && this.renderError('No search results found within provided filters')}
-                            
-                            <div style={{ width: Utils.tableWidth(width)}}>
+
+                            <div style={{ width: Utils.tableWidth(width) }}>
                                 {this.state.events.length > 0 &&
                                     <CardBigTable
                                         className={'table-responsive table--for-betevents'}
@@ -325,17 +325,17 @@ class BetParlays extends Component {
                                                 ...event,
                                                 start: <Link to={`/explorer/tx/${encodeURIComponent(event.events[0].eventId)}`}>{timeStamp24Format(event.events[0].timeStamp)} </Link>,
                                                 event: <span>{Math.random().toString(36).substr(2, 9)}</span>,
-                                                homeTeam: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span>: <span className={`badge badge-success`}>Lose</span>,
-                                                awayTeam: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span>: <span className={`badge badge-success`}>win</span>,
-                                                homeOdds: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span>: <span className={`badge badge-danger`}>Lose</span>,
-                                                drawOdds: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span>: <span className={`badge badge-success`}>win</span>,
-                                                awayOdds: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span>: <span className={`badge badge-danger`}>Lose</span>,
+                                                homeTeam: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span> : <span className={`badge badge-success`}>Lose</span>,
+                                                awayTeam: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span> : <span className={`badge badge-success`}>win</span>,
+                                                homeOdds: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span> : <span className={`badge badge-danger`}>Lose</span>,
+                                                drawOdds: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span> : <span className={`badge badge-success`}>win</span>,
+                                                awayOdds: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span> : <span className={`badge badge-danger`}>Lose</span>,
                                                 supplyChange: <span className={`badge badge-${event.totalMint - event.totalBet < 0 ? 'danger' : 'success'}`}>{numeral(event.totalMint - event.totalBet).format('0,0.00')}</span>,
                                                 betAmount: <span className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
-                                                betStatus: <span style={{ fontWeight: 'bold'}}>{toggleSwitch ? 'Pending': 'Completed'}</span>,
+                                                betStatus: <span style={{ fontWeight: 'bold' }}>{toggleSwitch ? 'Pending' : 'Completed'}</span>,
                                                 seeDetail: <Link to={`/explorer/tx/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
                                             }
-                                        })} 
+                                        })}
                                     />
                                 }
                             </div>

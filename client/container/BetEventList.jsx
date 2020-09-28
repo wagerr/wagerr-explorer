@@ -31,6 +31,7 @@ import CardBigTable from "../component/Card/CardBigTable";
 import ExplorerOverviewMenu from "../component/Menu/ExplorerOverviewMenu";
 import GlobalSwitch from "../component/Menu/GlobalSwitch";
 import Utils from "../core/utils";
+import Sliding from '../component/Sliding'
 
 const convertToAmericanOdds = (odds) => {
 
@@ -300,6 +301,7 @@ class BetEventList extends Component {
                             />
                             {this.state.events.length == 0 && this.renderError('No search results found within provided filters')}
                             <div style={{ width: Utils.tableWidth(width) }}>
+
                                 <div className="w3-tables__title">
                                     <div>BET EVENTS </div>
                                     <div className="align-row-center">
@@ -313,23 +315,7 @@ class BetEventList extends Component {
                                     </div>
                                 </div>
 
-                                <div className="slick-slider">
-                                    <div className="slick-slider__leftarrow">
-                                        <img src={'/img/uiupdate/left_arrow.png'} alt={'left arrow'} />
-                                    </div>
-                                    <div className="slick-slider__row">
-                                        {
-                                            demo_sports.map((item, index) =>
-                                                <center className={`slick-slider__item ${demo_sports.length - 1 === index ? 'border-none': ''}`} key={index}>
-                                                    <img src={'/img/uiupdate/' + item.icon} alt={'sports'} />
-                                                    <p>{item.label}</p>
-                                                </center>)
-                                        }
-                                    </div>
-                                    <div className="slick-slider__rightarrow">
-                                        <img src={'/img/uiupdate/right_arrow.png'} alt={'right arrow'} />
-                                    </div>
-                                </div>
+                               <Sliding />
 
                                 {
                                     this.state.events.length > 0 &&
@@ -499,17 +485,3 @@ export default compose(
     translate('betEventList'),
 )(BetEventList);
 
-const demo_sports = [
-    { id: 1, label: 'All Events', icon: 'explorer_sportbetting_allevent.png' },
-    { id: 2, label: 'Soccer', icon: 'explorer_sportbetting_soccor.png' },
-    { id: 3, label: 'Esports', icon: 'explorer_sportbetting_esport.png' },
-    { id: 4, label: 'Baseball', icon: 'explorer_sportbetting_baseball.png' },
-    { id: 5, label: 'Basketball', icon: 'explorer_sportbetting_basketball.png' },
-    { id: 6, label: 'Football', icon: 'explorer_sportbetting_soccor.png' },
-    { id: 7, label: 'Hockey', icon: 'explorer_sportbetting_hockey.png' },
-    { id: 8, label: 'Aussie Rules', icon: 'explorer_sportbetting_aussie_rules.png' },
-    { id: 9, label: 'Cricket', icon: 'explorer_sportbetting_cricket.png' },
-    { id: 10, label: 'MMA', icon: 'explorer_sportbetting_mma.png' },
-    { id: 11, label: 'Rugby League', icon: 'explorer_sportbetting_rugby_league.png' },
-    { id: 12, label: 'Rugby Union', icon: 'explorer_sportbetting_rugby_league.png' },
-]
