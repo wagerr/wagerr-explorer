@@ -31,7 +31,7 @@ export default class CardBigTable extends Component {
 
     getHeader() {
         return (
-            <tr className="table-header">
+            <tr className="table-header" style={{ background: this.props.sports ? '#545454' : '#b40202' }}>
                 {
                     this.props.cols.map(item => {
                         return <th style={{textTransform: 'uppercase'}}>{item.title}</th>
@@ -47,7 +47,7 @@ export default class CardBigTable extends Component {
 
     render() {
         return (
-            <div className="animated fadeInUp w3-tables w3-responsive">
+            <div className="animated fadeInUp w3-tables w3-responsive" style={ this.props.sports && { marginTop: -1, borderRadius: 0 }}>
                 <table className="w3-table-all">
                     <tbody>
                         {this.sportsBody()}

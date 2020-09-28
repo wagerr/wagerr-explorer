@@ -585,8 +585,9 @@ h2 {
 	text-align: right;
 }
 tr.table-header {
-	background: #b40202!important;
+	background: #b40202;
 	color: #fff;
+	line-height: 16px;
 	@media (max-width: 1030px){
 		font-size: 15px!important;
 	}
