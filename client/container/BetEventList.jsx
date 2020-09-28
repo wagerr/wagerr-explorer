@@ -238,7 +238,7 @@ class BetEventList extends Component {
         const { toggleSwitchOddsStyle, toggleSwitch, toggleSwitchOdds } = this.props;
         const { t } = props;
         const cols = [
-            { key: 'start', title: t('startingnow'), className: 'w-m-140' },
+            { key: 'start', title: t('startingnow'), className: 'w-m-180' },
             { key: 'event', title: t('eventId') },
             { key: 'name', title: t('name'), className: 'w-m-180' },
             // {key: 'round', title: t('round')},
@@ -250,7 +250,7 @@ class BetEventList extends Component {
             { key: 'supplyChange', title: t('supplyChange'), className: 'w-m-120' },
             { key: 'betAmount', title: t('betAmount'), className: 'w-m-100' },
             { key: 'betStatus', title: t('betStatus'), className: 'w-m-100' },
-            { key: 'seeDetail', title: t('detail'), className: 'w-m-80' },
+            { key: 'seeDetail', title: t('detail'), className: 'w-m-100' },
         ]
         if (!!this.state.error) {
             return this.renderError(this.state.error)
@@ -301,146 +301,150 @@ class BetEventList extends Component {
                             {this.state.events.length == 0 && this.renderError('No search results found within provided filters')}
                             <div style={{ width: Utils.tableWidth(width) }}>
 
-                            {this.state.events.length > 0 &&
-                            <CardBigTable
-                                    className={'table-responsive table--for-betevents'}
-                                    cols={cols}
-                                    data={this.state.events.map((event) => {
-                                        const betAmount = event.actions.reduce((acc, action) => {
-                                            return acc + action.betValue
-                                        }, 0.0
-                                        )
+                                {this.state.events.length > 0 &&
+                                    <CardBigTable
+                                        className={'table-responsive table--for-betevents'}
+                                        cols={cols}
+                                        data={this.state.events.map((event) => {
+                                            const betAmount = event.actions.reduce((acc, action) => {
+                                                return acc + action.betValue
+                                            }, 0.0
+                                            )
 
-                                        let betStatus = t('open')
-                                        const eventTime = parseInt(event.events[0].timeStamp);
-                                        const eventData = event.events[0];
+                                            let betStatus = t('open')
+                                            const eventTime = parseInt(event.events[0].timeStamp);
+                                            const eventData = event.events[0];
 
-                                        if (event.results.length > 1) {
-                                            for (const result of event.results) {
-                                                if (result.result.indexOf('REFUND') !== -1) {
-                                                    betStatus = <span className={`badge badge-info`}>{result.result}</span>
+                                            if (event.results.length > 1) {
+                                                for (const result of event.results) {
+                                                    if (result.result.indexOf('REFUND') !== -1) {
+                                                        betStatus = <span className={`badge badge-info`}>{result.result}</span>
+                                                    }
                                                 }
-                                            }
-                                        } else if (event.results.length > 0) {
-                                            for (const result of event.results) {
-                                                const awayVsHome = result.transaction ? (result.transaction.awayScore - result.transaction.homeScore) : 0;
-                                                let outcome;
-                                                if (awayVsHome > 0) {
-                                                    // outcome = 'Away Win';
-                                                    outcome = eventData.awayTeam;
-                                                }
+                                            } else if (event.results.length > 0) {
+                                                for (const result of event.results) {
+                                                    const awayVsHome = result.transaction ? (result.transaction.awayScore - result.transaction.homeScore) : 0;
+                                                    let outcome;
+                                                    if (awayVsHome > 0) {
+                                                        // outcome = 'Away Win';
+                                                        outcome = eventData.awayTeam;
+                                                    }
 
-                                                if (awayVsHome < 0) {
-                                                    // outcome = 'Home Win';
-                                                    outcome = eventData.homeTeam;
-                                                }
+                                                    if (awayVsHome < 0) {
+                                                        // outcome = 'Home Win';
+                                                        outcome = eventData.homeTeam;
+                                                    }
 
-                                                if (awayVsHome === 0) {
-                                                    outcome = 'Draw';
-                                                }
+                                                    if (awayVsHome === 0) {
+                                                        outcome = 'Draw';
+                                                    }
 
-                                                if (result.result && result.result.includes('Refund')) {
-                                                    console.log('result', result);
-                                                    outcome = result.result;
-                                                }
+                                                    if (result.result && result.result.includes('Refund')) {
+                                                        console.log('result', result);
+                                                        outcome = result.result;
+                                                    }
 
-                                                if (outcome) {
-                                                    betStatus = <span className={`badge badge-info`}>{outcome}</span>
+                                                    if (outcome) {
+                                                        betStatus = <span className={`badge badge-info`}>{outcome}</span>
+                                                    }
                                                 }
-                                            }
-                                        } else {
-                                            if ((eventTime - (20 * 60 * 1000)) < Date.now()) {
-                                                betStatus = t('waitForStart')
-                                                if (eventTime < Date.now()) {
-                                                    betStatus = t('started')
-                                                    if (event.results.length === 0) {
-                                                        betStatus = <span
-                                                            className={`badge badge-warning`}>{t('waitingForOracle')}</span>
+                                            } else {
+                                                if ((eventTime - (20 * 60 * 1000)) < Date.now()) {
+                                                    betStatus = t('waitForStart')
+                                                    if (eventTime < Date.now()) {
+                                                        betStatus = t('started')
+                                                        if (event.results.length === 0) {
+                                                            betStatus = <span
+                                                                className={`badge badge-warning`}>{t('waitingForOracle')}</span>
+                                                        }
                                                     }
                                                 }
                                             }
-                                        }
 
-                                        let homeOdds = (event.events[0].homeOdds / 10000)
-                                        let drawOdds = (event.events[0].drawOdds / 10000)
-                                        let awayOdds = (event.events[0].awayOdds / 10000)
+                                            let homeOdds = (event.events[0].homeOdds / 10000)
+                                            let drawOdds = (event.events[0].drawOdds / 10000)
+                                            let awayOdds = (event.events[0].awayOdds / 10000)
 
-                                        let orighomeOdds = (event.events[0].homeOdds / 10000)
-                                        let origdrawOdds = (event.events[0].drawOdds / 10000)
-                                        let origawayOdds = (event.events[0].awayOdds / 10000)
+                                            let orighomeOdds = (event.events[0].homeOdds / 10000)
+                                            let origdrawOdds = (event.events[0].drawOdds / 10000)
+                                            let origawayOdds = (event.events[0].awayOdds / 10000)
 
 
-                                        if (toggleSwitchOdds) {
-                                            homeOdds = homeOdds == 0 ? homeOdds : (1 + (homeOdds - 1) * 0.94).toFixed(2);
-                                            drawOdds = drawOdds == 0 ? drawOdds : (1 + (drawOdds - 1) * 0.94).toFixed(2);
-                                            awayOdds = awayOdds == 0 ? awayOdds : (1 + (awayOdds - 1) * 0.94).toFixed(2);
-                                        }
-
-                                        if (toggleSwitchOddsStyle) {
-                                            homeOdds = convertToAmericanOdds(homeOdds);
-                                            drawOdds = convertToAmericanOdds(drawOdds);
-                                            awayOdds = convertToAmericanOdds(awayOdds);
-                                        }
-
-                                        if (event.events.length > 1) {
-                                            let lastHomeOdds = (event.events[1].homeOdds / 10000)
-                                            let lastDrawOdds = (event.events[1].drawOdds / 10000)
-                                            let lastAwayOdds = (event.events[1].awayOdds / 10000)
-                                            if (orighomeOdds > lastHomeOdds) {
-                                                homeOdds = homeOdds + ' ↑'
-                                            } else if (homeOdds < lastHomeOdds) {
-                                                homeOdds = homeOdds + ' ↓'
+                                            if (toggleSwitchOdds) {
+                                                homeOdds = homeOdds == 0 ? homeOdds : (1 + (homeOdds - 1) * 0.94).toFixed(2);
+                                                drawOdds = drawOdds == 0 ? drawOdds : (1 + (drawOdds - 1) * 0.94).toFixed(2);
+                                                awayOdds = awayOdds == 0 ? awayOdds : (1 + (awayOdds - 1) * 0.94).toFixed(2);
                                             }
-                                            if (origdrawOdds > lastDrawOdds) {
-                                                drawOdds = drawOdds + ' ↑'
-                                            } else if (drawOdds < lastDrawOdds) {
-                                                drawOdds = drawOdds + ' ↓'
+
+                                            if (toggleSwitchOddsStyle) {
+                                                homeOdds = convertToAmericanOdds(homeOdds);
+                                                drawOdds = convertToAmericanOdds(drawOdds);
+                                                awayOdds = convertToAmericanOdds(awayOdds);
                                             }
-                                            if (origawayOdds > lastAwayOdds) {
-                                                awayOdds = awayOdds + ' ↑'
-                                            } else if (awayOdds < lastAwayOdds) {
-                                                awayOdds = awayOdds + ' ↓'
+
+                                            if (event.events.length > 1) {
+                                                let lastHomeOdds = (event.events[1].homeOdds / 10000)
+                                                let lastDrawOdds = (event.events[1].drawOdds / 10000)
+                                                let lastAwayOdds = (event.events[1].awayOdds / 10000)
+                                                if (orighomeOdds > lastHomeOdds) {
+                                                    homeOdds = homeOdds + ' ↑'
+                                                } else if (homeOdds < lastHomeOdds) {
+                                                    homeOdds = homeOdds + ' ↓'
+                                                }
+                                                if (origdrawOdds > lastDrawOdds) {
+                                                    drawOdds = drawOdds + ' ↑'
+                                                } else if (drawOdds < lastDrawOdds) {
+                                                    drawOdds = drawOdds + ' ↓'
+                                                }
+                                                if (origawayOdds > lastAwayOdds) {
+                                                    awayOdds = awayOdds + ' ↑'
+                                                } else if (awayOdds < lastAwayOdds) {
+                                                    awayOdds = awayOdds + ' ↓'
+                                                }
                                             }
-                                        }
-                                        return {
-                                            ...event,
-                                            start: <Link to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
-                                                {timeStamp24Format(event.events[0].timeStamp)} </Link>
-                                            ,
-                                            event: (
-                                                <Link to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
-                                                    {event.events[0].eventId}
-                                                </Link>
-                                            ),
-                                            name: <Link to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
-                                                {event.events[0].league}</Link>,
-                                            round: <Link to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
-                                            </Link>,
-                                            homeTeam: <Link
-                                                to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].homeTeam}</Link>,
-                                            awayTeam: <Link
-                                                to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].awayTeam}</Link>,
-                                            homeOdds: homeOdds,
-                                            drawOdds: drawOdds,
-                                            awayOdds: awayOdds,
-                                            supplyChange: <span
-                                                className={`badge badge-${event.totalMint - event.totalBet < 0 ? 'danger' : 'success'}`}>
-                                                {numeral(event.totalMint - event.totalBet).format('0,0.00')}
-                                            </span>,
-                                            betAmount: <span
-                                                className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
-                                            betStatus: betStatus,
-                                            seeDetail: <Link
-                                                to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
-                                        }
-                                    })} />}
+                                            return {
+                                                ...event,
+                                                start: <Link to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
+                                                    {timeStamp24Format(event.events[0].timeStamp)} </Link>
+                                                ,
+                                                event: (
+                                                    <Link to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
+                                                        {event.events[0].eventId}
+                                                    </Link>
+                                                ),
+                                                name: <Link to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
+                                                    {event.events[0].league}</Link>,
+                                                round: <Link to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
+                                                </Link>,
+                                                homeTeam: <Link
+                                                    to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].homeTeam}</Link>,
+                                                awayTeam: <Link
+                                                    to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].awayTeam}</Link>,
+                                                homeOdds: homeOdds,
+                                                drawOdds: drawOdds,
+                                                awayOdds: awayOdds,
+                                                supplyChange: <span
+                                                    className={`badge badge-${event.totalMint - event.totalBet < 0 ? 'danger' : 'success'}`}>
+                                                    {numeral(event.totalMint - event.totalBet).format('0,0.00')}
+                                                </span>,
+                                                betAmount: <span
+                                                    className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
+                                                betStatus: betStatus,
+                                                seeDetail: <Link
+                                                    to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
+                                            }
+                                        })} />}
                             </div>
 
-                            {this.state.pages > 0 && <Pagination
-                                current={this.state.page}
-                                className="float-right"
-                                onPage={this.handlePage}
-                                total={this.state.pages} />}
+                            {
+                                this.state.pages > 0 &&
+                                <Pagination
+                                    current={this.state.page}
+                                    className="float-right"
+                                    onPage={this.handlePage}
+                                    total={this.state.pages} /
+                                >
+                            }
                             <div className="clearfix" />
                         </div>
                         <Footer />

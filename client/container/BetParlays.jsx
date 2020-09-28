@@ -30,6 +30,7 @@ import Footer from '../component/Footer';
 import CardBigTable from "../component/Card/CardBigTable";
 import ExplorerOverviewMenu from "../component/Menu/ExplorerOverviewMenu";
 import GlobalSwitch from "../component/Menu/GlobalSwitch";
+import Utils from '../core/utils'
 
 const convertToAmericanOdds = (odds) => {
 
@@ -71,6 +72,7 @@ class BetParlays extends Component {
             size: 50,
             filterBy: 'All',
             search: '',
+            width: 0,
             toggleSwitch: props.toggleSwitch
         }
 
@@ -82,6 +84,9 @@ class BetParlays extends Component {
     };
 
     componentDidMount() {
+        this.updateWindowDimensions();
+        window.addEventListener("resize", this.updateWindowDimensions);
+
         const values = queryString.parse(this.props.location.search); //this.props.match ? this.props.match.params : '';
         const search = values.search ? values.search : '';
 
@@ -104,6 +109,7 @@ class BetParlays extends Component {
     }
 
     componentWillUnmount() {
+        window.removeEventListener("resize", this.updateWindowDimensions);
         if (this.debounce) {
             clearTimeout(this.debounce)
             this.debounce = null
@@ -114,6 +120,10 @@ class BetParlays extends Component {
         if (prevProps.toggleSwitch !== this.props.toggleSwitch) {
             this.getBetEventsInfo();
         }
+    };
+
+    updateWindowDimensions = () => {
+        this.setState({ width: window.innerWidth });
     };
 
     getBetEventsInfo = () => {
@@ -226,6 +236,7 @@ class BetParlays extends Component {
         const { props } = this;
         const { t } = props;
         const { toggleSwitch } = props;
+        const { width } = this.state;
 
         const cols = toggleSwitch ? [
             { key: 'start', title: 'bettime', className: 'w-m-140' },
@@ -298,31 +309,36 @@ class BetParlays extends Component {
                                 title={'PARLAY BETS'}
                             />
                             {this.state.events.length == 0 && this.renderError('No search results found within provided filters')}
-                            {this.state.events.length > 0 &&
-                                <CardBigTable
-                                    className={'table-responsive table--for-betevents'}
-                                    cols={cols}
-                                    data={this.state.events.map((event) => {
-                                        const betAmount = event.actions.reduce((acc, action) => {
-                                            return acc + action.betValue
-                                        }, 0.0
-                                        )
+                            
+                            <div style={{ width: Utils.tableWidth(width)}}>
+                                {this.state.events.length > 0 &&
+                                    <CardBigTable
+                                        className={'table-responsive table--for-betevents'}
+                                        cols={cols}
+                                        data={this.state.events.map((event) => {
+                                            const betAmount = event.actions.reduce((acc, action) => {
+                                                return acc + action.betValue
+                                            }, 0.0
+                                            )
 
-                                        return {
-                                            ...event,
-                                            start: <Link to={`/explorer/tx/${encodeURIComponent(event.events[0].eventId)}`}>{timeStamp24Format(event.events[0].timeStamp)} </Link>,
-                                            event: <span>{Math.random().toString(36).substr(2, 9)}</span>,
-                                            homeTeam: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span>: <span className={`badge badge-success`}>Lose</span>,
-                                            awayTeam: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span>: <span className={`badge badge-success`}>win</span>,
-                                            homeOdds: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span>: <span className={`badge badge-danger`}>Lose</span>,
-                                            drawOdds: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span>: <span className={`badge badge-success`}>win</span>,
-                                            awayOdds: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span>: <span className={`badge badge-danger`}>Lose</span>,
-                                            supplyChange: <span className={`badge badge-${event.totalMint - event.totalBet < 0 ? 'danger' : 'success'}`}>{numeral(event.totalMint - event.totalBet).format('0,0.00')}</span>,
-                                            betAmount: <span className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
-                                            betStatus: <span style={{ fontWeight: 'bold'}}>{toggleSwitch ? 'Pending': 'Completed'}</span>,
-                                            seeDetail: <Link to={`/explorer/tx/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
-                                        }
-                                    })} />}
+                                            return {
+                                                ...event,
+                                                start: <Link to={`/explorer/tx/${encodeURIComponent(event.events[0].eventId)}`}>{timeStamp24Format(event.events[0].timeStamp)} </Link>,
+                                                event: <span>{Math.random().toString(36).substr(2, 9)}</span>,
+                                                homeTeam: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span>: <span className={`badge badge-success`}>Lose</span>,
+                                                awayTeam: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span>: <span className={`badge badge-success`}>win</span>,
+                                                homeOdds: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span>: <span className={`badge badge-danger`}>Lose</span>,
+                                                drawOdds: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span>: <span className={`badge badge-success`}>win</span>,
+                                                awayOdds: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span>: <span className={`badge badge-danger`}>Lose</span>,
+                                                supplyChange: <span className={`badge badge-${event.totalMint - event.totalBet < 0 ? 'danger' : 'success'}`}>{numeral(event.totalMint - event.totalBet).format('0,0.00')}</span>,
+                                                betAmount: <span className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
+                                                betStatus: <span style={{ fontWeight: 'bold'}}>{toggleSwitch ? 'Pending': 'Completed'}</span>,
+                                                seeDetail: <Link to={`/explorer/tx/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
+                                            }
+                                        })} 
+                                    />
+                                }
+                            </div>
 
                             {this.state.pages > 0 && <Pagination
                                 current={this.state.page}
