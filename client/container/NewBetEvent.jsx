@@ -209,32 +209,6 @@ export default compose(
     connect(mapState, mapDispatch),
 )(NewBetEvent);
 
-const MOKEDATA = [
-    {
-        id: 1,
-        hash: 'fbef8932kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujffbef8932kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf',
-        home: 1.69,
-        draw: 4.41,
-        away: 5.58,
-        time: '2019-12-12 12:12:12 UTC'
-    },
-    {
-        id: 2,
-        hash: 'ceewf23fdec 32jhkejf23847324fj349823rrjf23ru23ujffbef8932kfj32r23432jhkejf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf23847324fj349823rrjf23ru23ujf',
-        home: 6.22,
-        draw: 7.43,
-        away: 8.38,
-        time: '2019-12-12 12:12:12 UTC'
-    },
-    {
-        id: 3,
-        hash: '3243523ddxd432jhkejf23847324fj349823rrjf23ru23ujffbef8932kfj32r23432jhkejf23847324fj349823rrjf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf2kfj32r23432jhkejf23847324fj349823rrjf23ru23ujf23ru23ujf',
-        home: 4.49,
-        draw: 3.41,
-        away: 2.58,
-        time: '2019-12-12 12:12:12 UTC'
-    },
-]
 
 const MONEYDATA = [
     {label: 'Time:', value: '2019-12-10 20:00:00 UTC'},
@@ -247,23 +221,4 @@ const MONEYDATA = [
     {label: 'Draw Bet Amount:', value: '0.00000000'},
     {label: 'Away Bet Num:', value: '0'},
     {label: 'Away Bet Amount:', value: '0.00000000'},
-]
-
-const SPREADDATA = [
-    {label: 'Time:', value: '2019-12-10 20:00:00 UTC'},
-    {label: 'Home Bet Amount:', value: '0.00000000'},
-    {label: 'Draw Bet Num:', value: '0'},
-    {label: 'Draw Bet Amount:', value: '0.00000000'},
-    {label: 'Away Bet Num:', value: '0'},
-    {label: 'Away Bet Amount:', value: '0.00000000'},
-]
-
-const OVERDATA = [
-    {label: 'Time:', value: '2019-12-10 20:00:00 UTC'},
-    {label: 'League:', value: 'The Championship'},
-    {label: 'Home Team:', value: 'Stoke City'},
-    {label: 'Away Team:', value: 'Luton Town'},
-    {label: 'Home Bet Num:', value: '0'},
-    {label: 'Home Bet Amount:', value: '0.00000000'},
-    {label: 'Draw Bet Num:', value: '0'},
 ]

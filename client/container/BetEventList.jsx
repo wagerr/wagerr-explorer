@@ -30,6 +30,7 @@ import Footer from '../component/Footer';
 import CardBigTable from "../component/Card/CardBigTable";
 import ExplorerOverviewMenu from "../component/Menu/ExplorerOverviewMenu";
 import GlobalSwitch from "../component/Menu/GlobalSwitch";
+import Utils from "../core/utils";
 
 const convertToAmericanOdds = (odds) => {
 
@@ -71,6 +72,7 @@ class BetEventList extends Component {
             size: 50,
             filterBy: 'All',
             search: '',
+            width: 0,
             toggleSwitch: props.toggleSwitch
         }
 
@@ -82,6 +84,9 @@ class BetEventList extends Component {
     };
 
     componentDidMount() {
+        this.updateWindowDimensions();
+        window.addEventListener("resize", this.updateWindowDimensions);
+
         const values = queryString.parse(this.props.location.search); //this.props.match ? this.props.match.params : '';
         const search = values.search ? values.search : '';
 
@@ -108,12 +113,17 @@ class BetEventList extends Component {
             clearTimeout(this.debounce)
             this.debounce = null
         }
+        window.removeEventListener("resize", this.updateWindowDimensions);
     };
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.toggleSwitch !== this.props.toggleSwitch) {
             this.getBetEventsInfo();
         }
+    };
+
+    updateWindowDimensions = () => {
+        this.setState({ width: window.innerWidth });
     };
 
     getBetEventsInfo = () => {
@@ -224,6 +234,7 @@ class BetEventList extends Component {
 
     render() {
         const { props } = this;
+        const { width } = this.state;
         const { toggleSwitchOddsStyle, toggleSwitch, toggleSwitchOdds } = this.props;
         const { t } = props;
         const cols = [
@@ -288,8 +299,10 @@ class BetEventList extends Component {
                                 title={t('title')}
                             />
                             {this.state.events.length == 0 && this.renderError('No search results found within provided filters')}
+                            <div style={{ width: Utils.tableWidth(width) }}>
+
                             {this.state.events.length > 0 &&
-                                <CardBigTable
+                            <CardBigTable
                                     className={'table-responsive table--for-betevents'}
                                     cols={cols}
                                     data={this.state.events.map((event) => {
@@ -421,6 +434,7 @@ class BetEventList extends Component {
                                                 to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
                                         }
                                     })} />}
+                            </div>
 
                             {this.state.pages > 0 && <Pagination
                                 current={this.state.page}

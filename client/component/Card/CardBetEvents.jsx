@@ -3,6 +3,7 @@ import Component from '../../core/Component';
 import { Link } from 'react-router-dom';
 import React from 'react';
 import Switch from "react-switch";
+import Utils from "../../core/utils";
 
 export default class CardBetEvents extends Component {
   constructor() {
@@ -28,9 +29,9 @@ export default class CardBetEvents extends Component {
   render() {
     const { width } = this.state;
     return (
-      <div className="animated fadeInUp w3-tables w3-responsive" style={{ width: width > 767 ? width-320 : width-27 }}>
+      <div className="animated fadeInUp w3-tables w3-responsive" style={{ width: Utils.tableWidth(width) }}>
         
-        <div className="w3-tables__title" style={{ width: width < 1640 && (width < 767 ? 1438 : 1467)  }}>
+        <div className="w3-tables__title" style={{ width: Utils.getWidth(width) }}>
           <div>BET EVENTS </div>
           <div className="align-row-center">
             <span className="mr-10">Net Odds:</span>
@@ -45,7 +46,7 @@ export default class CardBetEvents extends Component {
           </div>
         </div>
 
-        <div className="slick-slider" style={{ width: width < 1640 && (width < 767 ? 1438 : 1467) }}>
+        <div className="slick-slider" style={{ width: Utils.getWidth(width) }}>
           <div className="slick-slider__leftarrow">
             <img src={'/img/uiupdate/left_arrow.png'} alt={'left arrow'} />
           </div>
@@ -63,7 +64,7 @@ export default class CardBetEvents extends Component {
           </div>
         </div>
 
-        <div className="slick-slider" style={{ width: width < 1640 && (width < 767 ? 1438 : 1467) }}>
+        <div className="slick-slider" style={{ width: Utils.getWidth(width) }}>
           <div className="slick-slider__leftarrow">
             <img src={'/img/uiupdate/left_arrow.png'} alt={'left arrow'} />
           </div>
@@ -131,7 +132,7 @@ export default class CardBetEvents extends Component {
           </tbody>
         </table>
         
-        <div className="table-footer" style={{ width: width < 1640 && (width < 767 ? 1438 : 1467) }}>
+        <div className="table-footer" style={{ width: Utils.getWidth(width) }}>
           <div className="table-footer__icon">{'<<'}</div>
           <div className="table-footer__icon">{'<'}</div>
           <div className="table-footer__row">
