@@ -295,8 +295,8 @@ class BetEventList extends Component {
                         />
                         <div>
                             <HorizontalRule
-                                select={select}
-                                filterSport={filterSport}
+                                // select={select}
+                                // filterSport={filterSport}
                                 title={t('title')}
                             />
                             {this.state.events.length == 0 && this.renderError('No search results found within provided filters')}
@@ -304,7 +304,11 @@ class BetEventList extends Component {
 
                                 <div className="w3-tables__title">
                                     <div>BET EVENTS </div>
-                                    <div className="align-row-center">
+                                    <div>
+                                        {select}
+                                    </div>
+
+                                    {/* <div className="align-row-center">
                                         <div className="w3-tables__title__dropdown">
                                             <div>10</div>
                                             <div className="flex-column">
@@ -312,7 +316,7 @@ class BetEventList extends Component {
                                                 <img src={'/img/uiupdate/down.png'} alt={'down'} />
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
 
                                <Sliding />
