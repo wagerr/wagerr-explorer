@@ -1,9 +1,7 @@
 class UtilService {
     static getHeader(path) {
         let name = ''
-        if (path.includes('#/explorer')) {
-            name = 'Overview '
-        } if (path.includes('#/bethistory')) {
+        if (path.includes('#/bethistory')) {
             name = 'Bet History '
         } if (path.includes('#/betting')) {
             name = 'Betting '
@@ -11,7 +9,9 @@ class UtilService {
             name = 'Chain Game '
         } if (path.includes('#/help')) {
             name = 'Help '
-        }
+        } if (path.includes('#/')) {
+            name = 'Overview '
+        } 
         return name
     }
 }

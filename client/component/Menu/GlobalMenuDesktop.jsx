@@ -30,14 +30,24 @@ export default class GlobalMenuDesktop extends Component {
     const { props, state } = this;
 
     return props.links.map((i, idx) => {
-      const isActive = props.location.pathname.includes(i.href === '#' ? 'help': i.href);      
+      const { pathname } = this.props.location;    
+     
+      
+      let explore_class = false;
+      if (!pathname.includes('/bethistory') && !pathname.includes('betting') && !pathname.includes('lottos') && !pathname.includes('help'))
+        explore_class = true
+
+      let isActive = false      
+      if (pathname.includes('help') && i.href === 'help') isActive = true;
+      if (explore_class && i.href === '/') isActive = true; 
+
       const iconSource = i.icon;
+
       return (
         <div
-          className={`global-menu-desktop__item ${isActive ? (props.location.pathname.includes('explorer') ? 'global-menu-desktop__item--is-active' : 'global-menu-desktop__item2--is-active') : ''}`}
+          key={idx} className={`global-menu-desktop__item ${isActive ? (explore_class ? 'global-menu-desktop__item--is-active' : 'global-menu-desktop__item2--is-active') : ''}`}
         >
-          <Link
-            key={idx}
+          <Link            
             to={i.href}
             className="w3-dropdown-hover"
           >
@@ -56,8 +66,10 @@ export default class GlobalMenuDesktop extends Component {
                   </div>
                 </Link>
               )}
-              </div>}
+              </div>
+            }
           </Link>
+
         </div>
       )
     })
@@ -67,11 +79,13 @@ export default class GlobalMenuDesktop extends Component {
 
   render() {
 
-    const { pathname } = this.props.location;
-    const explore_class = !pathname.includes('explorer') && 'global-menu-desktop-explore';
-
+    const { pathname } = this.props.location;    
+    let explore_class = '';
+    if (pathname.includes('/bethistory') || pathname.includes('betting') || pathname.includes('lottos') || pathname.includes('help'))
+      explore_class = 'global-menu-desktop-unexplorer'
+    console.log('explore_class --:', explore_class);
     return (
-      <div className={pathname.includes('help') && 'h-140'}>
+      <div className={pathname.includes('help') ? 'h-140' : ''}>
         <div className={`global-menu-desktop ${explore_class}`}>
           <div className="global-menu-desktop__content-wrapper">
             <div className="global-menu-desktop__header">
@@ -94,11 +108,12 @@ export default class GlobalMenuDesktop extends Component {
             </div>
           </div>
           {
-            pathname.includes('explorer') &&
+            explore_class !==  'global-menu-desktop-unexplorer' &&
             <SearchBar
               className="d-none d-md-block"
               onSearch={this.props.handleSearch}
-            />}
+            />
+          }
         </div>
       </div>
     )

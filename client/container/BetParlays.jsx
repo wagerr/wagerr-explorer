@@ -70,7 +70,7 @@ const convertToAmericanOdds = (odds) => {
       }
   
       this.props.history.listen((location, action) => {      
-        let page = location.pathname.split('/explorer/betparlays/')[1];
+        let page = location.pathname.split('/betparlays/')[1];
         if (typeof page == 'undefined') page = 1;
         setTimeout(this.updatePage(page));
       });
@@ -175,7 +175,7 @@ const convertToAmericanOdds = (odds) => {
     }
     
     handlePage = page => {
-      this.props.history.push('/explorer/betparlays/'+page) 
+      this.props.history.push('/betparlays/'+page) 
     }
   
     handleSize = size => this.setState({size, page: 1})
@@ -283,7 +283,7 @@ const convertToAmericanOdds = (odds) => {
                                                 ...bet,
                                                 betTime: betTime,
                                                 txId: (
-                                                    <Link to={`/explorer/tx/${encodeURIComponent(bet.txId)}`}>
+                                                    <Link to={`/tx/${encodeURIComponent(bet.txId)}`}>
                                                       {betTxId}
                                                     </Link>
                                                   ),

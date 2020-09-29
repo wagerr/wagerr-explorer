@@ -51,13 +51,13 @@ export default class CardTX extends Component {
         <div className="card__row">
           <span className="card__label">Block Hash:</span>
           <span className="card__result">
-            <Link to={ `/explorer/block/${ this.props.tx.blockHash }` }>{ this.props.tx.blockHash }</Link>
+            <Link to={ `/block/${ this.props.tx.blockHash }` }>{ this.props.tx.blockHash }</Link>
           </span>
         </div>
         <div className="card__row bg-eee">
           <span className="card__label">Block Height:</span>
           <span className="card__result">
-            <Link to={ `/explorer/block/${ this.props.tx.blockHeight }` }>{ this.props.tx.blockHeight }</Link>
+            <Link to={ `/block/${ this.props.tx.blockHeight }` }>{ this.props.tx.blockHeight }</Link>
           </span>
         </div>
         <div className="card__row">

@@ -143,7 +143,7 @@ const CardBetResult = ({eventInfo, data, t}) => {
         <div className="card__row">
           <span className="card__label">{t('txId')}:</span>
           <span className="card__result">
-        <Link to={`/explorer/tx/${ resultItem.txId}`}>
+        <Link to={`/tx/${ resultItem.txId}`}>
       {resultItem.txId}
         </Link>
         </span>
@@ -151,7 +151,7 @@ const CardBetResult = ({eventInfo, data, t}) => {
         <div className="card__row">
           <span className="card__label">{t('payoutBlock')}:</span>
           <span className="card__result">
-        <Link to={`/explorer/block/${resultItem.blockHeight + 1}`}>{resultItem.blockHeight + 1}</Link>
+        <Link to={`/block/${resultItem.blockHeight + 1}`}>{resultItem.blockHeight + 1}</Link>
         </span>
         </div>
       </div>)}
