@@ -42,9 +42,9 @@ const CardOverUnderEvent = ({eventInfo, data, t}) => {
     const TAwayBetAmount = under.reduce((acc, bet) => acc + bet.betValue, 0.0);
     
     // const TDrawBetAmount = TotalsBets.draw.reduce((acc, bet) => acc + bet.betValue, 0.0);
-    return <Card className="card--status">
-      <h2>Over/Under</h2>
-      <div className="card__row">
+    return <div className="card--status">
+      <h2 className='ml-2'>Over/Under</h2>
+      <div className="card__row bg-eee">
         <span className="card__label">{t('time')}:</span>
         {timeStamp24Format(eventInfo.events[0].timeStamp)}
       </div>
@@ -52,7 +52,7 @@ const CardOverUnderEvent = ({eventInfo, data, t}) => {
         <span className="card__label">{t('league')}:</span>
         {eventInfo.events[0].league}
       </div>
-      <div className="card__row">
+      <div className="card__row bg-eee">
         <span className="card__label">match:</span>
         <span className="card__result">
           {`${eventInfo.events[0].homeTeam} vs ${eventInfo.events[0].awayTeam}`}
@@ -63,7 +63,7 @@ const CardOverUnderEvent = ({eventInfo, data, t}) => {
         <span
           className="card__result">{over.length}</span>
       </div>
-      <div className="card__row">
+      <div className="card__row bg-eee">
         <span className="card__label">Over Bet Amount:</span>
         <span className="card__result">
           <span className={`badge badge-danger`}>
@@ -87,7 +87,7 @@ const CardOverUnderEvent = ({eventInfo, data, t}) => {
         <span
           className="card__result">{under.length}</span>
       </div>
-      <div className="card__row">
+      <div className="card__row bg-eee">
         <span className="card__label">Under Bet Amount:</span>
         <span className="card__result">
           <span className="badge badge-danger">
@@ -95,13 +95,13 @@ const CardOverUnderEvent = ({eventInfo, data, t}) => {
           </span>
         </span>
       </div>
-    </Card>
+    </div>
   } else {
-    return <Card title="Bet Event" className="card--status">
+    return <div title="Bet Event" className="card--status">
       <div className="card__row">
         {t('cantFindEvent')}
       </div>
-    </Card>
+    </div>
   }
 
 }

@@ -51,7 +51,7 @@ export default class CardStatus extends Component {
           <p className="card__data-sub">{this.props.btcPrice.toFixed(8)} BTC</p>
           <div className="card__info row">
             <div className="col-sm-12 col-md-6 col-lg-4">
-              <p>
+              {/*<p>
                 <span
                   className={`u--text-${isPos ? 'green' : 'red'}`}
                   key={dirArrow}>
@@ -59,15 +59,15 @@ export default class CardStatus extends Component {
                   <span>{numeral(growth * 100.0).format('0,0.00')}% &nbsp;</span>
                 </span>
                 <span>In {this.props.xAxis.length * 5} minutes</span>
-              </p>
+              </p>*/}
               <p className="card__info-source">Data from CoinMarketCap</p>
             </div>
             <div className="col-sm-12 col-md-6 col-lg-8">
-              <GraphLine
+              {/*<GraphLine
                 color={isPos ? '#61d75e' : '#ed1c24'}
                 data={this.props.yAxis.reverse()}
                 height="77px"
-                labels={this.props.xAxis.reverse()} />
+              labels={this.props.xAxis.reverse()} />*/}
             </div>
           </div>
         </Card>

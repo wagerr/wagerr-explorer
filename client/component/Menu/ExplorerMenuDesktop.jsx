@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 import Icon from '../Icon';
 
-export default class MenuDesktop extends Component {
+export default class ExplorerMenuDesktop extends Component {
   static propTypes = {
     links: PropTypes.array
   };
@@ -71,13 +71,7 @@ export default class MenuDesktop extends Component {
     return (
       <div className={ `menu-desktop ${ this.state.isOpen ? 'menu-desktop--open' : 'menu-desktop--close' }` }>
         <div className="menu-desktop__content-wrapper">
-          <div className="menu-desktop__header">
-            <img src="/img/whitelogo.svg" className="menu-desktop__logo" />
-            <a onClick={ this.handleToggle } >
-              <Icon name="bars" className="menu-desktop__toggle" onClick={ this.handleToggle } />
-            </a>
-          </div>
-          <p className="menu-desktop__title">MENU</p>
+          <p className="menu-desktop__title">MENU</p>          
           { this.getLinks() }
         </div>
       </div>

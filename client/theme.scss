@@ -1,5 +1,5 @@
 
-@import "./sass/testnet";
+@import "./sass/mainnet";
 /* Variables */
 $black: #151515;
 $blue: rgba(41, 77, 234, 1);
@@ -22,7 +22,7 @@ $menu-gradient-main: #295af5;
 $menu-gradient-secondary: #595ff5;
 $menu-width-open: 240px;
 $menu-width-close: 110px;
-$menu-mobile-height: 70px;
+$menu-mobile-height: 60px;
 
 /* Bootstrap override */
 $card-border-width: 0;
@@ -86,8 +86,10 @@ $pagination-disabled-border-color:  $gray;
 @import "./sass/loading";
 @import "./sass/menu-desktop";
 @import "./sass/menu-mobile";
+@import "./sass/global-menu-desktop";
 @import "./sass/qrcode";
 @import "./sass/watch-list";
+@import "./sass/ui-update";
 
 /* Containers */
 @import "./sass/api";
@@ -106,6 +108,7 @@ html, body {
 	padding: 0;
 	overflow-x: hidden;
 	width: 100vw;
+	background: #DEE2E6;
 }
 
 a, a:visited {
@@ -130,18 +133,19 @@ h1, h2, h3, h4, h5, h6 {
 
 .page-wrapper {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	height: 100%;
-
+	
 	@include media-breakpoint-down(sm) {
 		flex-direction: column;
 	}
 
 }
 
-.menu-wrapper {
-	display: flex;
+.menu-wrapper {	
 	z-index: $zindex-fixed;
+	display: flex;
+    flex-direction: row;
 }
 
 .badge {
@@ -176,13 +180,15 @@ h1, h2, h3, h4, h5, h6 {
 
 // Content Wrapper
 .content {
+	display: flex;
+    flex-direction: row;
 	flex: 1;
-	overflow-y: auto;
+	//overflow-y: auto;
 
-	@media (min-width: 1600px) {
-		padding-left: $menu-width-open;
-		padding-right: $menu-width-open;
-	}
+	// @media (min-width: 1600px) {
+	// 	padding-left: $menu-width-open;
+	// 	padding-right: $menu-width-open;
+	// }
 
 	@include media-breakpoint-down(sm) {
 		margin-top: $menu-mobile-height;
@@ -203,14 +209,16 @@ h1, h2, h3, h4, h5, h6 {
 	}
 
     &__wrapper {
-		background-color: $white;
 	    margin: 0 auto;
 		min-height: 80vh;
 		overflow-x: hidden;
 		padding: 1em 2em 2em;
 	    position: relative;
 		transition: all 1s cubic-bezier(0, 1, .5, 1);
-    }
+		@media (max-width: 768px) {
+			padding: 0.2em 1.4em 1em 0.3em;
+		}
+	}
 
     /*Set margin for content offset*/
 	& + div .menu-desktop--close + & {

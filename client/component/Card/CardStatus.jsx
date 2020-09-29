@@ -35,9 +35,9 @@ export default class CardStatus extends Component {
     return (
       <div className="animated fadeInUp">
       <Card title="Status" className="card--status" >
-        <div className="card__row">
+        <div className="card__row bg-eee">
           <span className="card__label">Chain:</span>
-          {config.coin.testnet ? 'MainNet' : 'TestNet' }
+          <span className="card__result">{config.coin.testnet ? 'MainNet' : 'TestNet' }</span>          
         </div>
         <div className="card__row">
           <span className="card__label">Status:</span>
@@ -47,10 +47,10 @@ export default class CardStatus extends Component {
             </span>
           </span>
         </div>
-        <div className="card__row">
+        <div className="card__row bg-eee">
           <span className="card__label">Blocks:</span>
           <span className="card__result">
-            <Link to={ `/block/${ this.props.blocks }` }>
+            <Link to={ `/explorer/block/${ this.props.blocks }` }>
               <b>
                 <CountUp
                   decimals={ 0 }
@@ -73,7 +73,7 @@ export default class CardStatus extends Component {
               </b>
           </span>
         </div> 
-        <div className="card__row">
+        <div className="card__row bg-eee">
           <span className="card__label">Peers:</span>
           <span className="card__result">
             <Link to="/peer">{ this.props.peers }</Link>
@@ -83,7 +83,7 @@ export default class CardStatus extends Component {
           <span className="card__label">Masternode Online:</span>
           <span className="card__result">{ this.props.online }</span>
         </div>
-        <div className="card__row">
+        <div className="card__row bg-eee">
           <span className="card__label">Avg. Block Time:</span>
           <span className="card__result">{ this.props.avgBlockTime.toFixed(2) } seconds</span>
         </div>

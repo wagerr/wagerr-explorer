@@ -4,15 +4,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { withRouter } from 'react-router';
 
-import MenuDesktop from './MenuDesktop';
-import MenuMobile from './MenuMobile';
+import BettingMenuDesktop from './BettingMenuDesktop';
+import BettingMenuMobile from './BettingMenuMobile';
 import { compose } from 'redux'
 import { translate } from 'react-i18next'
-import connect from 'react-redux/es/connect/connect'
-import { genMenuData } from './menuData'
+import { genMenuData } from './explorerMenuData'
 
-
-class Menu extends Component {
+class BettingMenu extends Component {
   static propTypes = {
     onSearch: PropTypes.func.isRequired
   };
@@ -22,8 +20,8 @@ class Menu extends Component {
     const menuData = genMenuData(t)
     return (
       <div className="menu-wrapper">
-        <MenuMobile links={menuData} onSearch={ this.props.onSearch } />
-        <MenuDesktop links={ menuData } location={ this.props.location } />
+        {/* <BettingMenuMobile links={menuData} onSearch={this.props.onSearch} /> */}
+        <BettingMenuDesktop links={menuData} location={this.props.location} />
       </div>
     )
   }
@@ -32,5 +30,5 @@ class Menu extends Component {
 export default compose(
   translate('menu'),
   withRouter
-)(Menu);
+)(BettingMenu);
 

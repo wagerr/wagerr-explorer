@@ -4,13 +4,14 @@ import numeral from 'numeral';
 import { date24Format } from '../../lib/date';
 import Table from '../component/Table';
 import { Link } from 'react-router-dom';
-import { OpcodeChangedBlock } from '../constants';
+
 // actions
 import PropTypes from 'prop-types';
 import Actions, { getBetEventInfo, getBetTotals } from '../core/Actions';
 import { compose } from 'redux';
 import { translate } from 'react-i18next';
 import { connect } from 'react-redux';
+import CardBigTable from "../component/Card/CardBigTable";
 
 class BetEventTable extends Component {
   static propTypes = {
@@ -181,7 +182,7 @@ class BetEventTable extends Component {
       {
         this.props.data.activeTab == 1 &&
         <div>
-          <Table
+          <CardBigTable
             cols={topOneCols}
             data={sortBy(this.props.data.eventInfo.events.map((event) => {
               return {
@@ -191,12 +192,12 @@ class BetEventTable extends Component {
                 drawOdds: event.drawOdds / 10000,
                 awayOdds: event.awayOdds / 10000,
                 txId: (
-                  <Link to={`/tx/${ event.txId }`}>{event.txId}</Link>
+                  <Link to={`/explorer/tx/${ event.txId }`}>{event.txId}</Link>
                 )
               }
             }), ['createdAt'])}
           />
-          <Table
+          <CardBigTable
             cols={bottomOneCols}
             data={sortBy(this.state.MoneyLine.map((action) => {
               return {
@@ -208,50 +209,48 @@ class BetEventTable extends Component {
                   ? (<span
                     className="badge badge-danger">-{numeral(action.betValue).format('0,0.00000000')} WGR</span>) : 'd',
                 txId: (
-                  <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
+                  <Link to={`/explorer/tx/${ action.txId }`}>{action.txId}</Link>
                 )
               }
             }), ['createdAt'])}
           />
       </div>
       }
-      {        
+      {
         this.props.data.activeTab == 2 &&
         <div>
-            <Table
+            <CardBigTable
               cols={topTwoCols}
               data={sortBy(this.props.data.betSpreads.map((action) => {
-                const divider = action.blockHeight > OpcodeChangedBlock ? 100 : 10;
-                //console.log('betSpreads', action);
                 return {
                   ...action,
                   createdAt: date24Format(action.createdAt),
                   homeOdds: action.homeOdds / 10000,
-                  spread: `${displayNum(action.homePoints, divider)}/${displayNum(action.awayPoints, divider)}`,
+                  spread: `${displayNum(action.homePoints, 10)}/${displayNum(action.awayPoints, 10)}`,
                   awayOdds: action.awayOdds / 10000,
                   txId: (
-                    <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
+                    <Link to={`/explorer/tx/${ action.txId }`}>{action.txId}</Link>
                   )
                 }
               }), ['createdAt'])}
             />
-            <Table
+            <CardBigTable
               cols={bottomTwoCols}
               data={sortBy(this.state.Spreads.map((action) => {
-                const betChoose = action.betChoose.replace('Spreads - ', '');                
-                const divider = action.blockHeight > OpcodeChangedBlock ? 100 : 10;
-                console.log('spread divider:', divider);
+                const betChoose = action.betChoose.replace('Spreads - ', '');
+                const spreadNum = Math.abs(parseInt(action.spreadAwayPoints, 10)) / 10;
+
                 return {
                   ...action,
                   createdAt: date24Format(action.createdAt),
                   bet: betChoose, // `${action.homeOdds / 10000}/${action.awayOdds / 10000}`,
-                  spread: betChoose == 'Away' ? displayNum(action.spreadAwayPoints, divider) : displayNum(action.spreadHomePoints, divider),
+                  spread: betChoose == 'Away' ? displayNum(action.spreadAwayPoints, 10) : displayNum(action.spreadHomePoints, 10),
                   odds: betChoose == 'Away' ? action.spreadAwayOdds / 10000 : action.spreadHomeOdds / 10000,
                   value: action.betValue
                     ? (<span
                       className="badge badge-danger">-{numeral(action.betValue).format('0,0.00000000')} WGR</span>) : '',
                   txId: (
-                    <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
+                    <Link to={`/explorer/tx/${ action.txId }`}>{action.txId}</Link>
                   )
                 }
               }), ['createdAt'])}
@@ -261,37 +260,35 @@ class BetEventTable extends Component {
       {
         this.props.data.activeTab == 3 &&
         <div>
-          <Table
+          <CardBigTable
             cols={topThreeCols}
             data={sortBy(this.props.data.betTotals.map((action) => {
-              const divider = action.blockHeight > OpcodeChangedBlock ? 100 : 10;
               return {
                 ...action,
                 createdAt: date24Format(action.createdAt),
                 overOdds: action.overOdds / 10000,
-                overUnder: action.points / divider,
+                overUnder: action.points / 10,
                 underOdds: action.underOdds / 10000,
                 txId: (
-                  <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
+                  <Link to={`/explorer/tx/${ action.txId }`}>{action.txId}</Link>
                 )
               }
             }), ['createdAt'])}
           /> 
-          <Table
+          <CardBigTable
             cols={bottomThreeCols}
             data={sortBy(this.state.Totals.map((action) => {
-              const divider = action.blockHeight > OpcodeChangedBlock ? 100 : 10;
               return {
                 ...action,
                 createdAt: date24Format(action.createdAt),
                 bet: action.betChoose.replace('Money Line - ', ''),
                 // overUnder: ((action.homeOdds / action.awayOdds + action.homeOdds) * 100).toFixed(1),
-                overUnder: (action.points / divider).toFixed(2),
+                overUnder: (action.points / 10).toFixed(1),
                 odds: action.betChoose.includes('Over') ? action.overOdds / 10000 : action.underOdds / 10000,
                 value: action.betValue
                   ? (<span className="badge badge-danger">-{numeral(action.betValue).format('0,0.00000000')} WGR</span>) : '',
                 txId: (
-                  <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
+                  <Link to={`/explorer/tx/${ action.txId }`}>{action.txId}</Link>
                 )
               }
             }), ['createdAt'])}

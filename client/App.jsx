@@ -4,7 +4,7 @@ import Component from './core/Component';
 import { connect } from 'react-redux';
 import { HashRouter } from 'react-router-dom';
 import { isAddress, isBlock, isTX } from '../lib/blockchain';
-import { Link, Route, Switch } from 'react-router-dom';
+import { Link, Route, Switch, Redirect } from 'react-router-dom';
 import promise from 'bluebird';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -25,7 +25,8 @@ import Statistics from './container/Statistics';
 import Top100 from './container/Top100';
 import TX from './container/TX';
 import BetEventList from './container/BetEventList';
-import BetParlayList from './container/BetParlayList';
+import BetParlays from './container/BetParlays';
+
 import LottoList from './container/LottoList';
 import LottoEvent from './container/LottoEvent';
 import BetEvent from './container/BetEvent';
@@ -36,9 +37,21 @@ import CoinSummary from './container/CoinSummary';
 import Footer from './component/Footer';
 import Icon from './component/Icon';
 import Loading from './component/Loading';
-import Menu from './component/Menu';
+import GlobalMenu from './component/Menu/GlobalMenu';
 import Notification from './component/Notification';
 import SearchBar from './component/SearchBar';
+import SearchEventBar from './component/SearchEventBar';
+import Lottos from './container/Lottos';
+import Bethistory from './container/Bethistory';
+import Betting from './container/Betting';
+import Help from './container/Help';
+// import NewBetEventList from './container/NewBetEventList';
+import NewBetEvent from './container/NewBetEvent';
+import NewBetParlay from './container/NewBetParlay';
+
+import ExplorerMenu from './component/Menu/ExplorerMenu';
+import GlobalSwitch from './component/Menu/GlobalSwitch';
+
 class App extends Component {
   static propTypes = {
     // Dispatch
@@ -54,7 +67,10 @@ class App extends Component {
       init: true,
       limit: 10,
       searches: [],
-      page_type: 0
+      toggleSwitch: localStorage.getItem('toggleCompletedAndOpen') != undefined ? localStorage.getItem('toggleCompletedAndOpen') == 'true' : true,
+      toggleSwitchOdds: localStorage.getItem('toggleOddsFee') != undefined ? localStorage.getItem('toggleOddsFee') == 'true' : false,
+      toggleSwitchOddsStyle: localStorage.getItem('toggleOddsStyle') != undefined ? localStorage.getItem('toggleOddsStyle') == 'true' : false,
+ 
     };
     this.timer = { coins: null, txs: null };
   };
@@ -65,9 +81,9 @@ class App extends Component {
 
   componentDidMount() {
     promise.all([
-        this.props.getCoins({ limit: 12 }),
-        this.props.getTXs({ limit: 10 })
-      ])
+      this.props.getCoins({ limit: 12 }),
+      this.props.getTXs({ limit: 10 })
+    ])
       .then(() => {
         this.getCoins();
         this.getTXs();
@@ -120,7 +136,7 @@ class App extends Component {
   };
 
   isBetEventId = (s) => {
-    return typeof(s) === 'string' && s.length === 4 && isNaN(s);
+    return typeof (s) === 'string' && s.length === 4 && isNaN(s);
   };
 
   handleSearch = (term) => {
@@ -135,28 +151,38 @@ class App extends Component {
     // Setup path for search.
     let path = '/#/';
     if (isAddress(term)) {
-      document.location.href = `/#/address/${ term }`;
+      document.location.href = `/#/explorer/address/${term}`;
     } else if (this.isBetEventId(term)) {
-      document.location.href = `/#/bet/event/${ encodeURIComponent(term) }`;
+      document.location.href = `/#/explorer/bet/event/${encodeURIComponent(term)}`;
     } else if (!isNaN(term)) {
-      document.location.href = `/#/block/${ term }`;
+      document.location.href = `/#/explorer/block/${term}`;
     } else {
       this.props
         .getIsBlock(term)
         .then((is) => {
-          document.location.href = `/#/${ is ? 'block' : 'tx' }/${ term }`;
+          document.location.href = `/#/${is ? 'explorer/block' : 'explorer/tx'}/${term}`;
         });
     }
   };
 
-  handleEventSearch = (term) => {    
-    if (term == '') document.location.href = `/#/betevents`    
-    else document.location.href = `/#/betevents?search=${term}`    
+  handleEventSearch = (term) => {
+    if (term == '') document.location.href = `/#/betevents`
+    else document.location.href = `/#/betevents?search=${term}`
   }
 
-  handleParlayBetSearch = (term) => {
-    if (term == '') document.location.href = `/#/betparlays`    
-    else document.location.href = `/#/betparlays?search=${term}`    
+  handleToggleChange = (toggleSwitch) => {
+    localStorage.setItem('toggleCompletedAndOpen', toggleSwitch);
+    this.setState({toggleSwitch});
+  }
+
+  handleToggleChangeOdds = (toggleSwitchOdds) => {
+    localStorage.setItem('toggleOddsFee', toggleSwitchOdds);
+    this.setState({toggleSwitchOdds});
+  }
+
+  handleToggleChangeOddsStyle = (toggleSwitchOddsStyle) => {
+    localStorage.setItem('toggleOddsStyle', toggleSwitchOddsStyle);
+    this.setState({toggleSwitchOddsStyle});
   }
 
   render() {
@@ -165,53 +191,58 @@ class App extends Component {
         <Loading />
       );
     }
-    console.log('href', document.location.href.includes('/betparlays'));
+
+    const { toggleSwitch, toggleSwitchOdds, toggleSwitchOddsStyle } = this.state;
+
     return (
       <HashRouter>
         <div className="page-wrapper">
-          <Menu onSearch={ this.handleSearch } />
-          <div className="content" id="body-content">
-            <div className="content__wrapper">
-              {/* <Notification /> */}
-              <CoinSummary
-                onRemove={ this.handleRemove }
-                onSearch={ this.handleSearch }
-                searches={ this.state.searches.reverse() } />
-              <SearchBar
-                className="d-none d-md-block mb-3"
-                onSearch={ this.handleSearch } />
+          <GlobalMenu handleSearch={this.handleSearch}/>   
+          <GlobalSwitch 
+              toggleSwitch={toggleSwitch}
+              toggleSwitchOdds={toggleSwitchOdds}
+              toggleSwitchOddsStyle={toggleSwitchOddsStyle}
+              handleToggleChange={this.handleToggleChange}
+              handleToggleChangeOdds={this.handleToggleChangeOdds}
+              handleToggleChangeOddsStyle={this.handleToggleChangeOddsStyle}
+          />
+          <Switch>
+            <Route exact path="/">
+              <Redirect to="/explorer" />
+            </Route>
+            <Route exact path="/explorer" render={(props) => <Overview {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/explorer/movement" render={(props) => <Movement {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/explorer/movement/:page" render={(props) => <Movement {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/explorer/address/:hash" render={(props) => <Address {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/explorer/api" render={(props) => <API {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/explorer/block/:hash" render={(props) => <Block {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/explorer/coin" render={(props) => <CoinInfo {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/explorer/faq" render={(props) => <FAQ {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/explorer/governance" render={(props) => <Governance {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/explorer/masternode" render={(props) => <Masternode {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/explorer/masternode/:page" render={(props) => <Masternode {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            
+            <Route exact path="/explorer/betevents" render={(props) => <BetEventList {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} toggleSwitch={toggleSwitch} toggleSwitchOdds={toggleSwitchOdds} toggleSwitchOddsStyle={toggleSwitchOddsStyle}/>} />
+            <Route exact path="/explorer/betparlays" render={(props) => <BetParlays {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} toggleSwitch={toggleSwitch} />} />
+            <Route exact path="/explorer/betevents/:page" render={(props) => <BetEventList {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} toggleSwitch={toggleSwitch} toggleSwitchOdds={toggleSwitchOdds} toggleSwitchOddsStyle={toggleSwitchOddsStyle}/>} />
+            <Route exact path="/explorer/betparlays/:page" render={(props) => <BetParlays {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} toggleSwitch={toggleSwitch} />} />
+            <Route exact path="/explorer/bet/event/:eventId" render={(props) => <NewBetEvent {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/explorer/lottos" render={(props) => <LottoList {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/explorer/peer" render={(props) => <Peer {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/explorer/statistics" render={(props) => <Statistics {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/explorer/tx/:hash" render={(props) => <TX {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/explorer/lotto/event/:eventId" render={(props) => <LottoEvent {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
 
-              <div className="content__inner-wrapper">
-                <Switch>
-                  <Route exact path="/" component={ Overview } />
-                  <Route exact path="/address/:hash" component={ Address } />
-                  <Route exact path="/api" component={ API } />
-                  <Route exact path="/block/:hash" component={ Block } />
-                  <Route exact path="/coin" component={ CoinInfo } />
-                  <Route exact path="/faq" component={ FAQ } />
-                  <Route exact path="/governance" component={ Governance } />
-                  <Route exact path="/masternode" component={ Masternode } />
-                  <Route exact path="/masternode/:page" component={ Masternode } />
-                  <Route exact path="/betevents" render={(props) => <BetEventList {...props} onEventSearch={(term) => this.handleEventSearch(term)} />}/>                 
-                  <Route exact path="/betevents/:page" render={(props) => <BetEventList {...props} onEventSearch={(term) => this.handleEventSearch(term)} />}/>
-                  <Route exact path="/betparlays" render={(props) => <BetParlayList {...props} onParlaySearch={(term) => this.handleParlayBetSearch(term)} />}/> 
-                  <Route exact path="/betparlays/:page" render={(props) => <BetParlayList {...props} onParlaySearch={(term) => this.handleParlayBetSearch(term)} />}/> 
-                  <Route exact path="/lottos" component={ LottoList } />
-                  <Route exact path="/movement" component={ Movement } />
-                  <Route exact path="/movement/:page" component={ Movement } />
-                  <Route exact path="/peer" component={ Peer } />
-                  <Route exact path="/statistics" component={ Statistics } />
-                  <Route exact path="/top" component={ Top100 } />
-                  <Route exact path="/tx/:hash" component={ TX } />
-                  <Route exact path="/bet/event/:eventId" component={ BetEvent } />
-                  <Route exact path="/lotto/event/:eventId" component={ LottoEvent } />
-                  <Route component={ Error404 } />
-                </Switch>
-              </div>
-              <Footer />
-            </div>
-          </div>
-        </div>
+            <Route exact path="/bethistory" render={(props) => <Bethistory {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/lottos" render={(props) => <Lottos {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/help" render={(props) => <Help {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/betting" render={(props) => <Betting {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+            <Route exact path="/betting/:id" render={(props) => <Betting {...props} handleSearch={this.handleSearch} handleRemove={this.handleRemove} searches={this.state.searches.reverse()} handleEventSearch={this.handleEventSearch} />} />
+
+            <Route component={Error404} />
+
+          </Switch>
+        </div>       
       </HashRouter>
     );
   };

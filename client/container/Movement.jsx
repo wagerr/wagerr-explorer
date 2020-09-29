@@ -11,6 +11,16 @@ import Pagination from '../component/Pagination';
 import Select from '../component/Select';
 
 import { PAGINATION_PAGE_SIZE } from '../constants';
+import ExplorerMenu from '../component/Menu/ExplorerMenu';
+import CoinSummary from '../container/CoinSummary';
+import SearchBar from '../component/SearchBar';
+import SearchEventBar from '../component/SearchEventBar';
+import Footer from '../component/Footer';
+import ExplorerOverviewMenu from '../component/Menu/ExplorerOverviewMenu';
+import CardBigTable from "../component/Card/CardBigTable";
+import {Link} from "react-router-dom";
+import {date24Format} from "../../lib/date";
+import numeral from "numeral";
 
 class Movement extends Component {
   static propTypes = {
@@ -84,7 +94,7 @@ class Movement extends Component {
   };
 
   handlePage = page => {
-    this.props.history.push('/movement/'+page) 
+    this.props.history.push('/movement/'+page)
   }
 
   handleSize = size => this.setState({ size, page: 1 }, this.getTXs);
@@ -103,19 +113,72 @@ class Movement extends Component {
         selectedValue={ this.state.size }
         options={ selectOptions } />
     );
-
     return (
-      <div>
-        <HorizontalRule
-          select={ select }
-          title="Movement" />
-        <CardTXs txs={ this.state.txs } />
-        <Pagination
-          current={ this.state.page }
-          className="float-right"
-          onPage={ this.handlePage }
-          total={ this.state.pages } />
-        <div className="clearfix" />
+      <div className="content content-top" id="body-content">
+        <ExplorerMenu onSearch={ this.props.handleSearch } />
+        <div className="content__wrapper_total">
+        <ExplorerOverviewMenu />
+
+          <div className="content_search_wrapper">
+            <div className="content_page_title">
+              <span>Movement</span>
+            </div>
+          </div>
+          <div className="content__wrapper">
+            <CoinSummary
+              onRemove={this.props.handleRemove}
+              onSearch={this.props.handleSearch}
+              searches={this.props.searches} />
+            <div>
+              <HorizontalRule
+                select={ select }
+                title="Movement"
+              />
+              <CardBigTable
+                  data={ this.state.txs.map(tx => {
+                    let blockValue = 0.0;
+                    if (tx.vout && tx.vout.length) {
+                      tx.vout.forEach(vout => blockValue += vout.value);
+                    }
+
+                    return ({
+                      ...tx,
+                      blockHeight: (
+                          <Link to={ `/explorer/block/${ tx.blockHeight }` }>
+                            { tx.blockHeight }
+                          </Link>
+                      ),
+                      createdAt: date24Format(tx.createdAt),
+                      txId: (
+                          <Link to={ `/explorer/tx/${ tx.txId }` }>
+                            { tx.txId }
+                          </Link>
+                      ),
+                      vout: (
+                          <span className={ `badge badge-${ blockValue < 0 ? 'danger' : 'success' }` }>
+                { numeral(blockValue).format('0,0.00000000') }
+              </span>
+                      )
+                    });
+                  }) }
+                  cols= {[
+                    { key: 'blockHeight', title: 'Block Height', className: 'w-m-120' },
+                    { key: 'txId', title: 'Transaction Hash' },
+                    { key: 'vout', title: 'Amount' },
+                    { key: 'createdAt', title: 'Time', className: 'w-m-160' },
+                  ]}
+              />
+              {/*<CardTXs txs={ this.state.txs } />*/}
+              <Pagination
+                current={ this.state.page }
+                className="float-right"
+                onPage={ this.handlePage }
+                total={ this.state.pages } />
+              <div className="clearfix" />
+            </div>
+            <Footer />
+          </div>
+        </div>
       </div>
     );
   };

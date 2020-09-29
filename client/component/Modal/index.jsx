@@ -7,21 +7,18 @@ import _ from 'lodash';
 
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Actions from '../../core/Actions';
-import { OpcodeChangedBlock } from '../../constants';
-
 
 export default class BetModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      modal: false,      
+      modal: false,
       decryption: {},
-      divider: this.props.height > OpcodeChangedBlock ? 100 : 10
     };
   }
 
   static propTypes = {
-    buttonLabel: PropTypes.string,    
+    buttonLabel: PropTypes.string,
     className: PropTypes.string,
   };
 
@@ -186,8 +183,8 @@ export default class BetModal extends Component {
         <div className="col text-center">
           <div className="badge badge-success">{this.formatScores(decryption.homeOdds)}</div>
         </div>
-        <div className="col text-center"> 
-        <div className="badge badge-warning">{(decryption.spreadPoints) / this.state.divider}</div>
+        <div className="col text-center">
+        <div className="badge badge-warning">{(decryption.spreadPoints) / 10}</div>
         </div>
         <div className="col text-center">
           <div className="badge badge-danger">{this.formatScores(decryption.awayOdds)}</div>
@@ -196,7 +193,7 @@ export default class BetModal extends Component {
     </div>
   );
 
-  renderBody = (data) => {    
+  renderBody = (data) => {
     if (data.txType === 'peerlessUpdateOdds') {
       return this.peerlessUpdateOdds(data);
     }
@@ -216,7 +213,6 @@ export default class BetModal extends Component {
     delete rawData.type;
     delete rawData.opCode;
     delete rawData.version;
-    rawData.spreadPoints = (rawData.spreadPoints / this.state.divider).toFixed(2);
     return (
       <div className="row">
         <div className="col text-center">
@@ -226,7 +222,7 @@ export default class BetModal extends Component {
     );
   }
 
-  renderTransaction = (decryption) => (    
+  renderTransaction = (decryption) => (
     <div>
       <div className="text-center">
         {decryption.eventId ? (
@@ -250,7 +246,7 @@ export default class BetModal extends Component {
       return false;
     }
 
-    console.log('render props', this.props);
+    console.log(this.state);
 
     const getTransactionType = (tx) => {
       if (tx === 'peerlessUpdateOdds') return 'Event Update';

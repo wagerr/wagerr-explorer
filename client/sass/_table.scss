@@ -58,12 +58,16 @@
 	}
 
 	th {
-		background-color: $wgreen;
+		background-color: #b50102;
 		color: $white;
 		font-size: 16px;
 		min-width: 100px;
-		padding: 32px 5px;
+		padding: 9px 0 7px 0;
 		text-transform: uppercase;
+		@media (max-width: 767px) {
+			font-size: 12px!important;
+			padding: 2px 0 2px 0;
+		}
 	}
 
 	th:first-child {
