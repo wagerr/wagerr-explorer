@@ -1,17 +1,17 @@
 
 .menu-mobile {
-
 	display: flex;
 	flex-direction: column;
-
-	box-shadow: #7d7d7d 0px 0px 16px;
 	color: $white;
 	flex: 1;
 	font-weight: lighter;
     margin: 0;
 	position: fixed;
 	width: 100%;
+	z-index: 10000;
+	min-height: $menu-mobile-height!important;
 
+	// margin-top: -69px;
 	@include media-breakpoint-up(md) {
 		display: none;
 	}
@@ -28,34 +28,35 @@
 		display: flex;
 		align-items: center;
 		flex-direction: row;
-    	min-height: $menu-mobile-height;
-		padding: 1em;
+		padding: 0.3em;
 	}
 
 	&__item-wrapper {
-		background-color: $white;
+		background-color: #AB0000;
+		color: #fff;
 		/*height: 0;*/
   		/*overflow: hidden;*/
   		display: none;
 		transition: all .1s cubic-bezier(0, 1, .5, 1);
+		width: 200px;
 	}
 
 	&__item {
 		display: flex;
 		align-items: center;
-		border-bottom: 1px solid $gray;
 		line-height: 1;
-		margin: 0 auto;
 		padding: 1em;
 		position: relative;
 		transition: all 1s cubic-bezier(0, 1, .5, 1);
-		width: 95%;
+		height: 40px;
+	}
 
+	&__note {
+		margin: 0.5em 0 0.5em 1em ;
 		&:hover {
 			color: $wgreen;
-			text-decoration: none;
+			background: #330000;
 		}
-
 	}
 
 	a.menu-mobile__item:last-child {
@@ -83,4 +84,52 @@
 
 
 }
+.menu-explorer {
+	height: 50px;
+	background: #000;
+	display: flex;
+	flex-direction: row;
+	overflow: auto;
+	white-space: nowrap;
+	margin-top: -4.5px;
+	display: none;
 
+	@media (max-width: 767px) {
+		display: inline-flex;
+	}
+	&__item {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		padding: 8px;
+		min-width: 90px;
+		color: #fff;
+		font-size: 10px;
+		border-right: 0.2px solid #fff;
+		img {
+			width: 18px;
+			height: 18px;
+		}
+		div {
+			margin-top: 2px;
+		}
+	}
+}
+
+.menu-explorer::-webkit-scrollbar-track
+{
+    background-color: #570502;
+    opacity: 0.8;
+}
+.menu-explorer::-webkit-scrollbar
+{
+	opacity: 0.5;
+	height: 4px;
+}
+
+.menu-explorer::-webkit-scrollbar-thumb
+{
+    opacity: 0.5;
+	background: #B50102;
+}

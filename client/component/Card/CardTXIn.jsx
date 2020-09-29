@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import Table from '../Table';
+import CardBigTable from "./CardBigTable";
 
 export default class CardTXIn extends Component {
   static defaultProps = {
@@ -29,7 +30,7 @@ export default class CardTXIn extends Component {
 
   render() {
     return (
-      <Table
+      <CardBigTable
         cols={ this.state.cols }
         data={ this.props.txs.map(tx => ({
           ...tx,

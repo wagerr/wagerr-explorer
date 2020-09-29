@@ -6,6 +6,7 @@ import moment from 'moment';
 import numeral from 'numeral';
 import PropTypes from 'prop-types';
 import React from 'react';
+import Card from "./Card";
 
 export default class CardTX extends Component {
   static propTypes = {
@@ -24,9 +25,9 @@ export default class CardTX extends Component {
     }
 
     return (
-      <div className="animated fadeIn">
+      <Card className="animated fadeIn" title='Transaction'>
       <div className="card--block">
-        <div className="card__row">
+        <div className="card__row bg-eee">
           <span className="card__label">TXID:</span>
           <span className="card__result">{ this.props.tx.txId }</span>
         </div>
@@ -43,20 +44,20 @@ export default class CardTX extends Component {
             </span>
           </span>
         </div>
-        <div className="card__row">
+        <div className="card__row bg-eee">
           <span className="card__label">Block Value:</span>
           <span className="card__result">{ numeral(blockValue).format('0,0.00000000') } WGR</span>
         </div>
         <div className="card__row">
           <span className="card__label">Block Hash:</span>
           <span className="card__result">
-            <Link to={ `/block/${ this.props.tx.blockHash }` }>{ this.props.tx.blockHash }</Link>
+            <Link to={ `/explorer/block/${ this.props.tx.blockHash }` }>{ this.props.tx.blockHash }</Link>
           </span>
         </div>
-        <div className="card__row">
+        <div className="card__row bg-eee">
           <span className="card__label">Block Height:</span>
           <span className="card__result">
-            <Link to={ `/block/${ this.props.tx.blockHeight }` }>{ this.props.tx.blockHeight }</Link>
+            <Link to={ `/explorer/block/${ this.props.tx.blockHeight }` }>{ this.props.tx.blockHeight }</Link>
           </span>
         </div>
         <div className="card__row">
@@ -66,7 +67,7 @@ export default class CardTX extends Component {
           </span>
         </div>
       </div>
-      </div>
+      </Card>
     );
   };
 }

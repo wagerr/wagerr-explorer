@@ -1,4 +1,3 @@
-
 import Actions from '../core/Actions';
 import Component from '../core/Component';
 import { connect } from 'react-redux';
@@ -8,12 +7,18 @@ import moment from 'moment';
 import numeral from 'numeral';
 import PropTypes from 'prop-types';
 import React from 'react';
-
 import HorizontalRule from '../component/HorizontalRule';
 import Table from '../component/Table';
 import { compose } from 'redux'
 import { translate } from 'react-i18next';
-
+import ExplorerMenu from '../component/Menu/ExplorerMenu';
+import CoinSummary from '../container/CoinSummary';
+import SearchBar from '../component/SearchBar';
+import SearchEventBar from '../component/SearchEventBar';
+import Footer from '../component/Footer';
+import ExplorerOverviewMenu from '../component/Menu/ExplorerOverviewMenu';
+import CardLatestBlocks from "../component/Card/CardLatestBlocks";
+import CardBigTable from "../component/Card/CardBigTable";
 class Overview extends Component {
   static propTypes = {
     txs: PropTypes.array.isRequired
@@ -35,7 +40,7 @@ class Overview extends Component {
   };
 
   render() {
-    const { t, i18n } = this.props;
+    const { t, i18n, location } = this.props;
 
     // Setup the list of transactions with age since created.
     const txs = this.props.txs.map(tx => {
@@ -49,20 +54,59 @@ class Overview extends Component {
       return ({
         ...tx,
         age: diffSeconds < 0 ? "Just Now" : (diffSeconds < 60 ? `${ diffSeconds } seconds` : createdAt.fromNow(true)),
-        blockHeight: (<Link to={ `/block/${ tx.blockHeight }` }>{ tx.blockHeight }</Link>),
+        blockHeight: (<Link to={ `/explorer/block/${ tx.blockHeight }` }>{ tx.blockHeight }</Link>),
         createdAt: date24Format(tx.createdAt),
         recipients: tx.vout.length,
-        txId: (<Link to={ `/tx/${ tx.txId }` }>{ tx.txId }</Link>),
+        txId: (<Link to={ `/explorer/tx/${ tx.txId }` }>{ tx.txId }</Link>),
         vout: numeral(blockValue).format('0,0.00000000')
       });
     });
 
+    const explore_class = location.pathname.includes('explorer') && 'content-top';
+
     return (
-      <div>
-        <HorizontalRule title={t('latestBlocks')} />
-        <Table
-          cols={ this.state.cols }
-          data={ txs } />
+      <div className={`content ${explore_class}`} id="body-content">
+        <ExplorerMenu onSearch={ this.props.handleSearch } />        
+        <div className="content__wrapper_total">     
+          <ExplorerOverviewMenu />     
+          <div className="content_search_wrapper">                      
+            {/* <SearchBar
+              className="d-none d-md-block"
+              onSearch={this.props.handleSearch} />           */}
+            <div className="content_page_title">
+              <span>Overview</span>
+            </div>              
+          </div>
+          <div className="content__wrapper">
+            <CoinSummary
+              onRemove={this.props.handleRemove}
+              onSearch={this.props.handleSearch}
+              searches={this.props.searches} />
+            {/* <SearchEventBar
+              className="d-none d-md-block mb-3"
+              onSearch={this.props.handleEventSearch}
+            /> */}
+            <div>
+              <HorizontalRule title={t('latestBlocks')} />
+              {/*<CardLatestBlocks data={txs}/>*/}
+              <CardBigTable
+                data={txs}
+                cols= {[
+                  {title: 'Height', key: 'blockHeight'},
+                  {title: 'Transaction Hash', key: 'txId', className: 'cell-ellipsis'},
+                  {title: 'Value', key: 'vout'},
+                  {title: 'age', key: 'age', className: 'w-m-80'},
+                  {title: 'recipients', key: 'recipients'},
+                  {title: 'Created', key: 'createdAt', className: 'w-m-160'},
+                ]}
+              />
+              {/*<Table*/}
+              {/*  cols={this.state.cols}*/}
+              {/*  data={txs} />*/}
+            </div>
+            <Footer />
+          </div>
+        </div>
       </div>
     );
   };

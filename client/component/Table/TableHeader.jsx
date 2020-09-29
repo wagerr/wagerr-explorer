@@ -14,13 +14,13 @@ const TableHeader = (props) => {
       }
 
       return (
-        <th key={ idx } >{ col }</th>
+        <th key={ idx } style={{ minWidth: 170 }}>{ col }</th>
       )
     });
 
     return (
       <thead>
-        <tr>
+        <tr className='card__blocks'>
           { cells }
         </tr>
       </thead>

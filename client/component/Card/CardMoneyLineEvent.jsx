@@ -32,9 +32,9 @@ const CardMoneyLineEvent = ({eventInfo, t}) => {
     const MLAwayBetAmount = MoneyLineBets.away.reduce((acc, bet) => acc + bet.betValue, 0.0);
     const MLDrawBetAmount = MoneyLineBets.draw.reduce((acc, bet) => acc + bet.betValue, 0.0);
 
-    return <Card className="card--status">
-      <h2>Money Line</h2>
-      <div className="card__row">
+    return <div className="card--status">
+      <h2 className='ml-2'>Money Line</h2>
+      <div className="card__row bg-eee">
         <span className="card__label">{t('time')}:</span>
         {timeStamp24Format(eventInfo.events[0].timeStamp)}
       </div>
@@ -42,7 +42,7 @@ const CardMoneyLineEvent = ({eventInfo, t}) => {
         <span className="card__label">{t('league')}:</span>
         {eventInfo.events[0].league}
       </div>
-      <div className="card__row">
+      <div className="card__row bg-eee">
         <span className="card__label">{t('homeTeam')}:</span>
         <span className="card__result">
                {eventInfo.events[0].homeTeam}
@@ -54,7 +54,7 @@ const CardMoneyLineEvent = ({eventInfo, t}) => {
                 {eventInfo.events[0].awayTeam}
           </span>
       </div>
-      <div className="card__row">
+      <div className="card__row bg-eee">
         <span className="card__label">{t('homeBetNum')}:</span>
         <span
           className="card__result">{MoneyLineBets.home.length}</span>
@@ -64,7 +64,7 @@ const CardMoneyLineEvent = ({eventInfo, t}) => {
         <span className="card__result"> <span className={`badge badge-danger`}>
                 {numeral(MLHomeBetAmount).format('0,0.00000000')}</span></span>
       </div>
-      <div className="card__row">
+      <div className="card__row bg-eee">
         <span className="card__label">{t('drawBetNum')}:</span>
         <span
           className="card__result">{MoneyLineBets.draw.length}</span>
@@ -75,7 +75,7 @@ const CardMoneyLineEvent = ({eventInfo, t}) => {
            <span className={`badge badge-danger`}>
                 {numeral(MLDrawBetAmount).format('0,0.00000000')}</span></span>
       </div>
-      <div className="card__row">
+      <div className="card__row bg-eee">
         <span className="card__label">{t('awayBetNum')}:</span>
         <span
           className="card__result">{MoneyLineBets.away.length}</span>
@@ -86,13 +86,13 @@ const CardMoneyLineEvent = ({eventInfo, t}) => {
                {numeral(MLAwayBetAmount).format('0,0.00000000')}</span>
           </span>
       </div>
-    </Card>
+    </div>
   } else {
-    return <Card title="Bet Event" className="card--status">
+    return <div title="Bet Event" className="card--status">
       <div className="card__row">
         {t('cantFindEvent')}
       </div>
-    </Card>
+    </div>
   }
 
 }

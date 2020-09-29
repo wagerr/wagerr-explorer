@@ -127,7 +127,7 @@ class LottoEventTable extends Component {
                   ? (<span
                     className="badge badge-danger">-{numeral(action.betValue).format('0,0.00000000')} WGR</span>) : 'd',
                 txId: (
-                  <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
+                  <Link to={`/explorer/tx/${ action.txId }`}>{action.txId}</Link>
                 )
               }
             }), ['createdAt'])}

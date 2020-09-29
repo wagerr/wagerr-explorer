@@ -15,7 +15,13 @@ import Table from '../component/Table';
 import Select from '../component/Select';
 
 import { PAGINATION_PAGE_SIZE } from '../constants';
-
+import ExplorerMenu from '../component/Menu/ExplorerMenu';
+import CoinSummary from '../container/CoinSummary';
+import SearchBar from '../component/SearchBar';
+import SearchEventBar from '../component/SearchEventBar';
+import Footer from '../component/Footer';
+import ExplorerOverviewMenu from '../component/Menu/ExplorerOverviewMenu';
+import CardBigTable from "../component/Card/CardBigTable";
 class Masternode extends Component {
   static propTypes = {
     getMNs: PropTypes.func.isRequired
@@ -25,15 +31,6 @@ class Masternode extends Component {
     super(props);
     this.debounce = null;
     this.state = {
-      cols: [
-        { key: 'lastPaidAt', title: 'Last Paid' },
-        { key: 'active', title: 'Active' },
-        { key: 'addr', title: 'Address' },
-        { key: 'txHash', title: 'Collateral TX' },
-        { key: 'txOutIdx', title: 'Index' },
-        { key: 'ver', title: 'Version' },
-        { key: 'status', title: 'Status' },
-      ],
       error: null,
       loading: true,
       mns: [] ,
@@ -116,38 +113,73 @@ class Masternode extends Component {
     const future = moment().add(2, 'years').utc().unix();
 
     return (
-      <div>
-        <HorizontalRule
-          select={ select }
-          title="Masternodes" />
-        <Table
-          cols={ this.state.cols }
-          data={ sortBy(this.state.mns.map((mn) => {
-            const lastPaidAt = moment(mn.lastPaidAt).utc();
-            const isEpoch = lastPaidAt.unix() === 0;
+      <div className="content content-top" id="body-content">
+        <ExplorerMenu onSearch={ this.props.handleSearch } />        
+        <div className="content__wrapper_total">   
+        <ExplorerOverviewMenu />       
+          <div className="content_search_wrapper">                      
+            {/* <SearchBar
+              className="d-none d-md-block"
+              onSearch={this.props.handleSearch} />           */}
+            <div className="content_page_title">
+              <span>Masternodes</span>
+            </div>              
+          </div>
+          <div className="content__wrapper">
+            <CoinSummary
+              onRemove={this.props.handleRemove}
+              onSearch={this.props.handleSearch}
+              searches={this.props.searches} />
+            {/* <SearchEventBar
+              className="d-none d-md-block mb-3"
+              onSearch={this.props.handleEventSearch}
+            /> */}
+            <div>
+              <HorizontalRule
+                select={ select }
+                title="Masternodes" />
+              <CardBigTable
+                  cols= {[
+                    { key: 'lastPaidAt', title: 'Last Paid', className: 'w-m-160' },
+                    { key: 'active', title: 'Active', className: 'w-m-120' },
+                    { key: 'addr', title: 'Address' },
+                    { key: 'txHash', title: 'Collateral TX' },
+                    { key: 'txOutIdx', title: 'Index' },
+                    { key: 'ver', title: 'Version' },
+                    { key: 'status', title: 'Status' },
+                  ]}
+                  data={ sortBy(this.state.mns.map((mn) => {
+                    const lastPaidAt = moment(mn.lastPaidAt).utc();
+                    const isEpoch = lastPaidAt.unix() === 0;
 
-            return {
-              ...mn,
-              active: moment().subtract(mn.active, 'seconds').utc().fromNow(),
-              addr: (
-                <Link to={ `/address/${ mn.addr }` }>
-                  { `${ mn.addr.substr(0, 20) }...` }
-                </Link>
-              ),
-              lastPaidAt: isEpoch ? 'N/A' : date24Format(mn.lastPaidAt),
-              txHash: (
-                <Link to={ `/tx/${ mn.txHash }` }>
-                  { `${ mn.txHash.substr(0, 20) }...` }
-                </Link>
-              )
-            };
-          }), ['status']) } />
-        <Pagination
-          current={ this.state.page }
-          className="float-right"
-          onPage={ this.handlePage }
-          total={ this.state.pages } />
-        <div className="clearfix" />
+                    return {
+                      ...mn,
+                      active: moment().subtract(mn.active, 'seconds').utc().fromNow(),
+                      addr: (
+                          <Link to={ `/address/${ mn.addr }` }>
+                            { `${ mn.addr.substr(0, 20) }...` }
+                          </Link>
+                      ),
+                      lastPaidAt: isEpoch ? 'N/A' : date24Format(mn.lastPaidAt),
+                      txHash: (
+                          <Link to={ `/explorer/tx/${ mn.txHash }` }>
+                            { `${ mn.txHash.substr(0, 20) }...` }
+                          </Link>
+                      )
+                    };
+                  }), ['status']) }
+              />
+
+              <Pagination
+                current={ this.state.page }
+                className="float-right"
+                onPage={ this.handlePage }
+                total={ this.state.pages } />
+              <div className="clearfix" />
+            </div>
+            <Footer />
+          </div>
+        </div>
       </div>
     );
   };
