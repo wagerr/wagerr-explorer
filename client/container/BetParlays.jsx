@@ -33,203 +33,169 @@ import GlobalSwitch from "../component/Menu/GlobalSwitch";
 import Utils from '../core/utils'
 
 const convertToAmericanOdds = (odds) => {
-
+  
     odds = parseFloat(odds);
     let ret = parseInt((odds - 1) * 100);
-
+    
     if (odds < 2)
-        ret = Math.round((-100) / (odds - 1));
-
+      ret = Math.round((-100) / (odds - 1));
+    
     if (odds == 0) ret = 0;
-
-    if (ret > 0) ret = `+${ret}`
-
+  
+    if (ret > 0)  ret = `+${ret}`  
+    
     return ret;
-}
-
-class BetParlays extends Component {
-    static defaultProps = {
-        placeholder: 'Find team names, event ids, sports or tournaments.',
-    }
-
+  }
+  
+  class BetParlays extends Component {
     static propTypes = {
-        getBetEventsInfo: PropTypes.func.isRequired,
-        getBetQuery: PropTypes.func.isRequired,
-        placeholder: PropTypes.string.isRequired,
+      getParlayBetsInfo: PropTypes.func.isRequired    
     }
-
+  
     constructor(props) {
-        super(props)
-        const { t } = props;
-
-        this.debounce = null
-        this.state = {
-            error: null,
-            loading: true,
-            events: [],
-            pages: 0,
-            page: 1,
-            size: 50,
-            filterBy: 'All',
-            search: '',
-            width: 0,
-            toggleSwitch: props.toggleSwitch
-        }
-
-        this.props.history.listen((location, action) => {
-            let page = location.pathname.split('/betevents/')[1];
-            if (typeof page == 'undefined') page = 1;
-            setTimeout(this.updatePage(page));
-        });
-    };
-
-    componentDidMount() {
-        this.updateWindowDimensions();
-        window.addEventListener("resize", this.updateWindowDimensions);
-
-        const values = queryString.parse(this.props.location.search); //this.props.match ? this.props.match.params : '';
-        const search = values.search ? values.search : '';
-
-        let page = this.props.match.params.page;
+      super(props)
+      const { t } = props;
+  
+      this.debounce = null
+      this.state = {
+        error: null,
+        loading: true,
+        parlaybets: [],
+        pages: 0,
+        page: 1,
+        size: 50,
+        filterBy: 'All',
+        search: '',
+        toggleSwitch: localStorage.getItem('toggleCompletedAndOpen') != undefined? localStorage.getItem('toggleCompletedAndOpen') == 'true' : false,          
+        toggleSwitchOdds: localStorage.getItem('toggleOddsFee') != undefined? localStorage.getItem('toggleOddsFee') == 'true' : false,      
+        toggleSwitchOddsStyle: localStorage.getItem('toggleOddsStyle') != undefined? localStorage.getItem('toggleOddsStyle') == 'true' : false,
+      }
+  
+      this.props.history.listen((location, action) => {      
+        let page = location.pathname.split('/explorer/betparlays/')[1];
         if (typeof page == 'undefined') page = 1;
-
-        this.setState({ search, page }, this.getBetEventsInfo)
+        setTimeout(this.updatePage(page));
+      });
     };
-
-    updatePage = (page) => {
-        this.setState({ page: parseInt(page) }, this.getBetEventsInfo);
+  
+    componentDidMount() {
+      const values = queryString.parse(this.props.location.search); //this.props.match ? this.props.match.params : '';    
+      const search = values.search ? values.search : '';    
+  
+      let page = this.props.match.params.page;
+      if (typeof page == 'undefined') page = 1;
+  
+      const toggleSwitch = localStorage.getItem('toggleCompletedAndOpen') != undefined? localStorage.getItem('toggleCompletedAndOpen') == 'true' : false;       
+      console.log('componentDidMount', toggleSwitch);
+      this.setState({ search, page }, this.getParlayBetsInfo)
+    };
+  
+    updatePage = (page) => {    
+      this.setState({ page:parseInt(page) }, this.getParlayBetsInfo);
     }
-
+  
     componentWillReceiveProps(nextProps) {
         const nextvalues = queryString.parse(nextProps.location.search);
-        const nextsearch = nextvalues.search ? nextvalues.search : '';
+        const nextsearch = nextvalues.search ? nextvalues.search : '';      
         if (nextsearch !== this.state.search) {
-            this.setState({ search: nextsearch }, this.getBetEventsInfo);
+          this.setState({ search:nextsearch }, this.getParlayBetsInfo);
         }
     }
-
+  
     componentWillUnmount() {
-        window.removeEventListener("resize", this.updateWindowDimensions);
+      if (this.debounce) {
+        clearTimeout(this.debounce)
+        this.debounce = null
+      }
+    };
+  
+    getParlayBetsInfo = () => {
+      this.setState({ loading: true }, () => {
         if (this.debounce) {
-            clearTimeout(this.debounce)
-            this.debounce = null
+          clearTimeout(this.debounce)
         }
-    };
-
-    componentDidUpdate(prevProps, prevState) {
-        if (prevProps.toggleSwitch !== this.props.toggleSwitch) {
-            this.getBetEventsInfo();
+  
+        let getMethod = this.props.getParlayBetsInfo;      
+        const params = {
+          limit: this.state.size,
+          skip: (this.state.page - 1) * this.state.size,
+          opened_or_completed: this.state.toggleSwitch
+        };
+  
+        if (this.state.search) {
+          getMethod = this.props.getParlayBetsInfo;
+          params.search = this.state.search;
         }
-    };
-
-    updateWindowDimensions = () => {
-        this.setState({ width: window.innerWidth });
-    };
-
-    getBetEventsInfo = () => {
-        this.setState({ loading: true }, () => {
-            if (this.debounce) {
-                clearTimeout(this.debounce)
-            }
-
-            let getMethod = this.props.getBetEventsInfo;
-
-            const params = {
-                limit: this.state.size,
-                skip: (this.state.page - 1) * this.state.size,
-                opened_or_completed: this.props.toggleSwitch
-            };
-
-            if (this.state.filterBy !== 'All') {
-                getMethod = this.props.getBetEventsInfo;
-                params.sport = this.state.filterBy;
-            }
-
-
-            if (this.state.search) {
-                getMethod = this.props.getBetEventsInfo;
-                params.search = this.state.search;
-            }
-
-            this.debounce = setTimeout(() => {
-                getMethod(params)
-                    .then(({ data, pages }) => {
-                        if (this.debounce) {
-                            data.map(item => {
-                                let totalBet = 0;
-                                let totalMint = 0;
-                                item.actions.forEach(action => totalBet += action.betValue)
-                                if (item.results) {
-                                    item.results.forEach(result => {
-                                        let startIndex = 2
-                                        if (
-                                            result.payoutTx.vout[1] &&
-                                            result.payoutTx.vout[2] &&
-                                            result.payoutTx.vout[1].address === result.payoutTx.vout[2].address
-                                        ) {
-                                            startIndex = 3
-                                        }
-                                        for (let i = startIndex; i < result.payoutTx.vout.length - 1; i++) {
-                                            totalMint += result.payoutTx.vout[i].value
-                                        }
-                                    })
-                                }
-                                item.totalBet = totalBet
-                                item.totalMint = totalMint
-                                item.events.sort(function (a, b) {
-                                    return b.blockHeight - a.blockHeight;
-                                })
-                            })
-                            this.setState({ events: data, pages, loading: false })
-                        }
-                    })
-                    .catch(error => {
-                        console.log('error', error);
-                        this.setState({ error, loading: false })
-                    })
-            }, 800)
-        })
+  
+        this.debounce = setTimeout(() => {
+          getMethod(params)
+            .then(({ data, pages }) => {            
+              if (this.debounce) {              
+                data.map(item => {                
+                  let totalBet = item.betValue;
+                  let totalMint = 0;
+                  item.supplyChange = 0;
+                  if (item.completed){
+                    totalMint = item.payout;
+                  }
+                  if (item.betResultType == 'lose'){
+                    item.supplyChange = -totalBet;  
+                  } else if (item.betResultType == 'refund'){
+                    item.supplyChange = 0;  
+                  } else {
+                    item.supplyChange = (totalMint - totalBet) * 97 / 94;    
+                  }    
+                  //console.log('item', item);
+                })
+                this.setState({ parlaybets: data, pages, loading: false })
+              }
+            })
+            .catch(error => {
+              console.log('error', error);
+              this.setState({ error, loading: false })
+            })
+        }, 800)
+      })
     }
-
+  
     handleKeyPress = (ev) => {
-        if (ev.key === 'Enter') {
-            ev.preventDefault();
-
-            this.getBetEventsInfo();
-        }
+      if (ev.key === 'Enter') {
+        ev.preventDefault();
+  
+        this.getParlayBetsInfo();
+      }
     };
-
+  
     handleChange = (e) => {
-        this.setState({
-            search: e.target.value,
-        });
+      this.setState({
+        search: e.target.value,
+      });
     }
-
-    handleFilterBy = value => this.setState({ filterBy: value }, () => {
-        this.setState({
-            search: '',
-        }, () => {
-            this.getBetEventsInfo()
-        });
-    });
-
+    
     handlePage = page => {
-        this.props.history.push('/betevents/' + page)
+      this.props.history.push('/explorer/betparlays/'+page) 
     }
-
-    handleSize = size => this.setState({ size, page: 1 })
-
-
-    TestMyFilter = (data, type) => {
-        let results = [];
-        if (type === 'All') {
-            results = data;
-        } else {
-            results = data.filter((event) => {
-                return event.events[0].transaction.sport === type
-            });
-        }
-        return results;
+  
+    handleSize = size => this.setState({size, page: 1})
+  
+    handleToggleChange = (toggleSwitch) => {
+      console.log("handleToggleChange", toggleSwitch);
+      localStorage.setItem('toggleCompletedAndOpen', toggleSwitch);
+      this.setState({toggleSwitch, page:1}, this.getParlayBetsInfo);        
+    }
+  
+    handleToggleChangeOdds = (toggleSwitchOdds) => {
+      localStorage.setItem('toggleOddsFee', toggleSwitchOdds);
+      this.setState({ toggleSwitchOdds });    
+    }
+  
+    handleToggleChangeOddsStyle = (toggleSwitchOddsStyle) => {
+      localStorage.setItem('toggleOddsStyle', toggleSwitchOddsStyle);
+      this.setState({ toggleSwitchOddsStyle });    
+    }
+  
+    handleParlayBetSearch = (term) => {
+      this.props.onParlaySearch(term);
     }
 
     render() {
@@ -238,30 +204,23 @@ class BetParlays extends Component {
         const { toggleSwitch } = props;
         const { width } = this.state;
 
-        const cols = toggleSwitch ? [
-            { key: 'start', title: 'bettime', className: 'w-m-140' },
-            { key: 'event', title: 'txid' },
-            { key: 'homeTeam', title: 'leg1' },
-            { key: 'awayTeam', title: 'leg2' },
-            { key: 'homeOdds', title: 'leg3' },
-            { key: 'drawOdds', title: 'leg4' },
-            { key: 'awayOdds', title: 'leg5' },
-            { key: 'betAmount', title: t('betAmount'), className: 'w-m-100' },
-            { key: 'betStatus', title: t('betStatus'), className: 'w-m-100' },
-            { key: 'seeDetail', title: t('detail'), className: 'w-m-80' },
-        ] : [
-                { key: 'start', title: 'bettime', className: 'w-m-140' },
-                { key: 'event', title: 'txid' },
-                { key: 'homeTeam', title: 'leg1' },
-                { key: 'awayTeam', title: 'leg2' },
-                { key: 'homeOdds', title: 'leg3' },
-                { key: 'drawOdds', title: 'leg4' },
-                { key: 'awayOdds', title: 'leg5' },
-                { key: 'supplyChange', title: t('supplyChange'), className: 'w-m-120' },
-                { key: 'betAmount', title: t('betAmount'), className: 'w-m-100' },
-                { key: 'betStatus', title: t('betStatus'), className: 'w-m-100' },
-                { key: 'seeDetail', title: t('detail'), className: 'w-m-80' },
-            ]
+        let cols = [
+            { key: 'betTime', title: t('BetTime') },
+            { key: 'txId', title: t('TxId') },
+            { key: 'leg1', title: t('Leg1') },
+            { key: 'leg2', title: t('Leg2') },
+            { key: 'leg3', title: t('Leg3') },
+            { key: 'leg4', title: t('Leg4') },
+            { key: 'leg5', title: t('Leg5') },
+            { key: 'supplyChange', title: t('Supply Change') },
+            { key: 'betAmount', title: t('Bet Amount') },
+            { key: 'betStatus', title: t('betStatus') },
+            { key: 'seeDetail', title: t('detail') },
+          ];
+          
+        if (toggleSwitch){
+            delete cols[7];      
+        }    
         if (!!this.state.error) {
             return this.renderError(this.state.error)
         } else if (this.state.loading) {
@@ -304,36 +263,55 @@ class BetParlays extends Component {
                         />
                         <div>
                             <HorizontalRule
-                                select={select}
-                                filterSport={filterSport}
+                                select={select}                                
                                 title={'PARLAY BETS'}
                             />
-                            {this.state.events.length == 0 && this.renderError('No search results found within provided filters')}
+                            {this.state.parlaybets.length == 0 && this.renderError('No search results found within provided filters')}
 
                             <div style={{ width: Utils.tableWidth(width) }}>
-                                {this.state.events.length > 0 &&
+                                {this.state.parlaybets.length > 0 &&
                                     <CardBigTable
                                         className={'table-responsive table--for-betevents'}
                                         cols={cols}
-                                        data={this.state.events.map((event) => {
-                                            const betAmount = event.actions.reduce((acc, action) => {
-                                                return acc + action.betValue
-                                            }, 0.0
-                                            )
+                                        data={this.state.parlaybets.map((bet) => {
+                                            const betAmount = bet.betValue;
+                                            const betTime = moment(bet.createdAt).utc().local().format('YYYY-MM-DD HH:mm:ss');            
+                                            const betTxId = bet.txId.substr(0, 5) + '...';    
+                                            let betStatus = bet.betResultType;
+                                            if (bet.completed == false){
+                                              betStatus = "Pending"
+                                            } else {
+                                              betStatus = "Completed"
+                                            }
+                                            const legs = [];
+                                            for (let j = 0; j < 5; j++){
+                                              if (bet.legs[j] !== undefined){
+                                                legs[j] = bet.legs[j].resultType;
+                                              } else {
+                                                legs[j] = '';
+                                              }
+                                            }
+                                            const supplyChange = numeral(bet.supplyChange).format('0,0.00');     
 
                                             return {
-                                                ...event,
-                                                start: <Link to={`/explorer/tx/${encodeURIComponent(event.events[0].eventId)}`}>{timeStamp24Format(event.events[0].timeStamp)} </Link>,
-                                                event: <span>{Math.random().toString(36).substr(2, 9)}</span>,
-                                                homeTeam: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span> : <span className={`badge badge-success`}>Lose</span>,
-                                                awayTeam: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span> : <span className={`badge badge-success`}>win</span>,
-                                                homeOdds: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span> : <span className={`badge badge-danger`}>Lose</span>,
-                                                drawOdds: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span> : <span className={`badge badge-success`}>win</span>,
-                                                awayOdds: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span> : <span className={`badge badge-danger`}>Lose</span>,
-                                                supplyChange: <span className={`badge badge-${event.totalMint - event.totalBet < 0 ? 'danger' : 'success'}`}>{numeral(event.totalMint - event.totalBet).format('0,0.00')}</span>,
-                                                betAmount: <span className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
-                                                betStatus: <span style={{ fontWeight: 'bold' }}>{toggleSwitch ? 'Pending' : 'Completed'}</span>,
-                                                seeDetail: <Link to={`/explorer/tx/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
+                                                ...bet,
+                                                betTime: betTime,
+                                                txId: (
+                                                    <Link to={`/explorer/tx/${encodeURIComponent(bet.txId)}`}>
+                                                      {betTxId}
+                                                    </Link>
+                                                  ),
+                                                  leg1: <span className={`badge badge-${legs[0] == 'lose' ? 'danger' : legs[0] == 'pending'  ?  'info' : legs[0] == 'win' ? 'success' : 'warning'}`}>{legs[0]}</span>,
+                                                  leg2: <span className={`badge badge-${legs[1] == 'lose' ? 'danger' : legs[1] == 'pending'  ?  'info' : legs[1] == 'win' ? 'success' : 'warning'}`}>{legs[1]}</span>,
+                                                  leg3: <span className={`badge badge-${legs[2] == 'lose' ? 'danger' : legs[2] == 'pending'  ?  'info' : legs[2] == 'win' ? 'success' : 'warning'}`}>{legs[2]}</span>,
+                                                  leg4: <span className={`badge badge-${legs[3] == 'lose' ? 'danger' : legs[3] == 'pending'  ?  'info' : legs[3] == 'win' ? 'success' : 'warning'}`}>{legs[3]}</span>,
+                                                  leg5: <span className={`badge badge-${legs[4] == 'lose' ? 'danger' : legs[4] == 'pending'  ?  'info' : legs[4] == 'win' ? 'success' : 'warning'}`}>{legs[4]}</span>,
+                                                  supplyChange: <span className={`badge badge-${bet.supplyChange < 0 ? 'danger' : 'success'}`}>
+                                                    {supplyChange}
+                                                  </span>,
+                                                  betAmount: <span className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
+                                                  betStatus: <span style={{fontWeight:'bold'}}>{betStatus}</span>,
+                                                  seeDetail: <Link to={`/tx/${encodeURIComponent(bet.txId)}`}>{t('seeDetail')}</Link>
                                             }
                                         })}
                                     />
@@ -356,11 +334,10 @@ class BetParlays extends Component {
 }
 
 const mapDispatch = dispatch => ({
-    getBetEventsInfo: query => Actions.getBetEventsInfo(query),
-    getBetQuery: query => Actions.getBetQuery(query),
-})
-
-export default compose(
+    getParlayBetsInfo: query => Actions.getParlayBetsInfo(query)
+  })
+  
+  export default compose(
     connect(null, mapDispatch),
-    translate('betEventList'),
-)(BetParlays);
+    translate('BetParlays'),
+  )(BetParlays);
