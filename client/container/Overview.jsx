@@ -54,15 +54,22 @@ class Overview extends Component {
       return ({
         ...tx,
         age: diffSeconds < 0 ? "Just Now" : (diffSeconds < 60 ? `${ diffSeconds } seconds` : createdAt.fromNow(true)),
-        blockHeight: (<Link to={ `/explorer/block/${ tx.blockHeight }` }>{ tx.blockHeight }</Link>),
+        blockHeight: (<Link to={ `/block/${ tx.blockHeight }` }>{ tx.blockHeight }</Link>),
         createdAt: date24Format(tx.createdAt),
         recipients: tx.vout.length,
-        txId: (<Link to={ `/explorer/tx/${ tx.txId }` }>{ tx.txId }</Link>),
+        txId: (<Link to={ `/tx/${ tx.txId }` }>{ tx.txId }</Link>),
         vout: numeral(blockValue).format('0,0.00000000')
       });
     });
 
-    const explore_class = location.pathname.includes('explorer') && 'content-top';
+    const { pathname } = this.props.location;    
+
+    let is_explorer = false;
+    if (!pathname.includes('/bethistory') && !pathname.includes('betting') && !pathname.includes('lottos') && !pathname.includes('help'))
+      is_explorer = true
+
+    const explore_class = is_explorer? 'content-top' : '';
+    console.log('content-top:', explore_class)
 
     return (
       <div className={`content ${explore_class}`} id="body-content">

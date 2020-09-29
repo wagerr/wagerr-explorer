@@ -144,13 +144,13 @@ class Movement extends Component {
                     return ({
                       ...tx,
                       blockHeight: (
-                          <Link to={ `/explorer/block/${ tx.blockHeight }` }>
+                          <Link to={ `/block/${ tx.blockHeight }` }>
                             { tx.blockHeight }
                           </Link>
                       ),
                       createdAt: date24Format(tx.createdAt),
                       txId: (
-                          <Link to={ `/explorer/tx/${ tx.txId }` }>
+                          <Link to={ `/tx/${ tx.txId }` }>
                             { tx.txId }
                           </Link>
                       ),

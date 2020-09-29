@@ -39,8 +39,8 @@ export default class GlobalMenuMobile extends Component {
         )
       }
       return (
-        <div className="menu-mobile__note">
-          <Link key={idx} className="menu-mobile__item" to={i.href} onClick={this.handleToggle} >
+        <div className="menu-mobile__note" key={idx} >
+          <Link className="menu-mobile__item" to={i.href} onClick={this.handleToggle} >
             <img
               alt={i.label}
               className="menu-mobile__icon"

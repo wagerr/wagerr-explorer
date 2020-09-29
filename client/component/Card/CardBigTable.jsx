@@ -10,7 +10,7 @@ export default class CardBigTable extends Component {
                 )
             });
             return (
-                <tr className="table-item">
+                <tr className="table-item" key={idx}>
                     {cells}
                 </tr>
             )
@@ -33,8 +33,8 @@ export default class CardBigTable extends Component {
         return (
             <tr className="table-header" style={{ background: this.props.sports ? '#545454' : '#b40202' }}>
                 {
-                    this.props.cols.map(item => {
-                        return <th style={{textTransform: 'uppercase'}}>{item.title}</th>
+                    this.props.cols.map((item, idx) => {
+                        return <th key={idx} style={{textTransform: 'uppercase'}}>{item.title}</th>
                     })
                 }
             </tr>

@@ -50,7 +50,7 @@ export default class CardStatus extends Component {
         <div className="card__row bg-eee">
           <span className="card__label">Blocks:</span>
           <span className="card__result">
-            <Link to={ `/explorer/block/${ this.props.blocks }` }>
+            <Link to={ `/block/${ this.props.blocks }` }>
               <b>
                 <CountUp
                   decimals={ 0 }

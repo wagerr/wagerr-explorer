@@ -9,10 +9,6 @@ import { genMenuData } from './explorerMenuData'
 import { Link } from 'react-router-dom';
 
 class ExplorerOverviewMenu extends Component {
-  static propTypes = {
-    onSearch: PropTypes.func.isRequired
-  };
-
   render() {
     const { t } = this.props;
     const { pathname } = this.props.location;

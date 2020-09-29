@@ -43,11 +43,11 @@ export default class GlobalSwitch extends Component {
                                 />
                             </label>
                             <div className='global-switch__body__label'>
-                                <div className={!toggleSwitch && 'global-switch__body__label__active'} onClick={() => handleToggleChange(true)}>
+                                <div className={!toggleSwitch ? 'global-switch__body__label__active' : ''} onClick={() => handleToggleChange(true)}>
                                     Completed
                                 </div>
                                 &nbsp;|&nbsp;
-                                <div className={toggleSwitch && 'global-switch__body__label__active'} onClick={() => handleToggleChange(false)}>
+                                <div className={toggleSwitch ? 'global-switch__body__label__active' : ''} onClick={() => handleToggleChange(false)}>
                                     Opened
                                 </div>
                             </div>
@@ -71,11 +71,11 @@ export default class GlobalSwitch extends Component {
                                 />
                             </label>
                             <div className='global-switch__body__label'>
-                                <div className={!toggleSwitchOddsStyle && 'global-switch__body__label__active'} onClick={() => handleToggleChangeOddsStyle(true)}>
+                                <div className={!toggleSwitchOddsStyle ? 'global-switch__body__label__active' : ''} onClick={() => handleToggleChangeOddsStyle(true)}>
                                     Decimal Odds
                                 </div>
                                 &nbsp;|&nbsp;
-                                <div className={toggleSwitchOddsStyle && 'global-switch__body__label__active'} onClick={() => handleToggleChangeOddsStyle(false)}>
+                                <div className={toggleSwitchOddsStyle ? 'global-switch__body__label__active' : ''} onClick={() => handleToggleChangeOddsStyle(false)}>
                                     American Odds
                                 </div>
                             </div>
@@ -99,11 +99,11 @@ export default class GlobalSwitch extends Component {
                                 />
                             </label>
                             <div className='global-switch__body__label'>
-                                <div className={!toggleSwitchOdds && 'global-switch__body__label__active'} onClick={() => handleToggleChangeOdds(true)}>
+                                <div className={!toggleSwitchOdds ? 'global-switch__body__label__active' : ''} onClick={() => handleToggleChangeOdds(true)}>
                                     On Chain Odds
                                 </div>
                                 &nbsp;|&nbsp;
-                                <div className={toggleSwitchOdds && 'global-switch__body__label__active'} onClick={() => handleToggleChangeOdds(false)}>
+                                <div className={toggleSwitchOdds ? 'global-switch__body__label__active' : ''} onClick={() => handleToggleChangeOdds(false)}>
                                     Effective Odds
                                 </div>
                             </div>

@@ -289,7 +289,7 @@ class BetParlays extends Component {
 
                                         // return {
                                         //     ...event,
-                                        //     start: <Link to={`/explorer/tx/${encodeURIComponent(event.events[0].eventId)}`}>{timeStamp24Format(event.events[0].timeStamp)} </Link>,
+                                        //     start: <Link to={`/tx/${encodeURIComponent(event.events[0].eventId)}`}>{timeStamp24Format(event.events[0].timeStamp)} </Link>,
                                         //     event: <span>{Math.random().toString(36).substr(2, 9)}</span>,
                                         //     homeTeam: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span>: <span className={`badge badge-success`}>Lose</span>,
                                         //     awayTeam: toggleSwitch ? <span className={`badge badge-info`}>{'pending'}</span>: <span className={`badge badge-success`}>win</span>,
@@ -299,7 +299,7 @@ class BetParlays extends Component {
                                         //     supplyChange: <span className={`badge badge-${event.totalMint - event.totalBet < 0 ? 'danger' : 'success'}`}>{numeral(event.totalMint - event.totalBet).format('0,0.00')}</span>,
                                         //     betAmount: <span className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
                                         //     betStatus: <span style={{ fontWeight: 'bold'}}>{toggleSwitch ? 'Pending': 'Completed'}</span>,
-                                        //     seeDetail: <Link to={`/explorer/tx/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
+                                        //     seeDetail: <Link to={`/tx/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
                                         // }
 
                                         return { 
