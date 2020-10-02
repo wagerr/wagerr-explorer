@@ -8,7 +8,7 @@ import CardBlock from '../component/Card/CardBlock';
 import CardBlockTXs from '../component/Card/CardBlockTXs';
 import HorizontalRule from '../component/HorizontalRule';
 import ExplorerMenu from "../component/Menu/ExplorerMenu";
-
+import CoinSummary from '../container/CoinSummary';
 class Block extends Component {
     static propTypes = {
         getBlock: PropTypes.func.isRequired,
@@ -59,7 +59,16 @@ class Block extends Component {
             <div className="content content-top" id="body-content">
                 <ExplorerMenu onSearch={this.props.handleSearch}/>
                 <div className="content__wrapper_total">
+                <div className="content_search_wrapper">                      
+                    <div className="content_page_title">
+                        <span>Block Info</span>
+                    </div>              
+                </div>
                   <div className="content__wrapper">
+                    <CoinSummary
+                        onRemove={this.props.handleRemove}
+                        onSearch={this.props.handleSearch}
+                        searches={this.props.searches} />
                     <HorizontalRule title="Block Info"/>
                     <CardBlock block={this.state.block} height={this.props.tx.blockHeight}/>
                     <HorizontalRule title="Block Transactions"/>
