@@ -85,7 +85,7 @@ class TX extends Component {
               <span>Transaction Info</span>
             </div>              
           </div>
-          <div className="content__wrapper">
+          <div className="content__wrapper"> 
             <CoinSummary
               onRemove={this.props.handleRemove}
               onSearch={this.props.handleSearch}
