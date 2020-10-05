@@ -143,6 +143,7 @@ class BetEventList extends Component {
 
             if (this.state.filterBy !== 'All') {
                 getMethod = this.props.getBetEventsInfo;
+                console.log('sport', this.state.filterBy);
                 params.sport = this.state.filterBy;
             }
 
@@ -428,22 +429,22 @@ class BetEventList extends Component {
                                             }
                                             return {
                                                 ...event,
-                                                start: <Link to={`/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
+                                                start: <Link to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>
                                                     {timeStamp24Format(event.events[0].timeStamp)} </Link>
                                                 ,
                                                 event: (
-                                                    <Link to={`/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
+                                                    <Link to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>
                                                         {event.events[0].eventId}
                                                     </Link>
                                                 ),
-                                                name: <Link to={`/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
+                                                name: <Link to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>
                                                     {event.events[0].league}</Link>,
-                                                round: <Link to={`/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
+                                                round: <Link to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>
                                                 </Link>,
                                                 homeTeam: <Link
-                                                    to={`/betevents/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].homeTeam}</Link>,
+                                                    to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].homeTeam}</Link>,
                                                 awayTeam: <Link
-                                                    to={`/betevents/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].awayTeam}</Link>,
+                                                    to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].awayTeam}</Link>,
                                                 homeOdds: homeOdds,
                                                 drawOdds: drawOdds,
                                                 awayOdds: awayOdds,
@@ -455,7 +456,7 @@ class BetEventList extends Component {
                                                     className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
                                                 betStatus: betStatus,
                                                 seeDetail: <Link
-                                                    to={`/betevents/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
+                                                    to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
                                             }
                                         })} />}
 
