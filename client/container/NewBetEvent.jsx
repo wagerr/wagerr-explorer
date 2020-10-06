@@ -130,7 +130,7 @@ class NewBetEvent extends Component {
         };
 
         return (
-            <div className={`content ${explore_class}`} id="body-content">
+            <div className={`content content-top`} id="body-content">
                 <ExplorerMenu onSearch={this.props.handleSearch}/>
                 <div className="content__wrapper_total">
                     <div className="animated fadeInUp content_search_wrapper">
