@@ -100,13 +100,13 @@ class Address extends Component {
     let end = start + this.state.size;
 
     return (
-      <div className="content" id="body-content">
+      <div className="content content-top" id="body-content">
         <ExplorerMenu onSearch={ this.props.handleSearch } />        
         <div className="content__wrapper_total">          
           <div className="content_search_wrapper">                      
             {/* <SearchBar
               className="d-none d-md-block"
-              onSearch={this.props.handleSearch} />           */}
+              onSearch={this.props.handleSearch} />*/}
             <div className="content_page_title">
               <span>Overview</span>
             </div>              
