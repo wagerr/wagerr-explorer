@@ -40,6 +40,14 @@ export default class Sliding extends Component {
       prevArrow: <SamplePrevArrow />,
       responsive: [
         {
+          breakpoint: 2100,
+          settings: {
+            slidesToShow: 8,
+            slidesToScroll: 1,
+            infinite: true,
+          }
+        },
+        {
           breakpoint: 1500,
           settings: {
             slidesToShow: 6,
@@ -48,7 +56,7 @@ export default class Sliding extends Component {
           }
         },
         {
-          breakpoint: 1024,
+          breakpoint: 1147,
           settings: {
             slidesToShow: 5,
             slidesToScroll: 1,
@@ -56,17 +64,44 @@ export default class Sliding extends Component {
           }
         },
         {
-          breakpoint: 600,
+          breakpoint: 1021,
           settings: {
             slidesToShow: 4,
             slidesToScroll: 1,
-            initialSlide: 2
           }
         },
         {
-          breakpoint: 480,
+          breakpoint: 894,
           settings: {
             slidesToShow: 3,
+            slidesToScroll: 1
+          }
+        },
+        {
+          breakpoint: 767,
+          settings: {
+            slidesToShow: 4,
+            slidesToScroll: 1
+          }
+        },
+        {
+          breakpoint: 600,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 1
+          }
+        },
+        {
+          breakpoint: 471,
+          settings: {
+            slidesToShow: 2,
+            slidesToScroll: 1
+          }
+        },
+        {
+          breakpoint: 346,
+          settings: {
+            slidesToShow: 1,
             slidesToScroll: 1
           }
         }
