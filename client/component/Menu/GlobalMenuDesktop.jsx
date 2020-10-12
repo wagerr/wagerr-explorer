@@ -44,11 +44,11 @@ export default class GlobalMenuDesktop extends Component {
       const iconSource = i.icon;
 
       return (
-        <div
+        <Link to={i.href}
           key={idx} className={`global-menu-desktop__item ${isActive ? (explore_class ? 'global-menu-desktop__item--is-active' : 'global-menu-desktop__item2--is-active') : ''}`}
         >
-          <Link            
-            to={i.href}
+          <div
+
             className="w3-dropdown-hover"
           >
             <img
@@ -68,9 +68,9 @@ export default class GlobalMenuDesktop extends Component {
               )}
               </div>
             }
-          </Link>
+          </div>
 
-        </div>
+        </Link>
       )
     })
   };
