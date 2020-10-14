@@ -81,7 +81,7 @@ const getfeeinfo = async (req, res) => {
     }
     const blocks = parseInt(req.query.blocks)
     try {
-        const data = await rpc.call('getfeeinfo', [blocks]);        
+        const data = await rpc.call('estimatefee', [blocks]);        
         console.log(data);
         res.json(data);
     } catch (err) {

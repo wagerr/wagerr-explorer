@@ -46,11 +46,11 @@ const CardOverUnderEvent = ({eventInfo, data, t}) => {
       <h2 className='ml-2'>Over/Under</h2>
       <div className="card__row bg-eee">
         <span className="card__label">{t('time')}:</span>
-        {timeStamp24Format(eventInfo.events[0].timeStamp)}
+        <span className="card__result">{timeStamp24Format(eventInfo.events[0].timeStamp)}</span>
       </div>
       <div className="card__row">
         <span className="card__label">{t('league')}:</span>
-        {eventInfo.events[0].league}
+        <span className="card__result">{eventInfo.events[0].league}</span>
       </div>
       <div className="card__row bg-eee">
         <span className="card__label">match:</span>

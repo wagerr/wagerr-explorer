@@ -47,8 +47,7 @@ export default class CardStatus extends Component {
               end={this.props.usd}
               prefix={'WGR $'}
               start={0} />
-          </p>
-          <p className="card__data-sub">{this.props.btcPrice.toFixed(8)} BTC</p>
+          </p>          
           <div className="card__info row">
             <div className="col-sm-12 col-md-6 col-lg-4">
               {/*<p>

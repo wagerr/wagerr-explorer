@@ -101,7 +101,7 @@ export default class GlobalMenuDesktop extends Component {
                   <span className="global-menu-desktop_wallet_balance">0 WGR</span>
                   <div className="global-menu-desktop_wallet_connection_status">
                     <div className="wallet_connection_status_mark"></div>
-                    <span className="wallet_connection_status_text">Wallet Connected</span>
+                    <span className="wallet_connection_status_text">Wallet Disconnected</span>
                   </div>
                 </div>
               </div>
