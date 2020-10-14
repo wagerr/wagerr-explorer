@@ -100,6 +100,13 @@
 	margin:auto;
 	font-size: 14px;
 }
+.global-menu-desktop__item-label--disabled{
+	margin:auto;
+	font-size: 14px;
+	color: #d0d0d0;
+	text-shadow: #808080 1px 1px 0;
+	opacity: 0.9;
+}
 
 .global-menu-desktop_wallet_setion{
 	width: 100%;
@@ -190,4 +197,7 @@
 }
 .ft-12 {
 	font-size: 12px;
+}
+.disabled-link {
+	pointer-events: none;
 }
