@@ -8,6 +8,21 @@ import { compose } from 'redux'
 import { translate } from 'react-i18next'
 import connect from 'react-redux/es/connect/connect'
 
+const convertToAmericanOdds = (odds) => {
+
+  odds = parseFloat(odds);
+  let ret = parseInt((odds - 1) * 100);
+
+  if (odds < 2)
+      ret = Math.round((-100) / (odds - 1));
+
+  if (odds == 0) ret = 0;
+
+  if (ret > 0) ret = `+${ret}`
+
+  return ret;
+}
+
 const CardMoneyLineEvent = ({eventInfo, t}) => {
   if (eventInfo) {
     let MoneyLineBets = { home: [], away: [], draw: [] };

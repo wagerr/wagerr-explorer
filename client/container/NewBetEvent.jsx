@@ -18,6 +18,7 @@ import CardOverUnderEvent from "../component/Card/CardOverUnderEvent";
 import sortBy from "lodash/sortBy";
 import Actions from "../core/Actions";
 
+
 class NewBetEvent extends Component {
     static propTypes = {
         txs: PropTypes.array.isRequired,
@@ -111,7 +112,7 @@ class NewBetEvent extends Component {
     }
 
     render() {
-        const {location} = this.props;
+        const {location} = this.props;        
         const {tabIndex, mokeData} = this.state;
         const explore_class = location.pathname.includes('explorer') && 'content-top';
         if (!!this.state.error) {
@@ -184,7 +185,7 @@ class NewBetEvent extends Component {
                                 </Card>
                             </div>
                         </div>
-                        <BetEventTable match={this.props.match} data={tableData}/>
+                        <BetEventTable toggleSwitchOdds={this.props.toggleSwitchOdds} toggleSwitchOddsStyle={this.props.toggleSwitchOddsStyle} match={this.props.match} data={tableData}/>
                         <Footer/>
                     </div>
                 </div>
