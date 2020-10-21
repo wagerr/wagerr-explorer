@@ -96,12 +96,14 @@ const getTotalPayout = async (req, res) => {
   }
 };
 
-const getAddressesBalance = async (req, res) => {
+const getAddressesInfo = async (req, res) => {
   
   req.clearTimeout();
   try {
     const hashlist = req.params.hashlist.split(',');
-    console.log('getAddressesBalance hashlist', hashlist);
+    console.log('getAddressesInfo hashlist', hashlist);
+    let results = {};
+
     const txs = await TX
       .aggregate([
         { $match: { $or: [{ 'vout.address': {$in: hashlist} }, { 'vin.address': {$in: hashlist} }] } },
@@ -109,43 +111,99 @@ const getAddressesBalance = async (req, res) => {
       ])
       .allowDiskUse(true)
       .exec();    
-    const sent = txs.filter((tx) => tx.vout[0].address !== 'NON_STANDARD')
-      .reduce((acc, tx) => acc.plus(tx.vin.reduce((a, t) => {
-        if (hashlist.includes(t.address)) {
-          return a.plus(BigNumber(t.value));
+    
+    for (const hash of hashlist){
+      if (typeof results[hash] === 'undefined'){
+        results[hash] = {
+          sent : BigNumber(0.0),
+          received : BigNumber(0.0),
+          staked : BigNumber(0.0),  
+          balance: BigNumber(0.0),
+          tx_counts: 0
+        }     
+      }
+    }
+
+    txs.map((tx) => {      
+      let is_tx = {};
+
+      if (tx.vout[0].address !== 'NON_STANDARD'){
+        for (const t of tx.vin){
+          if (hashlist.includes(t.address)) {              
+            results[t.address]['sent'] = results[t.address]['sent'].plus(t.value);  
+            is_tx[t.address] = 1;
+          }  
         }
 
-        return a;
-      }, BigNumber(0.0))), BigNumber(0.0));
-
-    const received = txs.filter((tx) => tx.vout[0].address !== 'NON_STANDARD')
-      .reduce((acc, tx) => acc.plus(tx.vout.reduce((a, t) => {
-        if (hashlist.includes(t.address)) {
-          return a.plus(BigNumber(t.value));
+        for (const t of tx.vout){
+          if (hashlist.includes(t.address)) {              
+            results[t.address]['received'] = results[t.address]['received'].plus(t.value);  
+            is_tx[t.address] = 1;
+          }  
+        }
+      } else {
+        for (const t of tx.vin){
+          if (hashlist.includes(t.address)) {              
+            results[t.address]['staked'] = results[t.address]['staked'].plus(t.value);  
+            is_tx[t.address] = 1;
+          }  
         }
 
-        return a;
-      }, BigNumber(0.0))), BigNumber(0.0));
-
-    const staked = txs.filter((tx) => tx.vout[0].address === 'NON_STANDARD')
-      .reduce((acc, tx) => acc.minus(tx.vin.reduce((a, t) => {
-        if (hashlist.includes(t.address)) {
-          return a.plus(BigNumber(t.value));
+        for (const t of tx.vout){
+          if (hashlist.includes(t.address)) {              
+            results[t.address]['staked'] = results[t.address]['staked'].plus(t.value);  
+            is_tx[t.address] = 1;
+          }  
         }
+      }
+      for (const address of Object.keys(is_tx)){
+        results[address].tx_counts++;        
+      }
+      return tx;
+    })
 
-        return a;
-      }, BigNumber(0.0))).plus(tx.vout.reduce((a, t) => {
-        if (hashlist.includes(t.address)) {
-          return a.plus(BigNumber(t.value));
-        }
+    for (let key of Object.keys(results)){
+      let item = results[key];
+      item.balance = item.received.plus(item.staked).minus(item.sent);
+    }
 
-        return a;
-      }, BigNumber(0.0))), BigNumber(0.0));
+    console.log('tx length', txs.length);
 
-    const balance = received.plus(staked).minus(sent);
-    res.json({
-      balance: balance.toNumber()
-    });
+    // const sent = txs.filter((tx) => tx.vout[0].address !== 'NON_STANDARD')
+    //   .reduce((acc, tx) => acc.plus(tx.vin.reduce((a, t) => {
+    //     if (hashlist.includes(t.address)) {
+    //       return a.plus(BigNumber(t.value));
+    //     }
+
+    //     return a;
+    //   }, BigNumber(0.0))), BigNumber(0.0));
+
+    // const received = txs.filter((tx) => tx.vout[0].address !== 'NON_STANDARD')
+    //   .reduce((acc, tx) => acc.plus(tx.vout.reduce((a, t) => {
+    //     if (hashlist.includes(t.address)) {
+    //       return a.plus(BigNumber(t.value));
+    //     }
+
+    //     return a;
+    //   }, BigNumber(0.0))), BigNumber(0.0));
+
+    // const staked = txs.filter((tx) => tx.vout[0].address === 'NON_STANDARD')
+    //   .reduce((acc, tx) => acc.minus(tx.vin.reduce((a, t) => {
+    //     if (hashlist.includes(t.address)) {
+    //       return a.plus(BigNumber(t.value));
+    //     }
+
+    //     return a;
+    //   }, BigNumber(0.0))).plus(tx.vout.reduce((a, t) => {
+    //     if (hashlist.includes(t.address)) {
+    //       return a.plus(BigNumber(t.value));
+    //     }
+
+    //     return a;
+    //   }, BigNumber(0.0))), BigNumber(0.0));
+
+    // const balance = received.plus(staked).minus(sent);
+    res.json(results);
   } catch (err) {
     console.log(err);
     res.status(500).send(err.message || err);
@@ -156,5 +214,5 @@ module.exports = {
   getBetStatus,
   getCustomSupply,
   getTotalPayout,
-  getAddressesBalance
+  getAddressesInfo
 }
