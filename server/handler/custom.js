@@ -96,8 +96,65 @@ const getTotalPayout = async (req, res) => {
   }
 };
 
+const getAddressesBalance = async (req, res) => {
+  
+  req.clearTimeout();
+  try {
+    const hashlist = req.params.hashlist.split(',');
+    console.log('getAddressesBalance hashlist', hashlist);
+    const txs = await TX
+      .aggregate([
+        { $match: { $or: [{ 'vout.address': {$in: hashlist} }, { 'vin.address': {$in: hashlist} }] } },
+        { $sort: { blockHeight: -1 } },
+      ])
+      .allowDiskUse(true)
+      .exec();    
+    const sent = txs.filter((tx) => tx.vout[0].address !== 'NON_STANDARD')
+      .reduce((acc, tx) => acc.plus(tx.vin.reduce((a, t) => {
+        if (hashlist.includes(t.address)) {
+          return a.plus(BigNumber(t.value));
+        }
+
+        return a;
+      }, BigNumber(0.0))), BigNumber(0.0));
+
+    const received = txs.filter((tx) => tx.vout[0].address !== 'NON_STANDARD')
+      .reduce((acc, tx) => acc.plus(tx.vout.reduce((a, t) => {
+        if (hashlist.includes(t.address)) {
+          return a.plus(BigNumber(t.value));
+        }
+
+        return a;
+      }, BigNumber(0.0))), BigNumber(0.0));
+
+    const staked = txs.filter((tx) => tx.vout[0].address === 'NON_STANDARD')
+      .reduce((acc, tx) => acc.minus(tx.vin.reduce((a, t) => {
+        if (hashlist.includes(t.address)) {
+          return a.plus(BigNumber(t.value));
+        }
+
+        return a;
+      }, BigNumber(0.0))).plus(tx.vout.reduce((a, t) => {
+        if (hashlist.includes(t.address)) {
+          return a.plus(BigNumber(t.value));
+        }
+
+        return a;
+      }, BigNumber(0.0))), BigNumber(0.0));
+
+    const balance = received.plus(staked).minus(sent);
+    res.json({
+      balance: balance.toNumber()
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message || err);
+  }
+};
+
 module.exports = {
   getBetStatus,
   getCustomSupply,
-  getTotalPayout
+  getTotalPayout,
+  getAddressesBalance
 }
