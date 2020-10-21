@@ -87,7 +87,7 @@ export default class  GlobalMenuDesktop extends Component {
           <div className="global-menu-desktop__content-wrapper">
             <div className="global-menu-desktop__header">
               <div className="global-menu-desktop_logo_section">
-                <img src="/img/uiupdate/logo.png" className="global-menu-desktop__logo" />
+                <img src="/img/uiupdate/wgrlogomodernICONallwhite.svg" className="global-menu-desktop__logo" />
               </div>
               <div className="global-menu-desktop_links">
                 {this.getLinks()}
