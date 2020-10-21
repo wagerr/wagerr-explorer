@@ -45,7 +45,7 @@ export default class CardOracleProfit extends Component {
 
     return (
       <div className="animated fadeInUp">
-      <Card title="Estimated Oracle Earnings(COIN/BTC/USD)" className="card--status" >
+      <Card title="Estimated Oracle Earnings(COIN/USD)" className="card--status" >
         <div className="card__row bg-eee">
           <span className="card__label">DAILY</span>
           <span className="card__result">
