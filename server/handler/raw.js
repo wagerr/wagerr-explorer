@@ -65,9 +65,15 @@ const getunspenttransactions = async (req, res) => {
         if (!req.query.address || !isNaN(req.query.address)) {
             throw new Error('Param must have address');
         }
-
-        const txs = await UTXO.findOne({ address: req.query.address });
-        res.json(txs);
+        let result = []
+        let txs = await UTXO.find({ address: req.query.address });    
+        result = JSON.parse(JSON.stringify(txs));    
+        result = result.map((tx) => {                    
+          tx.satoshi = tx.value * 100000000;
+          console.log(tx);          
+          return tx;
+        })        
+        res.json(result);
     } catch (err) {
         console.log(err);
         res.status(500).send(err.message || err);
