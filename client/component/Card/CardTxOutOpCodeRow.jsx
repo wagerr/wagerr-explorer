@@ -10,6 +10,37 @@ import Table from '../Table';
 import BetModal from '../Modal';
 import { TXS } from '../../constants';
 
+Number.prototype.toFixedNoRounding = function(n) {
+  const reg = new RegExp("^-?\\d+(?:\\.\\d{0," + n + "})?", "g")
+  const a = this.toString().match(reg)[0];
+  const dot = a.indexOf(".");
+  if (dot === -1) { // integer, insert decimal dot and pad up zeros
+      return a + "." + "0".repeat(n);
+  }
+  const b = n - (a.length - dot) + 1;
+  return b > 0 ? (a + "0".repeat(b)) : a;
+}
+
+const convertToOdds = (odds, is_American, is_Decimal) => {
+  let ret = odds;
+  if (is_American){
+    odds = parseFloat(odds);
+    ret = parseInt((odds - 1) * 100);
+
+    if (odds < 2)
+      ret = Math.round((-100) / (odds - 1));
+
+    if (odds == 0) ret = 0;
+  }
+
+  if (is_Decimal){
+    ret = ret == 0 ? ret : (1 + (ret - 1) * 0.94).toFixedNoRounding(2);
+  }
+  
+  if (ret > 0) ret = `+${ret}`
+  return ret;
+}
+
 export default class CardTxOutOpCodeRow extends Component {
 
   constructor(props) {
@@ -18,6 +49,7 @@ export default class CardTxOutOpCodeRow extends Component {
 
   render() {    
     let txAddress;
+    const { toggleSwitchOddsStyle, toggleSwitchOdds } = this.props;
     return (
       <div className="card--block opcode">
         <div className="card__row">        
@@ -55,7 +87,7 @@ export default class CardTxOutOpCodeRow extends Component {
           </div>}
           <div className="card__row">
             <span className="card__label">Price</span>
-            <span className="card__result">{ this.props.tx.price }</span>
+            <span className="card__result">{ convertToOdds(this.props.tx.price, toggleSwitchOddsStyle, toggleSwitchOdds) }</span>
           </div>  
           <div className="card__row">
             <span className="card__label">BetValue</span>
