@@ -72,8 +72,9 @@ class TX extends Component {
     } else if (this.state.loading) {
       return this.renderLoading();
     }
-
+    const { toggleSwitchOddsStyle, toggleSwitchOdds } = this.props;
     return (
+      
       <div className="content content-top" id="body-content">
         <ExplorerMenu onSearch={ this.props.handleSearch } />        
         <div className="content__wrapper_total">          
@@ -104,7 +105,7 @@ class TX extends Component {
                 </div>
                 <div className="col">
                   <HorizontalRule title="Recipients" />
-                  <CardTXOut txs={ this.state.tx.vout } />
+                  <CardTXOut txs={ this.state.tx.vout } toggleSwitchOdds={toggleSwitchOdds} toggleSwitchOddsStyle={toggleSwitchOddsStyle}/>
                 </div>
               </div>
             </div>

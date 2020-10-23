@@ -33,6 +33,7 @@ export default class CardTXOut extends Component {
 
   render() {
     let txAddress;
+    const { toggleSwitchOddsStyle, toggleSwitchOdds } = this.props;
     return (
       <CardBigTable
         cols={ this.state.cols }
@@ -40,7 +41,7 @@ export default class CardTXOut extends Component {
           ...tx,
           address: (tx.address.indexOf('OP_RETURN 1|') !== -1 || tx.address.indexOf('OP_RETURN 2|') !== -1 || tx.address.indexOf('OP_RETURN 3|') !== -1) ?
               <Link to={`/bet/event/${ encodeURIComponent(tx.address.split('|')[2]) }`}>{tx.address}</Link>
-              :  (tx.address.indexOf('OP_RETURN') !== -1 ) ? <CardTxOutOpCodeRow tx={tx} /> : <Link to={`/address/${tx.address}`}>{tx.address}</Link>,
+              :  (tx.address.indexOf('OP_RETURN') !== -1 ) ? <CardTxOutOpCodeRow tx={tx} toggleSwitchOdds={toggleSwitchOdds} toggleSwitchOddsStyle={toggleSwitchOddsStyle}/> : <Link to={`/address/${tx.address}`}>{tx.address}</Link>,
           value: (
             (tx.address === config.coin.oracle_payout_address) ?
               <span>  <span className="badge badge-success">Oracle</span>
