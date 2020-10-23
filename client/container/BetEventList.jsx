@@ -33,20 +33,36 @@ import GlobalSwitch from "../component/Menu/GlobalSwitch";
 import Utils from "../core/utils";
 import Sliding from '../component/Sliding'
 
-const convertToAmericanOdds = (odds) => {
-
-    odds = parseFloat(odds);
-    let ret = parseInt((odds - 1) * 100);
-
-    if (odds < 2)
-        ret = Math.round((-100) / (odds - 1));
-
-    if (odds == 0) ret = 0;
-
-    if (ret > 0) ret = `+${ret}`
-
-    return ret;
+Number.prototype.toFixedNoRounding = function(n) {
+    const reg = new RegExp("^-?\\d+(?:\\.\\d{0," + n + "})?", "g")
+    const a = this.toString().match(reg)[0];
+    const dot = a.indexOf(".");
+    if (dot === -1) { // integer, insert decimal dot and pad up zeros
+        return a + "." + "0".repeat(n);
+    }
+    const b = n - (a.length - dot) + 1;
+    return b > 0 ? (a + "0".repeat(b)) : a;
 }
+
+const convertToOdds = (odds, is_American, is_Decimal) => {
+    let ret = odds;
+    if (is_American){
+      odds = parseFloat(odds);
+      ret = parseInt((odds - 1) * 100);
+  
+      if (odds < 2)
+        ret = Math.round((-100) / (odds - 1));
+  
+      if (odds == 0) ret = 0;
+    }
+  
+    if (is_Decimal){
+      ret = ret == 0 ? ret : (1 + (ret - 1) * 0.94).toFixedNoRounding(2);
+    }
+    
+    if (ret > 0) ret = `+${ret}`
+    return ret;
+  }
 
 class BetEventList extends Component {
     static defaultProps = {
@@ -394,19 +410,10 @@ class BetEventList extends Component {
                                             let origdrawOdds = (event.events[0].drawOdds / 10000)
                                             let origawayOdds = (event.events[0].awayOdds / 10000)
 
-
-                                            if (toggleSwitchOdds) {
-                                                homeOdds = homeOdds == 0 ? homeOdds : (1 + (homeOdds - 1) * 0.94).toFixed(2);
-                                                drawOdds = drawOdds == 0 ? drawOdds : (1 + (drawOdds - 1) * 0.94).toFixed(2);
-                                                awayOdds = awayOdds == 0 ? awayOdds : (1 + (awayOdds - 1) * 0.94).toFixed(2);
-                                            }
-
-                                            if (toggleSwitchOddsStyle) {
-                                                homeOdds = convertToAmericanOdds(homeOdds);
-                                                drawOdds = convertToAmericanOdds(drawOdds);
-                                                awayOdds = convertToAmericanOdds(awayOdds);
-                                            }
-
+                                            homeOdds = convertToOdds(homeOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                            drawOdds = convertToOdds(drawOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                            awayOdds = convertToOdds(awayOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                        
                                             if (event.events.length > 1) {
                                                 let lastHomeOdds = (event.events[1].homeOdds / 10000)
                                                 let lastDrawOdds = (event.events[1].drawOdds / 10000)

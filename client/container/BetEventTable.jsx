@@ -13,6 +13,16 @@ import { translate } from 'react-i18next';
 import { connect } from 'react-redux';
 import CardBigTable from "../component/Card/CardBigTable";
 
+Number.prototype.toFixedNoRounding = function(n) {
+  const reg = new RegExp("^-?\\d+(?:\\.\\d{0," + n + "})?", "g")
+  const a = this.toString().match(reg)[0];
+  const dot = a.indexOf(".");
+  if (dot === -1) { // integer, insert decimal dot and pad up zeros
+      return a + "." + "0".repeat(n);
+  }
+  const b = n - (a.length - dot) + 1;
+  return b > 0 ? (a + "0".repeat(b)) : a;
+}
 
 const convertToOdds = (odds, is_American, is_Decimal) => {
   let ret = odds;
@@ -27,7 +37,7 @@ const convertToOdds = (odds, is_American, is_Decimal) => {
   }
 
   if (is_Decimal){
-    ret = ret == 0 ? ret : (1 + (ret - 1) * 0.94).toFixed(2);
+    ret = ret == 0 ? ret : (1 + (ret - 1) * 0.94).toFixedNoRounding(2);
   }
   
   if (ret > 0) ret = `+${ret}`
