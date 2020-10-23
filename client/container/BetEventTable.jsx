@@ -14,18 +14,23 @@ import { connect } from 'react-redux';
 import CardBigTable from "../component/Card/CardBigTable";
 
 
-const convertToAmericanOdds = (odds) => {
+const convertToOdds = (odds, is_American, is_Decimal) => {
+  let ret = odds;
+  if (is_American){
+    odds = parseFloat(odds);
+    ret = parseInt((odds - 1) * 100);
 
-  odds = parseFloat(odds);
-  let ret = parseInt((odds - 1) * 100);
-
-  if (odds < 2)
+    if (odds < 2)
       ret = Math.round((-100) / (odds - 1));
 
-  if (odds == 0) ret = 0;
+    if (odds == 0) ret = 0;
+  }
 
+  if (is_Decimal){
+    ret = ret == 0 ? ret : (1 + (ret - 1) * 0.94).toFixed(2);
+  }
+  
   if (ret > 0) ret = `+${ret}`
-
   return ret;
 }
 
@@ -207,18 +212,10 @@ class BetEventTable extends Component {
               let drawOdds = event.drawOdds / 10000
               let awayOdds = event.awayOdds / 10000
 
-              if (toggleSwitchOdds) {
-                homeOdds = homeOdds == 0 ? homeOdds : (1 + (homeOdds - 1) * 0.94).toFixed(2);
-                drawOdds = drawOdds == 0 ? drawOdds : (1 + (drawOdds - 1) * 0.94).toFixed(2);
-                awayOdds = awayOdds == 0 ? awayOdds : (1 + (awayOdds - 1) * 0.94).toFixed(2);
-              }
-
-              if (toggleSwitchOddsStyle) {
-                homeOdds = convertToAmericanOdds(homeOdds);
-                drawOdds = convertToAmericanOdds(drawOdds);
-                awayOdds = convertToAmericanOdds(awayOdds);
-              }
-
+              homeOdds = convertToOdds(homeOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              drawOdds = convertToOdds(drawOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              awayOdds = convertToOdds(awayOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              
               return {
                 ...event,
                 createdAt: date24Format(event.createdAt),
@@ -235,13 +232,7 @@ class BetEventTable extends Component {
             cols={bottomOneCols}
             data={sortBy(this.state.MoneyLine.map((action) => {
               let Odds = action.odds
-              if (toggleSwitchOdds) {
-                Odds = Odds == 0 ? Odds : (1 + (Odds - 1) * 0.94).toFixed(2);                
-              }
-
-              if (toggleSwitchOddsStyle) {
-                Odds = convertToAmericanOdds(Odds);
-              }
+              Odds = convertToOdds(Odds, toggleSwitchOddsStyle, toggleSwitchOdds);
 
               return {
                 ...action,
@@ -269,15 +260,8 @@ class BetEventTable extends Component {
                 let homeOdds =  action.homeOdds / 10000                
                 let awayOdds = action.awayOdds / 10000
 
-                if (toggleSwitchOdds) {
-                  homeOdds = homeOdds == 0 ? homeOdds : (1 + (homeOdds - 1) * 0.94).toFixed(2);                  
-                  awayOdds = awayOdds == 0 ? awayOdds : (1 + (awayOdds - 1) * 0.94).toFixed(2);
-                }
-  
-                if (toggleSwitchOddsStyle) {
-                  homeOdds = convertToAmericanOdds(homeOdds);                  
-                  awayOdds = convertToAmericanOdds(awayOdds);
-                }
+                homeOdds = convertToOdds(homeOdds, toggleSwitchOddsStyle, toggleSwitchOdds);                
+                awayOdds = convertToOdds(awayOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
 
                 return {
                   ...action,
@@ -297,13 +281,7 @@ class BetEventTable extends Component {
                 const betChoose = action.betChoose.replace('Spreads - ', '');
                 const spreadNum = Math.abs(parseInt(action.spreadAwayPoints, 10)) / 10;
                 let Odds = betChoose == 'Away' ? action.spreadAwayOdds / 10000 : action.spreadHomeOdds / 10000
-                if (toggleSwitchOdds) {
-                  Odds = Odds == 0 ? Odds : (1 + (Odds - 1) * 0.94).toFixed(2);                
-                }
-  
-                if (toggleSwitchOddsStyle) {
-                  Odds = convertToAmericanOdds(Odds);
-                }
+                Odds = convertToOdds(Odds, toggleSwitchOddsStyle, toggleSwitchOdds);                                
 
                 return {
                   ...action,
@@ -331,16 +309,9 @@ class BetEventTable extends Component {
               let overOdds =  action.overOdds / 10000                
               let underOdds = action.underOdds / 10000
 
-              if (toggleSwitchOdds) {
-                overOdds = overOdds == 0 ? overOdds : (1 + (overOdds - 1) * 0.94).toFixed(2);                  
-                underOdds = underOdds == 0 ? underOdds : (1 + (underOdds - 1) * 0.94).toFixed(2);
-              }
-
-              if (toggleSwitchOddsStyle) {
-                overOdds = convertToAmericanOdds(overOdds);                  
-                underOdds = convertToAmericanOdds(underOdds);
-              }
-
+              underOdds = convertToOdds(underOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              overOdds = convertToOdds(overOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              
               return {
                 ...action,
                 createdAt: date24Format(action.createdAt),
@@ -357,14 +328,7 @@ class BetEventTable extends Component {
             cols={bottomThreeCols}
             data={sortBy(this.state.Totals.map((action) => {
               let Odds = action.betChoose.includes('Over') ? action.overOdds / 10000 : action.underOdds / 10000
-              if (toggleSwitchOdds) {
-                Odds = Odds == 0 ? Odds : (1 + (Odds - 1) * 0.94).toFixed(2);                
-              }
-
-              if (toggleSwitchOddsStyle) {
-                Odds = convertToAmericanOdds(Odds);
-              }
-
+              Odds = convertToOdds(Odds, toggleSwitchOddsStyle, toggleSwitchOdds);
               return {
                 ...action,
                 createdAt: date24Format(action.createdAt),
