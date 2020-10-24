@@ -262,15 +262,15 @@ class BetEventList extends Component {
             { key: 'event', title: t('eventId') },
             { key: 'name', title: t('name'), className: 'w-m-180' },
             // {key: 'round', title: t('round')},
-            { key: 'homeTeam', title: t('homeTeam'), className: 'w-m-140' },
-            { key: 'awayTeam', title: t('awayTeam'), className: 'w-m-140' },
+            { key: 'homeTeam', title: t('homeTeam'), className: 'w-m-120' },
+            { key: 'awayTeam', title: t('awayTeam'), className: 'w-m-120' },
             { key: 'homeOdds', title: '1' },
             { key: 'drawOdds', title: 'x' },
             { key: 'awayOdds', title: '2' },
-            { key: 'supplyChange', title: t('supplyChange'), className: 'w-m-120' },
+            { key: 'supplyChange', title: t('supplyChange'), className: 'w-m-100' },
             { key: 'betAmount', title: t('betAmount'), className: 'w-m-100' },
             { key: 'betStatus', title: t('betStatus'), className: 'w-m-100' },
-            { key: 'seeDetail', title: t('detail'), className: 'w-m-100' },
+            { key: 'seeDetail', title: t('detail'), className: 'w-m-95' },
         ]
         if (!!this.state.error) {
             return this.renderError(this.state.error)

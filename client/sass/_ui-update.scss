@@ -609,6 +609,9 @@ tr.table-header-long {
 }
 tr.table-item {
 	font-size: 16px;
+	@media (max-width: 1644px), (min-width: 1400px){
+		font-size: 14.4px!important;
+	}
 	@media (max-width: 900px){
 		font-size: 12px!important;
 	}
@@ -851,6 +854,9 @@ th.mobile-recipents::after {
 }
 .w-m-180 {
 	min-width: 180px;
+	@media (max-width: 1644px), (min-width: 1400px) {
+		min-width: 120px;
+	}
 }
 .w-m-160 {
 	min-width: 160px;
@@ -863,6 +869,12 @@ th.mobile-recipents::after {
 }
 .w-m-100 {
 	min-width: 100px;
+}
+.w-m-95 {
+	min-width: 95px;
+	@media (max-width: 1644px), (min-width: 1400px) {
+		min-width: 68px;
+	}
 }
 .w-m-80 {
 	min-width: 80px;
@@ -956,4 +968,9 @@ th.mobile-recipents::after {
 .slick-list {
 	border-left: 1px solid;
 	border-right: 1px solid;
+}
+.card-mobile-table {
+	margin-top: 4px;
+	background: #FFF;
+	border: 1px solid grey;
 }
