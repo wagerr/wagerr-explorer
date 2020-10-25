@@ -18,7 +18,7 @@
 	}
 }
 
-.global-menu-desktop-explore {
+.global-menu-desktop-unexplorer {
 	background:url('/img/uiupdate/header_back.png');
 	height: 93px;
 }
@@ -100,6 +100,13 @@
 	margin:auto;
 	font-size: 14px;
 }
+.global-menu-desktop__item-label--disabled{
+	margin:auto;
+	font-size: 14px;
+	color: #d0d0d0;
+	text-shadow: #808080 1px 1px 0;
+	opacity: 0.9;
+}
 
 .global-menu-desktop_wallet_setion{
 	width: 100%;
@@ -112,7 +119,7 @@
 .global-menu-desktop_wallet_connection{
 	padding: 5px 10px;
 	float: right;
-	width: 160px;
+	width: 180px;
 	height: 100%;
 	background-color: #570502;	
 	@media (max-width: 768px) {
@@ -190,4 +197,7 @@
 }
 .ft-12 {
 	font-size: 12px;
+}
+.disabled-link {
+	pointer-events: none;
 }

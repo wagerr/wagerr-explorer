@@ -2,14 +2,10 @@
 import Component from 'core/Component';
 import PropTypes from 'prop-types';
 import React from 'react';
-
 import { Link } from 'react-router-dom';
-
-import Icon from '../Icon';
 import SearchBar from '../SearchBar';
-import GlobalSwitch from './GlobalSwitch';
 
-export default class GlobalMenuDesktop extends Component {
+export default class  GlobalMenuDesktop extends Component {
   static propTypes = {
     links: PropTypes.array
   };
@@ -20,7 +16,6 @@ export default class GlobalMenuDesktop extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
       isOpen: true,
     }
@@ -30,23 +25,35 @@ export default class GlobalMenuDesktop extends Component {
     const { props, state } = this;
 
     return props.links.map((i, idx) => {
-      const isActive = props.location.pathname.includes(i.href === '#' ? 'help': i.href);      
-      const iconSource = i.icon;
+      const { pathname } = this.props.location;    
+  
+      let explore_class = false;
+      if (!pathname.includes('/bethistory') && !pathname.includes('betting') && !pathname.includes('lottos') && !pathname.includes('help'))
+        explore_class = true
+
+      let isActive = false;
+      let isDisabled = false;
+
+      let disabledList = ['/bethistory', '/lottos', '/betting', '/help'];
+      if (disabledList.includes(i.href)) isDisabled = true;
+
+      if (pathname.includes('help') && i.href === '/help') isActive = true;
+      if (pathname.includes('lottos') && i.href === '/lottos') isActive = true;
+      if (pathname.includes('betting') && i.href === '/betting') isActive = true;
+      if (pathname.includes('bethistory') && i.href === '/bethistory') isActive = true;
+      if (explore_class && i.href === '/') isActive = true; 
+      const iconSource = isDisabled ? i.gicon: i.icon;
+
       return (
-        <div
-          className={`global-menu-desktop__item ${isActive ? (props.location.pathname.includes('explorer') ? 'global-menu-desktop__item--is-active' : 'global-menu-desktop__item2--is-active') : ''}`}
-        >
-          <Link
-            key={idx}
-            to={i.href}
-            className="w3-dropdown-hover"
-          >
+        <Link to={i.href} key={idx} className={`${isDisabled && 'disabled-link'} global-menu-desktop__item ${isActive ? (explore_class ? 'global-menu-desktop__item--is-active' : 'global-menu-desktop__item2--is-active') : ''}`}>
+          <div className="w3-dropdown-hover">
             <img
               alt={i.label}
-              className="global-menu-desktop__item-icon "
+              className="global-menu-desktop__item-icon"
+              style={{ opacity: 0.9}}
               src={iconSource}
               title={this.state.isOpen ? null : i.label} />
-            <span className="w3-button global-menu-desktop__item-label " >{i.label}</span>
+            <span className={`w3-button global-menu-desktop__item-label ${isDisabled && 'global-menu-desktop__item-label--disabled'}`}>{i.label}</span>
             {
               i.submenu && <div className="w3-dropdown-content w3-bar-block ">
                 {i.submenu.map((x, key) =>
@@ -56,9 +63,11 @@ export default class GlobalMenuDesktop extends Component {
                   </div>
                 </Link>
               )}
-              </div>}
-          </Link>
-        </div>
+              </div>
+            }
+          </div>
+
+        </Link>
       )
     })
   };
@@ -67,16 +76,18 @@ export default class GlobalMenuDesktop extends Component {
 
   render() {
 
-    const { pathname } = this.props.location;
-    const explore_class = !pathname.includes('explorer') && 'global-menu-desktop-explore';
-
+    const { pathname } = this.props.location;    
+    let explore_class = '';
+    if (pathname.includes('/bethistory') || pathname.includes('betting') || pathname.includes('lottos') || pathname.includes('help'))
+      explore_class = 'global-menu-desktop-unexplorer'
+    console.log('explore_class --:', explore_class);
     return (
-      <div className={pathname.includes('help') && 'h-140'}>
+      <div className={pathname.includes('help') ? 'h-140' : ''}>
         <div className={`global-menu-desktop ${explore_class}`}>
           <div className="global-menu-desktop__content-wrapper">
             <div className="global-menu-desktop__header">
               <div className="global-menu-desktop_logo_section">
-                <img src="/img/uiupdate/logo.png" className="global-menu-desktop__logo" />
+                <img src="/img/uiupdate/wgrlogomodernICONallwhite.svg" className="global-menu-desktop__logo" />
               </div>
               <div className="global-menu-desktop_links">
                 {this.getLinks()}
@@ -87,18 +98,19 @@ export default class GlobalMenuDesktop extends Component {
                   <span className="global-menu-desktop_wallet_balance">0 WGR</span>
                   <div className="global-menu-desktop_wallet_connection_status">
                     <div className="wallet_connection_status_mark"></div>
-                    <span className="wallet_connection_status_text">Wallet Connected</span>
+                    <span className="wallet_connection_status_text">Wallet Disconnected</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           {
-            pathname.includes('explorer') &&
+            explore_class !==  'global-menu-desktop-unexplorer' &&
             <SearchBar
               className="d-none d-md-block"
               onSearch={this.props.handleSearch}
-            />}
+            />
+          }
         </div>
       </div>
     )

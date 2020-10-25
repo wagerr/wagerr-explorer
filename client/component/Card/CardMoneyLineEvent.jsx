@@ -8,6 +8,21 @@ import { compose } from 'redux'
 import { translate } from 'react-i18next'
 import connect from 'react-redux/es/connect/connect'
 
+const convertToAmericanOdds = (odds) => {
+
+  odds = parseFloat(odds);
+  let ret = parseInt((odds - 1) * 100);
+
+  if (odds < 2)
+      ret = Math.round((-100) / (odds - 1));
+
+  if (odds == 0) ret = 0;
+
+  if (ret > 0) ret = `+${ret}`
+
+  return ret;
+}
+
 const CardMoneyLineEvent = ({eventInfo, t}) => {
   if (eventInfo) {
     let MoneyLineBets = { home: [], away: [], draw: [] };
@@ -36,11 +51,11 @@ const CardMoneyLineEvent = ({eventInfo, t}) => {
       <h2 className='ml-2'>Money Line</h2>
       <div className="card__row bg-eee">
         <span className="card__label">{t('time')}:</span>
-        {timeStamp24Format(eventInfo.events[0].timeStamp)}
+        <span className="card__result">{timeStamp24Format(eventInfo.events[0].timeStamp)}</span>        
       </div>
       <div className="card__row">
         <span className="card__label">{t('league')}:</span>
-        {eventInfo.events[0].league}
+        <span className="card__result">{eventInfo.events[0].league}</span>
       </div>
       <div className="card__row bg-eee">
         <span className="card__label">{t('homeTeam')}:</span>

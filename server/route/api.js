@@ -70,8 +70,8 @@ router.get('/getnetworkhashps', iquidus.getnetworkhashps);
 // Custom
 router.get('/custom/betstatus', custom.getBetStatus);
 router.get('/custom/supply', custom.getCustomSupply);
-
 router.get('/custom/totalpayout', custom.getTotalPayout);
+router.get('/custom/getaddressesinfo/:hashlist', custom.getAddressesInfo);
 
 // OpCode decryption
 router.get('/opcodes/:hex_value', opCode.decodeOP);
@@ -82,8 +82,6 @@ router.get('/gettransaction', raw.gettransaction);
 
 router.get('/getunspenttransactions', raw.getunspenttransactions);
 
-router.get('/getunspenttransactions', raw.getunspenttransactions);
-
 router.get('/getfeeinfo', raw.getfeeinfo);
 
 router.get('/getblocktransactions', raw.getblocktransactions);
@@ -91,5 +89,7 @@ router.get('/getblocktransactions', raw.getblocktransactions);
 router.post('/sendrawtransaction', raw.sendRawTransaction);
 
 router.get('/getaddresstransactioncount/:hash', raw.getAddress);
+
+
 
 module.exports =  router;

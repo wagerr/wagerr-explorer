@@ -126,7 +126,7 @@ export default class CardBetEvents extends Component {
                   </td>
                   <td className="text-center">{item.bet_status}</td>
                   <td className="text-center" style={{ minWidth: 100 }}>
-                    <Link to={'/explorer/betevents/:' + item.id}>{item.detail}</Link></td>
+                    <Link to={'/betevents/:' + item.id}>{item.detail}</Link></td>
                 </tr>
               )}
           </tbody>

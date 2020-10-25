@@ -13,6 +13,37 @@ import { translate } from 'react-i18next';
 import { connect } from 'react-redux';
 import CardBigTable from "../component/Card/CardBigTable";
 
+Number.prototype.toFixedNoRounding = function(n) {
+  const reg = new RegExp("^-?\\d+(?:\\.\\d{0," + n + "})?", "g")
+  const a = this.toString().match(reg)[0];
+  const dot = a.indexOf(".");
+  if (dot === -1) { // integer, insert decimal dot and pad up zeros
+      return a + "." + "0".repeat(n);
+  }
+  const b = n - (a.length - dot) + 1;
+  return b > 0 ? (a + "0".repeat(b)) : a;
+}
+
+const convertToOdds = (odds, is_American, is_Decimal) => {
+  let ret = odds;
+  if (is_American){
+    odds = parseFloat(odds);
+    ret = parseInt((odds - 1) * 100);
+
+    if (odds < 2)
+      ret = Math.round((-100) / (odds - 1));
+
+    if (odds == 0) ret = 0;
+  }
+
+  if (is_Decimal){
+    ret = ret == 0 ? ret : (1 + (ret - 1) * 0.94).toFixedNoRounding(2);
+  }
+  
+  if (ret > 0) ret = `+${ret}`
+  return ret;
+}
+
 class BetEventTable extends Component {
   static propTypes = {
     match: PropTypes.object.isRequired,
@@ -120,7 +151,9 @@ class BetEventTable extends Component {
 
   render() {
     const { t } = this.props.data;
+    const { toggleSwitchOddsStyle, toggleSwitchOdds } = this.props;
 
+    console.log('toggleSwitchOddsStyle, toggleSwitchOdds', toggleSwitchOddsStyle, toggleSwitchOdds);
     const topOneCols = [
       {key: 'createdAt', title: t('time')},
       {key: 'homeOdds', title: t('homeOdds')},
@@ -184,15 +217,23 @@ class BetEventTable extends Component {
         <div>
           <CardBigTable
             cols={topOneCols}
-            data={sortBy(this.props.data.eventInfo.events.map((event) => {
+            data={sortBy(this.props.data.eventInfo.events.map((event) => {              
+              let homeOdds =  event.homeOdds / 10000
+              let drawOdds = event.drawOdds / 10000
+              let awayOdds = event.awayOdds / 10000
+
+              homeOdds = convertToOdds(homeOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              drawOdds = convertToOdds(drawOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              awayOdds = convertToOdds(awayOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              
               return {
                 ...event,
                 createdAt: date24Format(event.createdAt),
-                homeOdds: event.homeOdds / 10000,
-                drawOdds: event.drawOdds / 10000,
-                awayOdds: event.awayOdds / 10000,
+                homeOdds: homeOdds,
+                drawOdds: drawOdds,
+                awayOdds: awayOdds,
                 txId: (
-                  <Link to={`/explorer/tx/${ event.txId }`}>{event.txId}</Link>
+                  <Link to={`/tx/${ event.txId }`}>{event.txId}</Link>
                 )
               }
             }), ['createdAt'])}
@@ -200,16 +241,19 @@ class BetEventTable extends Component {
           <CardBigTable
             cols={bottomOneCols}
             data={sortBy(this.state.MoneyLine.map((action) => {
+              let Odds = action.odds
+              Odds = convertToOdds(Odds, toggleSwitchOddsStyle, toggleSwitchOdds);
+
               return {
                 ...action,
                 createdAt: date24Format(action.createdAt),
                 bet: action.betChoose.replace('Money Line - ', ''),
-                odds: action.odds,
+                odds: Odds,
                 value: action.betValue
                   ? (<span
                     className="badge badge-danger">-{numeral(action.betValue).format('0,0.00000000')} WGR</span>) : 'd',
                 txId: (
-                  <Link to={`/explorer/tx/${ action.txId }`}>{action.txId}</Link>
+                  <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
                 )
               }
             }), ['createdAt'])}
@@ -222,14 +266,21 @@ class BetEventTable extends Component {
             <CardBigTable
               cols={topTwoCols}
               data={sortBy(this.props.data.betSpreads.map((action) => {
+
+                let homeOdds =  action.homeOdds / 10000                
+                let awayOdds = action.awayOdds / 10000
+
+                homeOdds = convertToOdds(homeOdds, toggleSwitchOddsStyle, toggleSwitchOdds);                
+                awayOdds = convertToOdds(awayOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+
                 return {
                   ...action,
                   createdAt: date24Format(action.createdAt),
-                  homeOdds: action.homeOdds / 10000,
+                  homeOdds: homeOdds,
                   spread: `${displayNum(action.homePoints, 10)}/${displayNum(action.awayPoints, 10)}`,
-                  awayOdds: action.awayOdds / 10000,
+                  awayOdds: awayOdds,
                   txId: (
-                    <Link to={`/explorer/tx/${ action.txId }`}>{action.txId}</Link>
+                    <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
                   )
                 }
               }), ['createdAt'])}
@@ -239,18 +290,20 @@ class BetEventTable extends Component {
               data={sortBy(this.state.Spreads.map((action) => {
                 const betChoose = action.betChoose.replace('Spreads - ', '');
                 const spreadNum = Math.abs(parseInt(action.spreadAwayPoints, 10)) / 10;
+                let Odds = betChoose == 'Away' ? action.spreadAwayOdds / 10000 : action.spreadHomeOdds / 10000
+                Odds = convertToOdds(Odds, toggleSwitchOddsStyle, toggleSwitchOdds);                                
 
                 return {
                   ...action,
                   createdAt: date24Format(action.createdAt),
                   bet: betChoose, // `${action.homeOdds / 10000}/${action.awayOdds / 10000}`,
                   spread: betChoose == 'Away' ? displayNum(action.spreadAwayPoints, 10) : displayNum(action.spreadHomePoints, 10),
-                  odds: betChoose == 'Away' ? action.spreadAwayOdds / 10000 : action.spreadHomeOdds / 10000,
+                  odds: Odds,
                   value: action.betValue
                     ? (<span
                       className="badge badge-danger">-{numeral(action.betValue).format('0,0.00000000')} WGR</span>) : '',
                   txId: (
-                    <Link to={`/explorer/tx/${ action.txId }`}>{action.txId}</Link>
+                    <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
                   )
                 }
               }), ['createdAt'])}
@@ -263,14 +316,20 @@ class BetEventTable extends Component {
           <CardBigTable
             cols={topThreeCols}
             data={sortBy(this.props.data.betTotals.map((action) => {
+              let overOdds =  action.overOdds / 10000                
+              let underOdds = action.underOdds / 10000
+
+              underOdds = convertToOdds(underOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              overOdds = convertToOdds(overOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              
               return {
                 ...action,
                 createdAt: date24Format(action.createdAt),
-                overOdds: action.overOdds / 10000,
+                overOdds: overOdds,
                 overUnder: action.points / 10,
-                underOdds: action.underOdds / 10000,
+                underOdds: underOdds,
                 txId: (
-                  <Link to={`/explorer/tx/${ action.txId }`}>{action.txId}</Link>
+                  <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
                 )
               }
             }), ['createdAt'])}
@@ -278,17 +337,19 @@ class BetEventTable extends Component {
           <CardBigTable
             cols={bottomThreeCols}
             data={sortBy(this.state.Totals.map((action) => {
+              let Odds = action.betChoose.includes('Over') ? action.overOdds / 10000 : action.underOdds / 10000
+              Odds = convertToOdds(Odds, toggleSwitchOddsStyle, toggleSwitchOdds);
               return {
                 ...action,
                 createdAt: date24Format(action.createdAt),
                 bet: action.betChoose.replace('Money Line - ', ''),
                 // overUnder: ((action.homeOdds / action.awayOdds + action.homeOdds) * 100).toFixed(1),
                 overUnder: (action.points / 10).toFixed(1),
-                odds: action.betChoose.includes('Over') ? action.overOdds / 10000 : action.underOdds / 10000,
+                odds: Odds,
                 value: action.betValue
                   ? (<span className="badge badge-danger">-{numeral(action.betValue).format('0,0.00000000')} WGR</span>) : '',
                 txId: (
-                  <Link to={`/explorer/tx/${ action.txId }`}>{action.txId}</Link>
+                  <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
                 )
               }
             }), ['createdAt'])}

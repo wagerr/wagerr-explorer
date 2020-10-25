@@ -33,20 +33,36 @@ import GlobalSwitch from "../component/Menu/GlobalSwitch";
 import Utils from "../core/utils";
 import Sliding from '../component/Sliding'
 
-const convertToAmericanOdds = (odds) => {
-
-    odds = parseFloat(odds);
-    let ret = parseInt((odds - 1) * 100);
-
-    if (odds < 2)
-        ret = Math.round((-100) / (odds - 1));
-
-    if (odds == 0) ret = 0;
-
-    if (ret > 0) ret = `+${ret}`
-
-    return ret;
+Number.prototype.toFixedNoRounding = function(n) {
+    const reg = new RegExp("^-?\\d+(?:\\.\\d{0," + n + "})?", "g")
+    const a = this.toString().match(reg)[0];
+    const dot = a.indexOf(".");
+    if (dot === -1) { // integer, insert decimal dot and pad up zeros
+        return a + "." + "0".repeat(n);
+    }
+    const b = n - (a.length - dot) + 1;
+    return b > 0 ? (a + "0".repeat(b)) : a;
 }
+
+const convertToOdds = (odds, is_American, is_Decimal) => {
+    let ret = odds;
+    if (is_American){
+      odds = parseFloat(odds);
+      ret = parseInt((odds - 1) * 100);
+  
+      if (odds < 2)
+        ret = Math.round((-100) / (odds - 1));
+  
+      if (odds == 0) ret = 0;
+    }
+  
+    if (is_Decimal){
+      ret = ret == 0 ? ret : (1 + (ret - 1) * 0.94).toFixedNoRounding(2);
+    }
+    
+    if (ret > 0) ret = `+${ret}`
+    return ret;
+  }
 
 class BetEventList extends Component {
     static defaultProps = {
@@ -143,6 +159,7 @@ class BetEventList extends Component {
 
             if (this.state.filterBy !== 'All') {
                 getMethod = this.props.getBetEventsInfo;
+                console.log('sport', this.state.filterBy);
                 params.sport = this.state.filterBy;
             }
 
@@ -218,7 +235,9 @@ class BetEventList extends Component {
         this.props.history.push('/betevents/' + page)
     }
 
-    handleSize = size => this.setState({ size, page: 1 })
+    handleSize = size => this.setState({ size, page: 1 }, () => {
+        this.getBetEventsInfo()
+    });
 
 
     TestMyFilter = (data, type) => {
@@ -243,15 +262,15 @@ class BetEventList extends Component {
             { key: 'event', title: t('eventId') },
             { key: 'name', title: t('name'), className: 'w-m-180' },
             // {key: 'round', title: t('round')},
-            { key: 'homeTeam', title: t('homeTeam'), className: 'w-m-140' },
-            { key: 'awayTeam', title: t('awayTeam'), className: 'w-m-140' },
+            { key: 'homeTeam', title: t('homeTeam'), className: 'w-m-120' },
+            { key: 'awayTeam', title: t('awayTeam'), className: 'w-m-120' },
             { key: 'homeOdds', title: '1' },
             { key: 'drawOdds', title: 'x' },
             { key: 'awayOdds', title: '2' },
-            { key: 'supplyChange', title: t('supplyChange'), className: 'w-m-120' },
+            { key: 'supplyChange', title: t('supplyChange'), className: 'w-m-100' },
             { key: 'betAmount', title: t('betAmount'), className: 'w-m-100' },
             { key: 'betStatus', title: t('betStatus'), className: 'w-m-100' },
-            { key: 'seeDetail', title: t('detail'), className: 'w-m-100' },
+            { key: 'seeDetail', title: t('detail'), className: 'w-m-95' },
         ]
         if (!!this.state.error) {
             return this.renderError(this.state.error)
@@ -319,7 +338,7 @@ class BetEventList extends Component {
                                     </div> */}
                                 </div>
 
-                               <Sliding />
+                               <Sliding selectedValue={this.state.filterBy} onChange={value => this.handleFilterBy(value)} options={FILTER_EVENTS_OPTIONS}/>
 
                                 {
                                     this.state.events.length > 0 &&
@@ -391,19 +410,10 @@ class BetEventList extends Component {
                                             let origdrawOdds = (event.events[0].drawOdds / 10000)
                                             let origawayOdds = (event.events[0].awayOdds / 10000)
 
-
-                                            if (toggleSwitchOdds) {
-                                                homeOdds = homeOdds == 0 ? homeOdds : (1 + (homeOdds - 1) * 0.94).toFixed(2);
-                                                drawOdds = drawOdds == 0 ? drawOdds : (1 + (drawOdds - 1) * 0.94).toFixed(2);
-                                                awayOdds = awayOdds == 0 ? awayOdds : (1 + (awayOdds - 1) * 0.94).toFixed(2);
-                                            }
-
-                                            if (toggleSwitchOddsStyle) {
-                                                homeOdds = convertToAmericanOdds(homeOdds);
-                                                drawOdds = convertToAmericanOdds(drawOdds);
-                                                awayOdds = convertToAmericanOdds(awayOdds);
-                                            }
-
+                                            homeOdds = convertToOdds(homeOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                            drawOdds = convertToOdds(drawOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                            awayOdds = convertToOdds(awayOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                        
                                             if (event.events.length > 1) {
                                                 let lastHomeOdds = (event.events[1].homeOdds / 10000)
                                                 let lastDrawOdds = (event.events[1].drawOdds / 10000)
@@ -426,22 +436,22 @@ class BetEventList extends Component {
                                             }
                                             return {
                                                 ...event,
-                                                start: <Link to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
+                                                start: <Link to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>
                                                     {timeStamp24Format(event.events[0].timeStamp)} </Link>
                                                 ,
                                                 event: (
-                                                    <Link to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
+                                                    <Link to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>
                                                         {event.events[0].eventId}
                                                     </Link>
                                                 ),
-                                                name: <Link to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
+                                                name: <Link to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>
                                                     {event.events[0].league}</Link>,
-                                                round: <Link to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>
+                                                round: <Link to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>
                                                 </Link>,
                                                 homeTeam: <Link
-                                                    to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].homeTeam}</Link>,
+                                                    to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].homeTeam}</Link>,
                                                 awayTeam: <Link
-                                                    to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].awayTeam}</Link>,
+                                                    to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].awayTeam}</Link>,
                                                 homeOdds: homeOdds,
                                                 drawOdds: drawOdds,
                                                 awayOdds: awayOdds,
@@ -453,7 +463,7 @@ class BetEventList extends Component {
                                                     className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
                                                 betStatus: betStatus,
                                                 seeDetail: <Link
-                                                    to={`/explorer/betevents/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
+                                                    to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
                                             }
                                         })} />}
 

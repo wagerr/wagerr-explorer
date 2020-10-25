@@ -66,13 +66,11 @@ const convertToAmericanOdds = (odds) => {
         size: 50,
         filterBy: 'All',
         search: '',
-        toggleSwitch: localStorage.getItem('toggleCompletedAndOpen') != undefined? localStorage.getItem('toggleCompletedAndOpen') == 'true' : false,          
-        toggleSwitchOdds: localStorage.getItem('toggleOddsFee') != undefined? localStorage.getItem('toggleOddsFee') == 'true' : false,      
-        toggleSwitchOddsStyle: localStorage.getItem('toggleOddsStyle') != undefined? localStorage.getItem('toggleOddsStyle') == 'true' : false,
+        toggleSwitch: props.toggleSwitch,          
       }
   
       this.props.history.listen((location, action) => {      
-        let page = location.pathname.split('/explorer/betparlays/')[1];
+        let page = location.pathname.split('/betparlays/')[1];
         if (typeof page == 'undefined') page = 1;
         setTimeout(this.updatePage(page));
       });
@@ -84,12 +82,16 @@ const convertToAmericanOdds = (odds) => {
   
       let page = this.props.match.params.page;
       if (typeof page == 'undefined') page = 1;
-  
-      const toggleSwitch = localStorage.getItem('toggleCompletedAndOpen') != undefined? localStorage.getItem('toggleCompletedAndOpen') == 'true' : false;       
-      console.log('componentDidMount', toggleSwitch);
+
       this.setState({ search, page }, this.getParlayBetsInfo)
     };
   
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.toggleSwitch !== this.props.toggleSwitch) {
+            this.getParlayBetsInfo();
+        }
+    };
+
     updatePage = (page) => {    
       this.setState({ page:parseInt(page) }, this.getParlayBetsInfo);
     }
@@ -126,7 +128,7 @@ const convertToAmericanOdds = (odds) => {
           getMethod = this.props.getParlayBetsInfo;
           params.search = this.state.search;
         }
-  
+        console.log('params', params);
         this.debounce = setTimeout(() => {
           getMethod(params)
             .then(({ data, pages }) => {            
@@ -145,7 +147,7 @@ const convertToAmericanOdds = (odds) => {
                   } else {
                     item.supplyChange = (totalMint - totalBet) * 97 / 94;    
                   }    
-                  //console.log('item', item);
+                  console.log('item', item);
                 })
                 this.setState({ parlaybets: data, pages, loading: false })
               }
@@ -173,26 +175,10 @@ const convertToAmericanOdds = (odds) => {
     }
     
     handlePage = page => {
-      this.props.history.push('/explorer/betparlays/'+page) 
+      this.props.history.push('/betparlays/'+page) 
     }
   
     handleSize = size => this.setState({size, page: 1})
-  
-    handleToggleChange = (toggleSwitch) => {
-      console.log("handleToggleChange", toggleSwitch);
-      localStorage.setItem('toggleCompletedAndOpen', toggleSwitch);
-      this.setState({toggleSwitch, page:1}, this.getParlayBetsInfo);        
-    }
-  
-    handleToggleChangeOdds = (toggleSwitchOdds) => {
-      localStorage.setItem('toggleOddsFee', toggleSwitchOdds);
-      this.setState({ toggleSwitchOdds });    
-    }
-  
-    handleToggleChangeOddsStyle = (toggleSwitchOddsStyle) => {
-      localStorage.setItem('toggleOddsStyle', toggleSwitchOddsStyle);
-      this.setState({ toggleSwitchOddsStyle });    
-    }
   
     handleParlayBetSearch = (term) => {
       this.props.onParlaySearch(term);
@@ -297,7 +283,7 @@ const convertToAmericanOdds = (odds) => {
                                                 ...bet,
                                                 betTime: betTime,
                                                 txId: (
-                                                    <Link to={`/explorer/tx/${encodeURIComponent(bet.txId)}`}>
+                                                    <Link to={`/tx/${encodeURIComponent(bet.txId)}`}>
                                                       {betTxId}
                                                     </Link>
                                                   ),

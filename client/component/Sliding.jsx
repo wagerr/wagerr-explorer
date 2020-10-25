@@ -40,6 +40,14 @@ export default class Sliding extends Component {
       prevArrow: <SamplePrevArrow />,
       responsive: [
         {
+          breakpoint: 2100,
+          settings: {
+            slidesToShow: 8,
+            slidesToScroll: 1,
+            infinite: true,
+          }
+        },
+        {
           breakpoint: 1500,
           settings: {
             slidesToShow: 6,
@@ -48,7 +56,7 @@ export default class Sliding extends Component {
           }
         },
         {
-          breakpoint: 1024,
+          breakpoint: 1147,
           settings: {
             slidesToShow: 5,
             slidesToScroll: 1,
@@ -56,17 +64,44 @@ export default class Sliding extends Component {
           }
         },
         {
-          breakpoint: 600,
+          breakpoint: 1021,
           settings: {
             slidesToShow: 4,
             slidesToScroll: 1,
-            initialSlide: 2
           }
         },
         {
-          breakpoint: 480,
+          breakpoint: 894,
           settings: {
             slidesToShow: 3,
+            slidesToScroll: 1
+          }
+        },
+        {
+          breakpoint: 767,
+          settings: {
+            slidesToShow: 4,
+            slidesToScroll: 1
+          }
+        },
+        {
+          breakpoint: 600,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 1
+          }
+        },
+        {
+          breakpoint: 471,
+          settings: {
+            slidesToShow: 2,
+            slidesToScroll: 1
+          }
+        },
+        {
+          breakpoint: 346,
+          settings: {
+            slidesToShow: 1,
             slidesToScroll: 1
           }
         }
@@ -78,11 +113,11 @@ export default class Sliding extends Component {
         <div className="slick-slider__row">
           <Slider {...settings}>
             {
-              demo_sports.map((item, index) =>
+              this.props.options.map((item, index) =>
                 <center
-                  className={`slick-slider__item ${item.id === this.state.selected && 'slick-slider__item__active'}`} 
+                  className={`slick-slider__item ${item.value === this.props.selectedValue && 'slick-slider__item__active'}`} 
                   key={index} 
-                  onClick={()=>this.setState({ selected: item.id })}
+                  onClick={()=> this.props.onChange(item.value)}
                 >
                   <img src={'/img/uiupdate/' + item.icon} alt={'sports'} />
                   <p>{item.label}</p>

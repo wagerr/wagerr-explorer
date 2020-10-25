@@ -28,7 +28,7 @@ cd  wagerr
 echo 'Running autogen'
 ./autogen.sh
 echo 'Running configuration'
-./configure --disable-tests --with-gui=qt5
+./configure --disable-tests --with-gui=qt5k
 echo 'Running make'
 make
 cd src

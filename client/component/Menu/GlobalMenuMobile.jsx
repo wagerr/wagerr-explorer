@@ -39,8 +39,8 @@ export default class GlobalMenuMobile extends Component {
         )
       }
       return (
-        <div className="menu-mobile__note">
-          <Link key={idx} className="menu-mobile__item" to={i.href} onClick={this.handleToggle} >
+        <div className="menu-mobile__note" key={idx} >
+          <Link className="menu-mobile__item" to={i.href} onClick={this.handleToggle} >
             <img
               alt={i.label}
               className="menu-mobile__icon"
@@ -78,7 +78,7 @@ export default class GlobalMenuMobile extends Component {
           </div>
 
           <h5 style={{ color: '#FFF', fontWeight: 700 }}>{UtilService.getHeader(window.location.hash)}</h5>
-          <img src="/img/uiupdate/logo.png" className="global-menu-desktop__logo" className='mobile-logo' />
+          <img src="/img/uiupdate/wgrlogomodernICONallwhite.svg" className="global-menu-desktop__logo" className='mobile-logo' />
           <div className="global-menu-desktop_wallet_setion">
             <div className="global-menu-desktop_wallet_connection">
               <span className="global-menu-desktop_wallet_balance">0 WGR</span>
