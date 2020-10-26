@@ -258,12 +258,12 @@ class BetEventList extends Component {
         const { toggleSwitchOddsStyle, toggleSwitch, toggleSwitchOdds } = this.props;
         const { t } = props;
         const cols = [
-            { key: 'start', title: t('startingnow'), className: 'w-m-180' },
+            { key: 'start', title: 'Starting Now', className: 'w-m-160' },
             { key: 'event', title: t('eventId') },
-            { key: 'name', title: t('name'), className: 'w-m-180' },
+            { key: 'name', title: t('name'), className: 'w-m-160' },
             // {key: 'round', title: t('round')},
-            { key: 'homeTeam', title: t('homeTeam'), className: 'w-m-120' },
-            { key: 'awayTeam', title: t('awayTeam'), className: 'w-m-120' },
+            { key: 'homeTeam', title: t('homeTeam'), className: 'w-m-110' },
+            { key: 'awayTeam', title: t('awayTeam'), className: 'w-m-110' },
             { key: 'homeOdds', title: '1' },
             { key: 'drawOdds', title: 'x' },
             { key: 'awayOdds', title: '2' },
@@ -312,6 +312,17 @@ class BetEventList extends Component {
                             onSearch={this.props.handleSearch}
                             searches={this.props.searches}
                         />
+
+                        <div className="animated fadeInUp m-t-20 m-h-20 m--b-25">
+                            <div className="search__card flex-center">
+                                <img src={'/img/uiupdate/search.png'} alt={'search'}/>
+                            </div>
+                            <input
+                                className="search__input search__input__icon"
+                                placeholder={'Find team names, event ids, sports or tournaments.'}
+                            />
+                        </div>
+
                         <div>
                             <HorizontalRule
                                 // select={select}
