@@ -312,6 +312,17 @@ class BetEventList extends Component {
                             onSearch={this.props.handleSearch}
                             searches={this.props.searches}
                         />
+
+                        <div className="animated fadeInUp m-t-20 m-h-20 m--b-25">
+                            <div className="search__card flex-center">
+                                <img src={'/img/uiupdate/search.png'} alt={'search'}/>
+                            </div>
+                            <input
+                                className="search__input search__input__icon"
+                                placeholder={'Find team names, event ids, sports or tournaments.'}
+                            />
+                        </div>
+
                         <div>
                             <HorizontalRule
                                 // select={select}
