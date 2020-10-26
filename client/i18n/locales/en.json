@@ -60,6 +60,7 @@
     "betAmount": "Bet Amount",
     "payoutAmount": "Payout Amount",
     "supplyChange": "Supply Change",
+    "startingNow": "Starting Now",
     "waitingForOracle": "Waiting For Oracle"
   }
 }
