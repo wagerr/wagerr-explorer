@@ -610,7 +610,7 @@ tr.table-header-long {
 tr.table-item {
 	font-size: 16px;
 	@media (max-width: 1644px), (min-width: 1400px){
-		font-size: 14.4px!important;
+		font-size: 13.7px!important;
 	}
 	@media (max-width: 900px){
 		font-size: 12px!important;
@@ -851,15 +851,14 @@ th.mobile-recipents::after {
 		margin: 0;
 		padding: 0
 	}	
-}
-.w-m-180 {
-	min-width: 180px;
-	@media (max-width: 1644px), (min-width: 1400px) {
-		min-width: 120px;
-	}
-}
+}.w-m-180 {
+	 min-width: 180px;
+ }
 .w-m-160 {
 	min-width: 160px;
+	@media (max-width: 1644px) and (min-width: 1330px) {
+		min-width: 70px;
+	}
 }
 .w-m-140 {
 	min-width: 140px;
@@ -867,12 +866,21 @@ th.mobile-recipents::after {
 .w-m-120 {
 	min-width: 120px;
 }
+.w-m-110 {
+	min-width: 110px;
+	@media (max-width: 1644px) and (min-width: 1330px) {
+		min-width: 60px;
+	}
+}
 .w-m-100 {
 	min-width: 100px;
+	@media (max-width: 1644px) and (min-width: 1330px) {
+		min-width: 80px;
+	}
 }
 .w-m-95 {
 	min-width: 95px;
-	@media (max-width: 1644px), (min-width: 1400px) {
+	@media (max-width: 1644px) and (min-width: 1330px) {
 		min-width: 68px;
 	}
 }

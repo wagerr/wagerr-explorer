@@ -258,12 +258,12 @@ class BetEventList extends Component {
         const { toggleSwitchOddsStyle, toggleSwitch, toggleSwitchOdds } = this.props;
         const { t } = props;
         const cols = [
-            { key: 'start', title: t('startingnow'), className: 'w-m-180' },
+            { key: 'start', title: 'Starting Now', className: 'w-m-160' },
             { key: 'event', title: t('eventId') },
-            { key: 'name', title: t('name'), className: 'w-m-180' },
+            { key: 'name', title: t('name'), className: 'w-m-160' },
             // {key: 'round', title: t('round')},
-            { key: 'homeTeam', title: t('homeTeam'), className: 'w-m-120' },
-            { key: 'awayTeam', title: t('awayTeam'), className: 'w-m-120' },
+            { key: 'homeTeam', title: t('homeTeam'), className: 'w-m-110' },
+            { key: 'awayTeam', title: t('awayTeam'), className: 'w-m-110' },
             { key: 'homeOdds', title: '1' },
             { key: 'drawOdds', title: 'x' },
             { key: 'awayOdds', title: '2' },
