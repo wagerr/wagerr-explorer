@@ -13,7 +13,6 @@ import Table from '../component/SuperTable'
 import Select from '../component/Select'
 
 import Icon from '../component/Icon';
-import Switch from "react-switch";
 import _ from 'lodash'
 
 import { PAGINATION_PAGE_SIZE, FILTER_EVENTS_OPTIONS } from '../constants'
@@ -32,6 +31,7 @@ import ExplorerOverviewMenu from "../component/Menu/ExplorerOverviewMenu";
 import GlobalSwitch from "../component/Menu/GlobalSwitch";
 import Utils from "../core/utils";
 import Sliding from '../component/Sliding'
+import Switch from "react-switch";
 
 Number.prototype.toFixedNoRounding = function(n) {
     const reg = new RegExp("^-?\\d+(?:\\.\\d{0," + n + "})?", "g")
@@ -90,7 +90,8 @@ class BetEventList extends Component {
             filterBy: 'All',
             search: '',
             width: 0,
-            toggleSwitch: props.toggleSwitch
+            toggleSwitch: props.toggleSwitch,
+            odds: false,
         }
 
         this.props.history.listen((location, action) => {
@@ -254,7 +255,7 @@ class BetEventList extends Component {
 
     render() {
         const { props } = this;
-        const { width } = this.state;
+        const { width, odds } = this.state;
         const { toggleSwitchOddsStyle, toggleSwitch, toggleSwitchOdds } = this.props;
         const { t } = props;
         const cols = [
@@ -334,7 +335,23 @@ class BetEventList extends Component {
 
                                 <div className="w3-tables__title">
                                     <div>BET EVENTS </div>
-                                    <div>
+                                    <div className="d-flex flex-row align-items-center">
+                                        <span className='ft-12 mr-2'>Net Odds:</span>
+                                        <Switch
+                                            checked={odds}
+                                            onChange={()=>this.setState({odds: !odds})}
+                                            onColor="#86d3ff"
+                                            onHandleColor="#2693e6"
+                                            handleDiameter={18}
+                                            uncheckedIcon={false}
+                                            checkedIcon={false}
+                                            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                                            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                                            height={15}
+                                            width={30}
+                                            className="react-switch mr-3"
+                                            id="material-switch"
+                                        />
                                         {select}
                                     </div>
 
