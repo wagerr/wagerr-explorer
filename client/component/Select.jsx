@@ -10,12 +10,12 @@ class App extends Component {
         borderColor: '#e8e8e8',
         borderRadius: 5,
         textColor: '#FFF',
-        padding: '1px 10px'
+        padding: '1px 10px',
       },
     };
 
     return (
-      <div className="select">
+      <div className="select" style={{ marginTop: -5}}>
         <Select
           { ...this.props }
           settings={ settings } />
