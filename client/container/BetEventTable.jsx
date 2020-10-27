@@ -40,7 +40,7 @@ const convertToOdds = (odds, is_American, is_Decimal) => {
     ret = ret == 0 ? ret : (1 + (ret - 1) * 0.94).toFixedNoRounding(2);
   }
   
-  if (ret > 0) ret = `+${ret}`
+  if (ret > 0 && is_American) ret = `+${ret}`
   return ret;
 }
 
