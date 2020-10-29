@@ -182,12 +182,45 @@ h2 {
 	display: flex;
 	align-items: flex-start;
 }
+td.blk {
+	padding-left: 27px;
+	@media (max-width: 1630px) {
+		padding-left: 20px;
+	}
+	@media (max-width: 1450px) {
+		padding-left: 10px;
+	}
+}
+td.brk {
+	padding-right: 27px;
+	@media (max-width: 1630px) {
+		padding-right: 20px;
+	}
+	@media (max-width: 1450px) {
+		padding-right: 10px;
+	}
+}
+.w-18 {
+	width: 18%;
+	@media (max-width: 1430px) {
+		min-width: 200px!important;
+	}
+}
+.w-17 {
+	width: 17%;
+	@media (max-width: 1430px) {
+		min-width: 200px!important;
+	}
+}
 .w-20 {
 	width: 20%;
 	display: flex;
 	align-items: flex-start;
 	@media (max-width: 900px) {
 		width: 26.6%;
+	}
+	@media (max-width: 767px) {
+		margin: 0;
 	}
 }
 .w-33 {
@@ -611,12 +644,12 @@ tr.table-header-long {
 	}
 }
 tr.table-item {
-	font-size: 16px;
+	font-size: 18px;
 	@media (max-width: 1644px), (min-width: 1400px){
-		font-size: 13.7px!important;
+		font-size: 15.7px!important;
 	}
 	@media (max-width: 900px){
-		font-size: 12px!important;
+		font-size: 14px!important;
 	}
 }
 .w3-table-all {
@@ -706,6 +739,74 @@ tr.table-item {
 			}	
 		}
 	}
+}
+
+table.black-table {
+	font-family: 'Poppins', sans-serif;
+	thead {
+		border: none;
+		tr {
+			border: none;
+			th, td {
+				text-align: center;
+				color: #C9CBCB;
+			}
+			td {
+				font-size: 14px;
+			}
+		}
+	}
+}
+.black-table-tr {
+	background: #2B2B2B!important;
+	height: 45px;
+	font-size: 17px;
+	th {
+		vertical-align: middle;
+	}
+}
+.black-table-tr2 {
+	background: #212121!important;
+	margin-right: 0;
+	td {
+		padding-top: 15px;
+		padding-bottom: 3px;
+		vertical-align: bottom;
+	}
+}
+.black-table-td {
+	color: #BCBCBD;
+	border: 0.8px solid #484848;
+	text-align: center!important;
+}
+.black-table-box {
+	margin-top: 8px;
+	border: 1.4px solid #474747;
+	border-radius: 8px;
+	font-size: 15px;
+	text-align: center;
+	background: #343434;
+	height: 62px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	h3 {
+		color: #FFF;
+		font-family: 'Poppins', sans-serif;
+		font-weight: 700;
+		margin-top: 6px;
+		font-size: 18px;
+	}
+}
+.br-n {
+	border-right: none;
+}
+.bl-n {
+	border-left: none;
+}
+.text-align-left {
+	text-align: left!important;
 }
 .cell-ellipsis {
 	max-width: 600px;
@@ -982,6 +1083,7 @@ th.mobile-recipents::after {
 }
 .card-mobile-table {
 	margin-top: 4px;
-	background: #FFF;
+	background: #3B3B3B;
 	border: 1px solid grey;
+	color: white;
 }
