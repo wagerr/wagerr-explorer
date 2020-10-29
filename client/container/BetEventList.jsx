@@ -16,7 +16,7 @@ import Icon from '../component/Icon';
 import _ from 'lodash'
 
 import { PAGINATION_PAGE_SIZE, FILTER_EVENTS_OPTIONS } from '../constants'
-import { timeStamp24Format } from '../../lib/date'
+import { timeStampFormat } from '../../lib/date'
 import numeral from 'numeral'
 import { compose } from 'redux'
 import { translate } from 'react-i18next'
@@ -26,7 +26,7 @@ import CoinSummary from '../container/CoinSummary';
 import SearchBar from '../component/SearchBar';
 import SearchEventBar from '../component/SearchEventBar';
 import Footer from '../component/Footer';
-import CardBigTable from "../component/Card/CardBigTable";
+import CardBlackTable from "../component/Card/CardBlackTable";
 import ExplorerOverviewMenu from "../component/Menu/ExplorerOverviewMenu";
 import GlobalSwitch from "../component/Menu/GlobalSwitch";
 import Utils from "../core/utils";
@@ -259,19 +259,17 @@ class BetEventList extends Component {
         const { toggleSwitchOddsStyle, toggleSwitch, toggleSwitchOdds } = this.props;
         const { t } = props;
         const cols = [
-            { key: 'start', title: 'Starting Now', className: 'w-m-160' },
-            { key: 'event', title: t('eventId') },
-            { key: 'name', title: t('name'), className: 'w-m-160' },
-            // {key: 'round', title: t('round')},
-            { key: 'homeTeam', title: t('homeTeam'), className: 'w-m-110' },
-            { key: 'awayTeam', title: t('awayTeam'), className: 'w-m-110' },
+            { key: 'start', title: 'DATE', className: 'w-m-160' },
             { key: 'homeOdds', title: '1' },
             { key: 'drawOdds', title: 'x' },
             { key: 'awayOdds', title: '2' },
-            { key: 'supplyChange', title: t('supplyChange'), className: 'w-m-100' },
+            { key: 'homeTeam', title: t('homeTeam'), className: 'w-m-110' },
+            { key: 'awayTeam', title: t('awayTeam'), className: 'w-m-110' },
+            { key: 'homeTeam', title: '1' },
+            { key: 'awayTeam', title: '2' },
+            { key: 'betStatus', title: t('result'), className: 'w-m-100' },
             { key: 'betAmount', title: t('betAmount'), className: 'w-m-100' },
-            { key: 'betStatus', title: t('betStatus'), className: 'w-m-100' },
-            { key: 'seeDetail', title: t('detail'), className: 'w-m-95' },
+            { key: 'supplyChange', title: t('supplyChange'), className: 'w-m-100' },
         ]
         if (!!this.state.error) {
             return this.renderError(this.state.error)
@@ -370,16 +368,14 @@ class BetEventList extends Component {
 
                                 {
                                     this.state.events.length > 0 &&
-                                    <CardBigTable
+                                    <CardBlackTable
                                         className={'table-responsive table--for-betevents'}
                                         cols={cols}
-                                        sports={true}
                                         data={this.state.events.map((event) => {
                                             const betAmount = event.actions.reduce((acc, action) => {
                                                 return acc + action.betValue
                                             }, 0.0
                                             )
-
                                             let betStatus = t('open')
                                             const eventTime = parseInt(event.events[0].timeStamp);
                                             const eventData = event.events[0];
@@ -464,34 +460,29 @@ class BetEventList extends Component {
                                             }
                                             return {
                                                 ...event,
-                                                start: <Link to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>
-                                                    {timeStamp24Format(event.events[0].timeStamp)} </Link>
-                                                ,
-                                                event: (
-                                                    <Link to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>
-                                                        {event.events[0].eventId}
-                                                    </Link>
-                                                ),
-                                                name: <Link to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>
-                                                    {event.events[0].league}</Link>,
-                                                round: <Link to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>
-                                                </Link>,
-                                                homeTeam: <Link
-                                                    to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].homeTeam}</Link>,
-                                                awayTeam: <Link
-                                                    to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>{event.events[0].awayTeam}</Link>,
-                                                homeOdds: homeOdds,
-                                                drawOdds: drawOdds,
-                                                awayOdds: awayOdds,
-                                                supplyChange: <span
-                                                    className={`badge badge-${event.totalMint - event.totalBet < 0 ? 'danger' : 'success'}`}>
+                                                start: <div>
+                                                    <p style={{ fontSize: 20, color: '#E7E3EB'}}>Shakhtar Donetsk</p>
+                                                    <p style={{ fontSize: 20, color: '#F70407', fontWeight: '600'}}>Inter Milan</p>
+                                                    <p>{event.events[0].league}</p>
+                                                    <p>{timeStampFormat(event.events[0].timeStamp)} </p>
+                                                    <p>Event ID: {event.events[0].eventId}</p>
+                                                </div>,
+                                                homeOdds: <div className='black-table-box'><h3>{homeOdds}</h3></div>,
+                                                drawOdds: <div className='black-table-box'><h3 style={{ color: '#9D9D9D'}}>{drawOdds}</h3></div>,
+                                                awayOdds: <div className='black-table-box'><h3 style={{ color: '#F90000'}}>{awayOdds}</h3></div>,
+                                                // homeTeam: <p>{event.events[0].homeTeam}</p>,
+                                                // awayTeam: <p>{event.events[0].awayTeam}</p>,
+
+                                                homeTeam: <div className='black-table-box'><p>+2.5</p><h3>1.86</h3></div>,
+                                                awayTeam: <div className='black-table-box'><p>-2.5</p><h3 style={{ color: '#F90000'}}>2.03</h3></div>,
+
+                                                betStatus: <div className='mt-2'>{betStatus}</div>,
+                                                betAmount: <span className={`mt-2 badge badge-danger `}>{numeral(betAmount).format('0,0.00')}</span>,
+                                                supplyChange: <span className={`mt-2 badge badge-${event.totalMint - event.totalBet < 0 ? 'danger' : 'success'}`}>
                                                     {numeral(event.totalMint - event.totalBet).format('0,0.00')}
                                                 </span>,
-                                                betAmount: <span
-                                                    className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
-                                                betStatus: betStatus,
-                                                seeDetail: <Link
-                                                    to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
+                                                // seeDetail: <Link
+                                                //     to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
                                             }
                                         })} />}
 
