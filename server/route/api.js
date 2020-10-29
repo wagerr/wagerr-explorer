@@ -72,6 +72,7 @@ router.get('/custom/betstatus', custom.getBetStatus);
 router.get('/custom/supply', custom.getCustomSupply);
 router.get('/custom/totalpayout', custom.getTotalPayout);
 router.get('/custom/getaddressesinfo/:hashlist', custom.getAddressesInfo);
+router.get('/custom/getunspenttransactions/:hashlist', custom.getunspenttransactions);
 
 // OpCode decryption
 router.get('/opcodes/:hex_value', opCode.decodeOP);
@@ -89,7 +90,5 @@ router.get('/getblocktransactions', raw.getblocktransactions);
 router.post('/sendrawtransaction', raw.sendRawTransaction);
 
 router.get('/getaddresstransactioncount/:hash', raw.getAddress);
-
-
 
 module.exports =  router;
