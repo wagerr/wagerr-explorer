@@ -62,7 +62,7 @@ const convertToOdds = (odds, is_American, is_Decimal) => {
     
     if (ret > 0 && is_American) ret = `+${ret}`
     return ret;
-  }
+}
 
 class BetEventList extends Component {
     static defaultProps = {
@@ -253,10 +253,23 @@ class BetEventList extends Component {
         return results;
     }
 
+    handleKeyPress = (ev) => {
+        if (ev.key === 'Enter') {
+          ev.preventDefault();
+    
+          const term = ev.target.value.trim();
+          ev.target.value = '';
+    
+          if (!!term) {
+            this.props.handleEventSearch(term);
+          }
+        }
+    };
+
     render() {
         const { props } = this;
         const { width, odds } = this.state;
-        const { toggleSwitchOddsStyle, toggleSwitch, toggleSwitchOdds } = this.props;
+        const { toggleSwitchOddsStyle, toggleSwitch, toggleSwitchOdds, handleToggleChange } = this.props;
         const { t } = props;
         const cols = [
             { key: 'start', title: 'DATE', className: 'w-m-160' },
@@ -316,12 +329,13 @@ class BetEventList extends Component {
                             <div className="search__card flex-center">
                                 <img src={'/img/uiupdate/search.png'} alt={'search'}/>
                             </div>
-                            <input
+                            <input 
                                 className="search__input search__input__icon"
-                                placeholder={'Find team names, event ids, sports or tournaments.'}
+                                placeholder={'Find event ids, sports or tournaments.'}
+                                onKeyPress={this.handleKeyPress}
                             />
                         </div>
-
+            
                         <div>
                             <HorizontalRule
                                 // select={select}
@@ -336,8 +350,8 @@ class BetEventList extends Component {
                                     <div className="d-flex flex-row align-items-center">
                                         <span className='ft-12 mr-2'>Completed:</span>
                                         <Switch
-                                            checked={odds}
-                                            onChange={()=>this.setState({odds: !odds})}
+                                            checked={toggleSwitch}
+                                            onChange={handleToggleChange}
                                             onColor="#86d3ff"
                                             onHandleColor="#2693e6"
                                             handleDiameter={18}
