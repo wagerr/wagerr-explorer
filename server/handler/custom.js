@@ -210,9 +210,26 @@ const getAddressesInfo = async (req, res) => {
   }
 };
 
+const getunspenttransactions = async (req, res) => {
+  try {
+    const hashlist = req.params.hashlist.split(',');
+    const txs = await UTXO.find({address: {$in: hashlist}});
+    let result = JSON.parse(JSON.stringify(txs));
+    result = result.map((tx) => {
+      tx.satoshi = parseInt(tx.value * 100000000);
+      return tx;
+    })
+    res.json(result)
+  } catch (err){
+    console.log(err);
+    res.status(500).send(err.message || err);
+  }
+}
+
 module.exports = {
   getBetStatus,
   getCustomSupply,
   getTotalPayout,
-  getAddressesInfo
+  getAddressesInfo,
+  getunspenttransactions
 }

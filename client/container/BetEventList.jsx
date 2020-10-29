@@ -334,7 +334,7 @@ class BetEventList extends Component {
                                 <div className="w3-tables__title">
                                     <div>BET EVENTS </div>
                                     <div className="d-flex flex-row align-items-center">
-                                        <span className='ft-12 mr-2'>Net Odds:</span>
+                                        <span className='ft-12 mr-2'>Completed:</span>
                                         <Switch
                                             checked={odds}
                                             onChange={()=>this.setState({odds: !odds})}
