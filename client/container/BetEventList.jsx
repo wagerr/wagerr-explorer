@@ -470,8 +470,6 @@ class BetEventList extends Component {
                                                 homeOdds: <div className='black-table-box'><h3>{homeOdds}</h3></div>,
                                                 drawOdds: <div className='black-table-box'><h3 style={{ color: '#9D9D9D'}}>{drawOdds}</h3></div>,
                                                 awayOdds: <div className='black-table-box'><h3 style={{ color: '#F90000'}}>{awayOdds}</h3></div>,
-                                                // homeTeam: <p>{event.events[0].homeTeam}</p>,
-                                                // awayTeam: <p>{event.events[0].awayTeam}</p>,
 
                                                 homeTeam: <div className='black-table-box'><p>+2.5</p><h3>1.86</h3></div>,
                                                 awayTeam: <div className='black-table-box'><p>-2.5</p><h3 style={{ color: '#F90000'}}>2.03</h3></div>,

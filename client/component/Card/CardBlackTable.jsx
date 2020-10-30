@@ -53,18 +53,6 @@ export default class CardBlackTable extends Component {
         });
     }
 
-    getHeaderDesktop() {
-        return (
-            <tr className="table-header" style={{ background: '#2B2B2B' }}>
-                {
-                    this.props.cols.map((item, idx) => {
-                        return <th key={idx} style={{textTransform: 'uppercase'}}>{item.title}</th>
-                    })
-                }
-            </tr>
-        )
-    }
-
     getBodyMobile() {
         return this.props.data.map((row, idx) => {
             const cells = this.getKeys().map((col, i) => {
