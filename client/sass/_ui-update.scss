@@ -215,6 +215,15 @@ td.brk {
 		min-width: 190px!important;
 	}
 }
+.w-16 {
+	width: 17%;
+	@media (max-width: 1430px) {
+		min-width: 200px!important;
+	}
+	@media (min-width: 1360px) {
+		min-width: 170px!important;
+	}
+}
 .w-20 {
 	width: 20%;
 	display: flex;
@@ -764,6 +773,9 @@ table.black-table {
 	background: #2B2B2B!important;
 	height: 45px;
 	font-size: 17px;
+	@media (max-width: 1500px) and (min-width: 1360px){
+		font-size: 14px;
+	}
 	th {
 		vertical-align: middle;
 	}
@@ -781,6 +793,9 @@ table.black-table {
 	color: #BCBCBD;
 	border: 0.8px solid #484848;
 	text-align: center!important;
+	@media (max-width: 1500px) and (min-width: 1360px){
+		font-size: 12px;
+	}
 }
 .black-table-box {
 	margin-top: 8px;

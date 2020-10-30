@@ -82,8 +82,8 @@ export default class CardBlackTable extends Component {
                             <tr className="black-table-tr">
                                 <th className='w-18'>DATE</th>
                                 <th className='w-17' colSpan="3">MONEY LINE</th>
-                                <th className='w-17' colSpan="2">SPREAD</th>
-                                <th className='w-17' colSpan="2">TOTAL</th>
+                                <th className='w-16' colSpan="2">SPREAD</th>
+                                <th className='w-16' colSpan="2">TOTAL</th>
                                 <th>RESULT</th>
                                 <th>BET AMOUNT</th>
                                 <th>SUPPLY CHANGE</th>
