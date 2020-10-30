@@ -38,7 +38,7 @@ export default class CardBlockTXs extends Component {
           createdAt: date24Format(tx.createdAt),
           recipients: tx.vout.length,
           txId: (
-            <Link to={ `/explorer/tx/${ tx.txId }` }>{ tx.txId }</Link>
+            <Link to={ `/tx/${ tx.txId }` }>{ tx.txId }</Link>
           )
         })) } />
         </div>

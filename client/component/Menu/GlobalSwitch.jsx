@@ -6,7 +6,7 @@ import Switch from "react-switch";
 export default class GlobalSwitch extends Component {
     state = {
         hidden: true
-    }
+    } 
     render() {
         const {
             toggleSwitch,
@@ -24,34 +24,6 @@ export default class GlobalSwitch extends Component {
                         <span>⚙️</span>
                     </div>
                     <div className='global-switch__body'>
-                        <div className='global-switch__body__item'>
-                            <label htmlFor="material-switch">
-                                <Switch
-                                    checked={toggleSwitch}
-                                    onChange={handleToggleChange}
-                                    onColor="#86d3ff"
-                                    onHandleColor="#2693e6"
-                                    handleDiameter={18}
-                                    uncheckedIcon={false}
-                                    checkedIcon={false}
-                                    boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                                    activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                                    height={15}
-                                    width={30}
-                                    className="react-switch"
-                                    id="material-switch"
-                                />
-                            </label>
-                            <div className='global-switch__body__label'>
-                                <div className={!toggleSwitch ? 'global-switch__body__label__active' : ''} onClick={() => handleToggleChange(true)}>
-                                    Completed
-                                </div>
-                                &nbsp;|&nbsp;
-                                <div className={toggleSwitch ? 'global-switch__body__label__active' : ''} onClick={() => handleToggleChange(false)}>
-                                    Opened
-                                </div>
-                            </div>
-                        </div>
                         <div className='global-switch__body__item'>
                             <label htmlFor="material-switch1">
                                 <Switch
