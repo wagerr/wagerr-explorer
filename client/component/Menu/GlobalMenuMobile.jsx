@@ -79,7 +79,7 @@ export default class GlobalMenuMobile extends Component {
 
           <h5 style={{ color: '#FFF', fontWeight: 700 }}>{UtilService.getHeader(window.location.hash)}</h5>
           <img src="/img/uiupdate/wgrlogomodernICONallwhite.svg" className="global-menu-desktop__logo" className='mobile-logo' />
-          <div className="global-menu-desktop_wallet_setion">
+          {/* <div className="global-menu-desktop_wallet_setion">
             <div className="global-menu-desktop_wallet_connection">
               <span className="global-menu-desktop_wallet_balance">0 WGR</span>
               <div className="desktop_wallet_connection_status">
@@ -87,7 +87,7 @@ export default class GlobalMenuMobile extends Component {
                 <span className="wallet_connection_status_text">Wallet Connected</span>
               </div>
             </div>
-          </div>
+          </div> */}
 
         </div>
         <div className="menu-mobile__item-wrapper" onMouseEnter={() => this.setState({ isOpen: true })} onMouseLeave={() => this.setState({ isOpen: false })} >

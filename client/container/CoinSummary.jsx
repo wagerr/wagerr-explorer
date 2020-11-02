@@ -38,11 +38,13 @@ class CoinSummary extends Component {
             ? this.props.searches
             : this.props.searches.slice(0, 7);
 
+        const { onlyBet } = this.props;
+
         return (
             <div>
                 <div className="row">
                     <div className="col-md-12 col-lg-12">
-                        <div className="row">
+                        {!onlyBet && <div className="row">
                             <div className="col-md-12 col-lg-6">
                                 <CardStatus
                                     avgBlockTime={coin.avgBlockTime ? coin.avgBlockTime : 0}
@@ -60,16 +62,16 @@ class CoinSummary extends Component {
                                     btc={coin.btc}
                                     usd={coin.usd}/>
                             </div>
-                        </div>
+                        </div>}
                         <div className="row">
-                            <div className="col-md-12 col-lg-6">
+                            {!onlyBet && <div className="col-md-12 col-lg-6">
                                 <CardMarket
                                     btcPrice={coin.btcPrice}
                                     btc={coin.btc}
                                     usd={coin.usd}
                                     xAxis={this.props.coins.map(c => c.createdAt)}
                                     yAxis={this.props.coins.map(c => c.usd ? c.usd : 0.0)}/>
-                            </div>
+                            </div>}
                             <div className="col-md-12 col-lg-6">
                                 <CardBetStatus totalBet={coin.totalBet} totalMint={coin.totalMint}/>
                             </div>
