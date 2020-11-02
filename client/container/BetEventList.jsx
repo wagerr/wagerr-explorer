@@ -323,6 +323,7 @@ class BetEventList extends Component {
                             onRemove={this.props.handleRemove}
                             onSearch={this.props.handleSearch}
                             searches={this.props.searches}
+                            onlyBet={true}
                         />
 
                         <div className="animated fadeInUp m-t-20 m-h-20 m--b-25">

@@ -16,7 +16,7 @@ export const PAGINATION_PAGE_SIZE = [
 export const FILTER_EVENTS_OPTIONS = [
   { label: 'All', value: 'All', icon: 'explorer_sportbetting_allevent.png'},
   { label: 'Baseball', value: 'Baseball',  icon: 'explorer_sportbetting_baseball.png'},
-  { label: 'Football', value: 'Football', icon: 'explorer_sportbetting_soccor.png'},
+  { label: 'Football', value: 'Football', icon: 'explorer_sportbetting_football.png'},
   { label: 'Basketball', value: 'Basketball', icon: 'explorer_sportbetting_basketball.png'},
   { label: 'Hockey', value: 'Hockey', icon: 'explorer_sportbetting_hockey.png' },
   { label: 'Soccer', value: 'Soccer', icon: 'explorer_sportbetting_soccor.png' },
