@@ -6,6 +6,9 @@ class Utils {
 
     static tableWidth(width) {
         let result = width > 767 ? width-320 : width-27
+        if(width < 600 ) {
+            result = width - 10
+        }
         return result;
     }
 }

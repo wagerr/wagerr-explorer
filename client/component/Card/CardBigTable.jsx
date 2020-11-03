@@ -83,7 +83,7 @@ export default class CardBigTable extends Component {
                 className="animated fadeInUp w3-tables w3-responsive"
                 style={
                     this.props.sports && { marginTop: -1, borderRadius: 0 },
-                    this.props.black && { marginTop: -1, borderRadius: 0 }
+                    this.props.black && { marginTop: -6, borderRadius: 0 }
                 }
                 >
                 {
