@@ -484,6 +484,7 @@ class BetEventList extends Component {
                                                 supplyChange: <span className={`mt-2 badge badge-${event.totalMint - event.totalBet < 0 ? 'danger' : 'success'}`}>
                                                     {numeral(event.totalMint - event.totalBet).format('0,0.00')}
                                                 </span>,
+                                                links: `/bet/event/${encodeURIComponent(event.events[0].eventId)}`
                                                 // seeDetail: <Link
                                                 //     to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
                                             }

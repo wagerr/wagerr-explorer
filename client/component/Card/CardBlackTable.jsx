@@ -1,5 +1,6 @@
 import Component from '../../core/Component';
 import React from 'react';
+import { Link } from 'react-router-dom'
 
 export default class CardBlackTable extends Component {
 
@@ -75,17 +76,17 @@ export default class CardBlackTable extends Component {
             return (
                 <tbody>
                     <tr className="table-item bg-3b" key={idx}>
-                        <td className='black-table-td text-align-left bg-34'>{row.start}</td>
-                        <td className='black-table-td border-right-0'>{row.homeOdds}</td>
-                        <td className='black-table-td border-left-0 border-right-0'>{row.drawOdds}</td>
-                        <td className='black-table-td border-left-0'>{row.awayOdds}</td>
-                        <td className='black-table-td border-right-0 blk'>{row.homeTeam}</td>
-                        <td className='black-table-td border-left-0 brk'>{row.awayTeam}</td>
-                        <td className='black-table-td border-right-0 blk'>{row.homeTeam}</td>
-                        <td className='black-table-td border-left-0 brk'>{row.awayTeam}</td>
-                        <td className='black-table-td'>{row.betStatus}</td>
-                        <td className='black-table-td'>{row.betAmount}</td>
-                        <td className='black-table-td border-right-0'>{row.supplyChange}</td>
+                        <td className='black-table-td text-align-left bg-34'><Link to={row.links} className='text-white'>{row.start}</Link></td>
+                        <td className='black-table-td border-right-0'><Link to={row.links} className='text-white'>{row.homeOdds}</Link></td>
+                        <td className='black-table-td border-left-0 border-right-0'><Link to={row.links} className='text-white'>{row.drawOdds}</Link></td>
+                        <td className='black-table-td border-left-0'><Link to={row.links} className='text-white'>{row.awayOdds}</Link></td>
+                        <td className='black-table-td border-right-0 blk'><Link to={row.links} className='text-white'>{row.homeTeam}</Link></td>
+                        <td className='black-table-td border-left-0 brk'><Link to={row.links} className='text-white'>{row.awayTeam}</Link></td>
+                        <td className='black-table-td border-right-0 blk'><Link to={row.links} className='text-white'>{row.homeTeam}</Link></td>
+                        <td className='black-table-td border-left-0 brk'><Link to={row.links} className='text-white'>{row.awayTeam}</Link></td>
+                        <td className='black-table-td'><Link to={row.links} className='text-white'>{row.betStatus}</Link></td>
+                        <td className='black-table-td'><Link to={row.links} className='text-white'>{row.betAmount}</Link></td>
+                        <td className='black-table-td border-right-0'><Link to={row.links} className='text-white'>{row.supplyChange}</Link></td>
                     </tr>
                 </tbody>
             )
@@ -97,11 +98,11 @@ export default class CardBlackTable extends Component {
         return this.props.data.map((row, idx) => {
             return (
                 <div key={idx} className='black-mobile-table' style={{ marginBottom: this.props.data !== idx + 1 && 0}}>
-                    <div className='d-flex flex-row'>
-                        <div className='black-table-td text-align-left bg-34 w-50 p-2'  style={{ borderTopLeftRadius: 12 }}>
+                    <Link to={row.links} className='d-flex flex-row'>
+                        <div className='black-table-td text-align-left bg-34 w-50 p-2 text-white'  style={{ borderTopLeftRadius: 8 }}>
                             {row.start}
                         </div>
-                        <div className='w-50 d-flex flex-row' style={{ border: '1px solid #484848', borderTopRightRadius: 12 }}>
+                        <div className='w-50 d-flex flex-row' style={{ border: '1px solid #484848', borderTopRightRadius: 8 }}>
                             {tab === 1 && <div className='d-flex flex-1'>{row.homeOdds}</div>}
                             {tab === 1 && <div className='d-flex flex-1'>{row.drawOdds}</div>}
                             {tab === 1 && <div className='d-flex flex-1'>{row.awayOdds}</div>}
@@ -110,19 +111,19 @@ export default class CardBlackTable extends Component {
                             {tab === 3 && <div className='d-flex flex-1'>{row.homeTeam}</div>}
                             {tab === 3 && <div className='d-flex flex-1'>{row.awayTeam}</div>}
                         </div>
-                    </div>
-                    <div className='d-flex flex-row'>
-                        <div className='black-table-td text-align-left bg-34 w-50 p-2 text-white' style={{ borderBottomLeftRadius: 12 }}>
+                    </Link>
+                    <Link to={row.links} className='d-flex flex-row'>
+                        <div className='black-table-td text-align-left bg-34 w-50 p-2 text-white' style={{ borderBottomLeftRadius: 8 }}>
                             <p>RESULT</p>
                             <p className='pt-1'>BET AMOUNT</p>
                             <p className='pt-2'>SUPPLY CHANGE</p>
                         </div>
-                        <div className='w-50 d-flex flex-column align-items-center' style={{ border: '1px solid #484848', borderBottomRightRadius: 12 }}>
+                        <div className='w-50 d-flex flex-column align-items-center' style={{ border: '1px solid #484848', borderBottomRightRadius: 8 }}>
                             <div className='text-white'>{row.betStatus}</div>
                             <div>{row.betAmount}</div>
                             <div className='pb-2'>{row.supplyChange}</div>
                         </div>
-                    </div>
+                    </Link>
                 </div>
             )
         });
@@ -149,6 +150,7 @@ export default class CardBlackTable extends Component {
                         </div>
                         {this.getHeaderMobile()}
                         {this.getBodyMobile()}
+                        <div style={{ height: 12}}></div>
                     </div>
                 }
             </div >
