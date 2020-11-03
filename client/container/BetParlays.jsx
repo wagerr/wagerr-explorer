@@ -187,7 +187,7 @@ const convertToAmericanOdds = (odds) => {
     render() {
         const { props } = this;
         const { t } = props;
-        const { toggleSwitch } = props;
+        const { toggleSwitch, handleToggleChange } = props;
         const { width } = this.state;
 
         let cols = [
@@ -249,15 +249,38 @@ const convertToAmericanOdds = (odds) => {
                         />
                         <div>
                             <HorizontalRule
-                                select={select}                                
+                                // select={select}                                
                                 title={'PARLAY BETS'}
                             />
                             {this.state.parlaybets.length == 0 && this.renderError('No search results found within provided filters')}
 
                             <div style={{ width: Utils.tableWidth(width) }}>
+                                <div className="w3-tables__title">
+                                    <div>PARLAY BETS </div>
+                                    <div className="d-flex flex-row align-items-center">
+                                        <span className='ft-12 mr-2'>Completed:</span>
+                                        <Switch
+                                            checked={toggleSwitch}
+                                            onChange={handleToggleChange}
+                                            onColor="#86d3ff"
+                                            onHandleColor="#2693e6"
+                                            handleDiameter={18}
+                                            uncheckedIcon={false}
+                                            checkedIcon={false}
+                                            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                                            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                                            height={15}
+                                            width={30}
+                                            className="react-switch mr-3"
+                                            id="material-switch"
+                                        />
+                                        {select}
+                                    </div>
+                                </div>
                                 {this.state.parlaybets.length > 0 &&
                                     <CardBigTable
                                         className={'table-responsive table--for-betevents'}
+                                        black={true}
                                         cols={cols}
                                         data={this.state.parlaybets.map((bet) => {
                                             const betAmount = bet.betValue;

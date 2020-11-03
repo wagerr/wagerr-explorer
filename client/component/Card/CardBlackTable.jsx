@@ -96,7 +96,7 @@ export default class CardBlackTable extends Component {
         const { tab } = this.state;
         return this.props.data.map((row, idx) => {
             return (
-                <div key={idx} className='black-mobile-table'>
+                <div key={idx} className='black-mobile-table' style={{ marginBottom: this.props.data !== idx + 1 && 0}}>
                     <div className='d-flex flex-row'>
                         <div className='black-table-td text-align-left bg-34 w-50 p-2'  style={{ borderTopLeftRadius: 12 }}>
                             {row.start}

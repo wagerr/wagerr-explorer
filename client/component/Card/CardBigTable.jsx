@@ -45,10 +45,13 @@ export default class CardBigTable extends Component {
 
     getHeaderDesktop() {
         return (
-            <tr className="table-header" style={{ background: this.props.sports ? '#545454' : '#b40202' }}>
+            <tr 
+                className="table-header" 
+                style={{ background: this.props.sports ? '#545454' : this.props.black ? '#212121' : '#b40202' }}
+            >
                 {
                     this.props.cols.map((item, idx) => {
-                        return <th key={idx} style={{textTransform: 'uppercase'}}>{item.title}</th>
+                        return <th key={idx} style={{ textTransform: 'uppercase' }}>{item.title}</th>
                     })
                 }
             </tr>
@@ -61,7 +64,7 @@ export default class CardBigTable extends Component {
                 return (
                     <div className='d-flex flex-row'>
                         <div className='font--bold flex-1'>{this.props.cols[i].title}</div>
-                        <div className={this.getClasses()[i]} key={i} style={{ flex: 1.3}}>{row[col]}</div>
+                        <div className={this.getClasses()[i]} key={i} style={{ flex: 1.3 }}>{row[col]}</div>
                     </div>
                 )
             });
@@ -76,7 +79,13 @@ export default class CardBigTable extends Component {
     render() {
         const { width } = this.state;
         return (
-            <div className="animated fadeInUp w3-tables w3-responsive" style={ this.props.sports && { marginTop: -1, borderRadius: 0 }}>
+            <div
+                className="animated fadeInUp w3-tables w3-responsive"
+                style={
+                    this.props.sports && { marginTop: -1, borderRadius: 0 },
+                    this.props.black && { marginTop: -1, borderRadius: 0 }
+                }
+                >
                 {
                     width > 600 &&
                     <table className="w3-table-all">
@@ -88,9 +97,9 @@ export default class CardBigTable extends Component {
                 }
                 {
                     width <= 600 &&
-                        <div>
-                            {this.getBodyMobile()}
-                        </div>
+                    <div>
+                        {this.getBodyMobile()}
+                    </div>
                 }
 
             </div>
