@@ -367,16 +367,6 @@ class BetEventList extends Component {
                                         />
                                         {select}
                                     </div>
-
-                                    {/* <div className="align-row-center">
-                                        <div className="w3-tables__title__dropdown">
-                                            <div>10</div>
-                                            <div className="flex-column">
-                                                <img src={'/img/uiupdate/up.png'} alt={'up'} />
-                                                <img src={'/img/uiupdate/down.png'} alt={'down'} />
-                                            </div>
-                                        </div>
-                                    </div> */}
                                 </div>
 
                                <Sliding selectedValue={this.state.filterBy} onChange={value => this.handleFilterBy(value)} options={FILTER_EVENTS_OPTIONS}/>
