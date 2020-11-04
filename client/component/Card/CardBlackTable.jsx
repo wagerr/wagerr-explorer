@@ -103,13 +103,13 @@ export default class CardBlackTable extends Component {
                             {row.start}
                         </div>
                         <div className='w-50 d-flex flex-row' style={{ border: '1px solid #484848', borderTopRightRadius: 8 }}>
-                            {tab === 1 && <div className='d-flex flex-1'>{row.homeOdds}</div>}
-                            {tab === 1 && <div className='d-flex flex-1'>{row.drawOdds}</div>}
-                            {tab === 1 && <div className='d-flex flex-1'>{row.awayOdds}</div>}
-                            {tab === 2 && <div className='d-flex flex-1'>{row.homeTeam}</div>}
-                            {tab === 2 && <div className='d-flex flex-1'>{row.awayTeam}</div>}
-                            {tab === 3 && <div className='d-flex flex-1'>{row.homeTeam}</div>}
-                            {tab === 3 && <div className='d-flex flex-1'>{row.awayTeam}</div>}
+                            {tab === 1 && <div className='d-flex flex-1 align-items-center'>{row.homeOdds}</div>}
+                            {tab === 1 && <div className='d-flex flex-1 align-items-center'>{row.drawOdds}</div>}
+                            {tab === 1 && <div className='d-flex flex-1 align-items-center'>{row.awayOdds}</div>}
+                            {tab === 2 && <div className='d-flex flex-1 align-items-center'>{row.homeTeam}</div>}
+                            {tab === 2 && <div className='d-flex flex-1 align-items-center'>{row.awayTeam}</div>}
+                            {tab === 3 && <div className='d-flex flex-1 align-items-center'>{row.homeTeam}</div>}
+                            {tab === 3 && <div className='d-flex flex-1 align-items-center'>{row.awayTeam}</div>}
                         </div>
                     </Link>
                     <Link to={row.links} className='d-flex flex-row'>
