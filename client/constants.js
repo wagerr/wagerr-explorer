@@ -23,6 +23,7 @@ export const FILTER_EVENTS_OPTIONS = [
   { label: 'Cricket', value: 'Cricket', icon: 'explorer_sportbetting_cricket.png' },
   { label: 'Rugby Union', value: 'Rugby Union',icon: 'explorer_sportbetting_rugby_league.png'},
   { label: 'Aussie Rules', value: 'Aussie Rules', icon: 'explorer_sportbetting_aussie_rules.png'},
+  { label: 'MMA', icon: 'explorer_sportbetting_mma.png' },
 ];
 
 const demo_sports = [
