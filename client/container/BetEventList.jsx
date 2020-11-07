@@ -174,6 +174,7 @@ class BetEventList extends Component {
                 getMethod(params)
                     .then(({ data, pages }) => {
                         if (this.debounce) {
+                            console.log('data', data);                            
                             data.map(item => {
                                 let totalBet = 0;
                                 let totalMint = 0;
@@ -377,6 +378,13 @@ class BetEventList extends Component {
                                         className={'table-responsive table--for-betevents'}
                                         cols={cols}
                                         data={this.state.events.map((event) => {
+                                            const displayNum = (num, divider) => {
+                                                const value = num > 0 ? `+${num / divider}` : `${num / divider}`;
+                                                
+                                                return value;
+                                              };
+
+                                              
                                             const betAmount = event.actions.reduce((acc, action) => {
                                                 return acc + action.betValue
                                             }, 0.0
@@ -410,7 +418,7 @@ class BetEventList extends Component {
                                                     }
 
                                                     if (result.result && result.result.includes('Refund')) {
-                                                        console.log('result', result);
+                                                        //console.log('result', result);
                                                         outcome = result.result;
                                                     }
 
@@ -424,8 +432,7 @@ class BetEventList extends Component {
                                                     if (eventTime < Date.now()) {
                                                         betStatus = t('started')
                                                         if (event.results.length === 0) {
-                                                            betStatus = <span
-                                                                className={`badge badge-warning`}>{t('waitingForOracle')}</span>
+                                                            betStatus = <span>{t('waitingForOracle')}</span>
                                                         }
                                                     }
                                                 }
@@ -463,6 +470,36 @@ class BetEventList extends Component {
                                                     awayOdds = awayOdds + ' ↓'
                                                 }
                                             }
+
+                                            let spreadHomePoint = '';
+                                            let spreadAwayPoint = '';
+                                            let spreadHomeOdd = '';
+                                            let spreadAwayOdd = '';
+                                            const eventItem = event.events[0];
+                                            if (eventItem.latest_spread){
+                                                spreadHomePoint = `${displayNum(eventItem.latest_spread.homePoints, 10)}`;
+                                                spreadAwayPoint = `${displayNum(eventItem.latest_spread.awayPoints, 10)}`;
+                                                let homeOddstmp =  eventItem.latest_spread.homeOdds / 10000                
+                                                let awayOddstmp = eventItem.latest_spread.awayOdds / 10000
+                                
+                                                spreadHomeOdd = convertToOdds(homeOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);                
+                                                spreadAwayOdd = convertToOdds(awayOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);                                                
+                                            }
+                                            
+                                            let totalPoint = ''
+                                            let overOdd = ''
+                                            let underOdd = ''
+
+                                            if (eventItem.latest_total){
+                                                let overOddstmp =  eventItem.latest_total.overOdds / 10000                
+                                                let underOddstmp = eventItem.latest_total.underOdds / 10000
+                                                totalPoint = eventItem.latest_total.points / 10
+                                                underOdd = convertToOdds(underOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                                overOdd = convertToOdds(overOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                            }
+
+
+                                            //console.log('event', event.events[0]);
                                             return {
                                                 ...event,
                                                 start: <div>
@@ -476,15 +513,18 @@ class BetEventList extends Component {
                                                 drawOdds: <div className='black-table-box'><h3 style={{ color: '#9D9D9D'}}>{drawOdds}</h3></div>,
                                                 awayOdds: <div className='black-table-box'><h3 style={{ color: '#F90000'}}>{awayOdds}</h3></div>,
 
-                                                homeTeam: <div className='black-table-box'><p>+2.5</p><h3>1.86</h3></div>,
-                                                awayTeam: <div className='black-table-box'><p>-2.5</p><h3 style={{ color: '#F90000'}}>2.03</h3></div>,
+                                                spreadHome: <div className='black-table-box'><p>{spreadHomePoint}</p><h3>{spreadHomeOdd}</h3></div>,
+                                                spreadAway: <div className='black-table-box'><p>{spreadAwayPoint}</p><h3 style={{ color: '#F90000'}}>{spreadAwayOdd}</h3></div>,
 
+                                                totalOverOdd: <div className='black-table-box'><p>{totalPoint}</p><h3>{overOdd}</h3></div>,
+                                                totalUnderOdd: <div className='black-table-box'><p>{totalPoint}</p><h3 style={{ color: '#F90000'}}>{underOdd}</h3></div>,
+ 
                                                 betStatus: <div className='mt-2'>{betStatus}</div>,
                                                 betAmount: <span className={`mt-2 badge badge-danger `}>{numeral(betAmount).format('0,0.00')}</span>,
                                                 supplyChange: <span className={`mt-2 badge badge-${event.totalMint - event.totalBet < 0 ? 'danger' : 'success'}`}>
                                                     {numeral(event.totalMint - event.totalBet).format('0,0.00')}
                                                 </span>,
-                                                links: `/bet/event/${encodeURIComponent(event.events[0].eventId)}`
+                                                links: `/bet/event/${encodeURIComponent(event.events[0].eventId)}`,
                                                 // seeDetail: <Link
                                                 //     to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
                                             }

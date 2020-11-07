@@ -80,10 +80,10 @@ export default class CardBlackTable extends Component {
                         <td className='black-table-td border-right-0'><Link to={row.links} className='text-white'>{row.homeOdds}</Link></td>
                         <td className='black-table-td border-left-0 border-right-0'><Link to={row.links} className='text-white'>{row.drawOdds}</Link></td>
                         <td className='black-table-td border-left-0'><Link to={row.links} className='text-white'>{row.awayOdds}</Link></td>
-                        <td className='black-table-td border-right-0 blk'><Link to={row.links} className='text-white'>{row.homeTeam}</Link></td>
-                        <td className='black-table-td border-left-0 brk'><Link to={row.links} className='text-white'>{row.awayTeam}</Link></td>
-                        <td className='black-table-td border-right-0 blk'><Link to={row.links} className='text-white'>{row.homeTeam}</Link></td>
-                        <td className='black-table-td border-left-0 brk'><Link to={row.links} className='text-white'>{row.awayTeam}</Link></td>
+                        <td className='black-table-td border-right-0 blk'><Link to={row.links} className='text-white'>{row.spreadHome}</Link></td>
+                        <td className='black-table-td border-left-0 brk'><Link to={row.links} className='text-white'>{row.spreadAway}</Link></td>
+                        <td className='black-table-td border-right-0 blk'><Link to={row.links} className='text-white'>{row.totalOverOdd}</Link></td>
+                        <td className='black-table-td border-left-0 brk'><Link to={row.links} className='text-white'>{row.totalUnderOdd}</Link></td>
                         <td className='black-table-td'><Link to={row.links} className='text-white'>{row.betStatus}</Link></td>
                         <td className='black-table-td'><Link to={row.links} className='text-white'>{row.betAmount}</Link></td>
                         <td className='black-table-td border-right-0'><Link to={row.links} className='text-white'>{row.supplyChange}</Link></td>
@@ -106,10 +106,10 @@ export default class CardBlackTable extends Component {
                             {tab === 1 && <div className='d-flex flex-1 align-items-center'>{row.homeOdds}</div>}
                             {tab === 1 && <div className='d-flex flex-1 align-items-center'>{row.drawOdds}</div>}
                             {tab === 1 && <div className='d-flex flex-1 align-items-center'>{row.awayOdds}</div>}
-                            {tab === 2 && <div className='d-flex flex-1 align-items-center'>{row.homeTeam}</div>}
-                            {tab === 2 && <div className='d-flex flex-1 align-items-center'>{row.awayTeam}</div>}
-                            {tab === 3 && <div className='d-flex flex-1 align-items-center'>{row.homeTeam}</div>}
-                            {tab === 3 && <div className='d-flex flex-1 align-items-center'>{row.awayTeam}</div>}
+                            {tab === 2 && <div className='d-flex flex-1 align-items-center'>{row.spreadHome}</div>}
+                            {tab === 2 && <div className='d-flex flex-1 align-items-center'>{row.spreadAway}</div>}
+                            {tab === 3 && <div className='d-flex flex-1 align-items-center'>{row.totalOverOdd}</div>}
+                            {tab === 3 && <div className='d-flex flex-1 align-items-center'>{row.totalUnderOdd}</div>}
                         </div>
                     </Link>
                     <Link to={row.links} className='d-flex flex-row'>
