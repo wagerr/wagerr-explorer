@@ -1605,6 +1605,44 @@ const getDataListing = async (Model, actions, results, req, res) => {
         $addFields: { convertedTimestamp: { $toLong: "$timeStamp" } }
       }, 
       {
+        $lookup: {
+          from: "betspreads",
+          let: { eventId: "$eventId" },
+          pipeline: [
+            { $match:
+              { $expr:
+                 { 
+                    $eq: [ "$eventId",  "$$eventId" ]                                       
+                 }
+              }
+           },
+            { "$sort": { "createdAt": -1 } },
+            { "$limit": 1 }
+          ],
+          as: "latest_spread"
+        }
+      },  
+      { $addFields: { "latest_spread": { "$arrayElemAt": ["$latest_spread", 0] } } },
+      {
+        $lookup: {
+          from: "bettotals",
+          let: { eventId: "$eventId" },
+          pipeline: [
+            { $match:
+              { $expr:
+                 { 
+                    $eq: [ "$eventId",  "$$eventId" ]                                       
+                 }
+              }
+           },
+            { "$sort": { "createdAt": -1 } },
+            { "$limit": 1 }
+          ],
+          as: "latest_total"
+        }
+      },  
+      { $addFields: { "latest_total": { "$arrayElemAt": ["$latest_total", 0] } } },
+      {
         $group: {
           _id: '$eventId',
           events: {
@@ -1635,7 +1673,7 @@ const getDataListing = async (Model, actions, results, req, res) => {
           foreignField: 'eventId',
           as: 'actions',
         },
-      },
+      },      
       {
         $lookup: {
           from: results,
@@ -1643,7 +1681,7 @@ const getDataListing = async (Model, actions, results, req, res) => {
           foreignField: 'eventId',
           as: 'results',
         },
-      }
+      }      
     ];
 
     let result = await Model.aggregate(resultParams);

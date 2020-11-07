@@ -60,6 +60,6 @@
     "betAmount": "投注总额",
     "payoutAmount": "支付总额",
     "supplyChange": "供应量变化",
-    "waitingForOracle": "等待预言机结果"
+    "waitingForOracle2": "等待预言机结果"
   }
 }
