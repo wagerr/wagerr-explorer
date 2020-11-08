@@ -211,14 +211,6 @@ class BetEventList extends Component {
         })
     }
 
-    handleKeyPress = (ev) => {
-        if (ev.key === 'Enter') {
-            ev.preventDefault();
-
-            this.getBetEventsInfo();
-        }
-    };
-
     handleChange = (e) => {
         this.setState({
             search: e.target.value,

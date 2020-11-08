@@ -179,10 +179,19 @@ const convertToAmericanOdds = (odds) => {
     }
   
     handleSize = size => this.setState({size, page: 1})
+
+    handleParlayBetSearch = (ev) => {
+      if (ev.key === 'Enter') {
+        ev.preventDefault();
   
-    handleParlayBetSearch = (term) => {
-      this.props.onParlaySearch(term);
-    }
+        const term = ev.target.value.trim();
+        ev.target.value = '';
+  
+        if (!!term) {
+          this.props.onParlaySearch(term);
+        }
+      }
+    };
 
     render() {
         const { props } = this;
@@ -238,7 +247,7 @@ const convertToAmericanOdds = (odds) => {
                     <div className="content_search_wrapper">
 
                         <div className="content_page_title">
-                            <span>Betting Events</span>
+                            <span>Parlay Betting</span>
                         </div>
                     </div>
                     <div className="content__wrapper">
@@ -247,6 +256,16 @@ const convertToAmericanOdds = (odds) => {
                             onSearch={this.props.handleSearch}
                             searches={this.props.searches}
                         />
+                        <div className="animated fadeInUp m-t-20 m-h-20 m--b-25">
+                            <div className="search__card flex-center">
+                                <img src={'/img/uiupdate/search.png'} alt={'search'}/>
+                            </div>
+                            <input 
+                                className="search__input search__input__icon"
+                                placeholder={'Find parlay bet tx id'}
+                                onKeyPress={this.handleParlayBetSearch}
+                            />
+                        </div>
                         <div>
                             <HorizontalRule
                                 // select={select}                                
