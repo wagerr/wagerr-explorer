@@ -490,13 +490,15 @@ class BetEventList extends Component {
                                                 overOdd = convertToOdds(overOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);
                                             }
 
+                                            let homeTeam = eventItem.homeTeam ? eventItem.homeTeam : "";
+                                            let homeAway = eventItem.awayTeam ? eventItem.awayTeam : "";
 
                                             //console.log('event', event.events[0]);
                                             return {
                                                 ...event,
                                                 start: <div>
-                                                    <p style={{ fontSize: 20, color: '#E7E3EB'}}>Shakhtar Donetsk</p>
-                                                    <p style={{ fontSize: 20, color: '#F70407', fontWeight: '600'}}>Inter Milan</p>
+                                                    <p style={{ fontSize: 20, color: '#E7E3EB'}}>{homeTeam}</p>
+                                                    <p style={{ fontSize: 20, color: '#F70407', fontWeight: '600'}}>{homeAway}</p>
                                                     <p>{event.events[0].league}</p>
                                                     <p>{timeStampFormat(event.events[0].timeStamp)} </p>
                                                     <p>Event ID: {event.events[0].eventId}</p>
@@ -516,7 +518,7 @@ class BetEventList extends Component {
                                                 supplyChange: <span className={`mt-2 badge badge-${event.totalMint - event.totalBet < 0 ? 'danger' : 'success'}`}>
                                                     {numeral(event.totalMint - event.totalBet).format('0,0.00')}
                                                 </span>,
-                                                links: `/bet/event/${encodeURIComponent(event.events[0].eventId)}`,
+                                                links: `/bet/event/${encodeURIComponent(event.events[0].eventId)}`
                                                 // seeDetail: <Link
                                                 //     to={`/bet/event/${encodeURIComponent(event.events[0].eventId)}`}>{t('seeDetail')}</Link>
                                             }
