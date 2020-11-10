@@ -155,7 +155,7 @@ class BetEventList extends Component {
             const params = {
                 limit: this.state.size,
                 skip: (this.state.page - 1) * this.state.size,
-                opened_or_completed: this.props.toggleSwitch
+                opened_or_completed: !this.props.toggleSwitch
             };
 
             if (this.state.filterBy !== 'All') {
@@ -325,7 +325,7 @@ class BetEventList extends Component {
                             </div>
                             <input 
                                 className="search__input search__input__icon"
-                                placeholder={'Find event ids, sports or tournaments.'}
+                                placeholder={'Find by event ids, sports or tournaments.'}
                                 onKeyPress={this.handleKeyPress}
                             />
                         </div>

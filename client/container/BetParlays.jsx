@@ -121,14 +121,14 @@ const convertToAmericanOdds = (odds) => {
         const params = {
           limit: this.state.size,
           skip: (this.state.page - 1) * this.state.size,
-          opened_or_completed: this.state.toggleSwitch
+          opened_or_completed: !this.props.toggleSwitch
         };
   
         if (this.state.search) {
           getMethod = this.props.getParlayBetsInfo;
           params.search = this.state.search;
         }
-        console.log('params', params);
+        
         this.debounce = setTimeout(() => {
           getMethod(params)
             .then(({ data, pages }) => {            
@@ -146,8 +146,7 @@ const convertToAmericanOdds = (odds) => {
                     item.supplyChange = 0;  
                   } else {
                     item.supplyChange = (totalMint - totalBet) * 97 / 94;    
-                  }    
-                  console.log('item', item);
+                  }                      
                 })
                 this.setState({ parlaybets: data, pages, loading: false })
               }
@@ -200,7 +199,7 @@ const convertToAmericanOdds = (odds) => {
         const { width } = this.state;
 
         let cols = [
-            { key: 'betTime', title: t('BetTime') },
+            { key: 'betTime', title: t('Bet Time') },
             { key: 'txId', title: t('TxId') },
             { key: 'leg1', title: t('Leg1') },
             { key: 'leg2', title: t('Leg2') },
@@ -209,8 +208,8 @@ const convertToAmericanOdds = (odds) => {
             { key: 'leg5', title: t('Leg5') },
             { key: 'supplyChange', title: t('Supply Change') },
             { key: 'betAmount', title: t('Bet Amount') },
-            { key: 'betStatus', title: t('betStatus') },
-            { key: 'seeDetail', title: t('detail') },
+            { key: 'betStatus', title: t('Bet Status') },
+            { key: 'seeDetail', title: t('See details') },
           ];
           
         if (toggleSwitch){
@@ -255,6 +254,7 @@ const convertToAmericanOdds = (odds) => {
                             onRemove={this.props.handleRemove}
                             onSearch={this.props.handleSearch}
                             searches={this.props.searches}
+                            onlyBet={true}
                         />
                         <div className="animated fadeInUp m-t-20 m-h-20 m--b-25">
                             <div className="search__card flex-center">
@@ -262,7 +262,7 @@ const convertToAmericanOdds = (odds) => {
                             </div>
                             <input 
                                 className="search__input search__input__icon"
-                                placeholder={'Find parlay bet tx id'}
+                                placeholder={'Find parlay bet by tx id'}
                                 onKeyPress={this.handleParlayBetSearch}
                             />
                         </div>
