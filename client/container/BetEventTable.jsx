@@ -12,6 +12,9 @@ import { compose } from 'redux';
 import { translate } from 'react-i18next';
 import { connect } from 'react-redux';
 import CardBigTable from "../component/Card/CardBigTable";
+import {
+  OPCODE_CHANED_BLOCK
+} from '../constants';
 
 Number.prototype.toFixedNoRounding = function(n) {
   const reg = new RegExp("^-?\\d+(?:\\.\\d{0," + n + "})?", "g")
@@ -272,12 +275,12 @@ class BetEventTable extends Component {
 
                 homeOdds = convertToOdds(homeOdds, toggleSwitchOddsStyle, toggleSwitchOdds);                
                 awayOdds = convertToOdds(awayOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
-
+                const divider = action.blockHeight > OPCODE_CHANED_BLOCK ? 100 : 10;
                 return {
                   ...action,
                   createdAt: date24Format(action.createdAt),
                   homeOdds: homeOdds,
-                  spread: `${displayNum(action.homePoints, 10)}/${displayNum(action.awayPoints, 10)}`,
+                  spread: `${displayNum(action.homePoints, divider)}/${displayNum(action.awayPoints, divider)}`,
                   awayOdds: awayOdds,
                   txId: (
                     <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
@@ -292,12 +295,12 @@ class BetEventTable extends Component {
                 const spreadNum = Math.abs(parseInt(action.spreadAwayPoints, 10)) / 10;
                 let Odds = betChoose == 'Away' ? action.spreadAwayOdds / 10000 : action.spreadHomeOdds / 10000
                 Odds = convertToOdds(Odds, toggleSwitchOddsStyle, toggleSwitchOdds);                                
-
+                const divider = action.blockHeight > OPCODE_CHANED_BLOCK ? 100 : 10;
                 return {
                   ...action,
                   createdAt: date24Format(action.createdAt),
                   bet: betChoose, // `${action.homeOdds / 10000}/${action.awayOdds / 10000}`,
-                  spread: betChoose == 'Away' ? displayNum(action.spreadAwayPoints, 10) : displayNum(action.spreadHomePoints, 10),
+                  spread: betChoose == 'Away' ? displayNum(action.spreadAwayPoints, divider) : displayNum(action.spreadHomePoints, divider),
                   odds: Odds,
                   value: action.betValue
                     ? (<span
@@ -321,12 +324,12 @@ class BetEventTable extends Component {
 
               underOdds = convertToOdds(underOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
               overOdds = convertToOdds(overOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
-              
+              const divider = action.blockHeight > OPCODE_CHANED_BLOCK ? 100 : 10;
               return {
                 ...action,
                 createdAt: date24Format(action.createdAt),
                 overOdds: overOdds,
-                overUnder: action.points / 10,
+                overUnder: action.points / divider,
                 underOdds: underOdds,
                 txId: (
                   <Link to={`/tx/${ action.txId }`}>{action.txId}</Link>
@@ -339,12 +342,13 @@ class BetEventTable extends Component {
             data={sortBy(this.state.Totals.map((action) => {
               let Odds = action.betChoose.includes('Over') ? action.overOdds / 10000 : action.underOdds / 10000
               Odds = convertToOdds(Odds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              const divider = action.blockHeight > OPCODE_CHANED_BLOCK ? 100 : 10;
               return {
                 ...action,
                 createdAt: date24Format(action.createdAt),
                 bet: action.betChoose.replace('Money Line - ', ''),
                 // overUnder: ((action.homeOdds / action.awayOdds + action.homeOdds) * 100).toFixed(1),
-                overUnder: (action.points / 10).toFixed(1),
+                overUnder: (action.points / divider).toFixed(1),
                 odds: Odds,
                 value: action.betValue
                   ? (<span className="badge badge-danger">-{numeral(action.betValue).format('0,0.00000000')} WGR</span>) : '',

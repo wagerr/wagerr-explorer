@@ -32,6 +32,9 @@ import GlobalSwitch from "../component/Menu/GlobalSwitch";
 import Utils from "../core/utils";
 import Sliding from '../component/Sliding'
 import Switch from "react-switch";
+import {
+    OPCODE_CHANED_BLOCK
+  } from '../constants';
 
 Number.prototype.toFixedNoRounding = function(n) {
     const reg = new RegExp("^-?\\d+(?:\\.\\d{0," + n + "})?", "g")
@@ -441,7 +444,10 @@ class BetEventList extends Component {
                                             homeOdds = convertToOdds(homeOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
                                             drawOdds = convertToOdds(drawOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
                                             awayOdds = convertToOdds(awayOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
-                                        
+                                            
+                                            homeOdds = homeOdds == 0 ? '-' : homeOdds
+                                            drawOdds = drawOdds == 0 ? '-' : drawOdds
+                                            awayOdds = awayOdds == 0 ? '-' : awayOdds
                                             if (event.events.length > 1) {
                                                 let lastHomeOdds = (event.events[1].homeOdds / 10000)
                                                 let lastDrawOdds = (event.events[1].drawOdds / 10000)
@@ -463,33 +469,41 @@ class BetEventList extends Component {
                                                 }
                                             }
 
-                                            let spreadHomePoint = '';
-                                            let spreadAwayPoint = '';
-                                            let spreadHomeOdd = '';
-                                            let spreadAwayOdd = '';
+                                            let spreadHomePoint = '-';
+                                            let spreadAwayPoint = '-';
+                                            let spreadHomeOdd = '-';
+                                            let spreadAwayOdd = '-';
                                             const eventItem = event.events[0];
                                             if (eventItem.latest_spread){
-                                                spreadHomePoint = `${displayNum(eventItem.latest_spread.homePoints, 10)}`;
-                                                spreadAwayPoint = `${displayNum(eventItem.latest_spread.awayPoints, 10)}`;
+                                                const divider = eventItem.latest_spread.blockHeight > OPCODE_CHANED_BLOCK ? 100 : 10;
+                                                spreadHomePoint = `${displayNum(eventItem.latest_spread.homePoints, divider)}`;
+                                                spreadAwayPoint = `${displayNum(eventItem.latest_spread.awayPoints, divider)}`;                                                
                                                 let homeOddstmp =  eventItem.latest_spread.homeOdds / 10000                
                                                 let awayOddstmp = eventItem.latest_spread.awayOdds / 10000
                                 
                                                 spreadHomeOdd = convertToOdds(homeOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);                
                                                 spreadAwayOdd = convertToOdds(awayOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);                                                
                                             }
+                                            spreadHomePoint = spreadHomePoint == 0 ? '-' : spreadHomePoint;
+                                            spreadAwayPoint = spreadAwayPoint == 0 ? '-' : spreadAwayPoint;
+                                            spreadHomeOdd = spreadHomeOdd == 0 ? '-' : spreadHomeOdd;
+                                            spreadAwayOdd = spreadAwayOdd == 0 ? '-' : spreadAwayOdd;
                                             
-                                            let totalPoint = ''
-                                            let overOdd = ''
-                                            let underOdd = ''
+                                            let totalPoint = '-'
+                                            let overOdd = '-'
+                                            let underOdd = '-'
 
                                             if (eventItem.latest_total){
                                                 let overOddstmp =  eventItem.latest_total.overOdds / 10000                
                                                 let underOddstmp = eventItem.latest_total.underOdds / 10000
-                                                totalPoint = eventItem.latest_total.points / 10
+                                                const divider = eventItem.latest_total.blockHeight > OPCODE_CHANED_BLOCK ? 100 : 10;
+                                                totalPoint = eventItem.latest_total.points / divider                                                
                                                 underOdd = convertToOdds(underOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);
                                                 overOdd = convertToOdds(overOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);
                                             }
-
+                                            totalPoint = totalPoint == 0 ? '-' : totalPoint;
+                                            overOdd = overOdd == 0 ? '-' : overOdd;
+                                            underOdd = underOdd == 0 ? '-' : underOdd;
                                             let homeTeam = eventItem.homeTeam ? eventItem.homeTeam : "";
                                             let homeAway = eventItem.awayTeam ? eventItem.awayTeam : "";
 

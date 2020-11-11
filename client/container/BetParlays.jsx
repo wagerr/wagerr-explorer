@@ -339,7 +339,7 @@ const convertToAmericanOdds = (odds) => {
                                                   </span>,
                                                   betAmount: <span className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
                                                   betStatus: <span style={{fontWeight:'bold'}}>{betStatus}</span>,
-                                                  seeDetail: <Link to={`/tx/${encodeURIComponent(bet.txId)}`}>{t('seeDetail')}</Link>
+                                                  seeDetail: <Link to={`/tx/${encodeURIComponent(bet.txId)}`}>{t('See Details')}</Link>
                                             }
                                         })}
                                     />

@@ -547,7 +547,7 @@ const getTX = async (req, res) => {
         if (vout.address.indexOf('OP_RETURN') !== -1){          
           let betaction = await BetAction.findOne({txId: tx.txId});
           if (betaction){
-            const divider = betaction.blockHeight > OpcodeChangedBlock ? 100 : 10;
+            const divider = betaction.blockHeight > OpcodeChangedBlock ? 100 : 10;            
             if (betaction.betChoose.includes('Home')) {
               betaction.odds = betaction.homeOdds / 10000
             } else if (betaction.betChoose.includes('Away')) {
