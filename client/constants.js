@@ -5,6 +5,7 @@ export const ERROR = 'ERROR';
 export const TXS = 'TXS';
 export const WATCH_ADD = 'WATCH_ADD';
 export const WATCH_REMOVE = 'WATCH_REMOVE';
+export const OPCODE_CHANED_BLOCK = 0;
 
 export const API_BASE = location.origin;
 export const PAGINATION_PAGE_SIZE = [
@@ -43,6 +44,7 @@ const demo_sports = [
 
 
 export default {
+  OPCODE_CHANED_BLOCK,
   COIN,
   COINS,
   ERROR,

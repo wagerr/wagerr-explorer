@@ -27,15 +27,15 @@ export default class CardBetStatus extends Component {
       <Card title="Bet Status" className="card--status" >
         <div className="card__row bg-eee">
           <span className="card__label">TOTAL BET:</span>
-          <span className="card__result">{numeral(this.props.totalBet).format('0,0.00000000')} WGR</span>
+          <span className="card__result">{numeral(this.props.totalBet).format('0,0.00')} WGR</span>
         </div>
         <div className="card__row">
           <span className="card__label">TOTAL MINT:</span>
-          <span className="card__result">{numeral(this.props.totalMint).format('0,0.00000000')} WGR</span>
+          <span className="card__result">{numeral(this.props.totalMint).format('0,0.00')} WGR</span>
         </div>
         <div className="card__row bg-eee">
           <span className="card__label">NET SUPPLY CHANGE:</span>
-          <span className="card__result">{numeral(this.props.totalMint - this.props.totalBet).format('0,0.00000000')} WGR</span>
+          <span className="card__result">{numeral(this.props.totalMint - this.props.totalBet).format('0,0.00')} WGR</span>
         </div>
       </Card>
       </div>
