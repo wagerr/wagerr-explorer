@@ -209,7 +209,7 @@ const convertToAmericanOdds = (odds) => {
             { key: 'supplyChange', title: t('Supply Change') },
             { key: 'betAmount', title: t('Bet Amount') },
             { key: 'betStatus', title: t('Bet Status') },
-            { key: 'seeDetail', title: t('See details') },
+            { key: 'seeDetail', title: t('Details') },
           ];
           
         if (toggleSwitch){
