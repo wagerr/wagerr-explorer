@@ -505,9 +505,8 @@ class BetEventList extends Component {
                                             overOdd = overOdd == 0 ? '-' : overOdd;
                                             underOdd = underOdd == 0 ? '-' : underOdd;
                                             let homeTeam = eventItem.homeTeam ? eventItem.homeTeam : "";
-                                            let homeAway = eventItem.awayTeam ? eventItem.awayTeam : "";
-
-                                            //console.log('event', event.events[0]);
+                                            let homeAway = eventItem.awayTeam ? eventItem.awayTeam : "";                                            
+                                            //console.log('event', event.events[0]);                                                                 
                                             return {
                                                 ...event,
                                                 start: <div>
@@ -521,11 +520,11 @@ class BetEventList extends Component {
                                                 drawOdds: <div className='black-table-box'><h3 style={{ color: '#9D9D9D'}}>{drawOdds}</h3></div>,
                                                 awayOdds: <div className='black-table-box'><h3 style={{ color: '#F90000'}}>{awayOdds}</h3></div>,
 
-                                                spreadHome: <div className='black-table-box'><p>{spreadHomePoint}</p><h3>{spreadHomeOdd}</h3></div>,
-                                                spreadAway: <div className='black-table-box'><p>{spreadAwayPoint}</p><h3 style={{ color: '#F90000'}}>{spreadAwayOdd}</h3></div>,
+                                                spreadHome: <div className='black-table-box'>{spreadHomePoint != '-' && <p>{spreadHomePoint}</p>}{spreadHomePoint == '-' && <h3 style={{ color: '#9D9D9D'}}>{spreadHomePoint}</h3>}{spreadHomeOdd != '-' && <h3>{spreadHomeOdd}</h3>}{spreadHomeOdd == '-' && <h3 style={{ color: '#9D9D9D'}}>{spreadHomeOdd}</h3>}</div>,
+                                                spreadAway: <div className='black-table-box'>{spreadAwayPoint != '-' && <p>{spreadAwayPoint}</p>}{spreadAwayPoint == '-' && <h3 style={{ color: '#9D9D9D'}}>{spreadAwayPoint}</h3>}{spreadAwayOdd != '-' && <h3 style={{ color: '#F90000'}}>{spreadAwayOdd}</h3>}{spreadAwayOdd == '-' && <h3 style={{ color: '#9D9D9D'}}>{spreadAwayOdd}</h3>}</div>,
 
-                                                totalOverOdd: <div className='black-table-box'><p>{totalPoint}</p><h3>{overOdd}</h3></div>,
-                                                totalUnderOdd: <div className='black-table-box'><p>{totalPoint}</p><h3 style={{ color: '#F90000'}}>{underOdd}</h3></div>,
+                                                totalOverOdd: <div className='black-table-box'>{totalPoint == '-' && <h3 style={{ color: '#9D9D9D'}}>{totalPoint}</h3>}{totalPoint != '-' && <p>{totalPoint}</p>}{overOdd != '-' && <h3>{overOdd}</h3>}{overOdd == '-' && <h3 style={{ color: '#9D9D9D'}}>{overOdd}</h3>}</div>,                   
+                                                totalUnderOdd: <div className='black-table-box'>{totalPoint != '-' && <p>{totalPoint}</p>}{totalPoint == '-' && <h3 style={{ color: '#9D9D9D'}}>{totalPoint}</h3>}{underOdd == '-' && <h3 style={{ color: '#9D9D9D'}}>{underOdd}</h3>}{underOdd != '-' && <h3 style={{ color: '#F90000'}}>{underOdd}</h3>}</div>,                                   
  
                                                 betStatus: <div className='mt-2'>{betStatus}</div>,
                                                 betAmount: <span className={`mt-2 badge badge-danger `}>{numeral(betAmount).format('0,0.00')}</span>,

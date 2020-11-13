@@ -1336,6 +1336,7 @@ const getBetTotals = async (req, res) => {
       const results = await Bettotal.find({
         visibility: true,
       }).skip(skip).limit(limit).sort({ createdAt: 1 });
+      
       res.json({ results, pages: total <= limit ? 1 : Math.ceil(total / limit) });
     }
   } catch (err) {
