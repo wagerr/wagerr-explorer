@@ -177,7 +177,9 @@ const convertToAmericanOdds = (odds) => {
       this.props.history.push('/betparlays/'+page) 
     }
   
-    handleSize = size => this.setState({size, page: 1})
+    handleSize = size => this.setState({ size, page: 1 }, () => {
+      this.getParlayBetsInfo()
+  });
 
     handleParlayBetSearch = (ev) => {
       if (ev.key === 'Enter') {
