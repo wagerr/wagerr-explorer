@@ -543,10 +543,10 @@ class BetEventList extends Component {
                                                     {totalPoint == '-' && overOdd == '-' && <h3 style={{ color: '#9D9D9D'}}>{overOdd}</h3>}
                                                 </div>,                   
                                                 totalUnderOdd: <div className='black-table-box'>
-                                                    {totalPoint != '-' && <p>{totalPoint}</p>}
                                                     {underOdd != '-' && totalPoint == '-' && <h3 style={{ color: '#9D9D9D'}}>{totalPoint}</h3>}
+                                                    {totalPoint != '-' && <p>{totalPoint}</p>}                                                    
                                                     {underOdd != '-' && <h3 style={{ color: '#F90000'}}>{underOdd}</h3>}
-                                                    {totalPoint != '-' & underOdd == '-' && <h3 style={{ color: '#9D9D9D'}}>{underOdd}</h3>}                                                    
+                                                    {totalPoint != '-' && underOdd == '-' && <h3 style={{ color: '#9D9D9D'}}>{underOdd}</h3>}                                                    
                                                     {totalPoint == '-' && underOdd == '-' && <h3 style={{ color: '#9D9D9D'}}>{underOdd}</h3>}
                                                 </div>,                                   
  
