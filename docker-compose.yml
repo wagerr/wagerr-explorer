@@ -20,7 +20,8 @@ services:
     networks:
       - dbnet
     volumes:
-      - /root/wagerr:/root/.wagerr
+      - /root/wagerr/wagerr-cli:/usr/local/bin/wagerr-cli
+      - /root/wagerr/wagerrd:/usr/local/bin/wagerrd
       - ./docker/node/docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
       - ./docker/node/start.sh:/usr/local/bin/start.sh
       - ./docker/node/dev.sh:/usr/local/bin/dev.sh

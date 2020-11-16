@@ -19,26 +19,26 @@ apt-get install libtool -y
 apt-get install libevent-dev -y
 apt-get install protobuf-compiler -y
 
-echo 'Cloning wagerr'
+#echo 'Cloning wagerr'
 
-mkdir -p /tmp/wagerr
-cd /tmp/wagerr
-git clone -b master https://github.com/wagerr/wagerr
-cd  wagerr
-echo 'Running autogen'
-./autogen.sh
-echo 'Running configuration'
-./configure --disable-tests --with-gui=qt5k
-echo 'Running make'
-make
-cd src
+#mkdir -p /tmp/wagerr
+#cd /tmp/wagerr
+#git clone -b master https://github.com/wagerr/wagerr
+#cd  wagerr
+#echo 'Running autogen'
+#./autogen.sh
+#echo 'Running configuration'
+#./configure --disable-tests --with-gui=qt5k
+#echo 'Running make'
+#make
+#cd src
 #cp test_wagerr /usr/local/bin
 #cp test_wagerr-qt /usr/local/bin
-cp wagerr-cli /usr/local/bin
-cp wagerrd /usr/local/bin
+#cp wagerr-cli /usr/local/bin
+#cp wagerrd /usr/local/bin
 #cp wagerr-qt /usr/local/bin
-cp wagerr-tx /usr/local/bin
-cd
+#cp wagerr-tx /usr/local/bin
+#cd
 
 # Download latest node and install.
 #echo 'Installing wagerr'
