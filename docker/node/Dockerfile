@@ -17,4 +17,3 @@ EXPOSE 55003
 EXPOSE 55055
 EXPOSE 55002
 
-CMD [ "bash",  "start.sh" ]

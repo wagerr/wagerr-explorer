@@ -16,7 +16,7 @@ rpcuser=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo '')
 rpcpassword=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 32 ; echo '')
 cat > /root/.wagerr/wagerr.conf <<EOL
 daemon=1
-txindex=1
+txindex=1166
 enablezeromint=0
 server=1
 rpcbind=0.0.0.0
