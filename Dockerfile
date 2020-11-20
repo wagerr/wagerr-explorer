@@ -20,6 +20,7 @@ WORKDIR /explorer
 RUN npm cache clean --force
 RUN npm install -g webpack
 RUN npm install -g webpack-cli
+RUN npm install -g webpack-dev-server
 
 COPY package.json /explorer
 #COPY docker/node/install.sh /root/install.sh
