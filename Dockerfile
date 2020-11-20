@@ -19,9 +19,9 @@ WORKDIR /explorer
 
 RUN npm cache clean --force
 RUN npm install -g yarn node-gyp
-RUN yarn global add webpack-dev-server
-RUN yarn global add webpack
-RUN yarn global add webpack-cli
+#RUN yarn global add webpack-dev-server
+#RUN yarn global add webpack
+#RUN yarn global add webpack-cli
 
 COPY package.json /explorer
 
