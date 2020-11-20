@@ -18,18 +18,16 @@ RUN echo "NPM Version:" && npm --version
 WORKDIR /explorer
 
 RUN npm cache clean --force
-RUN npm install -g webpack-dev-server
-RUN npm install -g webpack
-RUN npm install -g webpack-cli
+RUN npm install -g yarn node-gyp
+RUN yarn global add webpack-dev-server
+RUN yarn global add webpack
+RUN yarn global add webpack-cli
 
 COPY package.json /explorer
+
+RUN yarn install
 #COPY docker/node/install.sh /root/install.sh
 #COPY docker/node/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-
-RUN npm install -g yarn node-gyp
-RUN npm install
-RUN yarn install
-
 COPY . .
 
 ADD crontab /etc/cron.d/hello-cron
