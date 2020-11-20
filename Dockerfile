@@ -18,6 +18,7 @@ RUN echo "NPM Version:" && npm --version
 WORKDIR /explorer
 
 RUN npm cache clean --force
+RUN npm install -g webpack-dev-server
 RUN npm install -g webpack
 RUN npm install -g webpack-cli
 
