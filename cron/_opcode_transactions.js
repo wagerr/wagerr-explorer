@@ -350,7 +350,7 @@ async function verifyBetOdds(record, rtype) {
                 };                      
                 legs.push(item);
               }
-              console.log('legs', legs);
+              //console.log('legs', legs);
               thisParlay.legs = legs;
             }
             await thisParlay.save()
@@ -787,7 +787,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         const res = await rpc.call('getbetbytxid', [rpctx.get('txid')]);  
         if (res && res.length > 0){              
           const leg = res[0].legs[0];
-          console.log('peerlessbet', leg);
+          //console.log('peerlessbet', leg);
 
           // eventId: leg['event-id'],  
           // outcome: leg.outcome,  
@@ -862,7 +862,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
       return spreadExists;
     }
     
-    console.log('peerlessSpreadsMarket', transaction);
+    //console.log('peerlessSpreadsMarket', transaction);
     const { spreadPoints } = transaction;
     
     const moneyLine = await Betupdate.find({
