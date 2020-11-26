@@ -21,7 +21,7 @@
     "cron:rich": "node ./cron/rich.js >> ./tmp/rich.log",
     "cron:rpc": "node ./cron/rpc-test.js >> ./tmp/rpc-test.log",
     "cron:tx-query": "node ./cron/decode.js >> ./tmp/tx-query.log",
-    "start:api": "NODE_ENV=production node ./server/index.js",
+    "start:api": "NODE_ENV=production node --max-old-space-size=8192 ./server/index.js",
     "db:clean": "node ./cron/clear-db.js >> ./tmp/clear-db.log",
     "start:maint": "NODE_ENV=production node ./server/maintenance.js",
     "start:web": "webpack-dev-server --progress --colors",
