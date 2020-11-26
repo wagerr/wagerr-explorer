@@ -6,6 +6,7 @@ const locker = require('../lib/locker')
 const util = require('./util')
 // Models.
 const Block = require('../model/block')
+const Price = require('../model/price')
 const Statistic = require('../model/statistic')
 const TX = require('../model/tx')
 const BetResult = require('../model/betresult')
@@ -27,6 +28,8 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
   rpc.timeout(10000) // 10 secs
 
   for (let height = start; height <= stop; height++) {
+    const block_obj = await Block.findOne({height: height})
+
     let totalBet = 0
 
     const actionData = await BetAction.aggregate([
@@ -76,16 +79,59 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
       })
     }
 
-    const block = await Block.findOne({height: height})
+    let total_wgr = 0;
+    let total_usd = 0;
+    try {
+      let total_bet_wgr = 0;
+      let total_bet_usd = 0;
+      let total_parlay_wgr = 0;
+      let total_parlay_usd = 0;
 
+      const prices = await Price.aggregate([
+        { $project: { diff: { $abs: { $subtract: [block_obj.createdAt, '$createdAt'] } }, doc: '$$ROOT' } },
+        { $sort: { diff: 1 } },
+        { $limit: 1 }
+      ]);
+
+      const betactions = await BetAction.aggregate([
+        {$match: {blockHeight: { $lte: height , $gte: start}, completed: true}},
+        { $group: { _id: 'total_bet_wgr', total: { $sum: '$payout' } } }        
+      ]);
+    
+      if (betactions.length!==0){
+        total_bet_wgr = betactions[0].total_bet_wgr
+        total_bet_usd = total_bet_wgr * prices[0].doc.usd;
+      }
+      
+      const betparlays = await BetParlay.aggregate([
+        {$match: {blockHeight: { $lte: height , $gte: start}, completed: true}},
+        { $group: { _id: 'total_parlay_wgr', total: { $sum: '$payout' } } }           
+      ]);
+
+      if (betparlays.length!==0){
+        total_parlay_wgr = betactions[0].total_parlay_wgr
+        total_parlay_usd = total_parlay_wgr * prices[0].doc.usd;
+      }
+        
+      total_wgr = total_bet_wgr + total_parlay_wgr;
+      total_usd = total_bet_usd + total_parlay_usd;
+  
+    } catch(err) {
+      console.log(err);
+    }
+
+    //const block = await Block.findOne({height: height})
+    console.log(total_wgr, total_usd);
     const statistic = new Statistic({
-      blockHeight: block.height,
-      createdAt: block.createdAt,
+      blockHeight: block_obj.height,
+      createdAt: block_obj.createdAt,
       totalBet: totalBet,
       totalMint: totalMint,
+      totalPayout: total_wgr,
+      totalPayoutUSD: total_usd
     })
     await statistic.save()
-    console.log(`Height: ${ block.height } totalBet: ${ totalBet } totalMint: ${ totalMint }`)
+    console.log(`Height: ${ block_obj.height } totalBet: ${ totalBet } totalMint: ${ totalMint }`)
 
   }
 }
@@ -98,7 +144,7 @@ async function update () {
   let code = 0
 
   try {
-    const info = await rpc.call('getinfo')
+    //const info = await rpc.call('getinfo')
     const statistic = await Statistic.findOne().sort({blockHeight: -1})
     const betResult = await BetResult.findOne().sort({blockHeight: -1})
 
