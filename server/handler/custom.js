@@ -51,6 +51,7 @@ const getCustomSupply = async (req, res) => {
 };
 
 const getTotalPayout = async (req, res) => {
+  req.clearTimeout();
   try {
     const betactions = await BetAction.find({completed: true});  
     const total_bet_wgr = betactions.reduce((sum, action) => {
