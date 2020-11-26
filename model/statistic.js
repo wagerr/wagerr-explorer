@@ -12,6 +12,8 @@ const Statistic = mongoose.model('Statistic', new mongoose.Schema({
   createdAt: { index: true, required: true, type: Date },
   totalBet: { type: Number },
   totalMint: { type: Number },
+  totalPayout: {type: Number},
+  totalPayoutUSD: {type: Number}
 }, { versionKey: false }), 'statistics');
 
 module.exports =  Statistic;

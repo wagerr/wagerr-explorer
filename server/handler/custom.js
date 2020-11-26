@@ -51,7 +51,7 @@ const getCustomSupply = async (req, res) => {
 };
 
 const getTotalPayout = async (req, res) => {
-  req.clearTimeout();
+  
   try {
     const betactions = await BetAction.find({completed: true});  
     const total_bet_wgr = betactions.reduce((sum, action) => {
@@ -61,12 +61,12 @@ const getTotalPayout = async (req, res) => {
     let total_bet_usd = 0;
 
     for (action of betactions){
-      // const prices = await Price.aggregate([
-      //   { $project: { diff: { $abs: { $subtract: [action.createdAt, '$createdAt'] } }, doc: '$$ROOT' } },
-      //   { $sort: { diff: 1 } },
-      //   { $limit: 1 }
-      // ]);
-      total_bet_usd = total_bet_usd + action.payout * action.betValueUSD;
+      const prices = await Price.aggregate([
+        { $project: { diff: { $abs: { $subtract: [action.createdAt, '$createdAt'] } }, doc: '$$ROOT' } },
+        { $sort: { diff: 1 } },
+        { $limit: 1 }
+      ]);
+      total_bet_usd = total_bet_usd + action.payout * prices[0].doc.usd;
     }
 
     const betparlays = await BetParlay.find({completed: true});  
@@ -76,12 +76,12 @@ const getTotalPayout = async (req, res) => {
 
     let total_parlay_usd = 0;
     for (parlay of betparlays){
-      // const prices = await Price.aggregate([
-      //   { $project: { diff: { $abs: { $subtract: [parlay.createdAt, '$createdAt'] } }, doc: '$$ROOT' } },
-      //   { $sort: { diff: 1 } },
-      //   { $limit: 1 }
-      // ]);
-      total_parlay_usd = total_parlay_usd + parlay.payout * parlay.betValueUSD;
+      const prices = await Price.aggregate([
+        { $project: { diff: { $abs: { $subtract: [parlay.createdAt, '$createdAt'] } }, doc: '$$ROOT' } },
+        { $sort: { diff: 1 } },
+        { $limit: 1 }
+      ]);
+      total_parlay_usd = total_parlay_usd + parlay.payout * prices[0].doc.usd;
     }
 
 
