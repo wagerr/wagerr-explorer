@@ -36,31 +36,62 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
 
   const blocks = await Block.find({height: { $gte: start , $lte: stop}})
 
+  const betData = await BetAction.aggregate([
+    {$match: {blockHeight: { $gte: start , $lte: stop}}},
+    { $group: { _id: "$blockHeight", total: { $sum: '$betValue' }, totalpayout: { $sum: '$payout' } } }
+  ]);
+
+  let betactionBetData = {};
+  let betactionPayoutData = {}
+  for (const item_bet_data of betData){
+    betactionBetData[item_bet_data._id] = item_bet_data.total;
+    if (item_bet_data.completed == true){
+      betactionPayoutData[item_bet_data._id] = item_bet_data.totalpayout;
+    }
+  }
+
+
+
+  const parlayData = await BetParlay.aggregate([
+    {$match: {blockHeight: { $gte: start , $lte: stop}}},
+    { $group: { _id: '$blockHeight', total: { $sum: '$betValue' }, totalpayout: { $sum: '$payout' } } }
+  ]);
+
+  let parlayBetData = {};
+  let parlayPayoutData = {};
+  for (const item_parlay_data of parlayData){
+    parlayBetData[item_parlay_data._id] = item_parlay_data.total;
+    if (item_parlay_data.completed == true){
+      parlayPayoutData[item_parlay_data._id] = item_parlay_data.totalpayout;
+    }
+  }
+
+  const resultDatas = await BetResult.aggregate([
+    {$match: {blockHeight: { $gte: start , $lte: stop}}},
+  ]);
+
+  let resultPayoutDatas = {};
+  for (const item_result of resultDatas){
+    if (resultDatas[item_result.blockHeight]){
+      resultPayoutDatas[item_result.blockHeight].push(item_result);
+    } else {
+      resultPayoutDatas[item_result.blockHeight] = [];
+      resultPayoutDatas[item_result.blockHeight].push(item_result);
+    }    
+  }
+
+
   for (let block of blocks) {
-
-    const actionData = await BetAction.aggregate([
-      {$match: {blockHeight: block.height}},
-      { $group: { _id: 'totalBet', total: { $sum: '$betValue' } } }
-    ]);
-
-    if (actionData.length!==0){
-      totalBet =+ actionData[0].total
+    if (betactionBetData[block.height]){
+      totalBet =+ betactionBetData[block.height]
     }
 
-    const parlayData = await BetParlay.aggregate([
-      {$match: {blockHeight: block.height}},
-      { $group: { _id: 'totalBet', total: { $sum: '$betValue' } } }
-    ]);
-
-    if (parlayData.length!==0){
-      totalBet =+ parlayData[0].total
+    if (parlayBetData[block.height]){
+      totalBet =+ parlayBetData[block.height]
     }
 
-    const resultData = await BetResult.aggregate([
-      {$match: {blockHeight: {$lte: block.height, $gte: start}}},
-    ]);
-
-    if (resultData.length !== 0 ){
+    let resultData = resultPayoutDatas[block.height]
+    if (resultData && resultData.length !== 0 ){
       resultData.forEach(queryResult => {
         let startIndex = 2
         let obj_checked = false;
@@ -95,24 +126,14 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
         { $sort: { diff: 1 } },
         { $limit: 1 }
       ]);
-
-      const betactions = await BetAction.aggregate([
-        {$match: {blockHeight: block.height, completed: true}},
-        { $group: { _id: 'total_bet_wgr', total: { $sum: '$payout' } } }        
-      ]);
-    
-      if (betactions.length!==0){
-        total_bet_wgr = betactions[0].total_bet_wgr
+          
+      if (betactionPayoutData[block.height]){
+        total_bet_wgr = betactionPayoutData[block.height]
         total_bet_usd = total_bet_wgr * prices[0].doc.usd;
       }
-      
-      const betparlays = await BetParlay.aggregate([
-        {$match: {blockHeight: block.height, completed: true }},
-        {$group: { _id: 'total_parlay_wgr', total: { $sum: '$payout' } }}           
-      ]);
 
-      if (betparlays.length!==0){
-        total_parlay_wgr = betactions[0].total_parlay_wgr
+      if (parlayPayoutData[block.height]){
+        total_parlay_wgr = parlayPayoutData[block.height]
         total_parlay_usd = total_parlay_wgr * prices[0].doc.usd;
       }
         
