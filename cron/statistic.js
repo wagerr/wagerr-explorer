@@ -26,8 +26,7 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
   if (clean) {
     await Statistic.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
   }    
-  console.log('syncBlocksForStatistic', start, stop);
-
+  
   const latest_statistic = await Statistic.findOne({height: { $lt: start}}).sort({blockHeight: -1});  
 
   let totalBet =  latest_statistic && latest_statistic.totalBet ? latest_statistic.totalBet : 0
@@ -132,9 +131,9 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
       totalPayout: totalPayout,
       totalPayoutUSD: totalPayoutUSD
     })
-    await statistic.save()
-    //console.log(`statistic:`, statistic)
+    await statistic.save()    
   }
+  console.log('syncBlocksForStatistic', start, stop);
 }
 
 /**
