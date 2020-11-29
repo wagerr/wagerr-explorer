@@ -55,7 +55,7 @@ const getTotalPayout = async (req, res) => {
   
   try {    
     const statistic = await Statistic.findOne().sort({blockHeight: -1})
-    res.json({totalpayout: {wgr: statistic.totalPayout, usd: totalPayoutUSD}})
+    res.json({totalpayout: {wgr: statistic.totalPayout, usd: statistic.totalPayoutUSD}})
 
   } catch(err) {
     console.log(err);
