@@ -7,7 +7,7 @@ const { BigNumber } = require('bignumber.js')
 const UTXO = require('../../model/utxo');
 const { rpc } = require('../../lib/cron');
 const Price = require('../../model/price');
-const Statistic = require('../model/statistic')
+const Statistic = require('../../model/statistic');
 const getBetStatus = async (req, res) => {
   try {
     const txs = await TX
