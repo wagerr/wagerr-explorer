@@ -40,16 +40,15 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
     {$match: {blockHeight: { $gte: start , $lte: stop}}},
     { $group: { _id: "$blockHeight", total: { $sum: '$betValue' }, totalpayout: { $sum: '$payout' } } }
   ]);
+  
 
   let betactionBetData = {};
   let betactionPayoutData = {}
   for (const item_bet_data of betData){
     betactionBetData[item_bet_data._id] = item_bet_data.total;
-    if (item_bet_data.completed == true){
-      betactionPayoutData[item_bet_data._id] = item_bet_data.totalpayout;
-    }
+    betactionPayoutData[item_bet_data._id] = item_bet_data.totalpayout;
   }
-
+  console.log("betbetactionBetDataData", betactionBetData, betactionPayoutData);
 
 
   const parlayData = await BetParlay.aggregate([
@@ -61,9 +60,7 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
   let parlayPayoutData = {};
   for (const item_parlay_data of parlayData){
     parlayBetData[item_parlay_data._id] = item_parlay_data.total;
-    if (item_parlay_data.completed == true){
-      parlayPayoutData[item_parlay_data._id] = item_parlay_data.totalpayout;
-    }
+    parlayPayoutData[item_parlay_data._id] = item_parlay_data.totalpayout;
   }
 
   const resultDatas = await BetResult.aggregate([
@@ -83,11 +80,11 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
 
   for (let block of blocks) {
     if (betactionBetData[block.height]){
-      totalBet =+ betactionBetData[block.height]
+      totalBet = totalBet + betactionBetData[block.height]
     }
 
     if (parlayBetData[block.height]){
-      totalBet =+ parlayBetData[block.height]
+      totalBet = totalBet + parlayBetData[block.height]
     }
 
     let resultData = resultPayoutDatas[block.height]
@@ -110,7 +107,7 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
           }
         }
         for (let i = startIndex; i < queryResult.payoutTx.vout.length - 1; i++) {
-          totalMint += queryResult.payoutTx.vout[i].value
+          totalMint = totalMint + queryResult.payoutTx.vout[i].value
         }
       })
     }
@@ -137,13 +134,17 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
         total_parlay_usd = total_parlay_wgr * prices[0].doc.usd;
       }
         
-      totalPayout =+ (total_bet_wgr + total_parlay_wgr);
-      totalPayoutUSD =+ (total_bet_usd + total_parlay_usd);
+      totalPayout = totalPayout + (total_bet_wgr + total_parlay_wgr);
+      totalPayoutUSD = totalPayoutUSD + (total_bet_usd + total_parlay_usd);
       
     } catch(err) {
       console.log(err);
     }
-
+    console.log('totalBet', totalBet);
+    console.log('totalMint', totalMint);
+    console.log('totalPayout', totalPayout);
+    console.log('totalPayoutUSD', totalPayoutUSD);
+    
     const statistic = new Statistic({
       blockHeight: block.height,
       createdAt: block.createdAt,
