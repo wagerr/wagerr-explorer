@@ -177,12 +177,13 @@ class NewBetEvent extends Component {
                                 </div>
                             </div>
                             <div className="col-md-12 col-lg-6">
-                                <Card title={'Bet Result'}>
+                                <CardBetResult eventInfo={this.state.eventInfo} data={tableData} />
+                                {/* <Card title={'Bet Result'}>
                                     <div className='space-between direction-row p-13'>
                                         <div>Result:</div>
                                         <div>Waiting For Oracle</div>
                                     </div>
-                                </Card>
+                                </Card> */}
                             </div>
                         </div>
                         <BetEventTable toggleSwitchOdds={this.props.toggleSwitchOdds} toggleSwitchOddsStyle={this.props.toggleSwitchOddsStyle} match={this.props.match} data={tableData}/>
