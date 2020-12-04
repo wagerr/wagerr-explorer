@@ -26,7 +26,7 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
     await Statistic.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
   }  
 
-  if (stop - start > 1000) stop = start + 1000;
+  if (stop - start > 500) stop = start + 500;
    
   const latest_statistic = await Statistic.findOne({height: { $lt: start}}).sort({blockHeight: -1});  
 
