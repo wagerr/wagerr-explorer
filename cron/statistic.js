@@ -48,7 +48,7 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
     betactionBetData[item_bet_data._id] = item_bet_data.total;
     betactionPayoutData[item_bet_data._id] = item_bet_data.totalpayout;
   }
-  console.log("betbetactionBetDataData", betactionBetData, betactionPayoutData);
+  //console.log("betbetactionBetDataData", betactionBetData, betactionPayoutData);
 
 
   const parlayData = await BetParlay.aggregate([
@@ -140,10 +140,10 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
     } catch(err) {
       console.log(err);
     }
-    console.log('totalBet', totalBet);
-    console.log('totalMint', totalMint);
-    console.log('totalPayout', totalPayout);
-    console.log('totalPayoutUSD', totalPayoutUSD);
+    // console.log('totalBet', totalBet);
+    // console.log('totalMint', totalMint);
+    // console.log('totalPayout', totalPayout);
+    // console.log('totalPayoutUSD', totalPayoutUSD);
     
     const statistic = new Statistic({
       blockHeight: block.height,
