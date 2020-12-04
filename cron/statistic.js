@@ -22,11 +22,12 @@ console.log('Running statistic cron job');
  * @param {Number} stop The current block height at the tip of the chain.
  */
 async function syncBlocksForStatistic (start, stop, clean = false) {
-  if (stop - start > 1000) stop = start + 1000;
   if (clean) {
     await Statistic.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
-  }    
-  
+  }  
+
+  if (stop - start > 1000) stop = start + 1000;
+   
   const latest_statistic = await Statistic.findOne({height: { $lt: start}}).sort({blockHeight: -1});  
 
   let totalBet =  latest_statistic && latest_statistic.totalBet ? latest_statistic.totalBet : 0
