@@ -28,12 +28,17 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
 
   if (stop - start > 500) stop = start + 500;
    
-  const latest_statistic = await Statistic.findOne({height: { $lt: start}}).sort({blockHeight: -1});  
+  const latest_statistic = await Statistic.findOne({blockHeight: { $lt: start}}).sort({blockHeight: -1});  
 
   let totalBet =  latest_statistic && latest_statistic.totalBet ? latest_statistic.totalBet : 0
   let totalMint =  latest_statistic && latest_statistic.totalMint ? latest_statistic.totalMint : 0
   let totalPayout =  latest_statistic && latest_statistic.totalPayout ? latest_statistic.totalPayout : 0
   let totalPayoutUSD =  latest_statistic && latest_statistic.totalPayoutUSD ? latest_statistic.totalPayoutUSD : 0
+
+  // console.log('totalBet', totalBet);
+  // console.log('totalMint', totalMint);
+  // console.log('totalPayout', totalPayout);
+  // console.log('totalPayoutUSD', totalPayoutUSD);
 
   const blocks = await Block.find({height: { $gte: start , $lte: stop}})
 
