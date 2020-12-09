@@ -54,9 +54,8 @@ const getCustomSupply = async (req, res) => {
 const getTotalPayout = async (req, res) => {
   
   try {    
-    const statistic = await Statistic.findOne().sort({blockHeight: -1})
-    res.json({totalpayout: {wgr: statistic.totalPayout, usd: statistic.totalPayoutUSD}})
-
+    const statistic = await Statistic.findOne().sort({blockHeight: -1})    
+    res.json({totalpayout: {wgr: statistic.totalPayout + 102107516.1294, usd: statistic.totalPayoutUSD + 102107516.1294 * 0.1}})
   } catch(err) {
     console.log(err);
     res.status(500).send(err.message || err);
