@@ -256,13 +256,11 @@ const getCoinHistory = (req, res) => {
     .skip(req.query.skip ? parseInt(req.query.skip, 10) : 0)
     .limit(req.query.limit ? parseInt(req.query.limit, 10) : 12) // 12x5=60 mins
     .sort({ createdAt: -1 })
-    .then(async (docs) => {
-      
+    .then(async (docs) => {      
       if (docs.length > 0){
         const price = await Price.findOne().sort({ createdAt: -1 });        
         docs[0].usd = price.usd;
       }
-      console.log(docs);
       res.json(docs);
     })
     .catch((err) => {
