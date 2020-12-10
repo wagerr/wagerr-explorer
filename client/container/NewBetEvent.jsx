@@ -47,6 +47,19 @@ class NewBetEvent extends Component {
         this.toggle = this.toggle.bind(this);
     };
 
+    handleKeyPress = (ev) => {
+        if (ev.key === 'Enter') {
+          ev.preventDefault();
+    
+          const term = ev.target.value.trim();
+          ev.target.value = '';
+    
+          if (!!term) {
+            this.props.handleEventSearch(term);
+          }
+        }
+    };
+    
     componentDidMount() {
         console.log('componentDidMount-BetEvent', this.props.match.params.eventId);
         this.setState({
@@ -149,6 +162,7 @@ class NewBetEvent extends Component {
                             <input
                                 className="search__input search__input__icon"
                                 placeholder={'Find team names, event ids, sports or tournaments.'}
+                                onKeyPress={this.handleKeyPress}
                             />
                         </div>
 

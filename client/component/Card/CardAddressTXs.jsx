@@ -60,7 +60,7 @@ export default class CardAddressTXs extends Component {
             ),
             createdAt: date24Format(tx.createdAt),
             txId: (
-              <Link to={ `/explorer/tx/${ tx.txId }` }>{ tx.txId }</Link>
+              <Link to={ `/tx/${ tx.txId }` }>{ tx.txId }</Link>
             )
           });
         }) } />
