@@ -6,39 +6,45 @@ const mongoose = require('mongoose');
  *
  * Connected betevent to the network.
  */
-// {
-//   "tx-id": "81b435faa205b96a682d35c92708f095778f6d3c26a8d90837c295feab109415",
-//   "id": "#123",
-//   "name": "WCUP",
-//   "round": "RD3",
-//   "starting": "1531141200",
-//   "teams": [
-//   {
-//     "name": "TES",
-//     "odds": "60000"
-//   },
-//   {
-//     "name": "TIN",
-//     "odds": "80000"
-//   },
-//   {
-//     "name": "DRW",
-//     "odds": "70000"
-//   }
-const Team = new mongoose.Schema({
-  name: { required: true, type: String },
-  odds: { required: true, type: String },
-});
+/* {
+  "event_id": 77826,
+  "sport": "Soccer",
+  "tournament": "Brazil Serie A",
+  "starting": 1607902200,
+  "tester": 1666,
+  "teams": {
+    "home": "Vasco da Gama",
+    "away": "Fluminense"
+  },
+  "odds": [
+    {
+      "mlHome": 33500,
+      "mlAway": 24600,
+      "mlDraw": 35100
+    },
+    {
+      "favorite": "away",
+      "spreadPoints": 0,
+      "spreadHome": 0,
+      "spreadAway": 0
+    },
+    {
+      "totalsPoints": 25,
+      "totalsOver": 24600,
+      "totalsUnder": 16800
+    }
+  ]
+}*/
 
 const ListEvent = mongoose.model('ListEvent', new mongoose.Schema({
   __v: { select: false, type: Number },
-  txId: { index: true, required: false, type: String },
-  id: { index: true, required: true, type: String },
-  createdAt: { required: true, type: Date },
-  name: { required: true, type: String },
-  round: { required: false, type: String },
+  event_id: { index: true, required: true, type: Number },
+  sport: {require: true, type:String},
+  tournament: { required: true, type: String },
+  tester: { required: false, type: Number },
   starting: { index: true,  required: true, type: String },
-  teams:  { required: true, type: [Team] }
+  teams:  { required: true, type: Object },
+  odds: { required: true, type: [Object]}
 }, { versionKey: false }), 'listevents');
 
 

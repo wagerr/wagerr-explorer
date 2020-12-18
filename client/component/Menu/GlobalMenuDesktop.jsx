@@ -1,26 +1,46 @@
 
 import Component from 'core/Component';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SearchBar from '../SearchBar';
+import Wallet from '../../core/Wallet';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default class  GlobalMenuDesktop extends Component {
-  static propTypes = {
-    links: PropTypes.array
-  };
-
-  static defaultProps = {
-    links: []
-  };
-
   constructor(props) {
     super(props);
     this.state = {
       isOpen: true,
+      walletInstalled: Wallet.instance.walletInstalled,
+      walletConnected: false,
+      walletBalance: 0
     }
+   this.connectWallet()
+   setInterval(Wallet.instance.updateWalletBalance,40000)
   }
 
+  connectWallet = () => {
+    
+    Wallet.instance.connectWallet().then(Wallet.instance.updateWalletBalance).then((balance) => {
+ 
+      this.setState({
+        walletConnected: true,
+        walletBalance:balance
+      })
+    })
+    .catch(e => {
+      toast(e.message,{
+        position: toast.POSITION.TOP_RIGHT,
+        hideProgressBar: true,
+        type: toast.TYPE.ERROR,
+      })
+    })
+
+    
+  }
+
+ 
   getLinks = () => {
     const { props, state } = this;
 
@@ -94,13 +114,22 @@ export default class  GlobalMenuDesktop extends Component {
               </div>
               
               <div className="global-menu-desktop_wallet_setion">
-                <div className="global-menu-desktop_wallet_connection">
-                  <span className="global-menu-desktop_wallet_balance">0 WGR</span>
+                <div className="global-menu-desktop_wallet_connection text-center">
+                { this.state.walletConnected ? <div>  <span className="global-menu-desktop_wallet_balance">{this.state.walletBalance} WGR</span>
                   <div className="global-menu-desktop_wallet_connection_status">
                     <div className="wallet_connection_status_mark"></div>
-                    <span className="wallet_connection_status_text">Wallet Disconnected</span>
+                    <span className= "wallet_connection_status_text">Wallet Connected</span>
                   </div>
+                  </div>
+                
+                : <div className="global-menu-desktop_wallet_connection_status">
+                  { this.state.walletInstalled ? <button className="wallet_connection_button" onClick={this.connectWallet}>Connect Wallet</button> 
+                    : <p className="wallet_connection_status_text mt-3"> No Wallet Installed </p>  
+                }
                 </div>
+               
+                }
+               </div>
               </div>
             </div>
           </div>

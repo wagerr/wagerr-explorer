@@ -34,6 +34,9 @@
     "test:cron": "mocha --compilers js:babel-core/register ./test/cron"
   },
   "dependencies": {
+    "@aksel/structjs": "^1.0.0",
+    "@wagerr-wdk/client": "^0.7.9",
+    "@wagerr-wdk/injected-provider": "^0.7.9",
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
     "bignumber.js": "^7.2.1",
@@ -59,10 +62,11 @@
     "numeral": "^2.0.6",
     "p-iteration": "^1.1.5",
     "prop-types": "^15.6.0",
+    "pubsub-js": "^1.9.1",
     "qrcode": "^1.2.0",
-    "react": "^16.2.0",
+    "react": "^16.8.0",
     "react-countup": "^3.0.3",
-    "react-dom": "^16.2.0",
+    "react-dom": "^16.8.0",
     "react-i18next": "^7.13.0",
     "react-opium-select": "^0.4.4",
     "react-redux": "^5.0.6",
@@ -71,6 +75,7 @@
     "react-slick": "^0.27.11",
     "react-super-responsive-table": "^4.3.5",
     "react-switch": "^5.0.1",
+    "react-toastify": "^6.2.0",
     "reactstrap": "^6.5.0",
     "redis": "^2.8.0",
     "redux": "^3.7.2",
@@ -95,7 +100,7 @@
     "sass-loader": "^6.0.6",
     "style-loader": "^0.20.1",
     "uglifyjs-webpack-plugin": "^1.2.4",
-    "webpack": "^3.11.0",
+    "webpack": "^3.12.0",
     "webpack-dev-server": "^2.11.1",
     "worker-loader": "^1.1.1"
   }

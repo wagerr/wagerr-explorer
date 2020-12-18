@@ -2,7 +2,6 @@
 import 'babel-polyfill';
 import './theme.scss';
 import { createStore } from 'redux';
-import Promise from 'bluebird';
 import { Provider } from 'react-redux';
 import React from 'react';
 import { render } from 'react-dom';

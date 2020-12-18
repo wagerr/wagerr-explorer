@@ -30,6 +30,7 @@ import CardBlackTable from "../component/Card/CardBlackTable";
 import ExplorerOverviewMenu from "../component/Menu/ExplorerOverviewMenu";
 import GlobalSwitch from "../component/Menu/GlobalSwitch";
 import Utils from "../core/utils";
+import ClientUtils from '../component/utils/utils';
 import Sliding from '../component/Sliding'
 import Switch from "react-switch";
 import {
@@ -45,26 +46,6 @@ Number.prototype.toFixedNoRounding = function(n) {
     }
     const b = n - (a.length - dot) + 1;
     return b > 0 ? (a + "0".repeat(b)) : a;
-}
-
-const convertToOdds = (odds, is_American, is_Decimal) => {
-    let ret = odds;
-    if (is_American){
-      odds = parseFloat(odds);
-      ret = parseInt((odds - 1) * 100);
-  
-      if (odds < 2)
-        ret = Math.round((-100) / (odds - 1));
-  
-      if (odds == 0) ret = 0;
-    }
-  
-    if (is_Decimal){
-      ret = ret == 0 ? ret : (1 + (ret - 1) * 0.94).toFixedNoRounding(2);
-    }
-    
-    if (ret > 0 && is_American) ret = `+${ret}`
-    return ret;
 }
 
 class BetEventList extends Component {
@@ -373,13 +354,6 @@ class BetEventList extends Component {
                                         className={'table-responsive table--for-betevents'}
                                         cols={cols}
                                         data={this.state.events.map((event) => {
-                                            const displayNum = (num, divider) => {
-                                                const value = num > 0 ? `+${num / divider}` : `${num / divider}`;
-                                                
-                                                return value;
-                                              };
-
-                                              
                                             const betAmount = event.actions.reduce((acc, action) => {
                                                 return acc + action.betValue
                                             }, 0.0
@@ -441,10 +415,10 @@ class BetEventList extends Component {
                                             let origdrawOdds = (event.events[0].drawOdds / 10000)
                                             let origawayOdds = (event.events[0].awayOdds / 10000)
 
-                                            homeOdds = convertToOdds(homeOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
-                                            drawOdds = convertToOdds(drawOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
-                                            awayOdds = convertToOdds(awayOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
-                                            
+                                            homeOdds = ClientUtils.convertToOdds(homeOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                            drawOdds = ClientUtils.convertToOdds(drawOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                            awayOdds = ClientUtils.convertToOdds(awayOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                        
                                             homeOdds = homeOdds == 0 ? '-' : homeOdds
                                             drawOdds = drawOdds == 0 ? '-' : drawOdds
                                             awayOdds = awayOdds == 0 ? '-' : awayOdds
@@ -476,13 +450,13 @@ class BetEventList extends Component {
                                             const eventItem = event.events[0];
                                             if (eventItem.latest_spread){
                                                 const divider = eventItem.latest_spread.blockHeight > OPCODE_CHANED_BLOCK ? 100 : 10;
-                                                spreadHomePoint = `${displayNum(eventItem.latest_spread.homePoints, divider)}`;
-                                                spreadAwayPoint = `${displayNum(eventItem.latest_spread.awayPoints, divider)}`;                                                
+                                                spreadHomePoint = `${ ClientUtils.displayNum(eventItem.latest_spread.homePoints, divider)}`;
+                                                spreadAwayPoint = `${ClientUtils.displayNum(eventItem.latest_spread.awayPoints, divider)}`;
                                                 let homeOddstmp =  eventItem.latest_spread.homeOdds / 10000                
                                                 let awayOddstmp = eventItem.latest_spread.awayOdds / 10000
                                 
-                                                spreadHomeOdd = convertToOdds(homeOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);                
-                                                spreadAwayOdd = convertToOdds(awayOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);                                                
+                                                spreadHomeOdd = ClientUtils.convertToOdds(homeOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);                
+                                                spreadAwayOdd = ClientUtils.convertToOdds(awayOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);                                                
                                             }
                                             spreadHomePoint = spreadHomePoint == 0 ? '-' : spreadHomePoint;
                                             spreadAwayPoint = spreadAwayPoint == 0 ? '-' : spreadAwayPoint;
@@ -497,16 +471,18 @@ class BetEventList extends Component {
                                                 let overOddstmp =  eventItem.latest_total.overOdds / 10000                
                                                 let underOddstmp = eventItem.latest_total.underOdds / 10000
                                                 const divider = eventItem.latest_total.blockHeight > OPCODE_CHANED_BLOCK ? 100 : 10;
-                                                totalPoint = eventItem.latest_total.points / divider                                                
-                                                underOdd = convertToOdds(underOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);
-                                                overOdd = convertToOdds(overOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                                totalPoint = eventItem.latest_total.points / divider
+                                                underOdd = ClientUtils.convertToOdds(underOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                                overOdd = ClientUtils.convertToOdds(overOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);
                                             }
                                             totalPoint = totalPoint == 0 ? '-' : totalPoint;
                                             overOdd = overOdd == 0 ? '-' : overOdd;
                                             underOdd = underOdd == 0 ? '-' : underOdd;
+
                                             let homeTeam = eventItem.homeTeam ? eventItem.homeTeam : "";
-                                            let homeAway = eventItem.awayTeam ? eventItem.awayTeam : "";                                         
-                                            //console.log('event', event.events[0]);                                                                 
+                                            let homeAway = eventItem.awayTeam ? eventItem.awayTeam : "";
+
+                                            //console.log('event', event.events[0]);
                                             return {
                                                 ...event,
                                                 start: <div>
@@ -548,7 +524,7 @@ class BetEventList extends Component {
                                                     {underOdd != '-' && <h3 style={{ color: '#F90000'}}>{underOdd}</h3>}
                                                     {totalPoint != '-' && underOdd == '-' && <h3 style={{ color: '#9D9D9D'}}>{underOdd}</h3>}                                                    
                                                     {totalPoint == '-' && underOdd == '-' && <h3 style={{ color: '#9D9D9D'}}>{underOdd}</h3>}
-                                                </div>,                                   
+                                                </div>,
  
                                                 betStatus: <div className='mt-2'>{betStatus}</div>,
                                                 betAmount: <span className={`mt-2 badge badge-danger `}>{numeral(betAmount).format('0,0.00')}</span>,

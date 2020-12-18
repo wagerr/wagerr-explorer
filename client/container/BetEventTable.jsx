@@ -1,51 +1,18 @@
 import React, { Component } from 'react';
 import sortBy from 'lodash/sortBy';
-import numeral from 'numeral';
 import { date24Format } from '../../lib/date';
-import Table from '../component/Table';
 import { Link } from 'react-router-dom';
 
 // actions
 import PropTypes from 'prop-types';
-import Actions, { getBetEventInfo, getBetTotals } from '../core/Actions';
 import { compose } from 'redux';
 import { translate } from 'react-i18next';
 import { connect } from 'react-redux';
+import ClientUtils  from '../component/utils/utils';
 import CardBigTable from "../component/Card/CardBigTable";
 import {
   OPCODE_CHANED_BLOCK
 } from '../constants';
-
-Number.prototype.toFixedNoRounding = function(n) {
-  const reg = new RegExp("^-?\\d+(?:\\.\\d{0," + n + "})?", "g")
-  const a = this.toString().match(reg)[0];
-  const dot = a.indexOf(".");
-  if (dot === -1) { // integer, insert decimal dot and pad up zeros
-      return a + "." + "0".repeat(n);
-  }
-  const b = n - (a.length - dot) + 1;
-  return b > 0 ? (a + "0".repeat(b)) : a;
-}
-
-const convertToOdds = (odds, is_American, is_Decimal) => {
-  let ret = odds;
-  if (is_American){
-    odds = parseFloat(odds);
-    ret = parseInt((odds - 1) * 100);
-
-    if (odds < 2)
-      ret = Math.round((-100) / (odds - 1));
-
-    if (odds == 0) ret = 0;
-  }
-
-  if (is_Decimal){
-    ret = ret == 0 ? ret : (1 + (ret - 1) * 0.94).toFixedNoRounding(2);
-  }
-  
-  if (ret > 0 && is_American) ret = `+${ret}`
-  return ret;
-}
 
 class BetEventTable extends Component {
   static propTypes = {
@@ -225,9 +192,9 @@ class BetEventTable extends Component {
               let drawOdds = event.drawOdds / 10000
               let awayOdds = event.awayOdds / 10000
 
-              homeOdds = convertToOdds(homeOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
-              drawOdds = convertToOdds(drawOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
-              awayOdds = convertToOdds(awayOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              homeOdds = ClientUtils.convertToOdds(homeOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              drawOdds = ClientUtils.convertToOdds(drawOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              awayOdds = ClientUtils.convertToOdds(awayOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
               
               return {
                 ...event,
@@ -245,7 +212,7 @@ class BetEventTable extends Component {
             cols={bottomOneCols}
             data={sortBy(this.state.MoneyLine.map((action) => {
               let Odds = action.odds
-              Odds = convertToOdds(Odds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              Odds = ClientUtils.convertToOdds(Odds, toggleSwitchOddsStyle, toggleSwitchOdds);
 
               return {
                 ...action,
@@ -273,8 +240,8 @@ class BetEventTable extends Component {
                 let homeOdds =  action.homeOdds / 10000                
                 let awayOdds = action.awayOdds / 10000
 
-                homeOdds = convertToOdds(homeOdds, toggleSwitchOddsStyle, toggleSwitchOdds);                
-                awayOdds = convertToOdds(awayOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+                homeOdds = ClientUtils.convertToOdds(homeOdds, toggleSwitchOddsStyle, toggleSwitchOdds);                
+                awayOdds = ClientUtils.convertToOdds(awayOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
                 const divider = action.blockHeight > OPCODE_CHANED_BLOCK ? 100 : 10;
                 return {
                   ...action,
@@ -294,7 +261,7 @@ class BetEventTable extends Component {
                 const betChoose = action.betChoose.replace('Spreads - ', '');
                 const spreadNum = Math.abs(parseInt(action.spreadAwayPoints, 10)) / 10;
                 let Odds = betChoose == 'Away' ? action.spreadAwayOdds / 10000 : action.spreadHomeOdds / 10000
-                Odds = convertToOdds(Odds, toggleSwitchOddsStyle, toggleSwitchOdds);                                
+                Odds = ClientUtils.convertToOdds(Odds, toggleSwitchOddsStyle, toggleSwitchOdds);                                
                 const divider = action.blockHeight > OPCODE_CHANED_BLOCK ? 100 : 10;
                 return {
                   ...action,
@@ -322,8 +289,8 @@ class BetEventTable extends Component {
               let overOdds =  action.overOdds / 10000                
               let underOdds = action.underOdds / 10000
 
-              underOdds = convertToOdds(underOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
-              overOdds = convertToOdds(overOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              underOdds = ClientUtils.convertToOdds(underOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              overOdds = ClientUtils.convertToOdds(overOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
               const divider = action.blockHeight > OPCODE_CHANED_BLOCK ? 100 : 10;
               return {
                 ...action,
@@ -341,7 +308,7 @@ class BetEventTable extends Component {
             cols={bottomThreeCols}
             data={sortBy(this.state.Totals.map((action) => {
               let Odds = action.betChoose.includes('Over') ? action.overOdds / 10000 : action.underOdds / 10000
-              Odds = convertToOdds(Odds, toggleSwitchOddsStyle, toggleSwitchOdds);
+              Odds = ClientUtils.convertToOdds(Odds, toggleSwitchOddsStyle, toggleSwitchOdds);
               const divider = action.blockHeight > OPCODE_CHANED_BLOCK ? 100 : 10;
               return {
                 ...action,

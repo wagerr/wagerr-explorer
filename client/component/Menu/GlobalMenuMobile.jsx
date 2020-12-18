@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../Icon';
-import UtilService from '../API/utils';
+import ClientUtils from '../utils/utils';
 
 export default class GlobalMenuMobile extends Component {
   static propTypes = {
@@ -77,7 +77,7 @@ export default class GlobalMenuMobile extends Component {
             </a>
           </div>
 
-          <h5 style={{ color: '#FFF', fontWeight: 700 }}>{UtilService.getHeader(window.location.hash)}</h5>
+          <h5 style={{ color: '#FFF', fontWeight: 700 }}>{ClientUtils.getHeader(window.location.hash)}</h5>
           <img src="/img/uiupdate/wgrlogomodernICONallwhite.svg" className="global-menu-desktop__logo" className='mobile-logo' />
           {/* <div className="global-menu-desktop_wallet_setion">
             <div className="global-menu-desktop_wallet_connection">
