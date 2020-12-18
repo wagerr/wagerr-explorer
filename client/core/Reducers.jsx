@@ -5,6 +5,7 @@ import {
   COINS,
   ERROR,
   TXS,
+  EVENTS,
   WATCH_ADD,
   WATCH_REMOVE
 } from '../constants';
@@ -15,6 +16,14 @@ const coinInit = {
   diff: 0, mnsOff: 0, mnsOn: 0, netHash: 0,
   peers: 0, status: 'Offline', supply: 0, usd: 0
 };
+
+const events = (state = [], action) => {
+  if (action.type === EVENTS && action.payload) {
+    return [ ...action.payload.events ];
+  }
+  return state;
+};
+
 /**
  * Will handle the coin key state.
  * @param {Object} state The current or default state.
@@ -56,5 +65,6 @@ const txs = (state = [], action) => {
 export default combineReducers({
   coin,
   coins,
-  txs
+  txs,
+  events
 });

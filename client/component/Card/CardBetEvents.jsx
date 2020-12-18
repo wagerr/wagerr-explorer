@@ -196,11 +196,11 @@ const MOKEDATA = [
 
 const demo_sports = [
   { id: 1, label: 'All Events', icon: 'explorer_sportbetting_allevent.png' },
-  { id: 2, label: 'Soccer', icon: 'explorer_sportbetting_soccor.png' },
+  { id: 2, label: 'Soccer', icon: 'explorer_sportbetting_soccer.png' },
   { id: 3, label: 'Esports', icon: 'explorer_sportbetting_esport.png' },
   { id: 4, label: 'Baseball', icon: 'explorer_sportbetting_baseball.png' },
   { id: 5, label: 'Basketball', icon: 'explorer_sportbetting_basketball.png' },
-  { id: 6, label: 'Football', icon: 'explorer_sportbetting_soccor.png' },
+  { id: 6, label: 'Football', icon: 'explorer_sportbetting_soccer.png' },
   { id: 7, label: 'Hockey', icon: 'explorer_sportbetting_hockey.png' },
   { id: 8, label: 'Aussie Rules', icon: 'explorer_sportbetting_aussie_rules.png' },
   { id: 9, label: 'Cricket', icon: 'explorer_sportbetting_cricket.png' },

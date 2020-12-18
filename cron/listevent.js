@@ -26,15 +26,14 @@ async function syncListEvents () {
   const events = await rpc.call('listevents')
   const inserts = []
   await forEach(events, async (event) => {
-    let teams = await getTeams(event)
     const listEvent = new ListEvent({
-      txId: event['tx-id'],
-      id: event.event_id,
-      createdAt: date,
-      name: event.tournament,
-      round: event.round,
+      event_id: event.event_id,
+      sport: event.sport,
+      tournament: event.tournament,
       starting: event.starting,
-      teams: teams
+      tester: event.tester,
+      teams: event.teams,
+      odds: event.odds
     })
 
     inserts.push(listEvent)
@@ -43,35 +42,6 @@ async function syncListEvents () {
   if (inserts.length) {
     await ListEvent.insertMany(inserts)
   }
-}
-
-async function getTeams (event) {
-  // Setup the outputs for the transaction.
-  const teamsResult = []
-  const { teams } = event;
-  let homeOdds;
-  let awayOdds;
-
-  event.odds.forEach((odd) => {
-    if (odd.mlHome) {
-      homeOdds = odd.mlHome;
-    }
-    if (odd.mlHome) {
-      awayOdds = odd.mlAway;
-    }
-  });
-
-  teamsResult.push({
-    name: teams.home,
-    odds: homeOdds,
-  });
-
-  teamsResult.push({
-    name: teams.away,
-    odds: awayOdds,
-  });
-
-  return teamsResult
 }
 
 /**

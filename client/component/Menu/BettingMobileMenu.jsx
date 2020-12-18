@@ -2,24 +2,31 @@
 import Component from 'core/Component';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { compose } from 'redux'
 import { translate } from 'react-i18next'
-import { bettingMenuData } from './bettingMenuData'
+import {generateBettingMenu}  from './bettingMenuData'
 import { Link } from 'react-router-dom';
 
 class BettingMobileMenu extends Component {
   static propTypes = {
-    onSearch: PropTypes.func.isRequired
+    events: PropTypes.array,
   };
+  
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      sports: []
+    }
+  }
 
   render() {
-    const { t } = this.props;
-    const menuData = bettingMenuData(t)
     return (
       <div className='menu-explorer'>
         {
-          menuData.map((i, index) =>
+          generateBettingMenu(this.props.events).map((i, index) =>
             <div
               className='menu-explorer__item'
               key={index}
@@ -33,8 +40,13 @@ class BettingMobileMenu extends Component {
   }
 }
 
+const mapState = state => ({
+  events: state.events
+});
+
 export default compose(
   translate('menu'),
+  connect(mapState),
   withRouter
 )(BettingMobileMenu);
 

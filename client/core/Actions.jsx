@@ -5,6 +5,7 @@ import {
   COIN,
   COINS,
   ERROR,
+  EVENTS,
   TXS,
   WATCH_ADD,
   WATCH_REMOVE
@@ -174,9 +175,16 @@ export const removeWatch = (dispatch, term) => {
   dispatch({ payload: term, type: WATCH_REMOVE });
 };
 
-export const getListEvents = (query) => {
+export const getListEvents = (dispatch, query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('listevents', resolve, reject, query);
+    return getFromWorker('listevents', (payload) => {
+      dispatch({ payload, type: EVENTS });
+      resolve(payload);
+    },
+    (payload) => {
+      dispatch({ payload, type: ERROR });
+      reject(payload);
+    }, query);
   });
 };
 

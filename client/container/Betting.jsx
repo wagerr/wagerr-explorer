@@ -1,40 +1,45 @@
-
 import Component from '../core/Component';
+import { compose } from 'redux'
+import { connect } from 'react-redux'
+import { translate } from 'react-i18next'
 import React from 'react';
 import Card from '../component/Card';
-import BettingMenu from '../component/Menu/BettingMenu';
-import CardBettingTable from '../component/Card/CardBettingTable';
+import BettingMenuDesktop from '../component/Menu/BettingMenuDesktop';
 import BettingMobileMenu from '../component/Menu/BettingMobileMenu';
+import BettingSlips from './BettingSlips';
+import EventList from './EventList';
+import PubSub from 'pubsub-js';
 
-export default class Betting extends Component {
-  state = {
-    connected: false
+class Betting extends Component {
+ 
+  constructor(props) {
+    super(props)
+    this.state = { 
+      sport:"allevent"
+    }
+    
   }
+
+  componentWillReceiveProps(props) {
+    const sport = props.match.params.id;
+    PubSub.publish('sport-changed',sport)
+  }
+  
   render() {
+    
     return (
       <div className='content'>
-        <BettingMenu onSearch={this.props.handleSearch} />
+        <div className="menu-wrapper">
+          <BettingMenuDesktop location={this.props.location} />
+        </div>
         <div className="content__wrapper_total">
           <BettingMobileMenu />
           <div className="row m-20">
             <div className="col-lg-9 col-md-12">
-              <div className="bet-search">
-                <div>Showing 80 events 1</div>
-                <input placeholder={'Search...'} />
-              </div>
-              <CardBettingTable />
-              <CardBettingTable />
-              <CardBettingTable />
-              <CardBettingTable />
+              <EventList toggleSwitchOddsStyle={this.props.toggleSwitchOddsStyle} toggleSwitchOdds={this.props.toggleSwitchOdds} />
             </div>
-            <div className="col-lg-3 col-md-12 animated fadeInUp">
-              <div className='bet-black-card'>
-                <div className='bet-black-card__title'>BET SLIP</div>
-                <div className='bet-black-card__body'>
-                  <div>Your bet slip is empty.</div>
-                  <div className='mt-12'>Please make one or more selections in order to place bets.</div>
-                </div>
-              </div>
+            <div className="col-lg-3 col-md-12">
+              <BettingSlips />
             </div>
           </div>
         </div>
@@ -51,3 +56,7 @@ export default class Betting extends Component {
     );
   };
 }
+
+export default compose(
+  translate('betting'),
+)(Betting);
