@@ -17,12 +17,12 @@ export default class CardParlayBetSlip extends Component {
         const {event} = this.props;
         switch(event.outcome) {
             case 1:
-                event.outComeTeam = event.teams[0].home
+                event.outComeTeam = event.teams.home
                 event.selectedOddValue = event.odds[0].mlHome
                 event.effectiveOddValue = event.odds[0].mlHomeEO
                 break;
             case 2:
-                event.outComeTeam = event.teams[0].away
+                event.outComeTeam = event.teams.away
                 event.selectedOddValue = event.odds[0].mlAway
                 event.effectiveOddValue = event.odds[0].mlAwayEO
                 break;
@@ -32,13 +32,13 @@ export default class CardParlayBetSlip extends Component {
                 event.effectiveOddValue = event.odds[0].mlDrawEO
                 break;
             case 4:
-                event.outComeTeam = event.teams[0].home
+                event.outComeTeam = event.teams.home
                 event.selectedOddValue = event.odds[1].spreadHome
                 event.effectiveOddValue = event.odds[1].spreadHomeEO
                 event.handicap = "Handicape " + event.spreadPoints
                 break;
             case 5:
-                event.outComeTeam = event.teams[0].away
+                event.outComeTeam = event.teams.away
                 event.selectedOddValue = event.odds[1].spreadAway
                 event.effectiveOddValue = event.odds[1].spreadAwayEO
                 event.handicap = "Handicape " + event.spreadPoints
@@ -68,7 +68,7 @@ export default class CardParlayBetSlip extends Component {
                  <div className="bet-slip-box">
                   <div className="slip-body">
                     <div className="slip-title">
-                      <span>{this.state.event.teams[0].home} vs {this.state.event.teams[0].away}</span>
+                      <span>{this.state.event.teams.home} vs {this.state.event.teams.away}</span>
                       <button className="slip-close" onClick={ props.removeBetSlip}>x</button>
                     </div>
                     <label>YOUR PICK :</label>
