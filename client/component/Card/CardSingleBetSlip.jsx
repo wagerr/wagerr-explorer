@@ -95,7 +95,7 @@ export default class CardSingleBetSlip extends Component {
             <div className="bet-slip-box">
                 <div className="slip-body">
                     <div className="slip-title">
-                        <span>{this.state.event.teams[0].home} vs {this.state.event.teams[0].away}</span>
+                        <span>{this.state.event.teams.home} vs {this.state.event.teams.away}</span>
                         <button className="slip-close" onClick={props.removeBetSlip}>x</button>
                     </div>
                     <label>YOUR PICK :</label>

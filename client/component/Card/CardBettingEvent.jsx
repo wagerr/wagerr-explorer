@@ -29,7 +29,7 @@ export default class CardBettingEvent extends Component {
         </div>
         <div className={props.data.disabled ? "card-disabled" : "" }>
         <div className="card__content direction-row">
-          <div className='card__content__title w-40 m-20 font-weight-500'>{props.data.teams[0].home}</div>
+          <div className='card__content__title w-40 m-20 font-weight-500'>{props.data.teams.home}</div>
           <button className='w-20 card__content__button align-center' onClick={() => PubSub.publish('event-clicked',[props.data,1])}>{props.data.odds[0].mlHome}</button>
           <button className='w-20 card__content__button' disabled={props.data.odds[1].spreadHome == 0} onClick={() => PubSub.publish('event-clicked',[props.data, 4])} >
             {props.data.odds[1].spreadHome == 0 ? <div className='align-center'> - </div>
@@ -54,7 +54,7 @@ export default class CardBettingEvent extends Component {
           </button>
         </div>
         <div className="card__content direction-row m-t--16">
-          <div className='card__content__title w-40 m-20 font-weight-500'>{props.data.teams[0].away}</div>
+          <div className='card__content__title w-40 m-20 font-weight-500'>{props.data.teams.away}</div>
           <button className='w-20 card__content__button align-center' onClick={() => PubSub.publish('event-clicked',[props.data,2])}>{props.data.odds[0].mlAway}</button>
           <button className='w-20 card__content__button' disabled={props.data.odds[1].spreadAway == 0} onClick={() => PubSub.publish('event-clicked',[props.data,5])}>
             {props.data.odds[1].spreadAway == 0 ? <div className='align-center'> - </div>

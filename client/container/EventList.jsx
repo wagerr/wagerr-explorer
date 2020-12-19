@@ -97,8 +97,8 @@ class EventList extends Component {
             const searchedEvents = tempevents.filter((e) => {
                 const searchValue = this.state.search.toLowerCase()
                 return e.tournament.toLowerCase().includes(searchValue) ||
-                    e.teams[0].home.toLowerCase().includes(searchValue) ||
-                    e.teams[0].away.toLowerCase().includes(searchValue) ||
+                    e.teams.home.toLowerCase().includes(searchValue) ||
+                    e.teams.away.toLowerCase().includes(searchValue) ||
                     e.event_id.toString().includes(searchValue)
             })
 
