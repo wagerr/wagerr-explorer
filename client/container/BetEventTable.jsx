@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import sortBy from 'lodash/sortBy';
+import numeral from 'numeral';
 import { date24Format } from '../../lib/date';
 import { Link } from 'react-router-dom';
 
