@@ -41,17 +41,17 @@ apt-get install protobuf-compiler -y
 #cd
 
 # Download latest node and install.
-#echo 'Installing wagerr'
-#wgrlink=`curl -s https://api.github.com/repos/wagerr/wagerr/releases/latest | grep browser_download_url | grep x86_64-linux-gnu.tar.gz | cut -d '"' -f 4`
-#mkdir -p /tmp/wagerr
-#cd /tmp/wagerr
-#curl -Lo wagerr.tar.gz $wgrlink
-#tar -xvf wagerr.tar.gz
-#wgrfolder=`ls | grep wagerr-`
-#cd /tmp/wagerr/$wgrfolder
-#mv ./bin/* /usr/local/bin
-#cd
-#rm -rf /tmp/wagerr
+echo 'Installing wagerr'
+wgrlink=`curl -s https://api.github.com/repos/wagerr/wagerr/releases/latest | grep browser_download_url | grep x86_64-linux-gnu.tar.gz | cut -d '"' -f 4`
+mkdir -p /tmp/wagerr
+cd /tmp/wagerr
+curl -Lo wagerr.tar.gz $wgrlink
+tar -xvf wagerr.tar.gz
+wgrfolder=`ls | grep wagerr-`
+cd /tmp/wagerr/$wgrfolder
+mv ./bin/* /usr/local/bin
+cd
+rm -rf /tmp/wagerr
 
 mkdir /root/.wagerr
 
