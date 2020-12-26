@@ -1,4 +1,4 @@
 #!/bin/bash
-/usr/bin/node ./cron/block.js
+/root/.nvm/versions/node/v10.16.2/bin/node ./cron/block.js
 sleep 30
-/usr/bin/node ./cron/block.js
+/root/.nvm/versions/node/v10.16.2/bin/node ./cron/block.js
