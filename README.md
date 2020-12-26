@@ -106,22 +106,35 @@ An advanced explorer based on node-js for the Wagerr block chain. Components doc
     },
   };
 ```
-9. Start docker build process
+
+9.  install npm modules
+
+```
+  npm install
+```
+
+10. copy wagerr daemon in 'wagerr' directory. docker script directly bridging it.
+
+```
+  put  test_wagerr,  wagerr-cli,  wagerrd, wagerr-qt,  wagerr-tx build in 'wagerr' folder.
+```
+
+11. Start docker build process
 
 ```
   docker-compose build
 ```
-10. Start the rpcnode docker and allow to fully sync
+12. Start the rpcnode docker and allow to fully sync
 
 ```
   docker-compose up -d rpcnode (wait for full sync)
 ```
-11. Start the mongo docker
+13. Start the mongo docker
 
 ```
   docker-compose up -d mongo
 ```
-12. Start the explorer docker
+14. Start the explorer docker
 
 ```
 docker-compose up -d
