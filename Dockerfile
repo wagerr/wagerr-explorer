@@ -25,7 +25,7 @@ RUN npm install -g yarn node-gyp
 
 COPY package.json /explorer
 
-RUN yarn install
+RUN yarn install --ignore-engines
 #COPY docker/node/install.sh /root/install.sh
 #COPY docker/node/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 COPY . .
