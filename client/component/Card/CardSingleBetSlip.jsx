@@ -3,6 +3,7 @@ import React from 'react';
 import _ from 'lodash';
 import { singleToOpcode } from '../utils/betUtils';
 import Wallet from '../../core/Wallet';
+import { alertPopup } from '../utils/alerts';
 
 
 export default class CardSingleBetSlip extends Component {
@@ -13,8 +14,6 @@ export default class CardSingleBetSlip extends Component {
             event: null,
             betAmount: 0
         }
-
-
 
     }
 
@@ -77,13 +76,18 @@ export default class CardSingleBetSlip extends Component {
            opcode = singleToOpcode(this.state.event)
         } catch (e) {
             console.log('invalid opcode: ',e)
+            alertPopup('Invalid opcode: '+ e.toString().replace(/Error:/g, ''))
             return
         }
 
         Wallet.instance.sendBet(opcode, this.state.betAmount).then((res) => {
             this.props.removeBetSlip()
+
+            alertPopup('Bet Sent: (txid: ' + res.hash + ' )')
+            console.log(res)
         }).catch((e) => {
             console.log('send bet error: ',e)
+            alertPopup('send bet error: '+ e.toString().replace(/Error:/g, ''))
         })
 
     }
