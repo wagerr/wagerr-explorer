@@ -4,8 +4,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import SearchBar from '../SearchBar';
 import Wallet from '../../core/Wallet';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { alertPopup } from '../utils/alerts';
 
 export default class  GlobalMenuDesktop extends Component {
   constructor(props) {
@@ -30,11 +29,7 @@ export default class  GlobalMenuDesktop extends Component {
       })
     })
     .catch(e => {
-      toast(e.message,{
-        position: toast.POSITION.TOP_RIGHT,
-        hideProgressBar: true,
-        type: toast.TYPE.ERROR,
-      })
+      alertPopup(e.toString().replace(/Error:/g, ''))
     })
 
     

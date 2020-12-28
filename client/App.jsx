@@ -51,7 +51,7 @@ import NewBetParlay from './container/NewBetParlay';
 
 import ExplorerMenu from './component/Menu/ExplorerMenu';
 import GlobalSwitch from './component/Menu/GlobalSwitch';
-import { ToastContainer } from 'react-toastify';
+import Popup from 'react-popup';
 
 class App extends Component {
   static propTypes = {
@@ -204,7 +204,7 @@ class App extends Component {
     return (
       <HashRouter>
         <div className="page-wrapper">
-          <ToastContainer autoClose={4000} />
+          <Popup />
           <GlobalMenu handleSearch={this.handleSearch}/>   
           <GlobalSwitch 
               toggleSwitch={toggleSwitch}
