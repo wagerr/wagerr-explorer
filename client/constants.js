@@ -6,6 +6,7 @@ export const TXS = 'TXS';
 export const EVENTS = 'EVENTS' 
 export const WATCH_ADD = 'WATCH_ADD';
 export const WATCH_REMOVE = 'WATCH_REMOVE';
+export const OPCODE_CHANED_BLOCK = 2000000;
 
 export const API_BASE = location.origin;
 export const PAGINATION_PAGE_SIZE = [
@@ -29,6 +30,7 @@ export const FILTER_EVENTS_OPTIONS = [
 
 
 export default {
+  OPCODE_CHANED_BLOCK,
   COIN,
   COINS,
   ERROR,
