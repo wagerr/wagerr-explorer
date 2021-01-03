@@ -591,7 +591,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         matched: true,
       });
 
-      verifyBetOdds(createResponse, 'create');
+      await verifyBetOdds(createResponse, 'create');
     } catch (e) {
       createResponse = e;
 
@@ -652,7 +652,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         matched: true,
       });
       
-      verifyBetOdds(createResponse, 'update');
+      await verifyBetOdds(createResponse, 'update');
     } catch (e) {
       logError(e, 'creating event update', block.height, transaction);
     }
