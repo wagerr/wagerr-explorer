@@ -928,7 +928,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
         matched,
       });
 
-      verifySpreadActions(createResponse, 'update');
+      await verifySpreadActions(createResponse, 'update');
     } catch (e) {
       logError(e, 'creating spreads data', block.height, transaction);
     }
