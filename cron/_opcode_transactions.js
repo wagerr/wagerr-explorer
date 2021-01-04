@@ -367,8 +367,8 @@ async function verifyBetOdds(record, rtype) {
       });
     }
   } catch (e) {
-    log(e)
-    exit();
+    log("verifyBetOdds",e)
+    //exit();
   }
 
   return record;
@@ -480,7 +480,7 @@ async function verifySpreadActions(record, rtype) {
       });
     }
   } catch (e) {
-    log(e)
+    log("verifySpreadActions:",e)
   }
 
   return record;
