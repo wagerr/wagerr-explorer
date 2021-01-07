@@ -14,6 +14,7 @@ import Select from '../component/Select';
 import { PAGINATION_PAGE_SIZE } from '../constants';
 import ExplorerMenu from '../component/Menu/ExplorerMenu';
 import CoinSummary from '../container/CoinSummary';
+import SearchBar from '../component/SearchBar';
 import SearchEventBar from '../component/SearchEventBar';
 import Footer from '../component/Footer';
 import ExplorerOverviewMenu from '../component/Menu/ExplorerOverviewMenu';
@@ -47,7 +48,7 @@ class Address extends Component {
   componentDidUpdate() {
     if (!!this.state.address
       && this.state.address !== this.props.match.params.hash) {
-      if(!this.state.loading){
+      if (!this.state.loading) {
         this.getAddress();
       }
     }
@@ -58,7 +59,7 @@ class Address extends Component {
       const address = this.props.match.params.hash;
       this.props
         .getAddress({ address })
-        .then(({ balance, sent, staked, received, txs }) => {          
+        .then(({ balance, sent, staked, received, txs }) => {
           this.setState({
             address,
             balance,
@@ -90,9 +91,9 @@ class Address extends Component {
 
     const select = (
       <Select
-        onChange={ value => this.handleSize(value) }
-        selectedValue={ this.state.size }
-        options={ selectOptions } />
+        onChange={value => this.handleSize(value)}
+        selectedValue={this.state.size}
+        options={selectOptions} />
     );
 
     // Setup internal pagination.
@@ -101,13 +102,17 @@ class Address extends Component {
 
     return (
       <div className="content content-top" id="body-content">
-        <ExplorerMenu onSearch={ this.props.handleSearch } />        
+        <ExplorerMenu onSearch={this.props.handleSearch} />
         <div className="content__wrapper_total">
-        <ExplorerOverviewMenu onSearch={ this.props.handleSearch } />            
-          <div className="content_search_wrapper">                      
+          <ExplorerOverviewMenu />
+          <SearchBar
+            className="search--mobile mr-3"
+            onSearch={this.props.handleSearch}
+            placeholder="Search Blockchain" />
+          <div className="content_search_wrapper">
             <div className="content_page_title">
               <span>Overview</span>
-            </div>              
+            </div>
           </div>
           <div className="content__wrapper">
             <CoinSummary
@@ -121,22 +126,22 @@ class Address extends Component {
             <div>
               <HorizontalRule title="Wallet Info" />
               <CardAddress
-                address={ this.state.address }
-                balance={ this.state.balance }
-                sent={ this.state.sent }
-                staked={ this.state.staked }
-                received={ this.state.received }
-                txs={ this.state.txs }
+                address={this.state.address}
+                balance={this.state.balance}
+                sent={this.state.sent}
+                staked={this.state.staked}
+                received={this.state.received}
+                txs={this.state.txs}
               />
-              <HorizontalRule select={ select } title="Wallet Transactions" />
+              <HorizontalRule select={select} title="Wallet Transactions" />
               <CardAddressTXs
-                address={ this.state.address }
-                txs={ this.state.txs.slice(start, end) }/>
+                address={this.state.address}
+                txs={this.state.txs.slice(start, end)} />
               <Pagination
-                current={ this.state.page }
+                current={this.state.page}
                 className="float-right"
-                onPage={ this.handlePage }
-                total={ this.state.pages } />
+                onPage={this.handlePage}
+                total={this.state.pages} />
               <div className="clearfix" />
             </div>
             <Footer />

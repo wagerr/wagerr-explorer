@@ -33,7 +33,7 @@ class Masternode extends Component {
     this.state = {
       error: null,
       loading: true,
-      mns: [] ,
+      mns: [],
       pages: 0,
       page: 1,
       size: 10
@@ -51,11 +51,11 @@ class Masternode extends Component {
     let page = this.props.match.params.page;
     if (typeof page == 'undefined') page = 1;
 
-    this.setState({ page:parseInt(page) }, this.getMNs);
+    this.setState({ page: parseInt(page) }, this.getMNs);
   };
 
   updatePage = (page) => {
-    this.setState({ page:parseInt(page) }, this.getMNs);
+    this.setState({ page: parseInt(page) }, this.getMNs);
   }
 
   componentWillUnmount() {
@@ -85,10 +85,10 @@ class Masternode extends Component {
           .catch(error => this.setState({ error, loading: false }));
       }, 800);
     });
-  };  
+  };
 
   handlePage = page => {
-    this.props.history.push('/masternode/'+page) 
+    this.props.history.push('/masternode/' + page)
   }
 
   handleSize = size => this.setState({ size, page: 1 }, this.getMNs);
@@ -103,9 +103,9 @@ class Masternode extends Component {
 
     const select = (
       <Select
-        onChange={ value => this.handleSize(value) }
-        selectedValue={ this.state.size }
-        options={ selectOptions } />
+        onChange={value => this.handleSize(value)}
+        selectedValue={this.state.size}
+        options={selectOptions} />
     );
 
     // Calculate the future so we can use it to
@@ -114,16 +114,17 @@ class Masternode extends Component {
 
     return (
       <div className="content content-top" id="body-content">
-        <ExplorerMenu onSearch={ this.props.handleSearch } />        
-        <div className="content__wrapper_total">   
-        <ExplorerOverviewMenu onSearch={ this.props.handleSearch }/>       
-          <div className="content_search_wrapper">                      
-            {/* <SearchBar
-              className="d-none d-md-block"
-              onSearch={this.props.handleSearch} />           */}
+        <ExplorerMenu onSearch={this.props.handleSearch} />
+        <div className="content__wrapper_total">
+          <ExplorerOverviewMenu />
+          <SearchBar
+            className="search--mobile mr-3"
+            onSearch={this.props.handleSearch}
+            placeholder="Search Blockchain" />
+          <div className="content_search_wrapper">
             <div className="content_page_title">
               <span>Masternodes</span>
-            </div>              
+            </div>
           </div>
           <div className="content__wrapper">
             <CoinSummary
@@ -136,45 +137,45 @@ class Masternode extends Component {
             /> */}
             <div>
               <HorizontalRule
-                select={ select }
+                select={select}
                 title="Masternodes" />
               <CardBigTable
-                  cols= {[
-                    { key: 'lastPaidAt', title: 'Last Paid', className: 'w-m-160' },
-                    { key: 'active', title: 'Active', className: 'w-m-120' },
-                    { key: 'addr', title: 'Address' },
-                    { key: 'txHash', title: 'Collateral TX' },
-                    { key: 'txOutIdx', title: 'Index' },
-                    { key: 'ver', title: 'Version' },
-                    { key: 'status', title: 'Status' },
-                  ]}
-                  data={ sortBy(this.state.mns.map((mn) => {
-                    const lastPaidAt = moment(mn.lastPaidAt).utc();
-                    const isEpoch = lastPaidAt.unix() === 0;
+                cols={[
+                  { key: 'lastPaidAt', title: 'Last Paid', className: 'w-m-160' },
+                  { key: 'active', title: 'Active', className: 'w-m-120' },
+                  { key: 'addr', title: 'Address' },
+                  { key: 'txHash', title: 'Collateral TX' },
+                  { key: 'txOutIdx', title: 'Index' },
+                  { key: 'ver', title: 'Version' },
+                  { key: 'status', title: 'Status' },
+                ]}
+                data={sortBy(this.state.mns.map((mn) => {
+                  const lastPaidAt = moment(mn.lastPaidAt).utc();
+                  const isEpoch = lastPaidAt.unix() === 0;
 
-                    return {
-                      ...mn,
-                      active: moment().subtract(mn.active, 'seconds').utc().fromNow(),
-                      addr: (
-                          <Link to={ `/address/${ mn.addr }` }>
-                            { `${ mn.addr.substr(0, 20) }...` }
-                          </Link>
-                      ),
-                      lastPaidAt: isEpoch ? 'N/A' : date24Format(mn.lastPaidAt),
-                      txHash: (
-                          <Link to={ `/tx/${ mn.txHash }` }>
-                            { `${ mn.txHash.substr(0, 20) }...` }
-                          </Link>
-                      )
-                    };
-                  }), ['status']) }
+                  return {
+                    ...mn,
+                    active: moment().subtract(mn.active, 'seconds').utc().fromNow(),
+                    addr: (
+                      <Link to={`/address/${mn.addr}`}>
+                        { `${mn.addr.substr(0, 20)}...`}
+                      </Link>
+                    ),
+                    lastPaidAt: isEpoch ? 'N/A' : date24Format(mn.lastPaidAt),
+                    txHash: (
+                      <Link to={`/tx/${mn.txHash}`}>
+                        { `${mn.txHash.substr(0, 20)}...`}
+                      </Link>
+                    )
+                  };
+                }), ['status'])}
               />
 
               <Pagination
-                current={ this.state.page }
+                current={this.state.page}
                 className="float-right"
-                onPage={ this.handlePage }
-                total={ this.state.pages } />
+                onPage={this.handlePage}
+                total={this.state.pages} />
               <div className="clearfix" />
             </div>
             <Footer />

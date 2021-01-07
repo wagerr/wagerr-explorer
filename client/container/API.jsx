@@ -7,6 +7,7 @@ import APIsection from '../component/API/APIsection';
 import HorizontalRule from '../component/HorizontalRule';
 import ExplorerMenu from '../component/Menu/ExplorerMenu';
 import CoinSummary from '../container/CoinSummary';
+import SearchBar from '../component/SearchBar';
 import SearchEventBar from '../component/SearchEventBar';
 import Footer from '../component/Footer';
 import ExplorerOverviewMenu from '../component/Menu/ExplorerOverviewMenu';
@@ -27,7 +28,11 @@ export default class API extends Component {
       <div className="content content-top" id="body-content">
         <ExplorerMenu onSearch={ this.props.handleSearch } />        
         <div className="content__wrapper_total">    
-        <ExplorerOverviewMenu onSearch={ this.props.handleSearch } />      
+        <ExplorerOverviewMenu  />      
+        <SearchBar
+      className="search--mobile mr-3"
+      onSearch={ this.props.handleSearch }
+      placeholder="Search Blockchain" /> 
           <div className="content_search_wrapper">                      
             <div className="content_page_title">
               <span>Movement</span>

@@ -49,17 +49,19 @@ class Peer extends Component {
 
     return (
       <div className="content content-top" id="body-content">
-        <ExplorerMenu onSearch={ this.props.handleSearch } />        
-        <div className="content__wrapper_total">    
-        <ExplorerOverviewMenu onSearch={ this.props.handleSearch }/>
-      
-          <div className="content_search_wrapper">                      
-            {/* <SearchBar
-              className="d-none d-md-block"
-              onSearch={this.props.handleSearch} />           */}
+        <ExplorerMenu onSearch={this.props.handleSearch} />
+        <div className="content__wrapper_total">
+          <ExplorerOverviewMenu />
+          <SearchBar
+            className="search--mobile mr-3"
+            onSearch={this.props.handleSearch}
+            placeholder="Search Blockchain" />
+
+          <div className="content_search_wrapper">
+
             <div className="content_page_title">
               <span>Connections</span>
-            </div>              
+            </div>
           </div>
           <div className="content__wrapper">
             <CoinSummary
@@ -73,24 +75,24 @@ class Peer extends Component {
             <div>
               <HorizontalRule title="Connections" />
               <CardBigTable
-                cols={ this.state.cols }
-                data={ this.state.peers.map(peer => ({
+                cols={this.state.cols}
+                data={this.state.peers.map(peer => ({
                   ...peer,
                   ip: (
                     <div>
                       <img
                         className="flag"
-                        src={ `/img/flag/${ peer.countryCode ? peer.countryCode.toLowerCase() : 'xx' }.gif` }
-                        title={ peer.country } /> { peer.ip }
+                        src={`/img/flag/${peer.countryCode ? peer.countryCode.toLowerCase() : 'xx'}.gif`}
+                        title={peer.country} /> { peer.ip}
                     </div>
                   )
-                })) } />
+                }))} />
             </div>
             <Footer />
           </div>
         </div>
       </div>
-    );   
+    );
   };
 }
 

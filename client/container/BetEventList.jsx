@@ -35,9 +35,9 @@ import Sliding from '../component/Sliding'
 import Switch from "react-switch";
 import {
     OPCODE_CHANED_BLOCK
-  } from '../constants';
+} from '../constants';
 
-Number.prototype.toFixedNoRounding = function(n) {
+Number.prototype.toFixedNoRounding = function (n) {
     const reg = new RegExp("^-?\\d+(?:\\.\\d{0," + n + "})?", "g")
     const a = this.toString().match(reg)[0];
     const dot = a.indexOf(".");
@@ -158,7 +158,7 @@ class BetEventList extends Component {
                 getMethod(params)
                     .then(({ data, pages }) => {
                         if (this.debounce) {
-                            console.log('data', data);                            
+                            console.log('data', data);
                             data.map(item => {
                                 let totalBet = 0;
                                 let totalMint = 0;
@@ -232,14 +232,14 @@ class BetEventList extends Component {
 
     handleKeyPress = (ev) => {
         if (ev.key === 'Enter') {
-          ev.preventDefault();
-    
-          const term = ev.target.value.trim();
-          ev.target.value = '';
-    
-          if (!!term) {
-            this.props.handleEventSearch(term);
-          }
+            ev.preventDefault();
+
+            const term = ev.target.value.trim();
+            ev.target.value = '';
+
+            if (!!term) {
+                this.props.handleEventSearch(term);
+            }
         }
     };
 
@@ -287,7 +287,11 @@ class BetEventList extends Component {
             <div className="content content-top" id="body-content">
                 <ExplorerMenu onSearch={this.props.handleSearch} />
                 <div className="content__wrapper_total">
-                    <ExplorerOverviewMenu onSearch={ this.props.handleSearch }/>
+                    <ExplorerOverviewMenu />
+                    <SearchBar
+                        className="search--mobile mr-3"
+                        onSearch={this.props.handleSearch}
+                        placeholder="Search Blockchain" />
 
                     <div className="content_search_wrapper">
 
@@ -305,15 +309,15 @@ class BetEventList extends Component {
 
                         <div className="animated fadeInUp m-t-20 m-h-20 m--b-25">
                             <div className="search__card flex-center">
-                                <img src={'/img/uiupdate/search.png'} alt={'search'}/>
+                                <img src={'/img/uiupdate/search.png'} alt={'search'} />
                             </div>
-                            <input 
+                            <input
                                 className="search__input search__input__icon"
                                 placeholder={'Find by event ids, sports or tournaments.'}
                                 onKeyPress={this.handleKeyPress}
                             />
                         </div>
-            
+
                         <div>
                             <HorizontalRule
                                 // select={select}
@@ -346,7 +350,7 @@ class BetEventList extends Component {
                                     </div>
                                 </div>
 
-                               <Sliding selectedValue={this.state.filterBy} onChange={value => this.handleFilterBy(value)} options={FILTER_EVENTS_OPTIONS}/>
+                                <Sliding selectedValue={this.state.filterBy} onChange={value => this.handleFilterBy(value)} options={FILTER_EVENTS_OPTIONS} />
 
                                 {
                                     this.state.events.length > 0 &&
@@ -418,7 +422,7 @@ class BetEventList extends Component {
                                             homeOdds = ClientUtils.convertToOdds(homeOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
                                             drawOdds = ClientUtils.convertToOdds(drawOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
                                             awayOdds = ClientUtils.convertToOdds(awayOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
-                                        
+
                                             homeOdds = homeOdds == 0 ? '-' : homeOdds
                                             drawOdds = drawOdds == 0 ? '-' : drawOdds
                                             awayOdds = awayOdds == 0 ? '-' : awayOdds
@@ -448,27 +452,27 @@ class BetEventList extends Component {
                                             let spreadHomeOdd = '-';
                                             let spreadAwayOdd = '-';
                                             const eventItem = event.events[0];
-                                            if (eventItem.latest_spread){
+                                            if (eventItem.latest_spread) {
                                                 const divider = eventItem.latest_spread.blockHeight > OPCODE_CHANED_BLOCK ? 100 : 10;
-                                                spreadHomePoint = `${ ClientUtils.displayNum(eventItem.latest_spread.homePoints, divider)}`;
+                                                spreadHomePoint = `${ClientUtils.displayNum(eventItem.latest_spread.homePoints, divider)}`;
                                                 spreadAwayPoint = `${ClientUtils.displayNum(eventItem.latest_spread.awayPoints, divider)}`;
-                                                let homeOddstmp =  eventItem.latest_spread.homeOdds / 10000                
+                                                let homeOddstmp = eventItem.latest_spread.homeOdds / 10000
                                                 let awayOddstmp = eventItem.latest_spread.awayOdds / 10000
-                                
-                                                spreadHomeOdd = ClientUtils.convertToOdds(homeOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);                
-                                                spreadAwayOdd = ClientUtils.convertToOdds(awayOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);                                                
+
+                                                spreadHomeOdd = ClientUtils.convertToOdds(homeOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                                spreadAwayOdd = ClientUtils.convertToOdds(awayOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);
                                             }
                                             spreadHomePoint = spreadHomePoint == 0 ? '-' : spreadHomePoint;
                                             spreadAwayPoint = spreadAwayPoint == 0 ? '-' : spreadAwayPoint;
                                             spreadHomeOdd = spreadHomeOdd == 0 ? '-' : spreadHomeOdd;
                                             spreadAwayOdd = spreadAwayOdd == 0 ? '-' : spreadAwayOdd;
-                                            
+
                                             let totalPoint = '-'
                                             let overOdd = '-'
                                             let underOdd = '-'
 
-                                            if (eventItem.latest_total){
-                                                let overOddstmp =  eventItem.latest_total.overOdds / 10000                
+                                            if (eventItem.latest_total) {
+                                                let overOddstmp = eventItem.latest_total.overOdds / 10000
                                                 let underOddstmp = eventItem.latest_total.underOdds / 10000
                                                 const divider = eventItem.latest_total.blockHeight > OPCODE_CHANED_BLOCK ? 100 : 10;
                                                 totalPoint = eventItem.latest_total.points / divider
@@ -486,46 +490,46 @@ class BetEventList extends Component {
                                             return {
                                                 ...event,
                                                 start: <div>
-                                                    <p style={{ fontSize: 20, color: '#E7E3EB'}}>{homeTeam}</p>
-                                                    <p style={{ fontSize: 20, color: '#F70407', fontWeight: '600'}}>{homeAway}</p>
+                                                    <p style={{ fontSize: 20, color: '#E7E3EB' }}>{homeTeam}</p>
+                                                    <p style={{ fontSize: 20, color: '#F70407', fontWeight: '600' }}>{homeAway}</p>
                                                     <p>{event.events[0].league}</p>
                                                     <p>{timeStampFormat(event.events[0].timeStamp)} </p>
                                                     <p>Event ID: {event.events[0].eventId}</p>
                                                 </div>,
                                                 homeOdds: <div className='black-table-box'><h3>{homeOdds}</h3></div>,
-                                                drawOdds: <div className='black-table-box'><h3 style={{ color: '#9D9D9D'}}>{drawOdds}</h3></div>,
-                                                awayOdds: <div className='black-table-box'><h3 style={{ color: '#F90000'}}>{awayOdds}</h3></div>,
+                                                drawOdds: <div className='black-table-box'><h3 style={{ color: '#9D9D9D' }}>{drawOdds}</h3></div>,
+                                                awayOdds: <div className='black-table-box'><h3 style={{ color: '#F90000' }}>{awayOdds}</h3></div>,
 
-                                                spreadHome: <div className='black-table-box'>    
+                                                spreadHome: <div className='black-table-box'>
                                                     {spreadHomePoint != '-' && <p>{spreadHomePoint}</p>}
-                                                    {spreadHomePoint == '-' && spreadHomeOdd != '-' && <h3 style={{ color: '#9D9D9D'}}>{spreadHomePoint}</h3>}
+                                                    {spreadHomePoint == '-' && spreadHomeOdd != '-' && <h3 style={{ color: '#9D9D9D' }}>{spreadHomePoint}</h3>}
                                                     {spreadHomeOdd != '-' && <h3>{spreadHomeOdd}</h3>}
-                                                    {spreadHomeOdd == '-' && spreadHomePoint != '-' && <h3 style={{ color: '#9D9D9D'}}>{spreadHomeOdd}</h3>}
-                                                    {spreadHomeOdd == '-' && spreadHomePoint == '-' && <h3 style={{ color: '#9D9D9D'}}>-</h3>}    
-                                                </div> , 
+                                                    {spreadHomeOdd == '-' && spreadHomePoint != '-' && <h3 style={{ color: '#9D9D9D' }}>{spreadHomeOdd}</h3>}
+                                                    {spreadHomeOdd == '-' && spreadHomePoint == '-' && <h3 style={{ color: '#9D9D9D' }}>-</h3>}
+                                                </div>,
                                                 spreadAway: <div className='black-table-box'>
                                                     {spreadAwayPoint != '-' && <p>{spreadAwayPoint}</p>}
-                                                    {spreadAwayPoint == '-' && spreadAwayOdd != '-' && <h3 style={{ color: '#9D9D9D'}}>{spreadAwayPoint}</h3>}
-                                                    {spreadAwayOdd != '-' && <h3 style={{ color: '#F90000'}}>{spreadAwayOdd}</h3>}
-                                                    {spreadAwayOdd == '-' && spreadAwayPoint != '-' && <h3 style={{ color: '#9D9D9D'}}>{spreadAwayOdd}</h3>}
-                                                    {spreadAwayOdd == '-' && spreadAwayPoint == '-' && <h3 style={{ color: '#9D9D9D'}}>-</h3>}
+                                                    {spreadAwayPoint == '-' && spreadAwayOdd != '-' && <h3 style={{ color: '#9D9D9D' }}>{spreadAwayPoint}</h3>}
+                                                    {spreadAwayOdd != '-' && <h3 style={{ color: '#F90000' }}>{spreadAwayOdd}</h3>}
+                                                    {spreadAwayOdd == '-' && spreadAwayPoint != '-' && <h3 style={{ color: '#9D9D9D' }}>{spreadAwayOdd}</h3>}
+                                                    {spreadAwayOdd == '-' && spreadAwayPoint == '-' && <h3 style={{ color: '#9D9D9D' }}>-</h3>}
                                                 </div>,
 
                                                 totalOverOdd: <div className='black-table-box'>
-                                                    {overOdd != '-' && totalPoint == '-' && <h3 style={{ color: '#9D9D9D'}}>{totalPoint}</h3>}
+                                                    {overOdd != '-' && totalPoint == '-' && <h3 style={{ color: '#9D9D9D' }}>{totalPoint}</h3>}
                                                     {totalPoint != '-' && <p>{totalPoint}</p>}
                                                     {overOdd != '-' && <h3>{overOdd}</h3>}
-                                                    {totalPoint != '-' && overOdd == '-' && <h3 style={{ color: '#9D9D9D'}}>{overOdd}</h3>}
-                                                    {totalPoint == '-' && overOdd == '-' && <h3 style={{ color: '#9D9D9D'}}>{overOdd}</h3>}
-                                                </div>,                   
-                                                totalUnderOdd: <div className='black-table-box'>
-                                                    {underOdd != '-' && totalPoint == '-' && <h3 style={{ color: '#9D9D9D'}}>{totalPoint}</h3>}
-                                                    {totalPoint != '-' && <p>{totalPoint}</p>}                                                    
-                                                    {underOdd != '-' && <h3 style={{ color: '#F90000'}}>{underOdd}</h3>}
-                                                    {totalPoint != '-' && underOdd == '-' && <h3 style={{ color: '#9D9D9D'}}>{underOdd}</h3>}                                                    
-                                                    {totalPoint == '-' && underOdd == '-' && <h3 style={{ color: '#9D9D9D'}}>{underOdd}</h3>}
+                                                    {totalPoint != '-' && overOdd == '-' && <h3 style={{ color: '#9D9D9D' }}>{overOdd}</h3>}
+                                                    {totalPoint == '-' && overOdd == '-' && <h3 style={{ color: '#9D9D9D' }}>{overOdd}</h3>}
                                                 </div>,
- 
+                                                totalUnderOdd: <div className='black-table-box'>
+                                                    {underOdd != '-' && totalPoint == '-' && <h3 style={{ color: '#9D9D9D' }}>{totalPoint}</h3>}
+                                                    {totalPoint != '-' && <p>{totalPoint}</p>}
+                                                    {underOdd != '-' && <h3 style={{ color: '#F90000' }}>{underOdd}</h3>}
+                                                    {totalPoint != '-' && underOdd == '-' && <h3 style={{ color: '#9D9D9D' }}>{underOdd}</h3>}
+                                                    {totalPoint == '-' && underOdd == '-' && <h3 style={{ color: '#9D9D9D' }}>{underOdd}</h3>}
+                                                </div>,
+
                                                 betStatus: <div className='mt-2'>{betStatus}</div>,
                                                 betAmount: <span className={`mt-2 badge badge-danger `}>{numeral(betAmount).format('0,0.00')}</span>,
                                                 supplyChange: <span className={`mt-2 badge badge-${event.totalMint - event.totalBet < 0 ? 'danger' : 'success'}`}>
