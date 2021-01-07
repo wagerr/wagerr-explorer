@@ -75,7 +75,7 @@ class Overview extends Component {
       <div className={`content ${explore_class}`} id="body-content">
         <ExplorerMenu onSearch={ this.props.handleSearch } />        
         <div className="content__wrapper_total">     
-          <ExplorerOverviewMenu />     
+          <ExplorerOverviewMenu onSearch={ this.props.handleSearch }/>     
           <div className="content_search_wrapper">                      
             {/* <SearchBar
               className="d-none d-md-block"

@@ -14,9 +14,9 @@ import Select from '../component/Select';
 import { PAGINATION_PAGE_SIZE } from '../constants';
 import ExplorerMenu from '../component/Menu/ExplorerMenu';
 import CoinSummary from '../container/CoinSummary';
-import SearchBar from '../component/SearchBar';
 import SearchEventBar from '../component/SearchEventBar';
 import Footer from '../component/Footer';
+import ExplorerOverviewMenu from '../component/Menu/ExplorerOverviewMenu';
 class Address extends Component {
   static propTypes = {
     getAddress: PropTypes.func.isRequired,
@@ -102,11 +102,9 @@ class Address extends Component {
     return (
       <div className="content content-top" id="body-content">
         <ExplorerMenu onSearch={ this.props.handleSearch } />        
-        <div className="content__wrapper_total">          
+        <div className="content__wrapper_total">
+        <ExplorerOverviewMenu onSearch={ this.props.handleSearch } />            
           <div className="content_search_wrapper">                      
-            {/* <SearchBar
-              className="d-none d-md-block"
-              onSearch={this.props.handleSearch} />*/}
             <div className="content_page_title">
               <span>Overview</span>
             </div>              

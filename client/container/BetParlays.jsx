@@ -145,7 +145,7 @@ const convertToAmericanOdds = (odds) => {
                   } else if (item.betResultType == 'refund'){
                     item.supplyChange = 0;  
                   } else {
-                    item.supplyChange = (totalMint - totalBet) * 97 / 94;    
+                    item.supplyChange = (totalMint - totalBet) * 97 / 94;   //TODO: fix 1 
                   }                      
                 })
                 this.setState({ parlaybets: data, pages, loading: false })
@@ -243,7 +243,7 @@ const convertToAmericanOdds = (odds) => {
             <div className="content content-top" id="body-content">
                 <ExplorerMenu onSearch={this.props.handleSearch} />
                 <div className="content__wrapper_total">
-                    <ExplorerOverviewMenu />
+                    <ExplorerOverviewMenu onSearch={ this.props.handleSearch }/>
 
                     <div className="content_search_wrapper">
 

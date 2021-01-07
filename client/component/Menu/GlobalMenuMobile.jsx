@@ -5,7 +5,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../Icon';
 import ClientUtils from '../utils/utils';
-
 export default class GlobalMenuMobile extends Component {
   static propTypes = {
     links: PropTypes.array
@@ -25,7 +24,14 @@ export default class GlobalMenuMobile extends Component {
 
   getLinks = () => {
     const { props } = this;
-    return props.links.map((i, idx) => {
+
+    let ignoreFilter = ['/bethistory', '/lottos', '/betting', '/help'];
+
+    let links = props.links.filter(link => {
+      return !ignoreFilter.includes(link.href)
+    })
+    return links.map((i, idx) => {
+
       if (i.label == 'Get Started') {
         return (
           <a target="_blank" key={idx} className="menu-mobile__item" href={i.href} onClick={this.handleToggle} >
@@ -67,10 +73,7 @@ export default class GlobalMenuMobile extends Component {
     return (
       <div className={`menu-mobile ${this.state.isOpen ? 'menu-mobile--open' : 'menu-mobile--close'}`}>
         <div className="menu-mobile__search-wrapper">
-          {/* <SearchBar
-            className="search--mobile mr-3"
-            onSearch={ this.props.onSearch }
-            placeholder="Search Blockchain" /> */}
+          
           <div style={{ height: 50, paddingTop: 7, marginBottom: -7}} onMouseLeave={() => this.setState({ isOpen: false })}>
             <a onClick={this.handleToggle} >
               <Icon name="bars" className="menu-mobile__toggle" onClick={this.handleToggle} />

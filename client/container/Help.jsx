@@ -31,13 +31,7 @@ export default class Help extends Component {
               <div className='help__item__description'>The wagerr Extension wallet Browser Extension turns your browser into a secure Wagerr Wallet</div>
               <div className='help__item__note'>Wagerr Extension Wallet</div>
             </div>
-            <div className='help__item col-lg-3 col-sm-6 col-xs-6'>
-              <img src={'/img/uiupdate/help_icon_4.png'} alt={'help_icon_1'} />
-              <div className='help__item__title'>Wagerr</div>
-              <div className='help__item__description'>Wagerr is your digital currency and what you will use to bet here</div>
-              <div className='help__item__note'>Buy from Coinbase</div>
-            </div>
-
+            
           </div>
 
           <div className='help__step'>

@@ -17,6 +17,7 @@ import CardSpreadEvent from "../component/Card/CardSpreadEvent";
 import CardOverUnderEvent from "../component/Card/CardOverUnderEvent";
 import sortBy from "lodash/sortBy";
 import Actions from "../core/Actions";
+import ExplorerOverviewMenu from '../component/Menu/ExplorerOverviewMenu';
 
 
 class NewBetEvent extends Component {
@@ -147,6 +148,7 @@ class NewBetEvent extends Component {
             <div className={`content content-top`} id="body-content">
                 <ExplorerMenu onSearch={this.props.handleSearch}/>
                 <div className="content__wrapper_total">
+                <ExplorerOverviewMenu onSearch={ this.props.handleSearch }/>
                     <div className="animated fadeInUp content_search_wrapper">
                         <div className="content_page_title">
                             <span>BET EVENTS INFO</span>
