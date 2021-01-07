@@ -14,6 +14,7 @@ import CoinSummary from '../container/CoinSummary';
 import SearchEventBar from '../component/SearchEventBar';
 import ExplorerOverviewMenu from '../component/Menu/ExplorerOverviewMenu';
 import Footer from '../component/Footer';
+import SearchBar from '../component/SearchBar';
 class TX extends Component {
   static propTypes = {
     getTX: PropTypes.func.isRequired,
@@ -36,19 +37,19 @@ class TX extends Component {
     };
 
     this.props.history.listen((location, action) => {
-      const { params: { hash } } = this.props.match;      
+      const { params: { hash } } = this.props.match;
       if (!!this.state.tx.txId && hash !== this.state.tx.txId) {
         setTimeout(this.getTX());
       }
     });
   };
 
-  componentDidMount() {    
+  componentDidMount() {
     this.getTX();
   };
 
   componentDidUpdate() {
-    
+
     // const { params: { hash } } = this.props.match;
     // console.log('componentDidUpdate', hash);
     // if (!!this.state.tx.txId && hash !== this.state.tx.txId) {
@@ -65,7 +66,7 @@ class TX extends Component {
     });
   };
 
-  
+
   render() {
     if (!!this.state.error) {
       return this.renderError(this.state.error);
@@ -74,17 +75,21 @@ class TX extends Component {
     }
     const { toggleSwitchOddsStyle, toggleSwitchOdds } = this.props;
     return (
-      
+
       <div className="content content-top" id="body-content">
-        <ExplorerMenu onSearch={ this.props.handleSearch } />        
-        <div className="content__wrapper_total"> 
-        <ExplorerOverviewMenu onSearch={ this.props.handleSearch } />          
-          <div className="content_search_wrapper">                      
+        <ExplorerMenu onSearch={this.props.handleSearch} />
+        <div className="content__wrapper_total">
+          <ExplorerOverviewMenu />
+          <SearchBar
+            className="search--mobile mr-3"
+            onSearch={this.props.handleSearch}
+            placeholder="Search Blockchain" />
+          <div className="content_search_wrapper">
             <div className="content_page_title">
               <span>Transaction Info</span>
-            </div>              
+            </div>
           </div>
-          <div className="content__wrapper"> 
+          <div className="content__wrapper">
             <CoinSummary
               onRemove={this.props.handleRemove}
               onSearch={this.props.handleSearch}
@@ -95,15 +100,15 @@ class TX extends Component {
             /> */}
             <div>
               <HorizontalRule title="Transaction Info" />
-              <CardTX height={ this.props.tx.blockHeight } tx={ this.state.tx } />
+              <CardTX height={this.props.tx.blockHeight} tx={this.state.tx} />
               <div className="row">
                 <div className="col">
                   <HorizontalRule title="Sending Addresses" />
-                  <CardTXIn txs={ this.state.tx.vin } />
+                  <CardTXIn txs={this.state.tx.vin} />
                 </div>
                 <div className="col">
                   <HorizontalRule title="Recipients" />
-                  <CardTXOut txs={ this.state.tx.vout } toggleSwitchOdds={toggleSwitchOdds} toggleSwitchOddsStyle={toggleSwitchOddsStyle}/>
+                  <CardTXOut txs={this.state.tx.vout} toggleSwitchOdds={toggleSwitchOdds} toggleSwitchOddsStyle={toggleSwitchOddsStyle} />
                 </div>
               </div>
             </div>
@@ -111,7 +116,7 @@ class TX extends Component {
           </div>
         </div>
       </div>
-    );   
+    );
   };
 }
 

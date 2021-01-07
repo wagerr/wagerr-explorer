@@ -7,7 +7,6 @@ import { compose } from 'redux'
 import { translate } from 'react-i18next'
 import { genMenuData } from './explorerMenuData'
 import { Link } from 'react-router-dom';
-import SearchBar from '../SearchBar';
 
 class ExplorerOverviewMenu extends Component {
   render() {
@@ -15,7 +14,7 @@ class ExplorerOverviewMenu extends Component {
     const { pathname } = this.props.location;
     const menuData = genMenuData(t)
     return (
-      <div>
+      
       <div className='menu-explorer'>
         {
           menuData.map((i, index) =>
@@ -28,13 +27,8 @@ class ExplorerOverviewMenu extends Component {
             </div>) 
 
         }
-      </div>
+      </div> 
       
-      <SearchBar
-      className="search--mobile mr-3"
-      onSearch={ this.props.onSearch }
-      placeholder="Search Blockchain" /> 
-      </div>
  
     )
   }

@@ -1,6 +1,6 @@
 import Actions from '../core/Actions';
 import Component from '../core/Component';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -10,6 +10,7 @@ import HorizontalRule from '../component/HorizontalRule';
 import ExplorerMenu from "../component/Menu/ExplorerMenu";
 import CoinSummary from '../container/CoinSummary';
 import ExplorerOverviewMenu from '../component/Menu/ExplorerOverviewMenu';
+import SearchBar from '../component/SearchBar';
 class Block extends Component {
     static propTypes = {
         getBlock: PropTypes.func.isRequired,
@@ -32,20 +33,20 @@ class Block extends Component {
     };
 
     componentDidUpdate(prevProps) {
-        const {params: {hash}} = this.props.match;
+        const { params: { hash } } = this.props.match;
         if (prevProps.match.params.hash !== hash) {
             this.getBlock();
         }
     };
 
     getBlock = () => {
-        this.setState({loading: true}, () => {
+        this.setState({ loading: true }, () => {
             this.props
                 .getBlock(this.props.match.params.hash)
-                .then(({block, txs}) => {
-                    this.setState({block, txs, loading: false});
+                .then(({ block, txs }) => {
+                    this.setState({ block, txs, loading: false });
                 })
-                .catch(error => this.setState({error, loading: false}));
+                .catch(error => this.setState({ error, loading: false }));
         });
     };
 
@@ -58,24 +59,28 @@ class Block extends Component {
 
         return (
             <div className="content content-top" id="body-content">
-                <ExplorerMenu onSearch={this.props.handleSearch}/>
+                <ExplorerMenu onSearch={this.props.handleSearch} />
                 <div className="content__wrapper_total">
-                <ExplorerOverviewMenu onSearch={ this.props.handleSearch } /> 
-                <div className="content_search_wrapper">                      
-                    <div className="content_page_title">
-                        <span>Block Info</span>
-                    </div>              
-                </div>
-                  <div className="content__wrapper">
-                    <CoinSummary
-                        onRemove={this.props.handleRemove}
+                    <ExplorerOverviewMenu />
+                    <SearchBar
+                        className="search--mobile mr-3"
                         onSearch={this.props.handleSearch}
-                        searches={this.props.searches} />
-                    <HorizontalRule title="Block Info"/>
-                    <CardBlock block={this.state.block} height={this.props.tx.blockHeight}/>
-                    <HorizontalRule title="Block Transactions"/>
-                    <CardBlockTXs txs={this.state.txs}/>
-                  </div>
+                        placeholder="Search Blockchain" />
+                    <div className="content_search_wrapper">
+                        <div className="content_page_title">
+                            <span>Block Info</span>
+                        </div>
+                    </div>
+                    <div className="content__wrapper">
+                        <CoinSummary
+                            onRemove={this.props.handleRemove}
+                            onSearch={this.props.handleSearch}
+                            searches={this.props.searches} />
+                        <HorizontalRule title="Block Info" />
+                        <CardBlock block={this.state.block} height={this.props.tx.blockHeight} />
+                        <HorizontalRule title="Block Transactions" />
+                        <CardBlockTXs txs={this.state.txs} />
+                    </div>
                 </div>
             </div>
         );
@@ -89,7 +94,7 @@ const mapDispatch = dispatch => ({
 const mapState = state => ({
     tx: state.txs.length
         ? state.txs[0]
-        : {blockHeight: state.coin.blocks}
+        : { blockHeight: state.coin.blocks }
 });
 
 export default connect(mapState, mapDispatch)(Block);

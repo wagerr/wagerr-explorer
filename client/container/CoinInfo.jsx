@@ -23,17 +23,21 @@ class CoinInfo extends Component {
   render() {
     return (
       <div className="content content-top" id="body-content">
-        <ExplorerMenu onSearch={ this.props.handleSearch } />        
-        <div className="content__wrapper_total">    
-          <ExplorerOverviewMenu onSearch={ this.props.handleSearch }/>
-      
-          <div className="content_search_wrapper">                      
+        <ExplorerMenu onSearch={this.props.handleSearch} />
+        <div className="content__wrapper_total">
+          <ExplorerOverviewMenu />
+          <SearchBar
+            className="search--mobile mr-3"
+            onSearch={this.props.handleSearch}
+            placeholder="Search Blockchain" />
+
+          <div className="content_search_wrapper">
             {/* <SearchBar
               className="d-none d-md-block"
               onSearch={this.props.handleSearch} />           */}
             <div className="content_page_title">
               <span>Coin Info</span>
-            </div>              
+            </div>
           </div>
           <div className="content__wrapper">
             <CoinSummary
@@ -57,15 +61,15 @@ class CoinInfo extends Component {
                       <CardExchanges />
                     </div>
                     <div className="col-sm-12 col-md-9">
-                      <CardEarnings coin={ this.props.coin } />
+                      <CardEarnings coin={this.props.coin} />
                     </div>
                   </div>
                 </div>
                 <div className="col-md-12 col-lg-4">
-                  <CardROI coin={ this.props.coin } />
+                  <CardROI coin={this.props.coin} />
                 </div>
               </div>
-             </div>
+            </div>
             <Footer />
           </div>
         </div>

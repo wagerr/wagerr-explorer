@@ -41,11 +41,11 @@ class Statistics extends Component {
 
   componentDidMount() {
     Promise.all([
-        this.props.getCoins(),
-        this.props.getTXs(),
-        this.props.getBetActions(),
-        this.props.getBetPerWeek()
-      ])
+      this.props.getCoins(),
+      this.props.getTXs(),
+      this.props.getBetActions(),
+      this.props.getBetPerWeek()
+    ])
       .then((res) => {
         this.setState({
           coins: res[0], // 7 days at 5 min = 2016 coins
@@ -149,29 +149,33 @@ class Statistics extends Component {
     this.state.betPerWeek.forEach((bet) => {
       betTotals.set(moment(bet.date, 'YYYY-MM-DD').format('MMM DD'), bet.totalBet);
     });
-    const overallTotalBet = this.state.betPerWeek.length > 0? this.state.betPerWeek[this.state.betPerWeek.length - 1].totalBet : "";
-    const overallTotalBetDate = this.state.betPerWeek.length > 0? (<small>{ moment(this.state.betPerWeek[this.state.betPerWeek.length - 1].date, 'YYYY-MM-DD').format('MMM DD') }</small>) : (<small></small>);
+    const overallTotalBet = this.state.betPerWeek.length > 0 ? this.state.betPerWeek[this.state.betPerWeek.length - 1].totalBet : "";
+    const overallTotalBetDate = this.state.betPerWeek.length > 0 ? (<small>{moment(this.state.betPerWeek[this.state.betPerWeek.length - 1].date, 'YYYY-MM-DD').format('MMM DD')}</small>) : (<small></small>);
 
     const betActions = new Map();
     this.state.betActions.forEach((action) => {
       betActions.set(moment(action._id, 'YYYY-MM-DD').format('MMM DD'), action.total);
     });
     // Get the current day of the month.
-    const day = (<small>{ moment().format('MMM DD') }</small>);
+    const day = (<small>{moment().format('MMM DD')}</small>);
 
     return (
       <div className="content content-top" id="body-content">
-        <ExplorerMenu onSearch={ this.props.handleSearch } />        
-        <div className="content__wrapper_total">     
-        <ExplorerOverviewMenu onSearch={ this.props.handleSearch }/>
-     
-          <div className="content_search_wrapper">                      
+        <ExplorerMenu onSearch={this.props.handleSearch} />
+        <div className="content__wrapper_total">
+          <ExplorerOverviewMenu />
+          <SearchBar
+            className="search--mobile mr-3"
+            onSearch={this.props.handleSearch}
+            placeholder="Search Blockchain" />
+
+          <div className="content_search_wrapper">
             {/* <SearchBar
               className="d-none d-md-block"
               onSearch={this.props.handleSearch} />           */}
             <div className="content_page_title">
               <span>Statistics</span>
-            </div>              
+            </div>
           </div>
           <div className="content__wrapper">
             <CoinSummary
@@ -184,91 +188,91 @@ class Statistics extends Component {
             /> */}
             <div className="animated fadeInUp">
               <HorizontalRule title="Statistics" />
-              { Array.from(hashes.keys()).slice(1, -1).length <= 6 && <Notification /> }
+              {Array.from(hashes.keys()).slice(1, -1).length <= 6 && <Notification />}
               <div>
                 <div className="row">
                   <div className="col-md-12 col-lg-12">
                     <h3>Total Bets Last 7 Weeks</h3>
-                    <h4>{ numeral(overallTotalBet).format('0,0') } { overallTotalBetDate }</h4>
+                    <h4>{numeral(overallTotalBet).format('0,0')} {overallTotalBetDate}</h4>
                     <div>
                       <GraphLineFull
                         color="#1991eb"
-                        data={ Array.from(betTotals.values()) }
+                        data={Array.from(betTotals.values())}
                         height="420px"
-                        labels={ Array.from(betTotals.keys()) } />
+                        labels={Array.from(betTotals.keys())} />
                     </div>
                   </div>
                   <div className="col-md-12 col-lg-6">
                     <h3>Network Hash Rate Last 7 Days</h3>
-                    <h4>{ numeral(netHash.hash).format('0,0.00000000') } { netHash.label }/s { day }</h4>
-                    <h5>Difficulty: { numeral(this.props.coin.diff).format('0,0.00000000') }</h5>
+                    <h4>{numeral(netHash.hash).format('0,0.00000000')} {netHash.label}/s {day}</h4>
+                    <h5>Difficulty: {numeral(this.props.coin.diff).format('0,0.00000000')}</h5>
                     <div>
                       <GraphLineFull
                         color="#1991eb"
-                        data={ Array.from(hashes.values()).slice(1, -1) }
+                        data={Array.from(hashes.values()).slice(1, -1)}
                         height="420px"
-                        labels={ Array.from(hashes.keys()).slice(1, -1) } />
+                        labels={Array.from(hashes.keys()).slice(1, -1)} />
                     </div>
                   </div>
                   <div className="col-md-12 col-lg-6">
                     <h3>Transactions Last 7 Days</h3>
-                    <h4>{ numeral(tTX).format('0,0') } { day }</h4>
-                    <h5>Average: { numeral(avgTX).format('0,0') } Per Hour</h5>
+                    <h4>{numeral(tTX).format('0,0')} {day}</h4>
+                    <h5>Average: {numeral(avgTX).format('0,0')} Per Hour</h5>
                     <div>
                       <GraphLineFull
                         color="#1991eb"
-                        data={ Array.from(txs.values()) }
+                        data={Array.from(txs.values())}
                         height="420px"
-                        labels={ Array.from(txs.keys()) } />
+                        labels={Array.from(txs.keys())} />
                     </div>
                   </div>
                 </div>
                 <div className="row">
                   <div className="col-md-12 col-lg-6">
                     <h3>Wagerr Price USD</h3>
-                    <h4>{ numeral(this.props.coin.usd).format('$0,0.00') } { day }</h4>
-                    <h5>{ numeral(this.props.coin.btc).format('0.000000000000') } BTC</h5>
+                    <h4>{numeral(this.props.coin.usd).format('$0,0.00')} {day}</h4>
+                    <h5>{numeral(this.props.coin.btc).format('0.000000000000')} BTC</h5>
                     <div>
                       <GraphLineFull
                         color="#1991eb"
-                        data={ Array.from(prices.values()).slice(1, -1) }
+                        data={Array.from(prices.values()).slice(1, -1)}
                         height="420px"
-                        labels={ Array.from(prices.keys()).slice(1, -1) } />
+                        labels={Array.from(prices.keys()).slice(1, -1)} />
                     </div>
                   </div>
                   <div className="col-md-12 col-lg-6">
                     <h3>Masternodes Online Last 7 Days</h3>
-                    <h4>{ this.props.coin.mnsOn } { day }</h4>
-                    <h5>Seen: { this.props.coin.mnsOn + this.props.coin.mnsOff }</h5>
+                    <h4>{this.props.coin.mnsOn} {day}</h4>
+                    <h5>Seen: {this.props.coin.mnsOn + this.props.coin.mnsOff}</h5>
                     <div>
                       <GraphLineFull
                         color="#1991eb"
-                        data={ Array.from(mns.values()).slice(1, -1) }
+                        data={Array.from(mns.values()).slice(1, -1)}
                         height="420px"
-                        labels={ Array.from(mns.keys()).slice(1, -1) } />
+                        labels={Array.from(mns.keys()).slice(1, -1)} />
                     </div>
                   </div>
                   <div className="col-md-12 col-lg-6">
                     <h3>Bet Actions Last 7 Days</h3>
-                    <h4>{ numeral(tBetActions).format('0,0') } { day }</h4>
-                    <h5>Average: { numeral(avgBetActions).format('0,0') } Per Hour</h5>
+                    <h4>{numeral(tBetActions).format('0,0')} {day}</h4>
+                    <h5>Average: {numeral(avgBetActions).format('0,0')} Per Hour</h5>
                     <div>
                       <GraphLineFull
                         color="#1991eb"
-                        data={ Array.from(betActions.values()) }
+                        data={Array.from(betActions.values())}
                         height="420px"
-                        labels={ Array.from(betActions.keys()) } />
+                        labels={Array.from(betActions.keys())} />
                     </div>
                   </div>
                   <div className="col-md-12 col-lg-6">
                     <h3>Supply Change Last 7 Days</h3>
-                    <h4>{ numeral(this.props.coin.supply).format('0,0.00000000') } { day }</h4>
+                    <h4>{numeral(this.props.coin.supply).format('0,0.00000000')} {day}</h4>
                     <div>
                       <GraphLineFull
                         color="#1991eb"
-                        data={ Array.from(supplies.values()).slice(1, -1) }
+                        data={Array.from(supplies.values()).slice(1, -1)}
                         height="420px"
-                        labels={ Array.from(supplies.keys()).slice(1, -1) } />
+                        labels={Array.from(supplies.keys()).slice(1, -1)} />
                     </div>
                   </div>
                 </div>
@@ -278,7 +282,7 @@ class Statistics extends Component {
           </div>
         </div>
       </div>
-    );    
+    );
   };
 }
 

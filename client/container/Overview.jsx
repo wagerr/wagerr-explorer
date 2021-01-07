@@ -29,12 +29,12 @@ class Overview extends Component {
 
     this.state = {
       cols: [
-        {title: 'Height', key: 'blockHeight'},
-        {title: 'Transaction Hash', key: 'txId'},
-        {title: 'Value', key: 'vout'},
+        { title: 'Height', key: 'blockHeight' },
+        { title: 'Transaction Hash', key: 'txId' },
+        { title: 'Value', key: 'vout' },
         'age',
         'recipients',
-        {title: 'Created', key: 'createdAt'},
+        { title: 'Created', key: 'createdAt' },
       ]
     };
   };
@@ -53,36 +53,37 @@ class Overview extends Component {
 
       return ({
         ...tx,
-        age: diffSeconds < 0 ? "Just Now" : (diffSeconds < 60 ? `${ diffSeconds } seconds` : createdAt.fromNow(true)),
-        blockHeight: (<Link to={ `/block/${ tx.blockHeight }` }>{ tx.blockHeight }</Link>),
+        age: diffSeconds < 0 ? "Just Now" : (diffSeconds < 60 ? `${diffSeconds} seconds` : createdAt.fromNow(true)),
+        blockHeight: (<Link to={`/block/${tx.blockHeight}`}>{tx.blockHeight}</Link>),
         createdAt: date24Format(tx.createdAt),
         recipients: tx.vout.length,
-        txId: (<Link to={ `/tx/${ tx.txId }` }>{ tx.txId }</Link>),
+        txId: (<Link to={`/tx/${tx.txId}`}>{tx.txId}</Link>),
         vout: numeral(blockValue).format('0,0.00000000')
       });
     });
 
-    const { pathname } = this.props.location;    
+    const { pathname } = this.props.location;
 
     let is_explorer = false;
     if (!pathname.includes('/bethistory') && !pathname.includes('betting') && !pathname.includes('lottos') && !pathname.includes('help'))
       is_explorer = true
 
-    const explore_class = is_explorer? 'content-top' : '';
+    const explore_class = is_explorer ? 'content-top' : '';
     console.log('content-top:', explore_class)
 
     return (
       <div className={`content ${explore_class}`} id="body-content">
-        <ExplorerMenu onSearch={ this.props.handleSearch } />        
-        <div className="content__wrapper_total">     
-          <ExplorerOverviewMenu onSearch={ this.props.handleSearch }/>     
-          <div className="content_search_wrapper">                      
-            {/* <SearchBar
-              className="d-none d-md-block"
-              onSearch={this.props.handleSearch} />           */}
+        <ExplorerMenu onSearch={this.props.handleSearch} />
+        <div className="content__wrapper_total">
+          <ExplorerOverviewMenu />
+          <SearchBar
+            className="search--mobile mr-3"
+            onSearch={this.props.handleSearch}
+            placeholder="Search Blockchain" />
+          <div className="content_search_wrapper">
             <div className="content_page_title">
               <span>Overview</span>
-            </div>              
+            </div>
           </div>
           <div className="content__wrapper">
             <CoinSummary
@@ -98,13 +99,13 @@ class Overview extends Component {
               {/*<CardLatestBlocks data={txs}/>*/}
               <CardBigTable
                 data={txs}
-                cols= {[
-                  {title: 'Height', key: 'blockHeight'},
-                  {title: 'Transaction Hash', key: 'txId', className: 'cell-ellipsis'},
-                  {title: 'Value', key: 'vout'},
-                  {title: 'age', key: 'age', className: 'w-m-80'},
-                  {title: 'recipients', key: 'recipients'},
-                  {title: 'Created', key: 'createdAt', className: 'w-m-160'},
+                cols={[
+                  { title: 'Height', key: 'blockHeight' },
+                  { title: 'Transaction Hash', key: 'txId', className: 'cell-ellipsis' },
+                  { title: 'Value', key: 'vout' },
+                  { title: 'age', key: 'age', className: 'w-m-80' },
+                  { title: 'recipients', key: 'recipients' },
+                  { title: 'Created', key: 'createdAt', className: 'w-m-160' },
                 ]}
               />
               {/*<Table*/}
