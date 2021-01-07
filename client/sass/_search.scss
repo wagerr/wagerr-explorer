@@ -5,8 +5,8 @@
 	float: right;
 	margin-top:15px;
 	margin-right: 20px!important;
-	@media (max-width: 1600px) {
-		margin-right: 30px!important;
+	@media (min-width: 767px){
+		display: none;
 	}
 	&:hover {
 		
@@ -52,12 +52,12 @@
 
 	&--mobile &__input {
 		background: transparent;
-	  	border: 1px solid $white-light;
-		color: $white;
+	  	border: 1px solid $black;
+		color: $black;
 	}
 
 	&--mobile input.search__input::placeholder {
-		color: $white;
+		color: $black;
 	}
 
 

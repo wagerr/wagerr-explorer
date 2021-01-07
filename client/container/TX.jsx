@@ -11,8 +11,8 @@ import CardTXOut from '../component/Card/CardTXOut';
 import HorizontalRule from '../component/HorizontalRule';
 import ExplorerMenu from '../component/Menu/ExplorerMenu';
 import CoinSummary from '../container/CoinSummary';
-import SearchBar from '../component/SearchBar';
 import SearchEventBar from '../component/SearchEventBar';
+import ExplorerOverviewMenu from '../component/Menu/ExplorerOverviewMenu';
 import Footer from '../component/Footer';
 class TX extends Component {
   static propTypes = {
@@ -77,11 +77,9 @@ class TX extends Component {
       
       <div className="content content-top" id="body-content">
         <ExplorerMenu onSearch={ this.props.handleSearch } />        
-        <div className="content__wrapper_total">          
+        <div className="content__wrapper_total"> 
+        <ExplorerOverviewMenu onSearch={ this.props.handleSearch } />          
           <div className="content_search_wrapper">                      
-            {/* <SearchBar
-              className="d-none d-md-block"
-              onSearch={this.props.handleSearch} />           */}
             <div className="content_page_title">
               <span>Transaction Info</span>
             </div>              

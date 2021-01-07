@@ -51,7 +51,7 @@ class Peer extends Component {
       <div className="content content-top" id="body-content">
         <ExplorerMenu onSearch={ this.props.handleSearch } />        
         <div className="content__wrapper_total">    
-        <ExplorerOverviewMenu />
+        <ExplorerOverviewMenu onSearch={ this.props.handleSearch }/>
       
           <div className="content_search_wrapper">                      
             {/* <SearchBar
