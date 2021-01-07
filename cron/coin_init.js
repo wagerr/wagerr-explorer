@@ -267,8 +267,8 @@ async function syncCoin() {
     supply: info.moneysupply,
     usd: 0, //usdMarket.quote.USD.price,
     eur: 0,//eurMarket.quote.EUR.price,
-    totalBet: totalBet + 99071397.1752,
-    totalMint: totalMint + 102107516.1294,
+    totalBet: totalBet + 99159233.6752,
+    totalMint: totalMint + 97145649.4494,
     oracleProfitPerSecond: payoutPerSecond,
     nextSuperBlock:nextSuperBlock
   });
