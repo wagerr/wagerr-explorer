@@ -33,7 +33,7 @@ const Bettotal = require('../../model/bettotal');
 const LottoEvent = require('../../model/lottoevent');
 const LottoBet = require('../../model/lottobet');
 const LottoResult = require('../../model/lottoresult');
-const OpcodeChangedBlock = 2000000
+const OpcodeChangedBlock = 1501000
 
 // util functions
 
