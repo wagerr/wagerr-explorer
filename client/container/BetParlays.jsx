@@ -33,341 +33,345 @@ import GlobalSwitch from "../component/Menu/GlobalSwitch";
 import Utils from '../core/utils'
 
 const convertToAmericanOdds = (odds) => {
-  
-    odds = parseFloat(odds);
-    let ret = parseInt((odds - 1) * 100);
-    
-    if (odds < 2)
-      ret = Math.round((-100) / (odds - 1));
-    
-    if (odds == 0) ret = 0;
-  
-    if (ret > 0)  ret = `+${ret}`  
-    
-    return ret;
+
+  odds = parseFloat(odds);
+  let ret = parseInt((odds - 1) * 100);
+
+  if (odds < 2)
+    ret = Math.round((-100) / (odds - 1));
+
+  if (odds == 0) ret = 0;
+
+  if (ret > 0) ret = `+${ret}`
+
+  return ret;
+}
+
+class BetParlays extends Component {
+  static propTypes = {
+    getParlayBetsInfo: PropTypes.func.isRequired
   }
-  
-  class BetParlays extends Component {
-    static propTypes = {
-      getParlayBetsInfo: PropTypes.func.isRequired    
+
+  constructor(props) {
+    super(props)
+    const { t } = props;
+
+    this.debounce = null
+    this.state = {
+      error: null,
+      loading: true,
+      parlaybets: [],
+      pages: 0,
+      page: 1,
+      size: 50,
+      filterBy: 'All',
+      search: '',
+      toggleSwitch: props.toggleSwitch,
     }
-  
-    constructor(props) {
-      super(props)
-      const { t } = props;
-  
-      this.debounce = null
-      this.state = {
-        error: null,
-        loading: true,
-        parlaybets: [],
-        pages: 0,
-        page: 1,
-        size: 50,
-        filterBy: 'All',
-        search: '',
-        toggleSwitch: props.toggleSwitch,          
-      }
-  
-      this.props.history.listen((location, action) => {      
-        let page = location.pathname.split('/betparlays/')[1];
-        if (typeof page == 'undefined') page = 1;
-        setTimeout(this.updatePage(page));
-      });
-    };
-  
-    componentDidMount() {
-      const values = queryString.parse(this.props.location.search); //this.props.match ? this.props.match.params : '';    
-      const search = values.search ? values.search : '';    
-  
-      let page = this.props.match.params.page;
+
+    this.props.history.listen((location, action) => {
+      let page = location.pathname.split('/betparlays/')[1];
       if (typeof page == 'undefined') page = 1;
+      setTimeout(this.updatePage(page));
+    });
+  };
 
-      this.setState({ search, page }, this.getParlayBetsInfo)
-    };
-  
-    componentDidUpdate(prevProps, prevState) {
-        if (prevProps.toggleSwitch !== this.props.toggleSwitch) {
-            this.getParlayBetsInfo();
-        }
-    };
+  componentDidMount() {
+    const values = queryString.parse(this.props.location.search); //this.props.match ? this.props.match.params : '';    
+    const search = values.search ? values.search : '';
 
-    updatePage = (page) => {    
-      this.setState({ page:parseInt(page) }, this.getParlayBetsInfo);
+    let page = this.props.match.params.page;
+    if (typeof page == 'undefined') page = 1;
+
+    this.setState({ search, page }, this.getParlayBetsInfo)
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.toggleSwitch !== this.props.toggleSwitch) {
+      this.getParlayBetsInfo();
     }
-  
-    componentWillReceiveProps(nextProps) {
-        const nextvalues = queryString.parse(nextProps.location.search);
-        const nextsearch = nextvalues.search ? nextvalues.search : '';      
-        if (nextsearch !== this.state.search) {
-          this.setState({ search:nextsearch }, this.getParlayBetsInfo);
-        }
+  };
+
+  updatePage = (page) => {
+    this.setState({ page: parseInt(page) }, this.getParlayBetsInfo);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const nextvalues = queryString.parse(nextProps.location.search);
+    const nextsearch = nextvalues.search ? nextvalues.search : '';
+    if (nextsearch !== this.state.search) {
+      this.setState({ search: nextsearch }, this.getParlayBetsInfo);
     }
-  
-    componentWillUnmount() {
+  }
+
+  componentWillUnmount() {
+    if (this.debounce) {
+      clearTimeout(this.debounce)
+      this.debounce = null
+    }
+  };
+
+  getParlayBetsInfo = () => {
+    this.setState({ loading: true }, () => {
       if (this.debounce) {
         clearTimeout(this.debounce)
-        this.debounce = null
       }
-    };
-  
-    getParlayBetsInfo = () => {
-      this.setState({ loading: true }, () => {
-        if (this.debounce) {
-          clearTimeout(this.debounce)
-        }
-  
-        let getMethod = this.props.getParlayBetsInfo;      
-        const params = {
-          limit: this.state.size,
-          skip: (this.state.page - 1) * this.state.size,
-          opened_or_completed: !this.props.toggleSwitch
-        };
-  
-        if (this.state.search) {
-          getMethod = this.props.getParlayBetsInfo;
-          params.search = this.state.search;
-        }
-        
-        this.debounce = setTimeout(() => {
-          getMethod(params)
-            .then(({ data, pages }) => {            
-              if (this.debounce) {              
-                data.map(item => {                
-                  let totalBet = item.betValue;
-                  let totalMint = 0;
+
+      let getMethod = this.props.getParlayBetsInfo;
+      const params = {
+        limit: this.state.size,
+        skip: (this.state.page - 1) * this.state.size,
+        opened_or_completed: !this.props.toggleSwitch
+      };
+
+      if (this.state.search) {
+        getMethod = this.props.getParlayBetsInfo;
+        params.search = this.state.search;
+      }
+
+      this.debounce = setTimeout(() => {
+        getMethod(params)
+          .then(({ data, pages }) => {
+            if (this.debounce) {
+              data.map(item => {
+                let totalBet = item.betValue;
+                let totalMint = 0;
+                item.supplyChange = 0;
+                if (item.completed) {
+                  totalMint = item.payout;
+                }
+                if (item.betResultType == 'lose') {
+                  item.supplyChange = -totalBet;
+                } else if (item.betResultType == 'refund') {
                   item.supplyChange = 0;
-                  if (item.completed){
-                    totalMint = item.payout;
-                  }
-                  if (item.betResultType == 'lose'){
-                    item.supplyChange = -totalBet;  
-                  } else if (item.betResultType == 'refund'){
-                    item.supplyChange = 0;  
-                  } else {
-                    item.supplyChange = (totalMint - totalBet) * 97 / 94;   //TODO: fix 1 
-                  }                      
-                })
-                this.setState({ parlaybets: data, pages, loading: false })
-              }
-            })
-            .catch(error => {
-              console.log('error', error);
-              this.setState({ error, loading: false })
-            })
-        }, 800)
-      })
+                } else {
+                  item.supplyChange = (totalMint - totalBet) * 97 / 94;   //TODO: fix 1 
+                }
+              })
+              this.setState({ parlaybets: data, pages, loading: false })
+            }
+          })
+          .catch(error => {
+            console.log('error', error);
+            this.setState({ error, loading: false })
+          })
+      }, 800)
+    })
+  }
+
+  handleKeyPress = (ev) => {
+    if (ev.key === 'Enter') {
+      ev.preventDefault();
+
+      this.getParlayBetsInfo();
     }
-  
-    handleKeyPress = (ev) => {
-      if (ev.key === 'Enter') {
-        ev.preventDefault();
-  
-        this.getParlayBetsInfo();
-      }
-    };
-  
-    handleChange = (e) => {
-      this.setState({
-        search: e.target.value,
-      });
-    }
-    
-    handlePage = page => {
-      this.props.history.push('/betparlays/'+page) 
-    }
-  
-    handleSize = size => this.setState({ size, page: 1 }, () => {
-      this.getParlayBetsInfo()
+  };
+
+  handleChange = (e) => {
+    this.setState({
+      search: e.target.value,
+    });
+  }
+
+  handlePage = page => {
+    this.props.history.push('/betparlays/' + page)
+  }
+
+  handleSize = size => this.setState({ size, page: 1 }, () => {
+    this.getParlayBetsInfo()
   });
 
-    handleParlayBetSearch = (ev) => {
-      if (ev.key === 'Enter') {
-        ev.preventDefault();
-  
-        const term = ev.target.value.trim();
-        ev.target.value = '';
-  
-        if (!!term) {
-          this.props.onParlaySearch(term);
-        }
+  handleParlayBetSearch = (ev) => {
+    if (ev.key === 'Enter') {
+      ev.preventDefault();
+
+      const term = ev.target.value.trim();
+      ev.target.value = '';
+
+      if (!!term) {
+        this.props.onParlaySearch(term);
       }
-    };
+    }
+  };
 
-    render() {
-        const { props } = this;
-        const { t } = props;
-        const { toggleSwitch, handleToggleChange } = props;
-        const { width } = this.state;
+  render() {
+    const { props } = this;
+    const { t } = props;
+    const { toggleSwitch, handleToggleChange } = props;
+    const { width } = this.state;
 
-        let cols = [
-            { key: 'betTime', title: t('Bet Time') },
-            { key: 'txId', title: t('TxId') },
-            { key: 'leg1', title: t('Leg1') },
-            { key: 'leg2', title: t('Leg2') },
-            { key: 'leg3', title: t('Leg3') },
-            { key: 'leg4', title: t('Leg4') },
-            { key: 'leg5', title: t('Leg5') },
-            { key: 'supplyChange', title: t('Supply Change') },
-            { key: 'betAmount', title: t('Bet Amount') },
-            { key: 'betStatus', title: t('Bet Status') },
-            { key: 'seeDetail', title: t('Details') },
-          ];
-          
-        if (toggleSwitch){
-            delete cols[7];      
-        }    
-        if (!!this.state.error) {
-            return this.renderError(this.state.error)
-        } else if (this.state.loading) {
-            return this.renderLoading()
-        }
-        const selectOptions = PAGINATION_PAGE_SIZE
-        const selectFilterOptions = FILTER_EVENTS_OPTIONS
+    let cols = [
+      { key: 'betTime', title: t('Bet Time') },
+      { key: 'txId', title: t('TxId') },
+      { key: 'leg1', title: t('Leg1') },
+      { key: 'leg2', title: t('Leg2') },
+      { key: 'leg3', title: t('Leg3') },
+      { key: 'leg4', title: t('Leg4') },
+      { key: 'leg5', title: t('Leg5') },
+      { key: 'supplyChange', title: t('Supply Change') },
+      { key: 'betAmount', title: t('Bet Amount') },
+      { key: 'betStatus', title: t('Bet Status') },
+      { key: 'seeDetail', title: t('Details') },
+    ];
 
-        const select = (
-            <Select
-                onChange={value => this.handleSize(value)}
-                selectedValue={this.state.size}
-                options={selectOptions} />
-        )
+    if (toggleSwitch) {
+      delete cols[7];
+    }
+    if (!!this.state.error) {
+      return this.renderError(this.state.error)
+    } else if (this.state.loading) {
+      return this.renderLoading()
+    }
+    const selectOptions = PAGINATION_PAGE_SIZE
+    const selectFilterOptions = FILTER_EVENTS_OPTIONS
 
-        const filterSport = (
-            <Select
-                onChange={value => this.handleFilterBy(value)}
-                selectedValue={this.state.filterBy}
-                options={selectFilterOptions} />
-        );
+    const select = (
+      <Select
+        onChange={value => this.handleSize(value)}
+        selectedValue={this.state.size}
+        options={selectOptions} />
+    )
 
-        return (
-            <div className="content content-top" id="body-content">
-                <ExplorerMenu onSearch={this.props.handleSearch} />
-                <div className="content__wrapper_total">
-                    <ExplorerOverviewMenu onSearch={ this.props.handleSearch }/>
+    const filterSport = (
+      <Select
+        onChange={value => this.handleFilterBy(value)}
+        selectedValue={this.state.filterBy}
+        options={selectFilterOptions} />
+    );
 
-                    <div className="content_search_wrapper">
+    return (
+      <div className="content content-top" id="body-content">
+        <ExplorerMenu onSearch={this.props.handleSearch} />
+        <div className="content__wrapper_total">
+          <ExplorerOverviewMenu />
+          <SearchBar
+            className="search--mobile mr-3"
+            onSearch={this.props.handleSearch}
+            placeholder="Search Blockchain" />
 
-                        <div className="content_page_title">
-                            <span>Parlay Betting</span>
-                        </div>
-                    </div>
-                    <div className="content__wrapper">
-                        <CoinSummary
-                            onRemove={this.props.handleRemove}
-                            onSearch={this.props.handleSearch}
-                            searches={this.props.searches}
-                            onlyBet={true}
-                        />
-                        <div className="animated fadeInUp m-t-20 m-h-20 m--b-25">
-                            <div className="search__card flex-center">
-                                <img src={'/img/uiupdate/search.png'} alt={'search'}/>
-                            </div>
-                            <input 
-                                className="search__input search__input__icon"
-                                placeholder={'Find parlay bet by tx id'}
-                                onKeyPress={this.handleParlayBetSearch}
-                            />
-                        </div>
-                        <div>
-                            <HorizontalRule
-                                // select={select}                                
-                                title={'PARLAY BETS'}
-                            />
-                            {this.state.parlaybets.length == 0 && this.renderError('No search results found within provided filters')}
+          <div className="content_search_wrapper">
 
-                            <div style={{ width: Utils.tableWidth(width) }}>
-                                <div className="w3-tables__title">
-                                    <div>PARLAY BETS </div>
-                                    <div className="d-flex flex-row align-items-center">
-                                        <span className='ft-12 mr-2'>Completed:</span>
-                                        <Switch
-                                            checked={toggleSwitch}
-                                            onChange={handleToggleChange}
-                                            onColor="#86d3ff"
-                                            onHandleColor="#2693e6"
-                                            handleDiameter={18}
-                                            uncheckedIcon={false}
-                                            checkedIcon={false}
-                                            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                                            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                                            height={15}
-                                            width={30}
-                                            className="react-switch mr-3"
-                                            id="material-switch"
-                                        />
-                                        {select}
-                                    </div>
-                                </div>
-                                {this.state.parlaybets.length > 0 &&
-                                    <CardBigTable
-                                        className={'table-responsive table--for-betevents'}
-                                        black={true}
-                                        cols={cols}
-                                        data={this.state.parlaybets.map((bet) => {
-                                            const betAmount = bet.betValue;
-                                            const betTime = moment(bet.createdAt).utc().local().format('YYYY-MM-DD HH:mm:ss');            
-                                            const betTxId = bet.txId.substr(0, 5) + '...';    
-                                            let betStatus = bet.betResultType;
-                                            if (bet.completed == false){
-                                              betStatus = "Pending"
-                                            } else {
-                                              betStatus = "Completed"
-                                            }
-                                            const legs = [];
-                                            for (let j = 0; j < 5; j++){
-                                              if (bet.legs[j] !== undefined){
-                                                legs[j] = bet.legs[j].resultType;
-                                              } else {
-                                                legs[j] = '';
-                                              }
-                                            }
-                                            const supplyChange = numeral(bet.supplyChange).format('0,0.00');     
-
-                                            return {
-                                                ...bet,
-                                                betTime: betTime,
-                                                txId: (
-                                                    <Link to={`/tx/${encodeURIComponent(bet.txId)}`}>
-                                                      {betTxId}
-                                                    </Link>
-                                                  ),
-                                                  leg1: <span className={`badge badge-${legs[0] == 'lose' ? 'danger' : legs[0] == 'pending'  ?  'info' : legs[0] == 'win' ? 'success' : 'warning'}`}>{legs[0]}</span>,
-                                                  leg2: <span className={`badge badge-${legs[1] == 'lose' ? 'danger' : legs[1] == 'pending'  ?  'info' : legs[1] == 'win' ? 'success' : 'warning'}`}>{legs[1]}</span>,
-                                                  leg3: <span className={`badge badge-${legs[2] == 'lose' ? 'danger' : legs[2] == 'pending'  ?  'info' : legs[2] == 'win' ? 'success' : 'warning'}`}>{legs[2]}</span>,
-                                                  leg4: <span className={`badge badge-${legs[3] == 'lose' ? 'danger' : legs[3] == 'pending'  ?  'info' : legs[3] == 'win' ? 'success' : 'warning'}`}>{legs[3]}</span>,
-                                                  leg5: <span className={`badge badge-${legs[4] == 'lose' ? 'danger' : legs[4] == 'pending'  ?  'info' : legs[4] == 'win' ? 'success' : 'warning'}`}>{legs[4]}</span>,
-                                                  supplyChange: <span className={`badge badge-${bet.supplyChange < 0 ? 'danger' : 'success'}`}>
-                                                    {supplyChange}
-                                                  </span>,
-                                                  betAmount: <span className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
-                                                  betStatus: <span style={{fontWeight:'bold'}}>{betStatus}</span>,
-                                                  seeDetail: <Link to={`/tx/${encodeURIComponent(bet.txId)}`}>{t('See Details')}</Link>
-                                            }
-                                        })}
-                                    />
-                                }
-                            </div>
-
-                            {this.state.pages > 0 && <Pagination
-                                current={this.state.page}
-                                className="float-right"
-                                onPage={this.handlePage}
-                                total={this.state.pages} />}
-                            <div className="clearfix" />
-                        </div>
-                        <Footer />
-                    </div>
-                </div>
+            <div className="content_page_title">
+              <span>Parlay Betting</span>
             </div>
-        );
-    };
+          </div>
+          <div className="content__wrapper">
+            <CoinSummary
+              onRemove={this.props.handleRemove}
+              onSearch={this.props.handleSearch}
+              searches={this.props.searches}
+              onlyBet={true}
+            />
+            <div className="animated fadeInUp m-t-20 m-h-20 m--b-25">
+              <div className="search__card flex-center">
+                <img src={'/img/uiupdate/search.png'} alt={'search'} />
+              </div>
+              <input
+                className="search__input search__input__icon"
+                placeholder={'Find parlay bet by tx id'}
+                onKeyPress={this.handleParlayBetSearch}
+              />
+            </div>
+            <div>
+              <HorizontalRule
+                // select={select}                                
+                title={'PARLAY BETS'}
+              />
+              {this.state.parlaybets.length == 0 && this.renderError('No search results found within provided filters')}
+
+              <div style={{ width: Utils.tableWidth(width) }}>
+                <div className="w3-tables__title">
+                  <div>PARLAY BETS </div>
+                  <div className="d-flex flex-row align-items-center">
+                    <span className='ft-12 mr-2'>Completed:</span>
+                    <Switch
+                      checked={toggleSwitch}
+                      onChange={handleToggleChange}
+                      onColor="#86d3ff"
+                      onHandleColor="#2693e6"
+                      handleDiameter={18}
+                      uncheckedIcon={false}
+                      checkedIcon={false}
+                      boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                      activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                      height={15}
+                      width={30}
+                      className="react-switch mr-3"
+                      id="material-switch"
+                    />
+                    {select}
+                  </div>
+                </div>
+                {this.state.parlaybets.length > 0 &&
+                  <CardBigTable
+                    className={'table-responsive table--for-betevents'}
+                    black={true}
+                    cols={cols}
+                    data={this.state.parlaybets.map((bet) => {
+                      const betAmount = bet.betValue;
+                      const betTime = moment(bet.createdAt).utc().local().format('YYYY-MM-DD HH:mm:ss');
+                      const betTxId = bet.txId.substr(0, 5) + '...';
+                      let betStatus = bet.betResultType;
+                      if (bet.completed == false) {
+                        betStatus = "Pending"
+                      } else {
+                        betStatus = "Completed"
+                      }
+                      const legs = [];
+                      for (let j = 0; j < 5; j++) {
+                        if (bet.legs[j] !== undefined) {
+                          legs[j] = bet.legs[j].resultType;
+                        } else {
+                          legs[j] = '';
+                        }
+                      }
+                      const supplyChange = numeral(bet.supplyChange).format('0,0.00');
+
+                      return {
+                        ...bet,
+                        betTime: betTime,
+                        txId: (
+                          <Link to={`/tx/${encodeURIComponent(bet.txId)}`}>
+                            {betTxId}
+                          </Link>
+                        ),
+                        leg1: <span className={`badge badge-${legs[0] == 'lose' ? 'danger' : legs[0] == 'pending' ? 'info' : legs[0] == 'win' ? 'success' : 'warning'}`}>{legs[0]}</span>,
+                        leg2: <span className={`badge badge-${legs[1] == 'lose' ? 'danger' : legs[1] == 'pending' ? 'info' : legs[1] == 'win' ? 'success' : 'warning'}`}>{legs[1]}</span>,
+                        leg3: <span className={`badge badge-${legs[2] == 'lose' ? 'danger' : legs[2] == 'pending' ? 'info' : legs[2] == 'win' ? 'success' : 'warning'}`}>{legs[2]}</span>,
+                        leg4: <span className={`badge badge-${legs[3] == 'lose' ? 'danger' : legs[3] == 'pending' ? 'info' : legs[3] == 'win' ? 'success' : 'warning'}`}>{legs[3]}</span>,
+                        leg5: <span className={`badge badge-${legs[4] == 'lose' ? 'danger' : legs[4] == 'pending' ? 'info' : legs[4] == 'win' ? 'success' : 'warning'}`}>{legs[4]}</span>,
+                        supplyChange: <span className={`badge badge-${bet.supplyChange < 0 ? 'danger' : 'success'}`}>
+                          {supplyChange}
+                        </span>,
+                        betAmount: <span className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
+                        betStatus: <span style={{ fontWeight: 'bold' }}>{betStatus}</span>,
+                        seeDetail: <Link to={`/tx/${encodeURIComponent(bet.txId)}`}>{t('See Details')}</Link>
+                      }
+                    })}
+                  />
+                }
+              </div>
+
+              {this.state.pages > 0 && <Pagination
+                current={this.state.page}
+                className="float-right"
+                onPage={this.handlePage}
+                total={this.state.pages} />}
+              <div className="clearfix" />
+            </div>
+            <Footer />
+          </div>
+        </div>
+      </div>
+    );
+  };
 }
 
 const mapDispatch = dispatch => ({
-    getParlayBetsInfo: query => Actions.getParlayBetsInfo(query)
-  })
-  
-  export default compose(
-    connect(null, mapDispatch),
-    translate('BetParlays'),
-  )(BetParlays);
+  getParlayBetsInfo: query => Actions.getParlayBetsInfo(query)
+})
+
+export default compose(
+  connect(null, mapDispatch),
+  translate('BetParlays'),
+)(BetParlays);
