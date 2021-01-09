@@ -224,17 +224,17 @@ async function syncCoin() {
   const btcUrl = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${ config.coinMarketCap.tickerId }&CMC_PRO_API_KEY=9fb9f39e-e942-4fc9-a699-47efcc622ea0&convert=BTC`;
   //const eurUrl = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${ config.coinMarketCap.tickerId }&CMC_PRO_API_KEY=937ce6ea-d220-4a0c-9439-23f9e28993b3&convert=EUR`;
   
-  //let usdMarket = await fetch(usdUrl);
-  //let btcMarket = await fetch(btcUrl);
+  let usdMarket = await fetch(usdUrl);
+  let btcMarket = await fetch(btcUrl);
   //let eurMarket = await fetch(eurUrl);
   
-  // if (usdMarket.data) {
-  //   usdMarket = usdMarket.data ? usdMarket.data[`${ config.coinMarketCap.tickerId }`] : {};
-  // }
+   if (usdMarket.data) {
+     usdMarket = usdMarket.data ? usdMarket.data[`${ config.coinMarketCap.tickerId }`] : {};
+   }
 
-  // if (btcMarket.data) {
-  //   btcMarket = btcMarket.data ? btcMarket.data[`${ config.coinMarketCap.tickerId }`] : {};
-  // }
+   if (btcMarket.data) {
+     btcMarket = btcMarket.data ? btcMarket.data[`${ config.coinMarketCap.tickerId }`] : {};
+   }
 
   // if (eurMarket.data) {
   //   eurMarket = eurMarket.data ? eurMarket.data[`${ config.coinMarketCap.tickerId }`] : {};
@@ -251,13 +251,13 @@ async function syncCoin() {
   }
   
   const coin = new Coin({
-    cap: 0,//usdMarket.quote.USD.market_cap,
+    cap: usdMarket.quote.USD.market_cap,
     capEur: 0,//eurMarket.quote.EUR.market_cap,
     createdAt: date,
     blocks: info.blocks,
     lastResultCreatedAt: last_date,
-    btc: 0, //btcMarket.quote.BTC.market_cap,
-    btcPrice: 0, //btcMarket.quote.BTC.price,
+    btc: btcMarket.quote.BTC.market_cap,
+    btcPrice: btcMarket.quote.BTC.price,
     diff: info.difficulty,
     mnsOff: masternodes.total - masternodes.stable,
     mnsOn: masternodes.stable,
@@ -265,7 +265,7 @@ async function syncCoin() {
     peers: info.connections,
     status: 'Online',
     supply: info.moneysupply,
-    usd: 0, //usdMarket.quote.USD.price,
+    usd: usdMarket.quote.USD.price,
     eur: 0,//eurMarket.quote.EUR.price,
     totalBet: totalBet + 99159233.6752,
     totalMint: totalMint + 97145649.4494,
