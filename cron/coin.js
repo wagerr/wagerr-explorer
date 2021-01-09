@@ -223,11 +223,11 @@ async function syncCoin() {
   const btcUrl = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${ config.coinMarketCap.tickerId }&CMC_PRO_API_KEY=9fb9f39e-e942-4fc9-a699-47efcc622ea0&convert=BTC`;
   //const eurUrl = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${ config.coinMarketCap.tickerId }&CMC_PRO_API_KEY=937ce6ea-d220-4a0c-9439-23f9e28993b3&convert=EUR`;
   
-  /let usdMarket = await fetch(usdUrl);
-  /let btcMarket = await fetch(btcUrl);
+  let usdMarket = await fetch(usdUrl);
+  let btcMarket = await fetch(btcUrl);
   //let eurMarket = await fetch(eurUrl);
   
-  / if (usdMarket.data) {
+   if (usdMarket.data) {
      usdMarket = usdMarket.data ? usdMarket.data[`${ config.coinMarketCap.tickerId }`] : {};
    }
 
