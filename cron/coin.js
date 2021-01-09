@@ -265,7 +265,7 @@ async function syncCoin() {
     status: 'Online',
     supply: info.moneysupply,
     usd: usdMarket.quote.USD.price,
-    eur: eurMarket.quote.EUR.price,
+    eur: 0,//eurMarket.quote.EUR.price,
     totalBet: totalBet,
     totalMint: totalMint,
     oracleProfitPerSecond: payoutPerSecond,
