@@ -24,7 +24,7 @@
 */1 * * * * cd /explorer && /root/.nvm/versions/node/v10.16.2/bin/node ./cron/masternode.js >> ./tmp/masternode.log 2>&1
 */1 * * * * cd /explorer && /root/.nvm/versions/node/v10.16.2/bin/node ./cron/peer.js >> ./tmp/peer.log 2>&1
 */1 * * * * cd /explorer && /root/.nvm/versions/node/v10.16.2/bin/node ./cron/rich.js >> ./tmp/rich.log 2>&1
-*/5 * * * * cd /explorer && /root/.nvm/versions/node/v10.16.2/bin/node ./cron/coin.js >> ./tmp/coin.log 2>&1
+#*/5 * * * * cd /explorer && /root/.nvm/versions/node/v10.16.2/bin/node ./cron/coin.js >> ./tmp/coin.log 2>&1
 */3 * * * * cd /explorer && /root/.nvm/versions/node/v10.16.2/bin/node ./cron/sync.js >> ./tmp/sync.log 2>&1
 */1 * * * * cd /explorer && /root/.nvm/versions/node/v10.16.2/bin/node ./cron/statistic.js >> ./tmp/statistic.log 2>&1
 */1 * * * * cd /explorer && /root/.nvm/versions/node/v10.16.2/bin/node ./cron/listevent.js >> ./tmp/listevent.log 2>&1
