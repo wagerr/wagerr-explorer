@@ -145,7 +145,7 @@ class BetParlays extends Component {
                 } else if (item.betResultType == 'refund') {
                   item.supplyChange = 0;
                 } else {
-                  item.supplyChange = (totalMint - totalBet) * 97 / 94;   //TODO: fix 1 
+                  item.supplyChange = (totalMint - totalBet);  
                 }
               })
               this.setState({ parlaybets: data, pages, loading: false })
@@ -211,11 +211,11 @@ class BetParlays extends Component {
       { key: 'supplyChange', title: t('Supply Change') },
       { key: 'betAmount', title: t('Bet Amount') },
       { key: 'betStatus', title: t('Bet Status') },
-      { key: 'seeDetail', title: t('Details') },
+      // { key: 'seeDetail', title: t('Details') },
     ];
 
-    if (toggleSwitch) {
-      delete cols[7];
+    if (!toggleSwitch) {
+      delete cols[7]; //delete "supply change column" for uncompleted bets
     }
     if (!!this.state.error) {
       return this.renderError(this.state.error)
