@@ -6,6 +6,9 @@ import { Link } from 'react-router-dom'
 import numeral from 'numeral'
 import { compose } from 'redux'
 import { translate } from 'react-i18next'
+import {
+  OPCODE_CHANED_BLOCK
+} from '../../constants';
 
 const CardBetResult = ({eventInfo, data, t}) => {
   if (eventInfo.results.length !== 0) {
@@ -101,30 +104,31 @@ const CardBetResult = ({eventInfo, data, t}) => {
     const supplyChange = totalMint - totalBet
     const resultDisplay = (resultData) => {
       const { transaction } = resultData;
-      // return `${resultData.result}  | \n\n Home ${transaction.homeScore / 10} Away ${transaction.awayScore / 10}`;
+      //TODO: create centralize function for score divider -> (resultData.blockHeight+1 >= OPCODE_CHANED_BLOCK)? 100 : 10
       let resultSection;
+      let divider = resultData.blockHeight+1 >= OPCODE_CHANED_BLOCK? 100 : 10;
       if (transaction.homeScore > transaction.awayScore) {
         resultSection = (
           <span>
             {`${resultData.result}`} <br />
-            <strong>{`Home ${transaction.homeScore / 10} `}</strong>
-            {`Away ${transaction.awayScore / 10}`}
+            <strong>{`Home ${transaction.homeScore / divider} `}</strong> 
+            {`Away ${transaction.awayScore / divider}`}
           </span>
         );
       } else if (transaction.homeScore < transaction.awayScore) {
         resultSection = (
           <span>
             {resultData.result} <br />
-            {`Home ${transaction.homeScore / 10} `}
-            <strong>{`Away ${transaction.awayScore / 10}`}</strong>
+            {`Home ${transaction.homeScore / divider} `}
+            <strong>{`Away ${transaction.awayScore / divider}`}</strong>
           </span>
         );
       } else {
         resultSection = (
           <span>
             {resultData.result} <br />
-            {`Home ${transaction.homeScore / 10} `}
-            {`Away ${transaction.awayScore / 10}`}
+            {`Home ${transaction.homeScore / divider} `}
+            {`Away ${transaction.awayScore / divider}`}
           </span>
         );
       }
