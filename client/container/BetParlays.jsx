@@ -31,6 +31,7 @@ import CardBigTable from "../component/Card/CardBigTable";
 import ExplorerOverviewMenu from "../component/Menu/ExplorerOverviewMenu";
 import GlobalSwitch from "../component/Menu/GlobalSwitch";
 import Utils from '../core/utils'
+import ClientUtils from '../component/utils/utils';
 
 const convertToAmericanOdds = (odds) => {
 
@@ -211,12 +212,10 @@ class BetParlays extends Component {
       { key: 'supplyChange', title: t('Supply Change') },
       { key: 'betAmount', title: t('Bet Amount') },
       { key: 'betStatus', title: t('Bet Status') },
-      // { key: 'seeDetail', title: t('Details') },
+      { key: 'effectiveOdds', title: t('Effective Odds') }
     ];
 
-    if (!toggleSwitch) {
-      delete cols[7]; //delete "supply change column" for uncompleted bets
-    }
+    
     if (!!this.state.error) {
       return this.renderError(this.state.error)
     } else if (this.state.loading) {
@@ -318,9 +317,11 @@ class BetParlays extends Component {
                         betStatus = "Completed"
                       }
                       const legs = [];
+                      let effectiveOdds = 1;
                       for (let j = 0; j < 5; j++) {
                         if (bet.legs[j] !== undefined) {
                           legs[j] = bet.legs[j].resultType;
+                          effectiveOdds = effectiveOdds * ClientUtils.getEffectiveOddFromLeg(bet.legs[j])
                         } else {
                           legs[j] = '';
                         }
@@ -345,7 +346,7 @@ class BetParlays extends Component {
                         </span>,
                         betAmount: <span className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
                         betStatus: <span style={{ fontWeight: 'bold' }}>{betStatus}</span>,
-                        seeDetail: <Link to={`/tx/${encodeURIComponent(bet.txId)}`}>{t('See Details')}</Link>
+                        effectiveOdds: <span style={{ fontWeight: 'bold' }}>{numeral(effectiveOdds).format('0,0.00')}</span>
                       }
                     })}
                   />

@@ -15,9 +15,9 @@ class ClientUtils {
         return bn_balance.dividedBy(10**8).dp(6,3).toString()
     }
     
-    static convertToOdds = (odds, is_American, is_Decimal) => {
+    static convertToOdds = (odds, is_American, is_Effective) => {
         let ret = odds;
-        if (is_American) {
+        if (is_American) { //american/decimal
             odds = parseFloat(odds);
             ret = parseInt((odds - 1) * 100);
 
@@ -27,12 +27,42 @@ class ClientUtils {
             if (odds == 0) ret = 0;
         }
 
-        if (is_Decimal) {
+        if (is_Effective) { //effective/onchain
             ret = ret == 0 ? ret : (1 + (ret - 1) * 0.94).toFixedNoRounding(2);
         }
 
         if (ret > 0 && is_American) ret = `+${ret}`
         return ret;
+    }
+
+    static getEffectiveOddFromLeg = (leg) => {
+        let odds = 0;
+        switch (leg.outcome) {
+            case 1:
+                odds = leg.homeOdds
+                break;
+            case 2:
+                odds = leg.awayOdds
+                break;
+            case 3:
+                odds = leg.drawOdds
+                break;
+            case 4:
+                odds = leg.spreadHomeOdds
+                break;
+            case 5:
+                odds = leg.spreadAwayOdds
+                break;
+            case 6:
+                odds = leg.totalOverOdds
+                break;
+            case 7:
+                odds = leg.totalUnderOdds
+                break;
+
+        }
+        return ClientUtils.convertToOdds(parseInt(odds)/10000,false,true)
+
     }
 
     static getHeader(path) {
