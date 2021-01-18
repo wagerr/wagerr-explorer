@@ -3,7 +3,8 @@ import Component from '../../core/Component';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import BetModal from '../Modal';
-import CardTxLegInfo from './CardTxLegInfo'
+import CardTxLegInfo from './CardTxLegInfo';
+import ClientUtils from '../utils/utils';
 
 export default class CardTxOutOpCodeRow extends Component {
 
@@ -36,7 +37,7 @@ export default class CardTxOutOpCodeRow extends Component {
           <div style={{backgroundColor:"#eee"}}>
             <div className="card__row">
               <span className="card__label" ><strong>Effective Odds</strong></span>
-              <span className="card__result">{effectiveOdds.toFixed(2)}</span>
+              <span className="card__result">{ClientUtils.convertToOdds(effectiveOdds.toFixed(2), toggleSwitchOddsStyle, true)}</span>
             </div>
             <div className="card__row">
               <span className="card__label" ><strong>BetValue</strong></span>
