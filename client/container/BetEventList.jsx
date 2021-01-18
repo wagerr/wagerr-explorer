@@ -502,14 +502,14 @@ class BetEventList extends Component {
 
                                                 spreadHome: <div className='black-table-box'>
                                                     {spreadHomePoint != '-' && <p>{spreadHomePoint}</p>}
-                                                    {spreadHomePoint == '-' && spreadHomeOdd != '-' && <h3 style={{ color: '#9D9D9D' }}>{0.00}</h3>}
+                                                    {spreadHomePoint == '-' && spreadHomeOdd != '-' && <p>-0.00</p>}
                                                     {spreadHomeOdd != '-' && <h3>{spreadHomeOdd}</h3>}
                                                     {spreadHomeOdd == '-' && spreadHomePoint != '-' && <h3 style={{ color: '#9D9D9D' }}>{spreadHomeOdd}</h3>}
                                                     {spreadHomeOdd == '-' && spreadHomePoint == '-' && <h3 style={{ color: '#9D9D9D' }}>-</h3>}
                                                 </div>,
                                                 spreadAway: <div className='black-table-box'>
                                                     {spreadAwayPoint != '-' && <p>{spreadAwayPoint}</p>}
-                                                    {spreadAwayPoint == '-' && spreadAwayOdd != '-' && <h3 style={{ color: '#9D9D9D' }}>{0.00}</h3>}
+                                                    {spreadAwayPoint == '-' && spreadAwayOdd != '-' && <p>+0.00</p>}
                                                     {spreadAwayOdd != '-' && <h3 style={{ color: '#F90000' }}>{spreadAwayOdd}</h3>}
                                                     {spreadAwayOdd == '-' && spreadAwayPoint != '-' && <h3 style={{ color: '#9D9D9D' }}>{spreadAwayOdd}</h3>}
                                                     {spreadAwayOdd == '-' && spreadAwayPoint == '-' && <h3 style={{ color: '#9D9D9D' }}>-</h3>}
