@@ -8,6 +8,7 @@ const fetch = require('../lib/fetch');
 const { forEach } = require('p-iteration');
 const locker = require('../lib/locker');
 const moment = require('moment');
+const { log } = console;
 // Models.
 const Masternode = require('../model/masternode');
 
@@ -62,16 +63,13 @@ async function update() {
   try {
     locker.lock(type);
     await syncMasternode();
+    locker.unlock(type);
   } catch(err) {
-    console.log(err);
+    log(err);
     code = 1;
+    exit(code);
   } finally {
-    try {
-      locker.unlock(type);
-    } catch(err) {
-      console.log(err);
-      code = 1;
-    }
+    code = 0;
     exit(code);
   }
 }

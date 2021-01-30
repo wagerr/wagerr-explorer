@@ -88,7 +88,6 @@ async function syncCoin() {
   let last_date = moment('1970-01-01T00:00:00.000+00:00').toDate();
 
   if (coins.length > 0 && typeof coins[0].lastResultCreatedAt != "undefined") {
-    console.log('abc');
     last_date = moment(coins[0].lastResultCreatedAt).toDate();
   }
   console.log(last_date);
@@ -288,16 +287,13 @@ async function update() {
     locker.lock(type);
     await syncPayoutData();
     await syncCoin();
+    locker.unlock(type);
   } catch(err) {
     log(err);
     code = 1;
+    exit(code);
   } finally {
-    try {
-      locker.unlock(type);
-    } catch(err) {
-      log(err);
-      code = 1;
-    }
+    code = 0;
     exit(code);
   }
 }

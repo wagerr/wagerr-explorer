@@ -8,6 +8,7 @@ const locker = require('../lib/locker')
 const moment = require('moment')
 // Models.
 const ListEvent = require('../model/listevent')
+const { log } = console;
 
 console.log('Running listevent cron job');
 
@@ -54,17 +55,16 @@ async function update () {
   try {
     locker.lock(type)
     await syncListEvents()
+    locker.unlock(type)
+    
   } catch (err) {
-    console.log(err)
+    log(err)
     code = 1
-  } finally {
-    try {
-      locker.unlock(type)
-    } catch (err) {
-      console.log(err)
-      code = 1
-    }
     exit(code)
+  } finally {
+    code = 0
+    exit(code)
+    
   }
 }
 

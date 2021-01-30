@@ -4,6 +4,7 @@ const {exit, rpc} = require('../lib/cron')
 const {forEachSeries} = require('p-iteration')
 const locker = require('../lib/locker')
 const util = require('./util')
+const { log } = console;
 // Models.
 const Block = require('../model/block')
 const Price = require('../model/price')
@@ -14,7 +15,6 @@ const BetAction = require('../model/betaction')
 const BetParlay = require('../model/betparlay')
 
 
-console.log('Running statistic cron job');
 
 /**
  * Process the blocks and transactions.
@@ -26,7 +26,7 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
     await Statistic.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
   }  
 
-  if (stop - start > 500) stop = start + 500;
+  if (stop - start > 50000) stop = start + 50000;
    
   const latest_statistic = await Statistic.findOne({blockHeight: { $lt: start}}).sort({blockHeight: -1});  
 
@@ -34,6 +34,7 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
   let totalMint =  latest_statistic && latest_statistic.totalMint ? latest_statistic.totalMint : 0
   let totalPayout =  latest_statistic && latest_statistic.totalPayout ? latest_statistic.totalPayout : 0
   let totalPayoutUSD =  latest_statistic && latest_statistic.totalPayoutUSD ? latest_statistic.totalPayoutUSD : 0
+  let lastBlock = null
 
   // console.log('totalBet', totalBet);
   // console.log('totalMint', totalMint);
@@ -142,7 +143,7 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
         
       totalPayout = totalPayout + (total_bet_wgr + total_parlay_wgr);
       totalPayoutUSD = totalPayoutUSD + (total_bet_usd + total_parlay_usd);
-      
+      lastBlock = block;
     } catch(err) {
       console.log(err);
     }
@@ -150,17 +151,20 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
     // console.log('totalMint', totalMint);
     // console.log('totalPayout', totalPayout);
     // console.log('totalPayoutUSD', totalPayoutUSD);
-    
-    const statistic = new Statistic({
-      blockHeight: block.height,
-      createdAt: block.createdAt,
-      totalBet: totalBet,
-      totalMint: totalMint,
-      totalPayout: totalPayout,
-      totalPayoutUSD: totalPayoutUSD
-    })
-    await statistic.save()    
+       
   }
+
+  const statistic = new Statistic({
+    blockHeight: lastBlock.height,
+    createdAt: lastBlock.createdAt,
+    totalBet: totalBet,
+    totalMint: totalMint,
+    totalPayout: totalPayout,
+    totalPayoutUSD: totalPayoutUSD
+  })
+  await statistic.save() 
+    await statistic.save()    
+  await statistic.save() 
   console.log('syncBlocksForStatistic', start, stop);
 }
 
@@ -170,8 +174,11 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
 async function update () {
   const type = 'statistic'
   let code = 0
-
+ 
   try {
+    locker.lock(type)
+    log('Running statistic cron job');
+    
     const statistic = await Statistic.findOne().sort({blockHeight: -1})
     const betResult = await BetResult.findOne().sort({blockHeight: -1})
 
@@ -205,18 +212,14 @@ async function update () {
       startHeight = 10000
     }
 
-    locker.lock(type)
     await syncBlocksForStatistic(startHeight, stopHeight, clean)
+    locker.unlock(type)
   } catch (err) {
-    console.log(err)
+    log(err)
     code = 1
+    exit(code)
   } finally {
-    try {
-      locker.unlock(type)
-    } catch (err) {
-      console.log(err)
-      code = 1
-    }
+    code = 0
     exit(code)
   }
 }

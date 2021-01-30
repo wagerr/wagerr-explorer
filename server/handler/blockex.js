@@ -588,6 +588,7 @@ const getTX = async (req, res) => {
             tx.vout[i].betResultType = betaction.betResultType;
             tx.vout[i].completed = betaction.completed;
             tx.vout[i].payout = betaction.payout;
+            tx.vout[i].payoutUSD = betaction.payoutUSD;
             tx.vout[i].payoutTxId = betaction.payoutTxId;
             tx.vout[i].payoutNout = parseInt(betaction.payoutNout);
 
@@ -608,6 +609,7 @@ const getTX = async (req, res) => {
           if (betparlay){
             const divider = betparlay.blockHeight > OpcodeChangedBlock ? 100 : 10;
             tx.vout[i].payout = betparlay.payout;
+            tx.vout[i].payoutUSD = betparlay.payoutUSD;
             tx.vout[i].payoutTxId = betparlay.payoutTxId;
             tx.vout[i].payoutNout = parseInt(betparlay.payoutNout);
             tx.vout[i].betValueUSD = betparlay.betValueUSD;
@@ -2259,9 +2261,10 @@ const getBettotalUSD = async (req, res) => {
     }
   ];
 
-  const result = await BetAction.aggregate(qry).allowDiskUse(true);
-  console.log('result', result);
-  const total = result[0].total + 8482657;
+  const resultSingleBets = await BetAction.aggregate(qry).allowDiskUse(true); //single bets
+  const resultParlayBets = await BetParlay.aggregate(qry).allowDiskUse(true); //parlay bets
+
+  const total = resultSingleBets[0].total + resultParlayBets[0].total + 8482657;
   return res.json({totalUSD:total});
 }
 

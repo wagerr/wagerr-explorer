@@ -7,6 +7,7 @@ const {forEach} = require('p-iteration')
 const locker = require('../lib/locker')
 const moment = require('moment')
 const _ = require('lodash')
+const { log } = console;
 
 // Models.
 const Proposal = require('../model/proposal')
@@ -66,16 +67,13 @@ async function update () {
   try {
     locker.lock(type)
     await syncProposal()
+    locker.unlock(type)
   } catch (err) {
-    console.log(err)
+    log(err)
     code = 1
+    exit(code)
   } finally {
-    try {
-      locker.unlock(type)
-    } catch (err) {
-      console.log(err)
-      code = 1
-    }
+    code = 0
     exit(code)
   }
 }

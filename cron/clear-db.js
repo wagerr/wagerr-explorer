@@ -44,6 +44,30 @@ async function clearDatabase() {
   await BetUpdate.deleteMany({});
 }
 
+function lockDB() {
+  locker.lock('block');
+  locker.lock('coin');
+  locker.lock('masternode');
+  locker.lock('peer');
+  locker.lock('rich');
+  locker.lock('tx');
+  locker.lock('utxo');
+  locker.lock('bet');
+  locker.lock('listevent');
+}
+
+function unlockDB() {
+  locker.unlock('block');
+  locker.unlock('coin');
+  locker.unlock('masternode');
+  locker.unlock('peer');
+  locker.unlock('rich');
+  locker.unlock('tx');
+  locker.unlock('utxo');
+  locker.unlock('bet');
+  locker.unlock('listevent');
+}
+
 /**
  * Handle locking.
  */
@@ -51,35 +75,16 @@ async function update() {
   let code = 0;
 
   try {
-    locker.lock('block');
-    locker.lock('coin');
-    locker.lock('masternode');
-    locker.lock('peer');
-    locker.lock('rich');
-    locker.lock('tx');
-    locker.lock('utxo');
-    locker.lock('bet');
-    locker.lock('listevent');
+    lockDB()
     await clearDatabase();
     console.log('finished');
+    unlockDB()
   } catch(err) {
     console.log(err);
     code = 1;
+    exit(code);
   } finally {
-    try {
-      locker.unlock('block');
-      locker.unlock('coin');
-      locker.unlock('masternode');
-      locker.unlock('peer');
-      locker.unlock('rich');
-      locker.unlock('tx');
-      locker.unlock('utxo');
-      locker.unlock('bet');
-      locker.unlock('listevent');
-    } catch(err) {
-      console.log(err);
-      code = 1;
-    }
+    code = 0;
     exit(code);
   }
 }

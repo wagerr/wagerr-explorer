@@ -35,7 +35,7 @@ const BetParlay = mongoose.model('BetParlay', new mongoose.Schema({
   txId: { index: true, required: true, type: String },
   blockHeight: { index: true, required: true, type: Number },
   createdAt: { required: true, type: Date },
-  eventId: { required: true, type: String },
+  eventId: { index: true, required: true, type: String },
   betValue: { required: true, type: Number },
   betValueUSD: { required: true, type: Number },
   betChoose: { required: true, type: String },
@@ -59,6 +59,7 @@ const BetParlay = mongoose.model('BetParlay', new mongoose.Schema({
   completed: { required: true, type: Boolean, default: false },
   betResultType: { required: true, type: String, default:'pending' },
   payout: { required: false, type: Number },
+  payoutUSD: { required: false, type: Number },
   payoutTxId: { required: false, type: String },
   payoutNout: { required: false, type: String },
 }, { versionKey: false }), 'betparlays');

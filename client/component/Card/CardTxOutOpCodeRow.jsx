@@ -15,7 +15,6 @@ export default class CardTxOutOpCodeRow extends Component {
   render() {
     let txAddress;
     const { toggleSwitchOddsStyle, toggleSwitchOdds } = this.props;
-    console.log(this.props)
     let effectiveOdds = 1;
     return (
       <div className="card--block opcode">
@@ -30,48 +29,55 @@ export default class CardTxOutOpCodeRow extends Component {
             leg.completed = this.props.tx.completed
             leg.index = index + 1
             effectiveOdds = effectiveOdds * leg.price
+            console.log("eff odds",effectiveOdds)
             return <CardTxLegInfo leg={leg} toggleSwitchOdds={toggleSwitchOdds} isParlay={true} toggleSwitchOddsStyle={toggleSwitchOddsStyle} />
 
           })}
 
           <div style={{backgroundColor:"#eee"}}>
             <div className="card__row">
-              <span className="card__label" ><strong>Effective Odds</strong></span>
-              <span className="card__result">{ClientUtils.convertToOdds(effectiveOdds.toFixed(2), toggleSwitchOddsStyle, true)}</span>
+              <span className="card__label" ><strong>Total Parlay Odds</strong></span>
+              <span className="card__result">{ClientUtils.convertToOdds(effectiveOdds,toggleSwitchOddsStyle,toggleSwitchOdds)}</span>
             </div>
             <div className="card__row">
               <span className="card__label" ><strong>BetValue</strong></span>
               <span className="card__result">{this.props.tx.betValue} WGR / {this.props.tx.betValueUSD.toFixed(2)} USD</span>
             </div>
 
-            {this.props.tx.betResultType == "win" ? <div className="card__row">
+            {
+            this.props.tx.betResultType == "win" ?  <div>
+            <div className="card__row">
               <span className="card__label" ><strong>Payout</strong></span>
-              <span className="card__result">{this.props.tx.payout.toFixed(2)} / WGR</span>
+              <span className="card__result">{this.props.tx.payout.toFixed(2)} WGR / {this.props.tx.payoutUSD? this.props.tx.payoutUSD.toFixed(2): 0} USD</span>
+            </div> 
+            
+            <div className="card__row">
+              <span className="card__label" ><strong>Payout Tx Hash</strong></span>
+              <span className="card__result"><Link to={`/tx/${this.props.tx.payoutTxId}`}>{this.props.tx.payoutTxId.substr(0, 5) + '...'}</Link></span>
+            </div>
+            
             </div> : null
             }
 
-            {this.props.tx.betResultType == "win" ? <div className="card__row">
-              <span className="card__label" ><strong>Payout Tx Hash</strong></span>
-              <span className="card__result"><Link to={`/tx/${this.props.tx.payoutTxId}`}>{this.props.tx.payoutTxId.substr(0, 5) + '...'}</Link></span>
-            </div> : null
-            }
             </div>
 
 
           </div> : (this.props.tx.eventId !== undefined) && <div style={{backgroundColor:"#eee"}}>
             <CardTxLegInfo leg={this.props.tx} isParlay={false} toggleSwitchOdds={toggleSwitchOdds} toggleSwitchOddsStyle={toggleSwitchOddsStyle} />
 
-            {this.props.tx.betResultType == "win" ? <div className="card__row">
+            {this.props.tx.betResultType == "win" ? <div>
+            <div className="card__row">
               <span className="card__label" ><strong>Payout</strong></span>
-              <span className="card__result">{this.props.tx.payout.toFixed(2)} / WGR</span>
-            </div> : null
-            }
-
-            {this.props.tx.betResultType == "win" ? <div className="card__row">
+              <span className="card__result">{this.props.tx.payout.toFixed(2)} WGR / {this.props.tx.payoutUSD? this.props.tx.payoutUSD.toFixed(2): 0} USD</span>
+            </div> 
+             
+            <div className="card__row">
               <span className="card__label" ><strong>Payout Tx Hash</strong></span>
               <span className="card__result"><Link to={`/tx/${this.props.tx.payoutTxId}`}>{this.props.tx.payoutTxId.substr(0, 5) + '...'}</Link></span>
-            </div> : null
+            </div>
+            </div>: null
             }
+
           </div>
         }
       </div>
