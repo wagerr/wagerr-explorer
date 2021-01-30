@@ -126,16 +126,13 @@ async function update() {
 
     locker.lock(type);
     await syncBlocks(dbHeight, rpcHeight, true);
+    locker.unlock(type);
   } catch(err) {
     logError(err);
     code = 1;
+    exit(code);
   } finally {
-    try {
-      locker.unlock(type);
-    } catch(err) {
-      logError(err);
-      code = 1;
-    }
+    code = 0;
     exit(code);
   }
 }

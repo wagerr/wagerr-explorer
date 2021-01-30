@@ -32,6 +32,7 @@ import ExplorerOverviewMenu from "../component/Menu/ExplorerOverviewMenu";
 import GlobalSwitch from "../component/Menu/GlobalSwitch";
 import Utils from '../core/utils'
 import ClientUtils from '../component/utils/utils';
+import { UncontrolledTooltip } from 'reactstrap';
 
 const convertToAmericanOdds = (odds) => {
 
@@ -194,11 +195,16 @@ class BetParlays extends Component {
       }
     }
   };
+  shortendMarket(market) {
+    if(!market) return null;
+    return market.replace("Spreads","SPD").replace("Money Line","ML").replace("Total","TL").replace('Win','')
+  }
 
   render() {
     const { props } = this;
     const { t } = props;
     const { toggleSwitch, handleToggleChange } = props;
+    const { toggleSwitchOddsStyle, toggleSwitchOdds } = this.props;
     const { width } = this.state;
 
     let cols = [
@@ -212,7 +218,7 @@ class BetParlays extends Component {
       { key: 'supplyChange', title: t('Supply Change') },
       { key: 'betAmount', title: t('Bet Amount') },
       { key: 'betStatus', title: t('Bet Status') },
-      { key: 'effectiveOdds', title: t('Effective Odds') }
+      { key: 'effectiveOdds', title: t('Total Parlay Odds') }
     ];
 
     
@@ -320,7 +326,7 @@ class BetParlays extends Component {
                       let effectiveOdds = 1;
                       for (let j = 0; j < 5; j++) {
                         if (bet.legs[j] !== undefined) {
-                          legs[j] = bet.legs[j].resultType;
+                          legs[j] = bet.legs[j];
                           effectiveOdds = effectiveOdds * ClientUtils.getEffectiveOddFromLeg(bet.legs[j])
                         } else {
                           legs[j] = '';
@@ -336,17 +342,52 @@ class BetParlays extends Component {
                             {betTxId}
                           </Link>
                         ),
-                        leg1: <span className={`badge badge-${legs[0] == 'lose' ? 'danger' : legs[0] == 'pending' ? 'info' : legs[0] == 'win' ? 'success' : 'warning'}`}>{legs[0]}</span>,
-                        leg2: <span className={`badge badge-${legs[1] == 'lose' ? 'danger' : legs[1] == 'pending' ? 'info' : legs[1] == 'win' ? 'success' : 'warning'}`}>{legs[1]}</span>,
-                        leg3: <span className={`badge badge-${legs[2] == 'lose' ? 'danger' : legs[2] == 'pending' ? 'info' : legs[2] == 'win' ? 'success' : 'warning'}`}>{legs[2]}</span>,
-                        leg4: <span className={`badge badge-${legs[3] == 'lose' ? 'danger' : legs[3] == 'pending' ? 'info' : legs[3] == 'win' ? 'success' : 'warning'}`}>{legs[3]}</span>,
-                        leg5: <span className={`badge badge-${legs[4] == 'lose' ? 'danger' : legs[4] == 'pending' ? 'info' : legs[4] == 'win' ? 'success' : 'warning'}`}>{legs[4]}</span>,
+                        leg1: <span  className={`badge badge-${legs[0].resultType == 'lose' ? 'danger' : legs[0].resultType == 'pending' ? 'info' : legs[0].resultType == 'win' ? 'success' : 'warning'}`} id={ "_" + legs[0]._id}>
+                          {legs[0].resultType}
+                          <UncontrolledTooltip placement="right" target={"_" + legs[0]._id} autohide={false}>
+                            {this.shortendMarket(legs[0].market)}
+                            <br/>
+                          <Link to={`/bet/event/${legs[0].eventId}`} > {legs[0].eventId}</Link>
+                          </UncontrolledTooltip> 
+                         </span>,
+                        leg2: <span className={`badge badge-${legs[1].resultType == 'lose' ? 'danger' : legs[1].resultType == 'pending' ? 'info' : legs[1].resultType == 'win' ? 'success' : 'warning'}`} id={ "_" + legs[1]._id}>
+                          {legs[1].resultType}
+                          <UncontrolledTooltip placement="right" target={"_" + legs[1]._id} autohide={false}>
+                            {this.shortendMarket(legs[1].market)}
+                            <br/>
+                          <Link to={`/bet/event/${legs[1].eventId}`} > {legs[1].eventId}</Link>
+                          </UncontrolledTooltip> 
+                          </span>,
+                        leg3: <span className={`badge badge-${legs[2].resultType == 'lose' ? 'danger' : legs[2].resultType == 'pending' ? 'info' : legs[2].resultType == 'win' ? 'success' : 'warning'}`} id={ "_" + legs[2]._id}>
+                          {legs[2].resultType}
+                          <UncontrolledTooltip placement="right" target={"_" + legs[2]._id} autohide={false}>
+                            {this.shortendMarket(legs[2].market)}
+                            <br/>
+                          <Link to={`/bet/event/${legs[2].eventId}`} > {legs[2].eventId}</Link>
+                          </UncontrolledTooltip> 
+                          </span>,
+                        leg4: <span className={`badge badge-${legs[3].resultType == 'lose' ? 'danger' : legs[3].resultType == 'pending' ? 'info' : legs[3].resultType == 'win' ? 'success' : 'warning'}`} id={ "_" + legs[3]._id}>
+                          {legs[3].resultType}
+                          <UncontrolledTooltip placement="right" target={"_" + legs[3]._id} autohide={false}>
+                            {this.shortendMarket(legs[3].market)}
+                            <br/>
+                          <Link to={`/bet/event/${legs[3].eventId}`} > {legs[3].eventId}</Link>
+                          </UncontrolledTooltip> 
+                          </span>,
+                        leg5: <span className={`badge badge-${legs[4].resultType == 'lose' ? 'danger' : legs[4].resultType == 'pending' ? 'info' : legs[4].resultType == 'win' ? 'success' : 'warning'}`} id={ "_" + legs[4]._id}>
+                          {legs[4].resultType}
+                          <UncontrolledTooltip placement="right" target={"_" + legs[4]._id} autohide={false}>
+                            {this.shortendMarket(legs[4].market)}
+                            <br/>
+                          <Link to={`/bet/event/${legs[4].eventId}`} > {legs[4].eventId}</Link>
+                          </UncontrolledTooltip> 
+                          </span>,
                         supplyChange: <span className={`badge badge-${bet.supplyChange < 0 ? 'danger' : 'success'}`}>
                           {supplyChange}
                         </span>,
                         betAmount: <span className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
                         betStatus: <span style={{ fontWeight: 'bold' }}>{betStatus}</span>,
-                        effectiveOdds: <span style={{ fontWeight: 'bold' }}>{numeral(effectiveOdds).format('0,0.00')}</span>
+                        effectiveOdds: <span style={{ fontWeight: 'bold' }}>{ClientUtils.convertToOdds(effectiveOdds,toggleSwitchOddsStyle,toggleSwitchOdds)}</span>
                       }
                     })}
                   />

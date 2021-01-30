@@ -6,14 +6,14 @@ const locker = require('../lib/locker');
 const Rich = require('../model/rich');
 const UTXO = require('../model/utxo');
 
-console.log('Running rich cron job');
+const { log } = console;
 
 /**
  * Build the list of rich addresses from
  * unspent transactions.
  */
 async function syncRich() {
-  await Rich.remove({});
+  await Rich.deleteMany({});
 
   const addresses = await UTXO.aggregate([
     {
@@ -44,17 +44,16 @@ async function update() {
 
   try {
     locker.lock(type);
+    log('Running rich cron job');
     await syncRich();
+    log('Finished rich cron job');
+    locker.unlock(type);
   } catch (err) {
-    console.log(err);
+    log(err);
     code = 1;
+    exit(code);
   } finally {
-    try {
-      locker.unlock(type);
-    } catch (err) {
-      console.log(err);
-      code = 1;
-    }
+    code = 0;
     exit(code);
   }
 }

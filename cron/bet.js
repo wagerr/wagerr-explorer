@@ -71,18 +71,7 @@ async function update () {
     code = 1;
     response = err;
     throw new Error(err);
-  } /* finally {
-    try {
-      // locker.unlock(type);
-    } catch (err) {
-      log('Update() error: finally');
-      log(err);
-      code = 1;
-      throw new Error(err);
-    }
-    // exit(code);
-  } */
-
+  } 
   return response;
 }
 

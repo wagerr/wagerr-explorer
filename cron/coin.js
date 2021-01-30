@@ -287,16 +287,13 @@ async function update() {
     locker.lock(type);
     await syncPayoutData();
     await syncCoin();
+    locker.unlock(type);
   } catch(err) {
     log(err);
     code = 1;
+    exit(code);
   } finally {
-    try {
-      locker.unlock(type);
-    } catch(err) {
-      log(err);
-      code = 1;
-    }
+    code = 0;
     exit(code);
   }
 }

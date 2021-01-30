@@ -10,12 +10,11 @@ import {
   OPCODE_CHANED_BLOCK
 } from '../../constants';
 
-const CardBetResult = ({eventInfo, data, t}) => {
+const CardBetResult = ({eventInfo, t}) => {
   if (eventInfo.results.length !== 0) {
     const results = eventInfo.results
     let totalBet = 0
     let totalMint = 0
-
     // Money Line
 
     let MoneyLineBets = { home: [], away: [], draw: [] };
@@ -44,6 +43,10 @@ const CardBetResult = ({eventInfo, data, t}) => {
 
     totalBet += MLHomeBetAmount + MLAwayBetAmount + MLDrawBetAmount;
 
+    totalMint +=  MoneyLineBets.home.reduce((acc, bet) => acc + bet.payout, 0.0);
+    totalMint +=  MoneyLineBets.away.reduce((acc, bet) => acc + bet.payout, 0.0);
+    totalMint +=  MoneyLineBets.draw.reduce((acc, bet) => acc + bet.payout, 0.0);
+
     // Spreads
     let SpreadsBets = { home: [], away: [], draw: [] };
 
@@ -70,37 +73,30 @@ const CardBetResult = ({eventInfo, data, t}) => {
     
     totalBet +=  SHomeBetAmount + SAwayBetAmount; //+ SDrawBetAmount;
 
+    totalMint += SpreadsBets.home.reduce((acc, bet) => acc + bet.payout, 0.0);
+    totalMint += SpreadsBets.away.reduce((acc, bet) => acc + bet.payout, 0.0);
+
     // Over / Under
     let over = [];
     let under = [];
 
-    data.betActions.map((event) => {
-      if (event.betChoose.includes('Totals - Over')) {
-        over.push(event);
-      } else if (event.betChoose.includes('Totals - Under')) {
-        under.push(event);
-      }
-    });
+    eventInfo.overBets.map((event) => {
+      over.push(event);
+  });
+
+  eventInfo.underBets.map((event) => {
+    under.push(event);
+});
 
     const THomeBetAmount = over.reduce((acc, bet) => acc + bet.betValue, 0.0);
     const TAwayBetAmount = under.reduce((acc, bet) => acc + bet.betValue, 0.0);
     
     totalBet += THomeBetAmount + TAwayBetAmount;
+    totalMint += over.reduce((acc, bet) => acc + bet.payout, 0.0);
+    totalMint += under.reduce((acc, bet) => acc + bet.payout, 0.0)
 
     // End of calculations here
   
-    if (eventInfo.results.length > 0) {
-      eventInfo.results.forEach(result =>{
-        let startIndex = 2
-        if (result.payoutTx.vout[1].address === result.payoutTx.vout[2].address) {
-          startIndex = 3
-        }
-        for (let i = startIndex; i < result.payoutTx.vout.length - 1; i++) {
-          totalMint += result.payoutTx.vout[i].value
-        }
-      })
-    }
-
     const supplyChange = totalMint - totalBet
     const resultDisplay = (resultData) => {
       const { transaction } = resultData;

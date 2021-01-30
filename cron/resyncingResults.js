@@ -11,6 +11,7 @@ const BetResult = require('../model/betresult');
 const BetAction = require('../model/betaction');
 const BetParlay = require('../model/betparlay');
 const { rpc } = require('../lib/cron');
+const { log } = console;
 
 async function start(){
   try {
@@ -120,17 +121,15 @@ async function update() {
   try {
     locker.lock(type);
     await start();
+    locker.unlock(type);
   } catch (err) {
-    console.log(err);
+    log(err);
     code = 1;
-  } finally {
-    try {
-      locker.unlock(type);
-    } catch (err) {
-      console.log(err);
-      code = 1;
-    }
     exit(code);
+  } finally {
+    code = 0;
+    exit(code);
+    
   }
 }
 

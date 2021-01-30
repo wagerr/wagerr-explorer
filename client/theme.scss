@@ -114,7 +114,7 @@ html, body {
 }
 
 a, a:visited {
-	color: $gray-dark;
+	color: #7b808a;
 	text-decoration: none;
 }
 
@@ -178,6 +178,12 @@ h1, h2, h3, h4, h5, h6 {
 	&-success {
 		color: $white !important;
 	}
+	&-link {
+		&:hover {
+			text-decoration: underline !important;
+		} 
+	}
+
 }
 
 // Content Wrapper

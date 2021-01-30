@@ -975,8 +975,15 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
       return resultExists;
     }
 
-
+    
     try {
+      
+      const prices = await Price.aggregate([
+        {$project: {diff: {$abs: {$subtract: [block.createdAt, '$createdAt']}}, doc: '$$ROOT'}},
+        {$sort: {diff: 1}},
+        {$limit: 1}
+      ]);
+      
       let resultPayoutTxs = await TX.find({ blockHeight: block.height + 1 });
 
       createResponse = await BetResult.create({
@@ -1007,17 +1014,20 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
       }
 
       const actions = await BetAction.find({eventId: `${transaction.eventId}`});
-      console.log('here', actions)
       if (actions && actions.length > 0){        
         for (const action of actions){        
           if (action != null){              
             const res = await rpc.call('getbetbytxid', [action.txId]);  
             if (res){                  
               const betinfo = res[0];
-              console.log('betinfo:', betinfo);
               action.completed = betinfo.completed == 'yes' ? true : false;
               action.betResultType = betinfo.betResultType;
-              action.payout = betinfo.payout != 'pending' ? betinfo.payout : 0;
+              action.payout = 0;
+              action.payoutUSD = 0;
+              if(betinfo.payout != 'pending') {
+                action.payout = betinfo.payout;
+                action.payoutUSD = prices[0].doc.usd * betinfo.payout;
+              }
               action.payoutTxId = betinfo.payoutTxHash;
               action.payoutNout = betinfo.payoutTxOut != 'pending' ? betinfo.payoutTxOut : 0;
               if (betinfo.legs.length > 0){
@@ -1025,7 +1035,6 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
                 action.homeScore = leg.lockedEvent.homeScore != "undefined" ? leg.lockedEvent.homeScore : 0,
                 action.awayScore = leg.lockedEvent.awayScore != "undefined" ? leg.lockedEvent.awayScore : 0
               }              
-              console.log('action saving', action)
               try {
                 await action.save()
               } catch (e_save) {
@@ -1047,7 +1056,12 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
                   if (betinfo.legs.length > 1){                                                            
                     betItem.completed = betinfo.completed == 'yes'? true: false;
                     betItem.betResultType = betinfo.betResultType;
-                    betItem.payout = betinfo.payout != 'pending' ? betinfo.payout : 0;  
+                    betItem.payout = 0;
+                    betItem.payoutUSD = 0;
+                    if(betinfo.payout != 'pending') {
+                      betItem.payout = betinfo.payout;
+                      betItem.payoutUSD = prices[0].doc.usd * betinfo.payout;
+                    } 
                     betItem.payoutTxId = betinfo.payoutTxHash;                      
                     betItem.payoutNout = betinfo.payoutTxOut != 'pending' ? betinfo.payoutTxOut : 0;
                     const legs = [];
@@ -1084,8 +1098,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
                   } catch (e_save){
                     console.log(e_save);
                   }
-
-                  console.log('parlay update by result');
+                  
                 }                               
               
             }            

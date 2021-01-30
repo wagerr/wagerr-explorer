@@ -7,10 +7,10 @@ const fetch = require('../lib/fetch');
 const { forEach } = require('p-iteration');
 const locker = require('../lib/locker');
 const moment = require('moment');
+const { log } = console;
 // Models.
 const Peer = require('../model/peer');
 
-console.log('Runnning peer cron job');
 
 /**
  * Get a list of the peers and request IP information
@@ -67,17 +67,16 @@ async function update() {
 
   try {
     locker.lock(type);
+    log('Runnning peer cron job');
     await syncPeer();
+    log('Finished Peer cron job');
+    locker.unlock(type);
   } catch(err) {
-    console.log(err);
+    log(err);
     code = 1;
+    exit(code);
   } finally {
-    try {
-      locker.unlock(type);
-    } catch(err) {
-      console.log(err);
-      code = 1;
-    }
+    code = 0;
     exit(code);
   }
 }

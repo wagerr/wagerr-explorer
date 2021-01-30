@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
  */
 const Statistic = mongoose.model('Statistic', new mongoose.Schema({
   __v: { select: false, type: Number },
-  blockHeight: { required: true, type: Number },
+  blockHeight: { index: true, required: true, type: Number },
   createdAt: { index: true, required: true, type: Date },
   totalBet: { type: Number },
   totalMint: { type: Number },

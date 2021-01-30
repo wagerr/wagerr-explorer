@@ -31,8 +31,11 @@ class ClientUtils {
             ret = ret == 0 ? ret : (1 + (ret - 1) * 0.94).toFixedNoRounding(2);
         }
 
-        if (ret > 0 && is_American) ret = `+${ret}`
-        return ret;
+        if (ret > 0 && is_American) {
+            return `+${ret}`
+        }
+
+        return Number.parseFloat(ret).toFixedNoRounding(2)
     }
 
     static getEffectiveOddFromLeg = (leg) => {
@@ -61,7 +64,7 @@ class ClientUtils {
                 break;
 
         }
-        return ClientUtils.convertToOdds(parseInt(odds)/10000,false,true)
+        return (parseInt(odds)/10000)
 
     }
 

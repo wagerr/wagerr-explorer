@@ -198,7 +198,7 @@ class NewBetEvent extends Component {
                                 </div>
                             </div>
                             <div className="col-md-12 col-lg-6">
-                                <CardBetResult eventInfo={this.state.eventInfo} data={tableData} />
+                                <CardBetResult eventInfo={this.state.eventInfo} />
                                 {/* <Card title={'Bet Result'}>
                                     <div className='space-between direction-row p-13'>
                                         <div>Result:</div>
