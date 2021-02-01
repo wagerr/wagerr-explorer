@@ -26,7 +26,7 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
     await Statistic.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
   }  
 
-  if (stop - start > 50000) stop = start + 50000;
+  if (stop - start > 500) stop = start + 500;
    
   const latest_statistic = await Statistic.findOne({blockHeight: { $lt: start}}).sort({blockHeight: -1});  
 
@@ -151,9 +151,7 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
     // console.log('totalMint', totalMint);
     // console.log('totalPayout', totalPayout);
     // console.log('totalPayoutUSD', totalPayoutUSD);
-       
-  }
-
+   
   const statistic = new Statistic({
     blockHeight: lastBlock.height,
     createdAt: lastBlock.createdAt,
@@ -163,8 +161,7 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
     totalPayoutUSD: totalPayoutUSD
   })
   await statistic.save() 
-    await statistic.save()    
-  await statistic.save() 
+}
   console.log('syncBlocksForStatistic', start, stop);
 }
 
