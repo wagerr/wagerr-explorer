@@ -49,28 +49,28 @@ export default class CardOracleProfit extends Component {
         <div className="card__row bg-eee">
           <span className="card__label">DAILY</span>
           <span className="card__result">
-            <Link to={`/address/${ config.coin.oracle_payout_address }`}>{numeral(profitPerDay).format('0,0.00')} WGR / {numeral(profitPerDayUsd).format('0,0.00')} USD </Link>
+            <Link to={`/address/${ config.coin.oracle_payout_address[0] }`}>{numeral(profitPerDay).format('0,0.00')} WGR / {numeral(profitPerDayUsd).format('0,0.00')} USD </Link>
           </span>          
         </div>
         <div className="card__row">
           <span className="card__label">WEEKLY</span>
           <span className="card__result">
-            <Link to={`/address/${ config.coin.oracle_payout_address }`}>{numeral(profitPerWeek).format('0,0.00')} WGR / {numeral(profitPerWeekUsd).format('0,0.00')} USD </Link>
+            <Link to={`/address/${ config.coin.oracle_payout_address[0] }`}>{numeral(profitPerWeek).format('0,0.00')} WGR / {numeral(profitPerWeekUsd).format('0,0.00')} USD </Link>
           </span>          
         </div>
         <div className="card__row bg-eee">
           <span className="card__label">SPOT ORACLE EARNINGS</span>
           <span className="card__result">
-            <Link to={`/address/${ config.coin.oracle_payout_address }`}>{numeral(profitPerWeek).format('0,0.00')} WGR / {numeral(profitPerWeekUsd).format('0,0.00')} USD </Link>
+            <Link to={`/address/${ config.coin.oracle_payout_address[0] }`}>{numeral(profitPerWeek).format('0,0.00')} WGR / {numeral(profitPerWeekUsd).format('0,0.00')} USD </Link>
           </span>          
         </div>
         {/*<div className="card__row">*/}
           {/*<span className="card__label-small">MONTYLY</span>*/}
-          {/*<Link to={`/address/${ config.coin.oracle_payout_address }`}>{numeral(profitPerMonth).format('0,0.00')} WGR / {numeral(profitPerMonthBtc).format('0,0.00000000')} BTC / {numeral(profitPerMonthyUsd).format('0,0.00')} USD </Link>*/}
+          {/*<Link to={`/address/${ config.coin.oracle_payout_address[0] }`}>{numeral(profitPerMonth).format('0,0.00')} WGR / {numeral(profitPerMonthBtc).format('0,0.00000000')} BTC / {numeral(profitPerMonthyUsd).format('0,0.00')} USD </Link>*/}
         {/*</div>*/}
         {/*<div className="card__row">*/}
           {/*<span className="card__label-small">YEARLY</span>*/}
-          {/*<Link to={`/address/${ config.coin.oracle_payout_address }`}>{numeral(profitPerYear).format('0,0.00')} WGR / {numeral(profitPerYearyBtc).format('0,0.00000000')} BTC / {numeral(profitPerYearUsd).format('0,0.00')} USD </Link>*/}
+          {/*<Link to={`/address/${ config.coin.oracle_payout_address[0] }`}>{numeral(profitPerYear).format('0,0.00')} WGR / {numeral(profitPerYearyBtc).format('0,0.00000000')} BTC / {numeral(profitPerYearUsd).format('0,0.00')} USD </Link>*/}
         {/*</div>*/}
         <div className="card__row">
           <span  style={{color:"rgba(0, 0, 0,.5)", fontSize: '15px', padding: '5px 0px'}}> Estimates based on current block subsidy and active masternodes</span>

@@ -54,7 +54,7 @@ export default class CardAddress extends Component {
             <div className="card--address">
               <div className="card__row">
                 <span className="card__label card--address-wallet">
-                  {this.props.address === config.coin.oracle_payout_address ? 'Oracle Wallet Address:' : 'Wallet Address:'}
+                  {config.coin.oracle_payout_address.includes(this.props.address) ? 'Oracle Wallet Address:' : 'Wallet Address:'}
                 </span>
                 <span className="card__result card--address-hash">
                   { this.props.address }
