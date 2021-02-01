@@ -35,8 +35,8 @@ const config = {
   },
   coin:{
     testnet: 'MainNet' || 'MainNet',
-    oracle_payout_address: '$ORACLE_PAYOUT_ADDRESS' || 'TGFKr64W3tTMLZrKBhMAou9wnQmdNMrSG2', // testnet address, replace with mainnet
-    dev_payout_address: '$DEV_PAYOUT_ADDRESS' || 'TLceyDrdPLBu8DK6UZjKu4vCDUQBGPybcY', // testnet address, replace with mainnet
+    oracle_payout_address: ['$ORACLE_PAYOUT_ADDRESS']
+    dev_payout_address: ['$DEV_PAYOUT_ADDRESS']
   },
   redis:{
     host: '$REDIS_HOST' || 'localhost',

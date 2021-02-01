@@ -32,8 +32,9 @@ const config = {
   },
   coin:{
     testnet: 'MainNet' || 'MainNet',
-    oracle_payout_address: 'WRBs8QD22urVNeGGYeAMP765ncxtUA1Rv2' || 'TGFKr64W3tTMLZrKBhMAou9wnQmdNMrSG2', // testnet address, replace with mainnet
-    dev_payout_address: 'Wm5om9hBJTyKqv5FkMSfZ2FDMeGp12fkTe' || 'TLceyDrdPLBu8DK6UZjKu4vCDUQBGPybcY', // testnet address, replace with mainnet
+    // testnet address, replace with mainnet if needed, oracle/dev address changed after 1501000, index [0] should be new one.
+    oracle_payout_address: ['TDunmyDASGDjYwhTF3SeDLsnDweyEBpfnP','TGFKr64W3tTMLZrKBhMAou9wnQmdNMrSG2'], 
+    dev_payout_address: ['TDunmyDASGDjYwhTF3SeDLsnDweyEBpfnP','TLceyDrdPLBu8DK6UZjKu4vCDUQBGPybcY'], 
   },
   redis:{
     host: 'redis' || 'localhost',

@@ -48,8 +48,8 @@ An advanced explorer based on node-js for the Wagerr block chain. Components doc
   RPC_PASS=REPLACE
   RPC_PORT=55003
   COIN_TESTNET='MainNet'
-  ORACLE_PAYOUT_ADDRESS=WRBs8QD22urVNeGGYeAMP765ncxtUA1Rv2
-  DEV_PAYOUT_ADDRESS=Wm5om9hBJTyKqv5FkMSfZ2FDMeGp12fkTe
+  ORACLE_PAYOUT_ADDRESS='"SNCNYcDyXPCLHpG9AyyhnPcLNpxCpGZ2X6","WRBs8QD22urVNeGGYeAMP765ncxtUA1Rv2"'
+  DEV_PAYOUT_ADDRESS='"Shqrs3mz3i65BiTEKPgnxoqJqMw5b726m5","Wm5om9hBJTyKqv5FkMSfZ2FDMeGp12fkTe"'
   LOTTO_PAYOUT_ADDRESS=Weqz3PFBq3SniYF5HS8kuj72q9FABKzDrP
   API_SERVER=https://explorer.wagerr.com
 ```
@@ -95,8 +95,9 @@ An advanced explorer based on node-js for the Wagerr block chain. Components doc
     },
     coin:{
       testnet: 'MainNet' || 'MainNet',
-      oracle_payout_address: 'WRBs8QD22urVNeGGYeAMP765ncxtUA1Rv2' || 'TGFKr64W3tTMLZrKBhMAou9wnQmdNMrSG2', // testnet address, replace with mainnet
-      dev_payout_address: 'Wm5om9hBJTyKqv5FkMSfZ2FDMeGp12fkTe' || 'TLceyDrdPLBu8DK6UZjKu4vCDUQBGPybcY', // testnet address, replace with mainnet
+      // testnet address, replace with mainnet if needed, oracle/dev address changed after 1501000, index [0] should be new one.
+      oracle_payout_address: ['SNCNYcDyXPCLHpG9AyyhnPcLNpxCpGZ2X6','WRBs8QD22urVNeGGYeAMP765ncxtUA1Rv2'], 
+      dev_payout_address: ['Shqrs3mz3i65BiTEKPgnxoqJqMw5b726m5','Wm5om9hBJTyKqv5FkMSfZ2FDMeGp12fkTe'], 
     },
     redis:{
       host: 'redis' || 'localhost',

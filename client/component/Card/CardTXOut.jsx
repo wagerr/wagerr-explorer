@@ -43,12 +43,12 @@ export default class CardTXOut extends Component {
               <Link to={`/bet/event/${ encodeURIComponent(tx.address.split('|')[2]) }`}>{tx.address}</Link>
               :  (tx.address.indexOf('OP_RETURN') !== -1 ) ? <CardTxOutOpCodeRow tx={tx} toggleSwitchOdds={toggleSwitchOdds} toggleSwitchOddsStyle={toggleSwitchOddsStyle}/> : <Link to={`/address/${tx.address}`}>{tx.address}</Link>,
           value: (
-            (tx.address === config.coin.oracle_payout_address) ?
+            (config.coin.oracle_payout_address.includes(tx.address)) ?
               <span>  <span className="badge badge-success">Oracle</span>
               <span className="badge badge-success">
               {numeral(tx.value).format('0,0.00000000')} WGR
             </span></span>
-              : (tx.address === config.coin.dev_payout_address) ?
+              : (config.coin.dev_payout_address.includes(tx.address)) ?
               <span>  <span className="badge badge-success">Dev</span>
               <span className="badge badge-success">
               {numeral(tx.value).format('0,0.00000000')} WGR

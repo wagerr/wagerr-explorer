@@ -29,7 +29,7 @@ async function syncCoin() {
     {$group: {_id: 'supply', total: {$sum: '$value'}}}
   ])
 
-  const lastSentFromOracle = (await TX.find({'vin.address': config.coin.oracle_payout_address})
+  const lastSentFromOracle = (await TX.find({'vin.address': config.coin.oracle_payout_address[0]})
     .sort({blockHeight: -1})
     .limit(1).exec())[0]
   let payoutPerSecond = 0
@@ -40,7 +40,7 @@ async function syncCoin() {
           $match: {
             $and: [
               {'blockHeight': {$gt: lastSentFromOracle.blockHeight}},
-              {'vout.address': config.coin.oracle_payout_address}
+              {'vout.address': config.coin.oracle_payout_address[0]}
             ]
           }
         },
@@ -50,7 +50,7 @@ async function syncCoin() {
       .exec()
 
     const payout = oracleTxs.reduce((acc, tx) => acc + tx.vout.reduce((a, t) => {
-      if (t.address === config.coin.oracle_payout_address) {
+      if (t.address === config.coin.oracle_payout_address[0]) {
         return a + t.value
       } else {
         return a

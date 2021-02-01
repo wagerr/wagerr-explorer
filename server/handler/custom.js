@@ -12,7 +12,7 @@ const getBetStatus = async (req, res) => {
   try {
     const txs = await TX
       .aggregate([
-        {$match: {$or: [{'vout.address': config.coin.oracle_payout_address}, {'vin.address': config.coin.oracle_payout_address}]}},
+        {$match: {$or: [{'vout.address': {$in:config.coin.oracle_payout_address}}, {'vin.address': {$in:config.coin.oracle_payout_address}}]}},
         {$sort: {blockHeight: -1}}
       ])
       .allowDiskUse(true)
@@ -20,13 +20,13 @@ const getBetStatus = async (req, res) => {
 
     const staked = txs.filter(tx => tx.vout[0].address === 'NON_STANDARD')
       .reduce((acc, tx) => acc.minus(tx.vin.reduce((a, t) => {
-        if (t.address === config.coin.oracle_payout_address) {
+        if (config.coin.oracle_payout_address.includes(t.address)) {
           return a.plus(BigNumber(t.value))
         } else {
           return a
         }
       }, BigNumber(0.0))).plus(tx.vout.reduce((a, t) => {
-        if (t.address === config.coin.oracle_payout_address) {
+        if (config.coin.oracle_payout_address.includes(t.address)) {
           return a.plus(BigNumber(t.value))
         } else {
           return a
