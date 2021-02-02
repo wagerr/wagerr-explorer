@@ -113,7 +113,7 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
             startIndex = 3
           }
         }
-        for (let i = startIndex; i < queryResult.payoutTx.vout.length - 1; i++) {
+        for (let i = startIndex; i < queryResult.payoutTx.vout.length - 2; i++) { // payoutTx.vout.length - 2 , because we skiping last masternode mint value 2.85
           totalMint = totalMint + queryResult.payoutTx.vout[i].value
         }
       })
