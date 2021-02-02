@@ -29,7 +29,6 @@ export default class CardTxOutOpCodeRow extends Component {
             leg.completed = this.props.tx.completed
             leg.index = index + 1
             effectiveOdds = effectiveOdds * leg.price
-            console.log("eff odds",effectiveOdds)
             return <CardTxLegInfo leg={leg} toggleSwitchOdds={toggleSwitchOdds} isParlay={true} toggleSwitchOddsStyle={toggleSwitchOddsStyle} />
 
           })}
