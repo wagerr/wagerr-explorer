@@ -82,7 +82,6 @@ async function syncCoin() {
   const date = moment().utc().startOf('minute').toDate();
 
   const coins = await Coin.find({}).sort({createdAt: -1}).limit(1);
-  console.log(coins);
 
   let last_date = moment('1970-01-01T00:00:00.000+00:00').toDate();
 
@@ -90,8 +89,7 @@ async function syncCoin() {
     console.log('abc');
     last_date = moment(coins[0].lastResultCreatedAt).toDate();
   }
-  console.log(last_date);
-
+  
   const queryResults = await BetResult.aggregate([
     {
       $match:{
@@ -139,8 +137,6 @@ async function syncCoin() {
       }
     }
   ]).allowDiskUse(true);
-
-  console.log(queryResults);
 
   let totalBet = 0;
   let totalMint = 0;
@@ -245,7 +241,6 @@ async function syncCoin() {
   
   const nextSuperBlock = await rpc.call('getnextsuperblock')
   if (queryResults.length > 0 && typeof queryResults[0].createdAt != "undefined"){
-    console.log(queryResults[0]);
     last_date = moment(queryResults[0].createdAt).toDate();
   }
   
