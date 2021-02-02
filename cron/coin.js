@@ -161,7 +161,7 @@ async function syncCoin() {
         if (result.payoutTx.vout[1].address === result.payoutTx.vout[2].address) {
           startIndex = 3
         }
-        for (let i = startIndex; i < result.payoutTx.vout.length - 2; i++) { // payoutTx.vout.length - 2 , because we skiping last masternode mint value 2.85
+        for (let i = startIndex; i < result.payoutTx.vout.length - 1; i++) {
           totalMint += result.payoutTx.vout[i].value
         }
       }
