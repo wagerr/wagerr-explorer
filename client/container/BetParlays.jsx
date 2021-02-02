@@ -343,43 +343,58 @@ class BetParlays extends Component {
                           </Link>
                         ),
                         leg1: <span  className={`badge badge-${legs[0].resultType == 'lose' ? 'danger' : legs[0].resultType == 'pending' ? 'info' : legs[0].resultType == 'win' ? 'success' : 'warning'}`} id={ "_" + legs[0]._id}>
-                          {legs[0].resultType}
+                          {legs[0].resultType ? <span> {legs[0].resultType} <hr style={{backgroundColor: 'white'}}/>  {legs[0].eventId.toString()}  <br/> { this.shortendMarket(legs[0].market)} </span>: null}
                           <UncontrolledTooltip placement="right" target={"_" + legs[0]._id} autohide={false}>
-                            {this.shortendMarket(legs[0].market)}
+                          <Link to={`/bet/event/${legs[0].eventId}`} >
+                            {legs[0].league}
                             <br/>
-                          <Link to={`/bet/event/${legs[0].eventId}`} > {legs[0].eventId}</Link>
+                            {legs[0].homeTeam + " vs " + legs[0].awayTeam}
+                            <br/>
+                           </Link>
                           </UncontrolledTooltip> 
                          </span>,
                         leg2: <span className={`badge badge-${legs[1].resultType == 'lose' ? 'danger' : legs[1].resultType == 'pending' ? 'info' : legs[1].resultType == 'win' ? 'success' : 'warning'}`} id={ "_" + legs[1]._id}>
-                          {legs[1].resultType}
+                          {legs[1].resultType ? <span> {legs[1].resultType} <hr style={{backgroundColor: 'white'}}/>  {legs[1].eventId.toString()}  <br/> { this.shortendMarket(legs[1].market)} </span>: null}
                           <UncontrolledTooltip placement="right" target={"_" + legs[1]._id} autohide={false}>
-                            {this.shortendMarket(legs[1].market)}
+                          <Link to={`/bet/event/${legs[1].eventId}`} >
+                          {legs[1].league}
                             <br/>
-                          <Link to={`/bet/event/${legs[1].eventId}`} > {legs[1].eventId}</Link>
+                            {legs[1].homeTeam + " vs " + legs[1].awayTeam}
+                            <br/>
+                           </Link>
                           </UncontrolledTooltip> 
                           </span>,
                         leg3: <span className={`badge badge-${legs[2].resultType == 'lose' ? 'danger' : legs[2].resultType == 'pending' ? 'info' : legs[2].resultType == 'win' ? 'success' : 'warning'}`} id={ "_" + legs[2]._id}>
-                          {legs[2].resultType}
+                          {legs[2].resultType ? <span> {legs[2].resultType} <hr style={{backgroundColor: 'white'}}/>  {legs[2].eventId.toString()}  <br/> { this.shortendMarket(legs[2].market)} </span>: null}
                           <UncontrolledTooltip placement="right" target={"_" + legs[2]._id} autohide={false}>
-                            {this.shortendMarket(legs[2].market)}
+                          <Link to={`/bet/event/${legs[2].eventId}`} >
+                          {legs[2].league}
                             <br/>
-                          <Link to={`/bet/event/${legs[2].eventId}`} > {legs[2].eventId}</Link>
+                            {legs[2].homeTeam + " vs " + legs[2].awayTeam}
+                            <br/>
+                           </Link>
                           </UncontrolledTooltip> 
                           </span>,
                         leg4: <span className={`badge badge-${legs[3].resultType == 'lose' ? 'danger' : legs[3].resultType == 'pending' ? 'info' : legs[3].resultType == 'win' ? 'success' : 'warning'}`} id={ "_" + legs[3]._id}>
-                          {legs[3].resultType}
+                          {legs[3].resultType ? <span> {legs[3].resultType} <hr style={{backgroundColor: 'white'}}/>  {legs[3].eventId.toString()}  <br/> { this.shortendMarket(legs[3].market)} </span>: null}
                           <UncontrolledTooltip placement="right" target={"_" + legs[3]._id} autohide={false}>
-                            {this.shortendMarket(legs[3].market)}
+                          <Link to={`/bet/event/${legs[3].eventId}`} >
+                          {legs[3].league}
                             <br/>
-                          <Link to={`/bet/event/${legs[3].eventId}`} > {legs[3].eventId}</Link>
+                            {legs[3].homeTeam + " vs " + legs[3].awayTeam}
+                            <br/>
+                          </Link>
                           </UncontrolledTooltip> 
                           </span>,
                         leg5: <span className={`badge badge-${legs[4].resultType == 'lose' ? 'danger' : legs[4].resultType == 'pending' ? 'info' : legs[4].resultType == 'win' ? 'success' : 'warning'}`} id={ "_" + legs[4]._id}>
-                          {legs[4].resultType}
+                          {legs[4].resultType ? <span> {legs[4].resultType} <hr style={{backgroundColor: 'white'}}/>  {legs[4].eventId.toString()}  <br/> { this.shortendMarket(legs[4].market)} </span>: null}
                           <UncontrolledTooltip placement="right" target={"_" + legs[4]._id} autohide={false}>
-                            {this.shortendMarket(legs[4].market)}
+                          <Link to={`/bet/event/${legs[4].eventId}`} >
+                          {legs[4].league}
                             <br/>
-                          <Link to={`/bet/event/${legs[4].eventId}`} > {legs[4].eventId}</Link>
+                            {legs[4].homeTeam + " vs " + legs[4].awayTeam}
+                            <br/>
+                          </Link>
                           </UncontrolledTooltip> 
                           </span>,
                         supplyChange: <span className={`badge badge-${bet.supplyChange < 0 ? 'danger' : 'success'}`}>
