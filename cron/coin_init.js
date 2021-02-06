@@ -211,8 +211,7 @@ async function syncCoin() {
   }
   console.log('syncCoin3');
 
-  let usdMarket = null;
-  let btcMarket = null;
+  
 
 try {
 
@@ -220,8 +219,8 @@ try {
   const btcUrl = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${ config.coinMarketCap.tickerId }&CMC_PRO_API_KEY=9fb9f39e-e942-4fc9-a699-47efcc622ea0&convert=BTC`;
   //const eurUrl = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${ config.coinMarketCap.tickerId }&CMC_PRO_API_KEY=937ce6ea-d220-4a0c-9439-23f9e28993b3&convert=EUR`;
   
-  usdMarket = await fetch(usdUrl);
-  btcMarket = await fetch(btcUrl);
+  let usdMarket = await fetch(usdUrl);
+  let btcMarket = await fetch(btcUrl);
   //let eurMarket = await fetch(eurUrl);
   
    if (usdMarket.data) {
@@ -231,14 +230,9 @@ try {
    if (btcMarket.data) {
      btcMarket = btcMarket.data ? btcMarket.data[`${ config.coinMarketCap.tickerId }`] : {};
    }
-} catch(err) {
-  log(err)
-  return;
-}
   // if (eurMarket.data) {
   //   eurMarket = eurMarket.data ? eurMarket.data[`${ config.coinMarketCap.tickerId }`] : {};
   // }
-
   
   //console.log(btcMarket, usdMarket);
   console.log('syncCoin5');
@@ -274,6 +268,10 @@ try {
   });
 
   await coin.save();
+} catch(err) {
+  log(err)
+  return;
+}
   console.log('Finished coin sync function');
 }
 
