@@ -11,7 +11,7 @@ const TXIn = new mongoose.Schema({
   coinbase: { type: String },
   sequence: { type: Number },
   txId: { type: String },
-  address: { type: String },
+  address: { index: true, type: String },
   value: { type: Number },
   isZcSpend:{ type: Boolean },
   vout: { type: Number }
@@ -24,7 +24,7 @@ const TXIn = new mongoose.Schema({
  */
 const TXOut = new mongoose.Schema({
   __v: { select: false, type: Number },
-  address: { required: true, type: String },
+  address: { index: true, required: true, type: String },
   n: { required: true, type: Number },
   value: { required: true, type: Number }
 });
