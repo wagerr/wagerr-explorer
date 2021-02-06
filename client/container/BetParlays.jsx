@@ -266,6 +266,7 @@ class BetParlays extends Component {
               onSearch={this.props.handleSearch}
               searches={this.props.searches}
               onlyBet={true}
+              isParlay={true}
             />
             <div className="animated fadeInUp m-t-20 m-h-20 m--b-25">
               <div className="search__card flex-center">

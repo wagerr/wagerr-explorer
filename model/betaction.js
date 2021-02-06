@@ -34,6 +34,7 @@ const BetAction = mongoose.model('BetAction', new mongoose.Schema({
   betResultType: { required: true, type: String, default:'pending' },
   payout: { required: false, type: Number },
   payoutUSD: { required: false, type: Number },
+  payoutDate: { index:true, required: false, type: Date },
   payoutTxId: { required: false, type: String },
   payoutNout: { required: false, type: String },
   homeScore: {  required: false, type: Number },

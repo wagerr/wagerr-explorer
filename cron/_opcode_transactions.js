@@ -1027,6 +1027,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
               if(betinfo.payout != 'pending') {
                 action.payout = betinfo.payout;
                 action.payoutUSD = prices[0].doc.usd * betinfo.payout;
+                action.payoutDate = block.createdAt
               }
               action.payoutTxId = betinfo.payoutTxHash;
               action.payoutNout = betinfo.payoutTxOut != 'pending' ? betinfo.payoutTxOut : 0;
@@ -1061,6 +1062,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
                     if(betinfo.payout != 'pending') {
                       betItem.payout = betinfo.payout;
                       betItem.payoutUSD = prices[0].doc.usd * betinfo.payout;
+                      betItem.payoutDate = block.createdAt
                     } 
                     betItem.payoutTxId = betinfo.payoutTxHash;                      
                     betItem.payoutNout = betinfo.payoutTxOut != 'pending' ? betinfo.payoutTxOut : 0;

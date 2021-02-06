@@ -13,6 +13,7 @@ import CardStatus from '../component/Card/CardStatus';
 import WatchList from '../component/WatchList';
 import CardOracleProfit from '../component/Card/CardOracleProfit'
 import CardBetStatus from '../component/Card/CardBetStatus'
+import CardParlayBetStatus from '../component/Card/CardParlayBetStatus'
 import CardLatestBlocks from '../component/Card/CardLatestBlocks';
 
 class CoinSummary extends Component {
@@ -38,7 +39,7 @@ class CoinSummary extends Component {
             ? this.props.searches
             : this.props.searches.slice(0, 7);
 
-        const { onlyBet } = this.props;
+        const { onlyBet, isParlay } = this.props;
 
         return (
             <div>
@@ -73,8 +74,12 @@ class CoinSummary extends Component {
                                     yAxis={this.props.coins.map(c => c.usd ? c.usd : 0.0)}/>
                             </div>}
                             <div className="col-md-12 col-lg-6">
-                                <CardBetStatus totalBet={coin.totalBet} totalMint={coin.totalMint}/>
+                            { isParlay?
+                            <CardParlayBetStatus totalBetParlay={coin.totalBetParlay} totalMintParlay={coin.totalMintParlay}/>
+                            :<CardBetStatus totalBet={coin.totalBet} totalMint={coin.totalMint}/>
+                            }
                             </div>
+                            
                         </div>
                     </div>
 

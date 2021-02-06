@@ -17,6 +17,7 @@ const { forEachSeries } = require('p-iteration');
 const util = require('./util');
 // Models.
 const Block = require('../model/block');
+const BetParlay = require('../model/betparlay');
 
 const { log } = console;
 
@@ -90,80 +91,75 @@ async function syncCoin() {
     last_date = moment(coins[0].lastResultCreatedAt).toDate();
   }
   
-  const queryResults = await BetResult.aggregate([
-    {
-      $match:{
-        createdAt: {$gt: last_date}
-      }
-    },
-    {
-      $group: {
-        _id: '$eventId',
-        results: {
-          $push: '$$ROOT'
-        },
-      },
-    },{
-      $project: {
-        _id: '$_id',
-        createdAt: { $max: '$results.createdAt'},
-      },
-    },{
-      $sort: {
-        createdAt: -1
-      }
-    },
-    {
-      $lookup: {
-        from: 'betparlays',
-        localField: '_id',
-        foreignField: 'eventId',
-        as: 'parlays'
-      }
-    },
-    {
-      $lookup: {
-        from: 'betactions',
-        localField: '_id',
-        foreignField: 'eventId',
-        as: 'actions'
-      }
-    }, {
-      $lookup: {
-        from: 'betresults',
-        localField: '_id',
-        foreignField: 'eventId',
-        as: 'results'
-      }
-    }
-  ]).allowDiskUse(true);
+  let totalBetSingle = 0;
+  let totalBetParlay = 0;
+  let totalMintParlay = 0;
 
   let totalBet = 0;
   let totalMint = 0;
  
-  queryResults.forEach(queryResult => {
-    queryResult.actions.forEach(action => {
-      totalBet += action.betValue
-    })
-    queryResult.parlays.forEach(action => {
-      totalBet += action.betValue
-    })
-    queryResult.results.forEach(result => {
-      // const { payoutTx } = result;
-      let startIndex = 2
-      if (result.payoutTx && result.payoutTx.vout.length < 3) {
-        console.log(result.payoutTx);
-      } else {
-        if (result.payoutTx.vout[1].address === result.payoutTx.vout[2].address) {
-          startIndex = 3
+  let betResults = await BetResult.aggregate([
+    { 
+      $match: {
+        createdAt:{
+          $gt:last_date
         }
-        for (let i = startIndex; i < result.payoutTx.vout.length - 1; i++) {
-          totalMint += result.payoutTx.vout[i].value
-        }
+      },
+    },
+  {
+    $sort: {
+      createdAt:-1
+    }
+  }]).allowDiskUse(true)
+
+  betResults.forEach(result => {
+    // const { payoutTx } = result;
+    let startIndex = 2
+    if (result.payoutTx && result.payoutTx.vout.length < 3) {
+      console.log(result.payoutTx);
+    } else {
+      if (result.payoutTx.vout[1].address === result.payoutTx.vout[2].address) {
+        startIndex = 3
       }
-    })
+      for (let i = startIndex; i < result.payoutTx.vout.length - 1; i++) { 
+        totalMint += result.payoutTx.vout[i].value
+      }
+    }
   })
 
+  let betParlays = await BetParlay.aggregate([
+    { 
+      $match: {
+        $and: [
+          {payoutDate:{ $gt:last_date }},
+          {completed: true }
+        ]
+      },
+    }]).allowDiskUse(true)
+
+  betParlays.forEach(action => {
+    
+     totalBetParlay += action.betValue
+     totalMintParlay += action.payout || 0
+       
+   })
+
+   let betSingles = await BetAction.aggregate([
+    { 
+      $match: {
+        $and: [
+        {payoutDate:{ $gt:last_date }},
+        {completed: true }
+      ]
+      }
+    }]).allowDiskUse(true)
+
+   betSingles.forEach(action => {
+    totalBetSingle += action.betValue
+  })
+
+  totalBet = totalBetParlay + totalBetSingle
+ 
   if (coins.length > 0 && typeof coins[0].lastResultCreatedAt != "undefined") {
     totalMint = coins[0].totalMint +  totalMint;
     totalBet = coins[0].totalBet +  totalBet;
@@ -213,14 +209,16 @@ async function syncCoin() {
   }
   console.log('syncCoin3');
 
+  let usdMarket = null;
+  let btcMarket = null;
 
-
+try {
   const usdUrl = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${ config.coinMarketCap.tickerId }&CMC_PRO_API_KEY=5319954a-0d37-45da-883e-d36ce1d0f047&convert=USD`;
   const btcUrl = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${ config.coinMarketCap.tickerId }&CMC_PRO_API_KEY=9fb9f39e-e942-4fc9-a699-47efcc622ea0&convert=BTC`;
   //const eurUrl = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${ config.coinMarketCap.tickerId }&CMC_PRO_API_KEY=937ce6ea-d220-4a0c-9439-23f9e28993b3&convert=EUR`;
   
-  let usdMarket = await fetch(usdUrl);
-  let btcMarket = await fetch(btcUrl);
+  usdMarket = await fetch(usdUrl);
+  btcMarket = await fetch(btcUrl);
   //let eurMarket = await fetch(eurUrl);
   
    if (usdMarket.data) {
@@ -230,7 +228,10 @@ async function syncCoin() {
    if (btcMarket.data) {
      btcMarket = btcMarket.data ? btcMarket.data[`${ config.coinMarketCap.tickerId }`] : {};
    }
-
+} catch(err) {
+  log(err)
+  return;
+}
   // if (eurMarket.data) {
   //   eurMarket = eurMarket.data ? eurMarket.data[`${ config.coinMarketCap.tickerId }`] : {};
   // }
@@ -240,8 +241,8 @@ async function syncCoin() {
   console.log('syncCoin5');
   
   const nextSuperBlock = await rpc.call('getnextsuperblock')
-  if (queryResults.length > 0 && typeof queryResults[0].createdAt != "undefined"){
-    last_date = moment(queryResults[0].createdAt).toDate();
+  if (betResults.length > 0 && typeof betResults[0].createdAt != "undefined"){
+    last_date = moment(betResults[0].createdAt).toDate();
   }
   
   const coin = new Coin({
@@ -261,6 +262,8 @@ async function syncCoin() {
     supply: info.moneysupply,
     usd: usdMarket.quote.USD.price,
     eur: 0,//eurMarket.quote.EUR.price,
+    totalBetParlay: totalBetParlay,
+    totalMintParlay: totalMintParlay,
     totalBet: totalBet,
     totalMint: totalMint,
     oracleProfitPerSecond: payoutPerSecond,
