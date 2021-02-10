@@ -174,9 +174,7 @@ async function update () {
   let code = 0
  
   try {
-    locker.lock(type)
     log('Running statistic cron job');
-    
     const statistic = await Statistic.findOne().sort({blockHeight: -1})
     const betResult = await BetResult.findOne().sort({blockHeight: -1})
 
@@ -209,7 +207,7 @@ async function update () {
     else if (startHeight === 0) {
       startHeight = 10000
     }
-
+    locker.lock(type)
     await syncBlocksForStatistic(startHeight, stopHeight, clean)
     locker.unlock(type)
   } catch (err) {

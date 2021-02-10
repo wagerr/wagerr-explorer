@@ -30,4 +30,5 @@
 */1 * * * * cd /explorer && /root/.nvm/versions/node/v10.16.2/bin/node ./cron/listevent.js >> ./tmp/listevent.log 2>&1
 */1 * * * * cd /explorer && /root/.nvm/versions/node/v10.16.2/bin/node ./cron/proposal.js >> ./tmp/proposal.log 2>&1
 #*/5 * * * * cd /explorer && /root/.nvm/versions/node/v10.16.2/bin/node ./cron/price.js >> ./tmp/price.log 2>&1
+*/3 * * * * cd /explorer && /root/.nvm/versions/node/v10.16.2/bin/node ./cron/detectOrphanBlock.js >> ./tmp/orphanedblocks.log 2>&1
 
