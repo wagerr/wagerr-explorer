@@ -28,7 +28,7 @@ export default class CardTxOutOpCodeRow extends Component {
             leg.betValueUSD = this.props.tx.betValueUSD
             leg.completed = this.props.tx.completed
             leg.index = index + 1
-            effectiveOdds = effectiveOdds * leg.price
+            effectiveOdds = effectiveOdds * (toggleSwitchOdds ? ClientUtils.getEffectiveodds(leg.price) : leg.price) 
             return <CardTxLegInfo leg={leg} toggleSwitchOdds={toggleSwitchOdds} isParlay={true} toggleSwitchOddsStyle={toggleSwitchOddsStyle} />
 
           })}
@@ -36,7 +36,7 @@ export default class CardTxOutOpCodeRow extends Component {
           <div style={{backgroundColor:"#eee"}}>
             <div className="card__row">
               <span className="card__label" ><strong>Total Parlay Odds</strong></span>
-              <span className="card__result">{ClientUtils.convertToOdds(effectiveOdds,toggleSwitchOddsStyle,toggleSwitchOdds)}</span>
+              <span className="card__result">{ClientUtils.convertToOdds(effectiveOdds,toggleSwitchOddsStyle,toggleSwitchOdds, true)}</span>
             </div>
             <div className="card__row">
               <span className="card__label" ><strong>BetValue</strong></span>

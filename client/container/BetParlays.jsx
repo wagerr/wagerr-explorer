@@ -328,7 +328,7 @@ class BetParlays extends Component {
                       for (let j = 0; j < 5; j++) {
                         if (bet.legs[j] !== undefined) {
                           legs[j] = bet.legs[j];
-                          effectiveOdds = effectiveOdds * ClientUtils.getEffectiveOddFromLeg(bet.legs[j])
+                          effectiveOdds = effectiveOdds * (toggleSwitchOdds == true ?  ClientUtils.getEffectiveodds(ClientUtils.getOddFromLeg(bet.legs[j])):ClientUtils.getOddFromLeg(bet.legs[j]))
                         } else {
                           legs[j] = '';
                         }
@@ -403,7 +403,7 @@ class BetParlays extends Component {
                         </span>,
                         betAmount: <span className={`badge badge-danger`}>{numeral(betAmount).format('0,0.00')}</span>,
                         betStatus: <span style={{ fontWeight: 'bold' }}>{betStatus}</span>,
-                        effectiveOdds: <span style={{ fontWeight: 'bold' }}>{ClientUtils.convertToOdds(effectiveOdds,toggleSwitchOddsStyle,toggleSwitchOdds)}</span>
+                        effectiveOdds: <span style={{ fontWeight: 'bold' }}>{ClientUtils.convertToOdds(effectiveOdds,toggleSwitchOddsStyle,toggleSwitchOdds,true)}</span>
                       }
                     })}
                   />
