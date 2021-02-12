@@ -29,7 +29,7 @@ export default class  GlobalMenuDesktop extends Component {
       })
     })
     .catch(e => {
-      alertPopup(e.toString().replace(/Error:/g, ''))
+      //alertPopup(e.toString().replace(/Error:/g, ''))
     })
 
     

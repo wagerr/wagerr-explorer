@@ -133,7 +133,7 @@ export default class BettingSlips extends Component {
                         <span className="checkmark"></span>
                     </label>
                     <label className="radio-container">Parlay
-                     <input type="radio" name="bet" value="parlay" disabled="true" checked={this.state.currentSelection === 'parlay'} />
+                     <input type="radio" name="bet" value="parlay" checked={this.state.currentSelection === 'parlay'} />
                         <span className="checkmark"></span>
                     </label>
                     <button id="clearSlip" className="btn-clear-slip" onClick={this.clearBetSlips}>CLEAR SLIP</button>
@@ -158,7 +158,7 @@ export default class BettingSlips extends Component {
                         
                 </div>
                 { 
-                    this.state.currentSelection === 'parlay' && <CardParlayBetBox parlaySlips={this.state.currentSlips.parlay}/>
+                    this.state.currentSelection === 'parlay' && <CardParlayBetBox parlaySlips={this.state.currentSlips.parlay} clearBetSlip={() => this.clearBetSlips()}/>
                     }
             </div>
 

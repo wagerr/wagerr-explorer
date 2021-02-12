@@ -1,7 +1,9 @@
 import Component from '../../core/Component';
 import React from 'react';
 import _ from 'lodash';
-
+import Wallet from '../../core/Wallet';
+import { parlayToOpcode } from '../utils/betUtils';
+import { alertPopup } from '../utils/alerts';
 
 export default class CardParlayBetBox extends Component {
     constructor(props) {
@@ -72,7 +74,25 @@ export default class CardParlayBetBox extends Component {
     }
 
     doBet = () => {
+        let opcode = ""
+        try {
+            
+           opcode = parlayToOpcode(this.state.legs)
+        } catch (e) {
+            console.log('invalid opcode: ',e)
+            alertPopup('Invalid opcode: '+ e.toString().replace(/Error:/g, ''))
+            return
+        }
 
+        Wallet.instance.sendBet(opcode, this.state.betAmount).then((res) => {
+            this.props.clearBetSlip()
+
+            alertPopup('Bet Sent: (txid: ' + res.hash + ' )')
+            console.log(res)
+        }).catch((e) => {
+            console.log('send bet error: ',e)
+            alertPopup('send bet error: '+ e.toString().replace(/Error:/g, ''))
+        })
     }
 
     render() {
@@ -91,7 +111,7 @@ export default class CardParlayBetBox extends Component {
                             </label>
                             { this.state.betAmount > 0 && (this.state.betAmount < 25 || this.state.betAmount > 10000)  && <p className="text-center"> (Min 25 - Max 10000)</p> }
                             <label className="place-bet-box__label">Potential Returns : <span>{this.state.potentialReturn} tWGR</span></label>
-                            <button className="btn-place-bet" disabled= {this.state.betAmount < 25 || this.state.betAmount > 10000 || this.state.legs.length < 2 }>PLACE BET</button>
+                            <button className="btn-place-bet" disabled= {this.state.betAmount < 25 || this.state.betAmount > 10000 || this.state.legs.length < 2 } onClick={this.doBet}>PLACE BET</button>
                         </div>
                     </div>
         )
