@@ -2,14 +2,14 @@ import React from 'react';
 import Card from './Card';
 
 const ExchangesData = [
-    {href: 'https://crex24.com/exchange/WGR-BTC', title: 'Crex24'},
-    {href: 'https://coinsuper.com/', title: 'CoinSuper'},
-    {href: 'https://chainex.io/', title: 'ChainEx'},
-    {href: 'https://folex.io/', title: 'Folex'},
-    {href: 'https://www.ionomy.com/', title: 'Ionomy'},
-    {href: 'https://livecoin.net/', title: 'LiveCoin'},
-    {href: 'https://www.blackturtle.eu/', title: 'TurtleNetwork'},
-    {href: 'https://www.gonetcoins.com/', title: 'Netcoins'},
+    {href: 'https://crex24.com/exchange/WGR-BTC', title: 'Crex24 - WGRBTC'},
+    {href: 'https://crex24.com/exchange/WGR-USDC', title: 'Crex24 - WGRUSDC'},
+    {href: 'https://exchange.beaxy.com/?pair=WGRBTC', title: 'Beaxy - WGRBTC'},
+    {href: 'https://exchange.beaxy.com/?pair=WGRUSD', title: 'Beaxy - WGRUSD'},
+    {href: 'https://www.coinsuper.com/trade?symbol=WGR%2FBTC', title: 'CoinSuper'},
+    {href: 'https://chainex.io/markets/WGR/BTC', title: 'ChainEx'},
+    {href: 'https://exchange.ionomy.com/en/markets/btc-wgr', title: 'Ionomy (No Kyc)'}
+    
 ];
 
 const CardExchanges = () => (

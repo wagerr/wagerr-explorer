@@ -3,7 +3,6 @@ export const genMenuData = (t) => {
     {label: t('overview'), icon: '/img/home.svg', href: '/'},
     {label: t('Sports Betting'), icon: '/img/betevent.svg', href: '/betevents'},      
     {label: t('Parlay Betting'), icon: '/img/betevent.svg', href: '/betparlays'},
-    {label: t('movement'), icon: '/img/movement.svg', href: '/movement'},
     // {label: t('top'), icon: '/img/top100.svg', href: '/top'},
     {label: t('masternode'), icon: '/img/masternodes.svg', href: '/masternode'},
     // {label: t('governance'), icon: '/img/governance.svg', href: '/governance'},

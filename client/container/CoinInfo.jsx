@@ -40,10 +40,6 @@ class CoinInfo extends Component {
             </div>
           </div>
           <div className="content__wrapper">
-            <CoinSummary
-              onRemove={this.props.handleRemove}
-              onSearch={this.props.handleSearch}
-              searches={this.props.searches} />
             {/* <SearchEventBar
               className="d-none d-md-block mb-3"
               onSearch={this.props.handleEventSearch}
@@ -60,14 +56,12 @@ class CoinInfo extends Component {
                       <CardLinks />
                       <CardExchanges />
                     </div>
-                    <div className="col-sm-12 col-md-9">
-                      <CardEarnings coin={this.props.coin} />
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-12 col-lg-4">
+                    <div className="col-md-12 col-lg-4">
                   <CardROI coin={this.props.coin} />
                 </div>
+                  </div>
+                </div>
+                
               </div>
             </div>
             <Footer />

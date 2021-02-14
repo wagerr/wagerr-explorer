@@ -31,7 +31,7 @@ export default class Sliding extends Component {
   render() {
     var settings = {
       dots: false,
-      infinite: true,
+      infinite: false,
       speed: 500,
       slidesToShow: 11,
       slidesToScroll: 1,
@@ -43,24 +43,21 @@ export default class Sliding extends Component {
           breakpoint: 2100,
           settings: {
             slidesToShow: 8,
-            slidesToScroll: 1,
-            infinite: true,
+            slidesToScroll: 1
           }
         },
         {
           breakpoint: 1500,
           settings: {
             slidesToShow: 6,
-            slidesToScroll: 1,
-            infinite: true,
+            slidesToScroll: 1
           }
         },
         {
           breakpoint: 1147,
           settings: {
             slidesToShow: 5,
-            slidesToScroll: 1,
-            infinite: true,
+            slidesToScroll: 1
           }
         },
         {

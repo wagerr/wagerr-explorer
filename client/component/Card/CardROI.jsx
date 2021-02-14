@@ -20,14 +20,6 @@ const CardROI = ({coin}) => {
                     Active/Total Masternodes
                 </div>
             </div>
-            <div className="p-5-10">
-                <div className="h3">
-                    {numeral(roi).format('0,0.00000000')}%
-                </div>
-                <div className="h5">
-                    Estimated ROI
-                </div>
-            </div>
             <div className="p-5-10 bg-eee">
                 <div className="h3">
                     {numeral(coin.supply ? coin.supply : 0.0).format('0,0.00000000')} WGR
