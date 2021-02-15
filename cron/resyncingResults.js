@@ -17,6 +17,13 @@ async function start(){
   try {
     const betresults = await BetResult.find({});
     for (betresult of betresults){
+
+      const prices = await Price.aggregate([
+        {$project: {diff: {$abs: {$subtract: [betresult.createdAt, '$createdAt']}}, doc: '$$ROOT'}},
+        {$sort: {diff: 1}},
+        {$limit: 1}
+      ]);
+
       console.log('--------resyncing betactions in betresult-------------')
       const betactions = await BetAction.find({completed: false, eventId: betresult.eventId});
       if (betactions && betactions.length > 0){        
@@ -25,10 +32,15 @@ async function start(){
             const res = await rpc.call('getbetbytxid', [action.txId]);  
             if (res){                  
               const betinfo = res[0];
-              console.log('betinfo:', betinfo);
               action.completed = betinfo.completed == 'yes' ? true : false;
               action.betResultType = betinfo.betResultType;
-              action.payout = betinfo.payout != 'pending' ? betinfo.payout : 0;
+              action.payout = 0;
+              action.payoutUSD = 0;
+              if(betinfo.payout != 'pending') {
+                action.payout = betinfo.payout;
+                action.payoutUSD = prices[0].doc.usd * betinfo.payout;
+                action.payoutDate = betresult.createdAt
+              }
               action.payoutTxId = betinfo.payoutTxHash;
               action.payoutNout = betinfo.payoutTxOut != 'pending' ? betinfo.payoutTxOut : 0;
               if (betinfo.legs.length > 0){
@@ -36,7 +48,6 @@ async function start(){
                 action.homeScore = leg.lockedEvent.homeScore != "undefined" ? leg.lockedEvent.homeScore : 0,
                 action.awayScore = leg.lockedEvent.awayScore != "undefined" ? leg.lockedEvent.awayScore : 0
               }              
-              console.log('action saving', action)
               try {
                 await action.save()
               } catch (e_save) {
@@ -57,51 +68,60 @@ async function start(){
           for (const betItem of betparlays){      
             if (betItem.txId){                                                                   
                 const res = await rpc.call('getbetbytxid', [betItem.txId]);  
-                if (res){                  
-                  const betinfo = res[0];                                                      
-                  if (betinfo.legs.length > 1){                                                            
-                    betItem.completed = betinfo.completed == 'yes'? true: false;
-                    betItem.betResultType = betinfo.betResultType;
-                    betItem.payout = betinfo.payout != 'pending' ? betinfo.payout : 0;  
-                    betItem.payoutTxId = betinfo.payoutTxHash;                      
-                    betItem.payoutNout = betinfo.payoutTxOut != 'pending' ? betinfo.payoutTxOut : 0;
-                    const legs = [];
-                    for (const leg of betinfo.legs){                    
-                      const item = {
-                        eventId: leg['event-id'],  
-                        outcome: leg.outcome,  
-                        market: `${outcomeMapping[leg.outcome]}`,
-                        resultType: leg.legResultType,  
-                        eventResultType: leg.lockedEvent.eventResultType, 
-                        homeOdds: leg.lockedEvent.homeOdds, 
-                        drawOdds: leg.lockedEvent.drawOdds,
-                        awayOdds: leg.lockedEvent.awayOdds,
-                        spreadHomePoints: leg.lockedEvent.spreadPoints,                        
-                        spreadAwayPoints: -leg.lockedEvent.spreadPoints,                        
-                        spreadHomeOdds: leg.lockedEvent.spreadHomeOdds,
-                        spreadAwayOdds: leg.lockedEvent.spreadAwayOdds,
-                        totalPoints: leg.lockedEvent.totalPoints,
-                        totalOverOdds: leg.lockedEvent.totalOverOdds,
-                        totalUnderOdds: leg.lockedEvent.totalUnderOdds,
-                        startingTime: leg.lockedEvent.starting,
-                        homeTeam: leg.lockedEvent.home,
-                        awayTeam: leg.lockedEvent.away,
-                        league: leg.lockedEvent.tournament,
-                        homeScore: leg.lockedEvent.homeScore != "undefined" ? leg.lockedEvent.homeScore : 0,
-                        awayScore: leg.lockedEvent.awayScore != "undefined" ? leg.lockedEvent.awayScore : 0
-                      };                      
-                      legs.push(item);
-                    }                    
-                    betItem.legs = legs;
-                  } 
-                  try {
-                    await betItem.save()       
-                  } catch (e_save){
-                    console.log(e_save);
-                  }
-
-                  console.log('parlay update by result');
-                }                                             
+                if (betItem.txId){                                                                   
+                  const res = await rpc.call('getbetbytxid', [betItem.txId]);  
+                  if (res){                  
+                    const betinfo = res[0];                                                      
+                    if (betinfo.legs.length >= 1){                                                            
+                      betItem.completed = betinfo.completed == 'yes'? true: false;
+                      betItem.betResultType = betinfo.betResultType;
+                      betItem.payout = 0;
+                      betItem.payoutUSD = 0;
+                      if(betinfo.payout != 'pending') {
+                        betItem.payout = betinfo.payout;
+                        betItem.payoutUSD = prices[0].doc.usd * betinfo.payout;
+                        betItem.payoutDate = betresult.createdAt
+                      } 
+                      betItem.payoutTxId = betinfo.payoutTxHash;                      
+                      betItem.payoutNout = betinfo.payoutTxOut != 'pending' ? betinfo.payoutTxOut : 0;
+                      const legs = [];
+                      for (const leg of betinfo.legs){                    
+                        const item = {
+                          eventId: leg['event-id'],  
+                          outcome: leg.outcome,  
+                          market: `${outcomeMapping[leg.outcome]}`,
+                          resultType: leg.legResultType,  
+                          eventResultType: leg.lockedEvent.eventResultType, 
+                          homeOdds: leg.lockedEvent.homeOdds, 
+                          drawOdds: leg.lockedEvent.drawOdds,
+                          awayOdds: leg.lockedEvent.awayOdds,
+                          spreadHomePoints: leg.lockedEvent.spreadPoints,                        
+                          spreadAwayPoints: -leg.lockedEvent.spreadPoints,                        
+                          spreadHomeOdds: leg.lockedEvent.spreadHomeOdds,
+                          spreadAwayOdds: leg.lockedEvent.spreadAwayOdds,
+                          totalPoints: leg.lockedEvent.totalPoints,
+                          totalOverOdds: leg.lockedEvent.totalOverOdds,
+                          totalUnderOdds: leg.lockedEvent.totalUnderOdds,
+                          startingTime: leg.lockedEvent.starting,
+                          homeTeam: leg.lockedEvent.home,
+                          awayTeam: leg.lockedEvent.away,
+                          league: leg.lockedEvent.tournament,
+                          homeScore: leg.lockedEvent.homeScore != "undefined" ? leg.lockedEvent.homeScore : 0,
+                          awayScore: leg.lockedEvent.awayScore != "undefined" ? leg.lockedEvent.awayScore : 0
+                        };                      
+                        legs.push(item);
+                      }                    
+                      betItem.legs = legs;
+                    } 
+                    try {
+                      await betItem.save()       
+                    } catch (e_save){
+                      console.log(e_save);
+                    }
+                    
+                  }                               
+                
+              }                                             
             }            
           }
         } catch (e) {
