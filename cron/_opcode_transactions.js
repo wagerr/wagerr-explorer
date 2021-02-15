@@ -1054,7 +1054,7 @@ async function saveOPTransaction(block, rpcTx, vout, transaction, waitTime = 50)
                 const res = await rpc.call('getbetbytxid', [betItem.txId]);  
                 if (res){                  
                   const betinfo = res[0];                                                      
-                  if (betinfo.legs.length > 1){                                                            
+                  if (betinfo.legs.length >= 1){                                                            
                     betItem.completed = betinfo.completed == 'yes'? true: false;
                     betItem.betResultType = betinfo.betResultType;
                     betItem.payout = 0;
