@@ -7,11 +7,13 @@ import React from 'react';
 import Icon from '../component/Icon';
 
 import CardMarket from '../component/Card/CardMarket';
+import CardOracleMNRoi from '../component/Card/CardOracleMNRoi';
 import CardMasternodeSummary from '../component/Card/CardMasternodeSummary';
 import CardNetworkSummary from '../component/Card/CardNetworkSummary';
 import CardStatus from '../component/Card/CardStatus';
 import WatchList from '../component/WatchList';
 import CardOracleProfit from '../component/Card/CardOracleProfit'
+import CardMasternodeReward from '../component/Card/CardMasternodeReward'
 import CardBetStatus from '../component/Card/CardBetStatus'
 import CardParlayBetStatus from '../component/Card/CardParlayBetStatus'
 import CardLatestBlocks from '../component/Card/CardLatestBlocks';
@@ -58,10 +60,19 @@ class CoinSummary extends Component {
                             </div>
                             <div className="col-md-12 col-lg-6">
                                 <CardOracleProfit
+                                    oracleBalance= {coin.oracleBalance}
                                     oracleProfitPerSecond={coin.oracleProfitPerSecond}
                                     online={coin.mnsOn}
                                     btc={coin.btc}
                                     usd={coin.usd}/>
+                                <CardMasternodeReward
+                                    online={coin.mnsOn}
+                                    usd={coin.usd}/>
+                                <CardOracleMNRoi 
+                                    usd={coin.usd}
+                                    oracleProfitPerSecond={coin.oracleProfitPerSecond}
+                                    online={coin.mnsOn}
+                                    />
                             </div>
                         </div>}
                         <div className="row">

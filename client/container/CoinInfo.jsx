@@ -45,15 +45,16 @@ class CoinInfo extends Component {
               onSearch={this.props.handleEventSearch}
             /> */}
             <div>
-              <HorizontalRule title="Coin Info" />
               <div className="row">
-                <div className="col-md-12 col-lg-8">
+                <div className="col-md-12 col-lg-12">
                   <div>
                     <img className="img-fluid" src="/img/largelogo.svg" />
                   </div>
                   <div className="row">
-                    <div className="col-sm-12 col-md-3">
+                    <div className="col-sm-12 col-md-4">
                       <CardLinks />
+                    </div>
+                    <div className="col-sm-12 col-md-4">
                       <CardExchanges />
                     </div>
                     <div className="col-md-12 col-lg-4">

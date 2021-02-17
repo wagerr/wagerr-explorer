@@ -5,6 +5,7 @@ const { exit, rpc } = require('../lib/cron');
 const fetch = require('../lib/fetch');
 const locker = require('../lib/locker');
 const moment = require('moment');
+const { BigNumber } = require('bignumber.js');
 // Models.
 const Coin = require('../model/coin');
 const UTXO = require('../model/utxo');
@@ -73,6 +74,61 @@ async function syncPayoutData() {
   log(betresults.length);
 }
 
+async function getAddressBalance(address){
+  try {
+    const txs = await TX
+      .aggregate([
+        { $match: { $or: [{ 'vout.address': address }, { 'vin.address': address }] } },
+        { $sort: { blockHeight: -1 } },
+      ])
+      .allowDiskUse(true)
+      .exec();
+
+    const sent = txs.filter((tx) => tx.vout[0].address !== 'NON_STANDARD')
+      .reduce((acc, tx) => acc.plus(tx.vin.reduce((a, t) => {
+        if (t.address === address) {
+          return a.plus(BigNumber(t.value));
+        }
+
+        return a;
+      }, BigNumber(0.0))), BigNumber(0.0));
+
+    const received = txs.filter((tx) => tx.vout[0].address !== 'NON_STANDARD')
+      .reduce((acc, tx) => acc.plus(tx.vout.reduce((a, t) => {
+        if (t.address === address) {
+          return a.plus(BigNumber(t.value));
+        }
+
+        return a;
+      }, BigNumber(0.0))), BigNumber(0.0));
+
+    const staked = txs.filter((tx) => tx.vout[0].address === 'NON_STANDARD')
+      .reduce((acc, tx) => acc.minus(tx.vin.reduce((a, t) => {
+        if (t.address === address) {
+          return a.plus(BigNumber(t.value));
+        }
+
+        return a;
+      }, BigNumber(0.0))).plus(tx.vout.reduce((a, t) => {
+        if (t.address === address) {
+          return a.plus(BigNumber(t.value));
+        }
+
+        return a;
+      }, BigNumber(0.0))), BigNumber(0.0));
+
+    const balance = received.plus(staked).minus(sent);
+   return {
+      balance: balance.toNumber(),
+      sent: sent.toNumber(),
+      staked: staked.toNumber(),
+      received: received.toNumber()
+    }
+  } catch (err) {
+    console.log(err);
+    return 0;
+  }
+}
 
 /**
  * Get the coin related information including things
@@ -180,22 +236,22 @@ async function syncCoin() {
     {$group: {_id: 'supply', total: {$sum: '$value'}}}
   ])
   console.log('syncCoin2');
-  const lastSentFromOracle = (await TX.find({'vin.address': config.coin.oracle_payout_address[0]})
-    .sort({blockHeight: -1})
+  const firstSentFromOracle = (await TX.find({'vin.address': config.coin.oracle_payout_address[0]})
+    .sort({blockHeight: 1})
     .limit(1).exec())[0]
   let payoutPerSecond = 0
-  if (lastSentFromOracle){
+  if (firstSentFromOracle){
     const oracleTxs = await TX
       .aggregate([
         {
           $match: {
             $and: [
-              {'blockHeight': {$gt: lastSentFromOracle.blockHeight}},
+              {'blockHeight': {$gt: firstSentFromOracle.blockHeight}},
               {'vout.address': config.coin.oracle_payout_address[0]}
             ]
           }
         },
-        {$sort: {blockHeight: -1}}
+        {$sort: {blockHeight: 1}}
       ])
       .allowDiskUse(true)
       .exec()
@@ -207,11 +263,12 @@ async function syncCoin() {
         return a
       }
     }, 0.0), 0.0)
-    payoutPerSecond = payout / (moment().unix() - moment(lastSentFromOracle.createdAt).unix())
+    payoutPerSecond = payout / (moment().unix() - moment(firstSentFromOracle.createdAt).unix())
   }
-  console.log('syncCoin3');
 
-  
+  const oracleBalance = (await getAddressBalance(config.coin.oracle_payout_address[0])).balance
+
+  console.log('syncCoin3');
 
 try {
 
@@ -261,6 +318,7 @@ try {
     eur: 0,//eurMarket.quote.EUR.price,
     totalBetParlay: totalBetParlay,
     totalMintParlay: totalMintParlay,
+    oracleBalance: oracleBalance,
     totalBet: totalBet + 99159233.6752,
     totalMint: totalMint + 97145649.4494,
     oracleProfitPerSecond: payoutPerSecond,

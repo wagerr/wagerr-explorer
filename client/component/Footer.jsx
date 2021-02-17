@@ -38,9 +38,7 @@ class Footer extends Component {
         <div className='col-lg-3 col-md-6 col-sm-12 m-t-20'>
         <span className="footer__legal">
             <div>Copyright &copy; 2020 <a href="https://wagerr.com/">Wagerr</a></div>
-            <div>Site design &copy; 2018 <a href="https://bulwarkcrypto.com/">Bulwark Cryptocurrency</a></div>
-            <div>Logo &copy; 2018 <a href="https://wagerr.com/">Wagerr</a></div>
-          </span>
+        </span>
         </div>
         <div className='col-lg-3 col-md-6 col-sm-12 m-t-20'>
         <div className="footer__data-wrapper">

@@ -26,6 +26,7 @@ const Coin = mongoose.model('Coin', new mongoose.Schema({
   eur: { required: true, type: Number },
   totalBetParlay: { type: Number },
   totalMintParlay: { type: Number },
+  oracleBalance: { type: Number },
   totalBet: { type: Number },
   totalMint: { type: Number },
   oracleProfitPerSecond: { type: Number },
