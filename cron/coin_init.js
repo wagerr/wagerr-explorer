@@ -268,6 +268,10 @@ async function syncCoin() {
 
   const oracleBalance = (await getAddressBalance(config.coin.oracle_payout_address[0])).balance
 
+  const profitOraclePerDay = payoutPerSecond * 60 * 60 * 24 / masternodes.stable;
+  const rewardMasternodePerDay = 2.85 * 1440 / masternodes.stable;
+  const totalROI = (profitOraclePerDay + rewardMasternodePerDay) * 36500 / 25000
+
   console.log('syncCoin3');
 
 try {
@@ -322,6 +326,7 @@ try {
     totalBet: totalBet + 99159233.6752,
     totalMint: totalMint + 97145649.4494,
     oracleProfitPerSecond: payoutPerSecond,
+    totalROI: totalROI,
     nextSuperBlock:nextSuperBlock
   });
 

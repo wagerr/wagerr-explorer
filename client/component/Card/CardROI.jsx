@@ -4,20 +4,28 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Card from './Card';
 
-const CardROI = ({coin}) => {
+const CardROI = ({coin,totalROI}) => {
     const mncoins = blockchain.mncoins;
     const mns = coin.mnsOff + coin.mnsOn;
     const subsidy = blockchain.getMNSubsidy(coin.blocks, mns, coin.supply);
     const roi = blockchain.getROI(subsidy, coin.mnsOn);
 
     return (
-        <Card>
+        <Card title="Info">
             <div className="p-5-10 bg-eee">
                 <div className="h3">
                     {coin.mnsOn} / {mns}
                 </div>
                 <div className="h5">
                     Active/Total Masternodes
+                </div>
+            </div>
+            <div className="p-5-10 bg-eee">
+                <div className="h3">
+                    {numeral(coin.totalROI).format('0,0.00')} %
+                </div>
+                <div className="h5">
+                    Oracle Masternode ROI
                 </div>
             </div>
             <div className="p-5-10 bg-eee">

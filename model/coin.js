@@ -30,6 +30,7 @@ const Coin = mongoose.model('Coin', new mongoose.Schema({
   totalBet: { type: Number },
   totalMint: { type: Number },
   oracleProfitPerSecond: { type: Number },
+  totalROI: { type: Number },
   nextSuperBlock: {required: true, type: Number},
 }, { versionKey: false }), 'coins');
 

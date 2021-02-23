@@ -13,6 +13,7 @@ import CardNetworkSummary from '../component/Card/CardNetworkSummary';
 import CardStatus from '../component/Card/CardStatus';
 import WatchList from '../component/WatchList';
 import CardOracleProfit from '../component/Card/CardOracleProfit'
+import CardMasternodeInfo from '../component/Card/CardMasternodeInfo'
 import CardMasternodeReward from '../component/Card/CardMasternodeReward'
 import CardBetStatus from '../component/Card/CardBetStatus'
 import CardParlayBetStatus from '../component/Card/CardParlayBetStatus'
@@ -57,6 +58,7 @@ class CoinSummary extends Component {
                                     online={coin.mnsOn}
                                     status={coin.status}
                                     supply={coin.supply}/>
+                                    <CardMasternodeInfo usd={coin.usd} online={coin.mnsOn} />
                             </div>
                             <div className="col-md-12 col-lg-6">
                                 <CardOracleProfit
@@ -70,8 +72,7 @@ class CoinSummary extends Component {
                                     usd={coin.usd}/>
                                 <CardOracleMNRoi 
                                     usd={coin.usd}
-                                    oracleProfitPerSecond={coin.oracleProfitPerSecond}
-                                    online={coin.mnsOn}
+                                    totalROI={coin.totalROI}
                                     />
                             </div>
                         </div>}
