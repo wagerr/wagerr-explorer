@@ -1,15 +1,15 @@
-const TX = require('../model/tx');
+const TX = require('../../model/tx');
 require('babel-polyfill');
-const config = require('../config');
-const { exit, rpc } = require('../lib/cron');
-const fetch = require('../lib/fetch');
-const locker = require('../lib/locker');
+const config = require('../../config');
+const { exit, rpc } = require('../../lib/cron');
+const fetch = require('../../lib/fetch');
+const locker = require('../../lib/locker');
 const moment = require('moment');
 // Models.
-const Coin = require('../model/coin');
-const UTXO = require('../model/utxo');
-const BetResult = require('../model/betresult');
-const BetAction = require('../model/betaction');
+const Coin = require('../../model/coin');
+const UTXO = require('../../model/utxo');
+const BetResult = require('../../model/betresult');
+const BetAction = require('../../model/betaction');
 
 console.log('Running coin cron job');
 

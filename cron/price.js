@@ -41,21 +41,18 @@ async function start(){
     
     await Price.insertMany(objs);
     */
-    
-    const usdUrl = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${ config.coinMarketCap.tickerId }&CMC_PRO_API_KEY=937ce6ea-d220-4a0c-9439-23f9e28993b3&convert=USD`;
+    const usdUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=wagerr&vs_currencies=usd';
     let market = await fetch(usdUrl);
 
-    market = market.data ? market.data[`${ config.coinMarketCap.tickerId }`] : {};
+    let usdPrice = market.wagerr ? market.wagerr.usd : 0;
     const date = moment().utc().startOf('minute').toDate(); 
     console.log(market);
-    if (market.id){      
       const price = new Price({
-        usd: market.quote.USD.price, 
+        usd: usdPrice, 
         createdAt: date
       });
       await price.save();
       console.log(date);
-    }
 
   } catch (err){
     console.log(err);

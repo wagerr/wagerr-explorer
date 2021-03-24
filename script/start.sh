@@ -8,9 +8,6 @@ const config = {
     prefix: '/api',
     timeout: '30s'
   },
-  coinMarketCap: {
-    tickerId: '1779'
-  },
   db: {
     host: '$MONGODB_HOST' || 'mongo',
     port: '$MONGODB_PORT' || '27017',

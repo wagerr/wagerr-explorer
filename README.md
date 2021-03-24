@@ -68,9 +68,6 @@ An advanced explorer based on node-js for the Wagerr block chain. Components doc
       prefix: '/api',
       timeout: '30s'
     },
-    coinMarketCap: {
-      tickerId: '1779'
-    },
     db: {
       host: 'mongo',
       port: '27017',

@@ -133,7 +133,7 @@ async function getAddressBalance(address){
 
 /**
  * Get the coin related information including things
- * like price coinmarketcap.com data.
+ * like price coinmarketcap.com or coingecko data.
  */
 async function syncCoin() {
   console.log('syncCoin');
@@ -281,26 +281,18 @@ async function syncCoin() {
 console.log('syncCoin3');
 
 try {
-  const usdUrl = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${ config.coinMarketCap.tickerId }&CMC_PRO_API_KEY=5319954a-0d37-45da-883e-d36ce1d0f047&convert=USD`;
-  const btcUrl = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${ config.coinMarketCap.tickerId }&CMC_PRO_API_KEY=9fb9f39e-e942-4fc9-a699-47efcc622ea0&convert=BTC`;
-  //const eurUrl = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${ config.coinMarketCap.tickerId }&CMC_PRO_API_KEY=937ce6ea-d220-4a0c-9439-23f9e28993b3&convert=EUR`;
-  
-  let usdMarket = await fetch(usdUrl);
-  let btcMarket = await fetch(btcUrl);
-  //let eurMarket = await fetch(eurUrl);
-  
-   if (usdMarket.data) {
-     usdMarket = usdMarket.data ? usdMarket.data[`${ config.coinMarketCap.tickerId }`] : {};
-   }
+  const priceTicker = 'https://api.coingecko.com/api/v3/simple/price?ids=wagerr&vs_currencies=btc%2Cusd&include_market_cap=true';
+ 
+  let ticker = await fetch(priceTicker);
+  let usdPrice, btcPrice, marketCapUsd, marketCapBtc;
 
-   if (btcMarket.data) {
-     btcMarket = btcMarket.data ? btcMarket.data[`${ config.coinMarketCap.tickerId }`] : {};
-   }
-  // if (eurMarket.data) {
-  //   eurMarket = eurMarket.data ? eurMarket.data[`${ config.coinMarketCap.tickerId }`] : {};
-  // }
+  if (ticker.wagerr) {
+    usdPrice = ticker.wagerr.usd;
+    btcPrice = ticker.wagerr.btc;
+    marketCapUsd = ticker.wagerr.usd_market_cap;
+    marketCapBtc = ticker.wagerr.btc_market_cap;
+  }
   
-  //console.log(btcMarket, usdMarket);
   console.log('syncCoin5');
   
   const nextSuperBlock = await rpc.call('getnextsuperblock')
@@ -309,13 +301,13 @@ try {
   }
   
   const coin = new Coin({
-    cap: usdMarket.quote.USD.market_cap,
+    cap: marketCapUsd,
     capEur: 0,//eurMarket.quote.EUR.market_cap,
     createdAt: date,
     blocks: info.blocks,
     lastResultCreatedAt: last_date,
-    btc: btcMarket.quote.BTC.market_cap,
-    btcPrice: btcMarket.quote.BTC.price,
+    btc: marketCapBtc,
+    btcPrice: btcPrice,
     diff: info.difficulty,
     mnsOff: masternodes.total - masternodes.stable,
     mnsOn: masternodes.stable,
@@ -323,7 +315,7 @@ try {
     peers: info.connections,
     status: 'Online',
     supply: info.moneysupply,
-    usd: usdMarket.quote.USD.price,
+    usd: usdPrice,
     eur: 0,//eurMarket.quote.EUR.price,
     totalBetParlay: totalBetParlay,
     totalMintParlay: totalMintParlay,
