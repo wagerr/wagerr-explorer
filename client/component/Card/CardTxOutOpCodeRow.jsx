@@ -44,7 +44,7 @@ export default class CardTxOutOpCodeRow extends Component {
             </div>
 
             {
-            this.props.tx.betResultType == "win" ?  <div>
+            ["win","partial-win"].includes(this.props.tx.betResultType)?  <div>
             <div className="card__row">
               <span className="card__label" ><strong>Payout</strong></span>
               <span className="card__result">{this.props.tx.payout.toFixed(2)} WGR / {this.props.tx.payoutUSD? this.props.tx.payoutUSD.toFixed(2): 0} USD</span>
@@ -54,6 +54,10 @@ export default class CardTxOutOpCodeRow extends Component {
               <span className="card__label" ><strong>Payout Tx Hash</strong></span>
               <span className="card__result"><Link to={`/tx/${this.props.tx.payoutTxId}`}>{this.props.tx.payoutTxId.substr(0, 5) + '...'}</Link></span>
             </div>
+            <div className="card__row">
+              <span className="card__label" ><strong>Overall Result</strong></span>
+              <span className="card__result text-capitalize">{this.props.tx.betResultType}</span>
+             </div>
             
             </div> : null
             }
@@ -64,7 +68,7 @@ export default class CardTxOutOpCodeRow extends Component {
           </div> : (this.props.tx.eventId !== undefined) && <div style={{backgroundColor:"#eee"}}>
             <CardTxLegInfo leg={this.props.tx} isParlay={false} toggleSwitchOdds={toggleSwitchOdds} toggleSwitchOddsStyle={toggleSwitchOddsStyle} />
 
-            {this.props.tx.betResultType == "win" ? <div>
+            {["win","partial-win"].includes(this.props.tx.betResultType)? <div>
             <div className="card__row">
               <span className="card__label" ><strong>Payout</strong></span>
               <span className="card__result">{this.props.tx.payout.toFixed(2)} WGR / {this.props.tx.payoutUSD? this.props.tx.payoutUSD.toFixed(2): 0} USD</span>
@@ -76,9 +80,9 @@ export default class CardTxOutOpCodeRow extends Component {
             </div>
             </div>: null
             }
-
           </div>
         }
+        
       </div>
     );
   };
