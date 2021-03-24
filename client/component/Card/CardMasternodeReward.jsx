@@ -36,7 +36,7 @@ export default class CardMasternodeReward extends Component {
         <div className="card__row bg-eee">
           <span className="card__label">DAILY</span>
           <span className="card__result">
-            <span>{numeral(rewardPerDay).format('0,0.00')} WGR / {numeral(rewardPerDay).format('0,0.00')} USD </span>
+            <span>{numeral(rewardPerDay).format('0,0.00')} WGR / {numeral(rewardPerDayUsd).format('0,0.00')} USD </span>
           </span>          
         </div>
         <div className="card__row">
