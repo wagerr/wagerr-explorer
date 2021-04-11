@@ -4,6 +4,7 @@ const blockex = require('../handler/blockex');
 const faucet = require('../handler/faucet');
 const iquidus = require('../handler/iquidus');
 const custom = require('../handler/custom');
+const stat = require('../handler/stat');
 const opCode = require('../handler/opcode');
 const raw = require('../handler/raw');
 
@@ -73,6 +74,10 @@ router.get('/custom/supply', custom.getCustomSupply);
 router.get('/custom/totalpayout', custom.getTotalPayout);
 router.get('/custom/getaddressesinfo/:hashlist', custom.getAddressesInfo);
 router.get('/custom/getunspenttransactions/:hashlist', custom.getunspenttransactions);
+
+//stat page
+router.get('/stat/betting', stat.getBettingStatData);
+router.get('/stat/masternode',stat.getMasternodeData);
 
 // OpCode decryption
 router.get('/opcodes/:hex_value', opCode.decodeOP);

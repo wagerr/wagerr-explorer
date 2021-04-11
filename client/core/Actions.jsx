@@ -193,6 +193,16 @@ export const getBetActionsWeek = () => {
     return getFromWorker('betactions-week', resolve, reject);
   });
 };
+export const getBettingStatData = (query) => {
+  return new promise((resolve, reject) => {
+    return getFromWorker('betstatdata', resolve, reject,query);
+  });
+};
+export const getMasternodeStatData = (query) => {
+  return new promise((resolve, reject) => {
+    return getFromWorker('masternodestatdata', resolve, reject,query);
+  });
+};
 export const getBetEvents = (query) => {
   return new promise((resolve, reject) => {
     return getFromWorker('betevents', resolve, reject, query);
@@ -303,6 +313,8 @@ export default {
   setTXs,
   getListEvents,
   getBetActionsWeek,
+  getBettingStatData,
+  getMasternodeStatData,
   getBetEvents,
   getBetQuery,
   getBetActions,

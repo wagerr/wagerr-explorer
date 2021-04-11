@@ -50,6 +50,7 @@ An advanced explorer based on node-js for the Wagerr block chain. Components doc
   COIN_TESTNET='MainNet'
   ORACLE_PAYOUT_ADDRESS='"SNCNYcDyXPCLHpG9AyyhnPcLNpxCpGZ2X6","WRBs8QD22urVNeGGYeAMP765ncxtUA1Rv2"'
   DEV_PAYOUT_ADDRESS='"Shqrs3mz3i65BiTEKPgnxoqJqMw5b726m5","Wm5om9hBJTyKqv5FkMSfZ2FDMeGp12fkTe"'
+  ORACLE_WALLET_ADDRESS=WRBs8QD22urVNeGGYeAMP765ncxtUA1Rv2
   LOTTO_PAYOUT_ADDRESS=Weqz3PFBq3SniYF5HS8kuj72q9FABKzDrP
   API_SERVER=https://explorer.wagerr.com
 ```

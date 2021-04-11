@@ -14,7 +14,9 @@
 }	
 
 .content__wrapper{
-	margin: 0px !important;
+	margin: 0px;
+	margin: 5em 1em 3em 1em!important;
+	overflow-x:visible!important;
 	// @media (max-width: 767px) {
 	// 	margin-right: -18px!important;
 	// }

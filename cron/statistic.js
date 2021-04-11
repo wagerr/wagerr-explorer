@@ -123,7 +123,7 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
       })
     }
 
-    try {
+    
       let total_bet_wgr = 0;
       let total_bet_usd = 0;
       let total_parlay_wgr = 0;
@@ -141,15 +141,13 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
         
       totalPayout = totalPayout + (total_bet_wgr + total_parlay_wgr);
       totalPayoutUSD = totalPayoutUSD + (total_bet_usd + total_parlay_usd);
-    } catch(err) {
-      console.log(err);
-    }
+   
     // console.log('totalBet', totalBet);
     // console.log('totalMint', totalMint);
     // console.log('totalPayout', totalPayout);
     // console.log('totalPayoutUSD', totalPayoutUSD);
    
-  const statistic = new Statistic({
+  let statistic = new Statistic({
     blockHeight: block.height,
     createdAt: block.createdAt,
     totalBet: totalBet,
@@ -183,11 +181,10 @@ async function update () {
 
     let startHeight = dbStatisticHeight
 
-    const block = await Block.findOne().sort({ height: -1});
-    let blockDbHeight = block && block.height ? block.height - 1: 1;
+    
     let dbResultHeight =  betResult && betResult.blockHeight ? betResult.blockHeight : 1
 
-    let stopHeight = [blockDbHeight,  dbResultHeight].sort().reverse()[0]
+    let stopHeight = [dbResultHeight].sort().reverse()[0]
 
     // If heights provided then use them instead.
     if (!isNaN(process.argv[2])) {

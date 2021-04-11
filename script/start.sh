@@ -32,8 +32,9 @@ const config = {
   },
   coin:{
     testnet: 'MainNet' || 'MainNet',
-    oracle_payout_address: ['$ORACLE_PAYOUT_ADDRESS']
-    dev_payout_address: ['$DEV_PAYOUT_ADDRESS']
+    oracle_payout_address: ['$ORACLE_PAYOUT_ADDRESS'],
+    dev_payout_address: ['$DEV_PAYOUT_ADDRESS'],
+    oracle_wallet_address: '$ORACLE_WALLET_ADDRESS'
   },
   redis:{
     host: '$REDIS_HOST' || 'localhost',

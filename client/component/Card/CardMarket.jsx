@@ -36,7 +36,7 @@ export default class CardMarket extends Component {
       growth = 0.0;
     }
     const isPos = growth >= 0;
-    const dirArrow = isPos ? 'arrow-up' : 'arrow-down';    
+    const dirArrow = isPos ? 'arrow-up' : 'arrow-down';
     return (
       <div className="animated fadeInUp">
         <Card className="card--market" title="Market">
@@ -47,7 +47,7 @@ export default class CardMarket extends Component {
               end={this.props.usd}
               prefix={'WGR $'}
               start={0} />
-          </p>          
+          </p>
           <div className="card__info row">
             <div className="col-sm-12 col-md-6 col-lg-4">
               {/*<p>
@@ -59,7 +59,7 @@ export default class CardMarket extends Component {
                 </span>
                 <span>In {this.props.xAxis.length * 5} minutes</span>
               </p>*/}
-              <p className="card__info-source">Data from CoinGecko</p>
+              <p className="card__info-source"><a href="https://www.coingecko.com/en/coins/wagerr#markets" target="blank">Data from CoinGecko</a></p>
             </div>
             <div className="col-sm-12 col-md-6 col-lg-8">
               {/*<GraphLine

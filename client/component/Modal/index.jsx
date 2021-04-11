@@ -176,7 +176,7 @@ export default class BetModal extends Component {
         <div className="col text-center">
           <h4><b>Under</b></h4>
         </div>
-      </div> 
+      </div>
       <br />
       <div className="divider my-3"></div>
       <div className="row">
@@ -184,7 +184,7 @@ export default class BetModal extends Component {
           <div className="badge badge-success">{this.formatScores(decryption.homeOdds)}</div>
         </div>
         <div className="col text-center">
-        <div className="badge badge-warning">{(decryption.spreadPoints) / 10}</div>
+          <div className="badge badge-warning">{(decryption.spreadPoints) / 10}</div>
         </div>
         <div className="col text-center">
           <div className="badge badge-danger">{this.formatScores(decryption.awayOdds)}</div>
@@ -270,9 +270,18 @@ export default class BetModal extends Component {
       return tx;
     };
 
+    function hex_to_ascii(str1) {
+      var hex = str1.toString();
+      var str = '';
+      for (var n = 0; n < hex.length; n += 2) {
+        str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
+      }
+      return str;
+    }
     return (
       <React.Fragment>
-        <span className="link-btn" onClick={this.toggle}>{buttonLabel}</span>
+        <span className="link-btn" onClick={this.toggle}>{buttonLabel.length > 100 ? "OP_RETURN " + hex_to_ascii(buttonLabel.replace("OP_RETURN ", "")) + " " + buttonLabel.replace("OP_RETURN ", "") : buttonLabel} </span>
+
         <Modal isOpen={modal} toggle={this.toggle} className={className}>
           <ModalHeader toggle={this.toggle}>
             <div>
