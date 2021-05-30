@@ -137,38 +137,139 @@ async function getAddressBalance(address){
 async function syncCoin() {
   console.log('syncCoin');
   await Coin.deleteMany({});
-  const date = moment().utc().startOf('minute').toDate();
-
-  const coins = await Coin.find({}).sort({createdAt: -1}).limit(1);
   
-  let last_date = moment('1970-01-01T00:00:00.000+00:00').toDate();
+  const coin = await Coin.findOne().sort({createdAt: -1});
+  const last_block = await Block.findOne().sort({createdAt:-1})
+  let last_block_date = last_block && last_block.createdAt ? moment(last_block.createdAt).toDate() : moment('2021-01-07T07:03:00.000+00:00').toDate()
+  let last_date =  coin && coin.createdAt ? moment(coin.createdAt).toDate() : moment('2021-01-07T07:03:00.000+00:00').toDate()
+  
+  
+  
+  
 
-  if (coins.length > 0 && typeof coins[0].lastResultCreatedAt != "undefined") {
-    last_date = moment(coins[0].lastResultCreatedAt).toDate();
-  }
- 
-  let totalBetSingle = 0;
-  let totalBetParlay = 0;
-  let totalMintParlay = 0;
+  let totalBetSingleYTD = 0;
+  let totalBetParlayYTD = 0;
+  let totalMintParlayYTD = 0;
 
-  let totalBet = 0;
-  let totalMint = 0;
+  let totalBetPending = 0;
 
-  let betResults = await BetResult.aggregate([
-    { 
-      $match: {
-        createdAt:{
-          $gt:last_date
-        }
-      },
+  let totalBetYTD = 0;
+  let totalMintYTD = 0;
+
+  
+  const betData = await BetAction.aggregate([
+    {
+      $sort: {
+        payoutDate: -1
+      }
     },
-  {
-    $sort: {
-      createdAt:-1
+    {
+      $match: { 
+        $and:[
+        { payoutDate: { $gte: last_date } },
+        { payoutDate: { $lt: last_block_date } },
+        
+      ] 
     }
-  }]).allowDiskUse(true)
+  }
 
-  betResults.forEach(result => {
+  ]).allowDiskUse(true);
+
+  const parlayData = await BetParlay.aggregate([
+    {
+      $sort: {
+        payoutDate: -1
+      }
+    },
+    {
+      $match: { 
+        $and:[
+        { payoutDate: { $gte: last_date } },
+        { payoutDate: { $lt: last_block_date } }
+      ] 
+    }
+  }
+
+  ]).allowDiskUse(true);
+
+  const pendingBetData = await BetAction.aggregate([
+
+    {
+      $match: { 
+        $and: [
+          {completed: false },
+          {createdAt: {$gt: moment('2021-01-01T00:00:00.000+00:00').toDate()} }
+        ]
+        
+    }
+  }
+
+  ]).allowDiskUse(true);
+
+  const pendingParlayData = await BetParlay.aggregate([
+
+    {
+      $match: { 
+        $and: [
+          {completed: false },
+          {createdAt: {$gt: moment('2021-01-01T00:00:00.000+00:00').toDate()} }
+        ]
+        
+    }
+  }
+
+  ]).allowDiskUse(true);
+
+
+  const resultDatas = await BetResult.aggregate([
+    {
+      $sort: {
+        "payoutTx.createdAt": -1
+      }
+    },
+    {
+      $match: {
+        $and:[
+        {"payoutTx.createdAt": {
+          $gte: last_date
+        } },
+        {"payoutTx.createdAt": {
+          $lt: last_block_date
+        } }
+      ]
+      },
+    }]).allowDiskUse(true);
+
+ 
+   
+  betData.forEach(action => {
+   
+      totalBetSingleYTD += action.betValue
+      totalMintYTD += action.payout
+      
+  })
+
+  pendingBetData.forEach(action => {
+    totalBetPending += action.betValue
+
+  })
+
+  parlayData.forEach(action => { //parlay is always YTD , because it implemented after wagerr 4.0
+
+      totalBetParlayYTD += action.betValue
+      totalMintParlayYTD += action.payout
+      totalMintYTD += action.payout
+  })
+
+  pendingParlayData.forEach(action => {
+
+    totalBetPending += action.betValue
+  })
+
+
+
+
+  /* resultDatas.forEach(result => {
     // const { payoutTx } = result;
     let startIndex = 2
     if (result.payoutTx && result.payoutTx.vout.length < 3) {
@@ -177,53 +278,43 @@ async function syncCoin() {
       if (result.payoutTx.vout[1].address === result.payoutTx.vout[2].address) {
         startIndex = 3
       }
-      for (let i = startIndex; i < result.payoutTx.vout.length - 1; i++) { 
+      for (let i = startIndex; i < result.payoutTx.vout.length - 1; i++) {
+        if(moment(result.payoutTx.createdAt).toDate() >= ytd) { //calculate for YTD
+          totalMintYTD += result.payoutTx.vout[i].value
+        }
         totalMint += result.payoutTx.vout[i].value
       }
     }
-  })
 
-  let betParlays = await BetParlay.aggregate([
-    { 
-      $match: {
-        $and: [
-          {payoutDate:{ $gt:last_date }},
-          {completed: true }
-        ]
-      },
-    }]).allowDiskUse(true)
-  
+  }) */
 
-  betParlays.forEach(action => {
-    
-     totalBetParlay += action.betValue
-     totalMintParlay += action.payout || 0
-       
-   })
 
-   let betSingles = await BetAction.aggregate([
-    { 
-      $match: {
-        $and: [
-        {payoutDate:{ $gt:last_date }},
-        {completed: true }
-      ]
+  resultDatas.forEach(result => {
+    // const { payoutTx } = result;
+    let startIndex = 2
+    if (result.payoutTx && result.payoutTx.vout.length < 3) {
+      console.log(result.payoutTx);
+    } else {
+      if (result.payoutTx.vout[1].address === result.payoutTx.vout[2].address) {
+        startIndex = 3
       }
-    }]).allowDiskUse(true)
+      for (let i = startIndex; i < result.payoutTx.vout.length - 1; i++) {
+        
+          if(result.payoutTx.vout[i].address === config.coin.oracle_payout_address[0] || result.payoutTx.vout[i].address === config.coin.dev_payout_address[0])
+          {
+            totalMintYTD += result.payoutTx.vout[i].value
+          }
+          
+        
+      }
+    }
 
-   betSingles.forEach(action => {
-    totalBetSingle += action.betValue
-  })
+  }) 
 
-  totalBet = totalBetParlay + totalBetSingle
   
+  totalBetYTD = totalBetSingleYTD + totalBetParlayYTD // YTD
 
-  if (coins.length > 0 && typeof coins[0].lastResultCreatedAt != "undefined") {
-    totalMint = coins[0].totalMint +  totalMint;
-    totalBet = coins[0].totalBet +  totalBet;
-  }
-
-  console.log('syncCoin4', totalMint, totalBet);
+  console.log('syncCoin4 YTD', totalMintYTD, totalBetYTD);
   
   rpc.timeout(50000)
   const info = await rpc.call('getinfo');  
@@ -291,16 +382,12 @@ try {
   console.log('syncCoin5');
   
   const nextSuperBlock = await rpc.call('getnextsuperblock')
-  if (betResults.length > 0 && typeof betResults[0].createdAt != "undefined"){
-    last_date = moment(betResults[0].createdAt).toDate();
-  }
   
   const coin = new Coin({
     cap: marketCapUsd,
     capEur: 0,//eurMarket.quote.EUR.market_cap,
-    createdAt: date,
+    createdAt: last_block_date,
     blocks: info.blocks,
-    lastResultCreatedAt: last_date,
     btc: marketCapBtc,
     btcPrice: btcPrice,
     diff: info.difficulty,
@@ -312,11 +399,14 @@ try {
     supply: info.moneysupply,
     usd: usdPrice,
     eur: 0,//eurMarket.quote.EUR.price,
-    totalBetParlay: totalBetParlay,
-    totalMintParlay: totalMintParlay,
+    totalBetParlay: totalBetParlayYTD,
+    totalMintParlay: totalMintParlayYTD,
     oracleBalance: oracleBalance,
-    totalBet: totalBet + 99159233.6752,
-    totalMint: totalMint + 97145649.4494,
+    totalBet: totalBetYTD + 99159233.6752 + 448442668.775775, //2.0 and 3.0 supply is fixed
+    totalPendingBet: totalBetPending,
+    totalMint: totalMintYTD + 97145649.4494 + 459312243.074108 ,
+    totalBetYTD: totalBetYTD,
+    totalMintYTD: totalMintYTD,
     oracleProfitPerSecond: payoutPerSecond,
     totalROI: totalROI,
     nextSuperBlock:nextSuperBlock

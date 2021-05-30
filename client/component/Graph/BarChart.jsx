@@ -37,7 +37,7 @@ export default class BarChart extends Component {
       type: this.props.type,
       data: this.props.data,
       options: {
-        responsive: true,
+        maintainAspectRatio : false,
         title: {
           display: true,
           text: this.props.title

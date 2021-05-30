@@ -12,7 +12,7 @@ export function generateBettingMenu(events) {
       { id: 8, label: 'Aussie Rules', href: 'aussie_rules', count: 0 },
       { id: 9, label: 'Cricket', href: 'cricket', count: 0 },
       { id: 10, label: 'MMA', href: 'mma', count: 0 },
-      { id: 11, label: 'Rugby League', href: 'rugby_league', count: 0 },
+      { id: 11, label: 'Rugby League', href: 'rugby league', count: 0 },
       { id: 12, label: 'Rugby Union', href: 'rugby_union', count: 0 },
     ]
       

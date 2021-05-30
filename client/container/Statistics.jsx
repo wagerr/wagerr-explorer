@@ -55,13 +55,6 @@ class Statistics extends Component {
                   Masternode Stats
           </NavLink>
               </NavItem>
-              <NavItem>
-                <NavLink
-                  className={classnames({ active: this.state.activeTab === 'network' })}
-                  onClick={() => { this.setState({ activeTab: 'network' }) }}>
-                  Network Stats
-          </NavLink>
-              </NavItem>
             </Nav>
             <TabContent activeTab={this.state.activeTab}>
               <TabPane tabId="betting">

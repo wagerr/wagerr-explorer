@@ -16,10 +16,17 @@ export default class Card extends Component {
       <div
         className={ `card ${ props.className ? props.className : '' }` }
         style={ !!props.style ? props.style : {} }>
+           
         <p className="card__title" style={props.pstyle}>
           <span>{ props.title }</span>
           <span>{ props.title2 }</span>
-        </p>
+          <span className="float-right" >
+             {props.actionItem}   
+          </span>
+             </p>                        
+       
+        
+        
         <div className="card__body">
           { props.children }
         </div>

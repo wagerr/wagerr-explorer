@@ -198,15 +198,15 @@ class BettingStat extends Component {
                   options={CHART_TIME_FRAME} />
               </div>
             </div>
-            { this.state.bettingChartData && <BarChart data={this.state.bettingChartData} height="100%" width="100%" type="bar" title="Weekly Betting Volume (WGR)" />}
+            { this.state.bettingChartData && <BarChart data={this.state.bettingChartData} height="30em" width="auto" type="bar" title="Weekly Betting Volume (WGR)" />}
           </Col>
         </Row>
-        <Row>
+        <Row className="mt-5">
           <Col sm="12">
             <div className="w3-tables__title">
               <div>League Chart</div>
             </div>
-           { this.state.leagueData &&  <BarChart data={this.state.leagueData} height="100%" width="100%" type="bar" title="Chain Mint & Burn by League" />}
+           { this.state.leagueData &&  <BarChart data={this.state.leagueData} height="30em" width="auto" type="bar" title="Chain Mint & Burn by League" />}
           </Col>
         </Row>
 

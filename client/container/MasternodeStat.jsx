@@ -109,7 +109,7 @@ class MasternodeStat extends Component {
                   options={CHART_TIME_FRAME} />
               </div>
             </div>
-            <BarChart data={this.state.oracleMasternodeChartData} height="100%" width="100%" type="bar" title="Masternode Reward Info" />
+            <BarChart data={this.state.oracleMasternodeChartData} height="30em" width="100%" type="bar" title="Masternode Reward Info" />
           </Col>
         </Row>
 

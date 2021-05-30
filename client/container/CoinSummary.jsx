@@ -88,7 +88,7 @@ class CoinSummary extends Component {
                             <div className="col-md-12 col-lg-6">
                             { isParlay?
                             <CardParlayBetStatus totalBetParlay={coin.totalBetParlay} totalMintParlay={coin.totalMintParlay}/>
-                            :<CardBetStatus totalBet={coin.totalBet} totalMint={coin.totalMint}/>
+                            :<CardBetStatus totalBet={coin.totalBet} totalMint={coin.totalMint} totalBetPending={coin.totalPendingBet} totalBetYTD={coin.totalBetYTD} totalMintYTD={coin.totalMintYTD}/>
                             }
                             </div>
                             

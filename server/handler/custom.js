@@ -8,6 +8,7 @@ const UTXO = require('../../model/utxo');
 const { rpc } = require('../../lib/cron');
 const Price = require('../../model/price');
 const Statistic = require('../../model/statistic');
+const Mapping = require('../../model/mappingname');
 const getBetStatus = async (req, res) => {
   try {
     const txs = await TX
@@ -54,7 +55,7 @@ const getCustomSupply = async (req, res) => {
 const getTotalPayout = async (req, res) => {
   
   try {    
-    const statistic = await Statistic.findOne().sort({blockHeight: -1})    
+    const statistic = await Statistic.findOne().sort({createdAt: -1})    
     res.json({totalpayout: {wgr: statistic.totalPayout + 102107516.1294, usd: statistic.totalPayoutUSD + 102107516.1294 * 0.1}})
   } catch(err) {
     console.log(err);
@@ -192,10 +193,34 @@ const getunspenttransactions = async (req, res) => {
   }
 }
 
+const getMapping = async(req,res) => {
+  
+try {
+
+  const search = req.params.search;
+
+  const results = await Mapping.aggregate([
+    {
+      $match:{
+        name: { $regex: `.*${search}.*`, $options: 'i' }
+      }
+    }
+  ])
+ 
+  res.json(results)
+
+} catch(err) {
+console.log(err);
+res.status(500).send(err.message || err);
+}
+
+}
+
 module.exports = {
   getBetStatus,
   getCustomSupply,
   getTotalPayout,
   getAddressesInfo,
-  getunspenttransactions
+  getunspenttransactions,
+  getMapping
 }
