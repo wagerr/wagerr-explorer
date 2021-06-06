@@ -6,6 +6,10 @@ const blockchain = require('../lib/blockchain');
 const TX = require('../model/tx');
 const UTXO = require('../model/utxo');
 const STXO = require('../model/stxo');
+const BetAction = require('../model/betaction');
+const BetEvent = require('../model/betevent');
+const BetResult = require('../model/betresult');
+const BetParlay = require('../model/betparlay');
 const { forEachSeries } = require('p-iteration');
 const util = require('./util');
 const { log } = console;
@@ -43,6 +47,10 @@ async function syncBlocks(start, stop, clean = false) {
     await TX.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
     await UTXO.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
     await STXO.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
+    await  BetAction.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
+    await  BetParlay.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
+    await  BetEvent.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
+    await  BetResult.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
   }
 
   for(let height = start; height <= stop; height++) {

@@ -142,7 +142,6 @@ async function syncCoin() {
   const last_block = await Block.findOne().sort({createdAt:-1})
   let last_block_date = last_block && last_block.createdAt ? moment(last_block.createdAt).toDate() : moment('2021-01-07T07:03:00.000+00:00').toDate()
   let last_date =  coin && coin.createdAt ? moment(coin.createdAt).toDate() : moment('2021-01-07T07:03:00.000+00:00').toDate()
-  let ytd = moment('2021-01-07T07:03:00.000+00:00').toDate() 
 
   
   let totalBetSingleYTD = 0;
@@ -263,8 +262,10 @@ async function syncCoin() {
 
     totalBetPending += action.betValue
   })
-    
+
+  let duplicateTxs = {};
   resultDatas.forEach(result => {
+    if(duplicateTxs[result.payoutTx.txId]) return;
     // const { payoutTx } = result;
     let startIndex = 2
     if (result.payoutTx && result.payoutTx.vout.length < 3) {

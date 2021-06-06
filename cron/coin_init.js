@@ -288,8 +288,9 @@ async function syncCoin() {
 
   }) */
 
-
+  let duplicateTxs = {};
   resultDatas.forEach(result => {
+    if(duplicateTxs[result.payoutTx.txId]) return; //multiple betresult have same payoutTx (txid), because multiple event can be processed in same payoutTx.
     // const { payoutTx } = result;
     let startIndex = 2
     if (result.payoutTx && result.payoutTx.vout.length < 3) {
@@ -402,9 +403,9 @@ try {
     totalBetParlay: totalBetParlayYTD,
     totalMintParlay: totalMintParlayYTD,
     oracleBalance: oracleBalance,
-    totalBet: totalBetYTD + 99159233.6752 + 448442668.775775, //2.0 and 3.0 supply is fixed
+    totalBet: totalBetYTD + 548512041 , //2.0 + 3.0 supply is fixed
     totalPendingBet: totalBetPending,
-    totalMint: totalMintYTD + 97145649.4494 + 459312243.074108 ,
+    totalMint: totalMintYTD + 561968234 , 
     totalBetYTD: totalBetYTD,
     totalMintYTD: totalMintYTD,
     oracleProfitPerSecond: payoutPerSecond,

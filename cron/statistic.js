@@ -4,6 +4,8 @@ const {exit, rpc} = require('../lib/cron')
 const {forEachSeries} = require('p-iteration')
 const locker = require('../lib/locker')
 const util = require('./util')
+const moment = require('moment');
+const config = require('../config');
 const { log } = console;
 // Models.
 const Block = require('../model/block')
@@ -21,15 +23,12 @@ const BetParlay = require('../model/betparlay')
  * @param {Number} start The current starting block height.
  * @param {Number} stop The current block height at the tip of the chain.
  */
-async function syncBlocksForStatistic (start, stop, clean = false) {
-  if (clean) {
-    await Statistic.deleteMany({ blockHeight: { $gte: start, $lte: stop } });
-  }  
-
-  if (stop - start > 50000) stop = start + 50000;
-   
-  const latest_statistic = await Statistic.findOne({blockHeight: { $lt: start}}).sort({blockHeight: -1});  
-
+async function syncBlocksForStatistic () {
+  const latest_statistic = await Statistic.findOne().sort({createdAt: -1})
+  const last_block = await Block.findOne().sort({createdAt:-1})
+  let last_block_date = last_block && last_block.createdAt ? moment(last_block.createdAt).toDate() : moment('1970-01-01T00:00:00.000+00:00').toDate()
+  let last_date =  latest_statistic && latest_statistic.createdAt ? moment(latest_statistic.createdAt).toDate() : moment('1970-01-01T00:00:00.000+00:00').toDate()
+ 
   let totalBet =  latest_statistic && latest_statistic.totalBet ? latest_statistic.totalBet : 0
   let totalMint =  latest_statistic && latest_statistic.totalMint ? latest_statistic.totalMint : 0
   let totalPayout =  latest_statistic && latest_statistic.totalPayout ? latest_statistic.totalPayout : 0
@@ -40,128 +39,135 @@ async function syncBlocksForStatistic (start, stop, clean = false) {
   // console.log('totalPayout', totalPayout);
   // console.log('totalPayoutUSD', totalPayoutUSD);
 
-  const blocks = await Block.find({height: { $gte: start , $lte: stop}})
 
   const betData = await BetAction.aggregate([
-    {$match: {blockHeight: { $gte: start , $lte: stop}}},
-    { $group: { _id: "$blockHeight", total: { $sum: '$betValue' }, totalpayout: { $sum: '$payout' }, totalpayoutUSD: { $sum: '$payoutUSD' } } }
-  ]);
+    {
+      $sort: {
+        payoutDate: -1
+      }
+    },
+    {
+      $match: { 
+        $and:[
+        { payoutDate: { $gte: last_date } },
+        { payoutDate: { $lt: last_block_date } }
+      ] 
+    }
+  }
+  ]).allowDiskUse(true);
+  
+  const parlayData = await BetParlay.aggregate([
+    {
+      $sort: {
+        payoutDate: -1
+      }
+    },
+    {
+      $match: { 
+        $and:[
+        { payoutDate: { $gte: last_date } },
+        { payoutDate: { $lt: last_block_date } }
+      ] 
+    }
+  }
+    
+  ]).allowDiskUse(true);
+
   
 
-  let betactionBetData = {};
-  let betactionPayoutData = {}
-  let betactionPayoutUSDData = {}
-  for (const item_bet_data of betData){
-    betactionBetData[item_bet_data._id] = item_bet_data.total;
-    betactionPayoutData[item_bet_data._id] = item_bet_data.totalpayout;
-    betactionPayoutUSDData[item_bet_data._id] = item_bet_data.totalpayoutUSD
-  }
-  //console.log("betbetactionBetDataData", betactionBetData, betactionPayoutData);
-
-
-  const parlayData = await BetParlay.aggregate([
-    {$match: {blockHeight: { $gte: start , $lte: stop}}},
-    { $group: { _id: '$blockHeight', total: { $sum: '$betValue' }, totalpayout: { $sum: '$payout' }, totalpayoutUSD: { $sum: '$payoutUSD' } } }
-  ]);
-
-  let parlayBetData = {};
-  let parlayPayoutData = {};
-  let parlayPayoutUSDData = {};
-  for (const item_parlay_data of parlayData){
-    parlayBetData[item_parlay_data._id] = item_parlay_data.total;
-    parlayPayoutData[item_parlay_data._id] = item_parlay_data.totalpayout;
-    parlayPayoutUSDData[item_parlay_data._id] = item_parlay_data.totalpayoutUSD
-  }
-
   const resultDatas = await BetResult.aggregate([
-    {$match: {blockHeight: { $gte: start , $lte: stop}}},
-  ]);
-
-  let resultPayoutDatas = {};
-  for (const item_result of resultDatas){
-    if (resultPayoutDatas[item_result.blockHeight]){
-      resultPayoutDatas[item_result.blockHeight].push(item_result);
-    } else {
-      resultPayoutDatas[item_result.blockHeight] = [];
-      resultPayoutDatas[item_result.blockHeight].push(item_result);
-    }    
-  }
-
-  let batchStatistic = [];
-
-  for (let block of blocks) {
-    if (betactionBetData[block.height]){
-      totalBet = totalBet + betactionBetData[block.height]
+    {
+      $sort: {
+        "payoutTx.createdAt": -1
+      }
+    },
+    {
+      $match: {
+        $and:[
+        {"payoutTx.createdAt": {
+          $gte: last_date
+        } },
+        {"payoutTx.createdAt": {
+          $lt: last_block_date
+        } }
+      ]
+      },
     }
+  ]).allowDiskUse(true);
 
-    if (parlayBetData[block.height]){
-      totalBet = totalBet + parlayBetData[block.height]
-    }
+   total_single_bet_wgr = 0
+   total_parlay_bet_wgr = 0
 
-    let resultData = resultPayoutDatas[block.height]
-    if (resultData && resultData.length !== 0 ){
-      resultData.forEach(queryResult => {
+   total_single_bet_payout = 0
+   total_parlay_bet_payout = 0
+   
+   total_single_bet_payout_usd = 0 
+   total_parlay_bet_payout_usd = 0
+
+
+  betData.forEach(action => {
+    total_single_bet_wgr += action.betValue
+    total_single_bet_payout += action.payout
+    total_single_bet_payout_usd += action.payoutUSD
+
+  })
+
+
+  parlayData.forEach(action => {
+    
+    total_parlay_bet_wgr += action.betValue
+    total_parlay_bet_payout += action.payout
+    total_parlay_bet_payout_usd += action.payoutUSD
+      
+  }) 
+    
+ 
+      totalBet = totalBet + (total_single_bet_wgr + total_parlay_bet_wgr)
+      totalPayout = totalPayout + (total_single_bet_payout + total_parlay_bet_payout);
+      totalPayoutUSD = totalPayoutUSD + (total_single_bet_payout_usd + total_parlay_bet_payout_usd);
+      totalMint = totalPayout;
+
+      let duplicateTxs = {};
+      resultDatas.forEach(result => {
+        if(duplicateTxs[result.payoutTx.txId]) return;
+        // const { payoutTx } = result;
         let startIndex = 2
-        let obj_checked = false;
-        
-        if (typeof queryResult.payoutTx !== "undefined" && typeof queryResult.payoutTx.vout !== "undefined"){
-          if (queryResult.payoutTx.vout.length > 2){
-            if (typeof queryResult.payoutTx.vout[1].address !== "undefined" && typeof queryResult.payoutTx.vout[2].address !== "undefined")
-            {
-              obj_checked = true;
-            }
-          }
-        }
-        if (obj_checked){
-          if (queryResult.payoutTx.vout[1].address === queryResult.payoutTx.vout[2].address) {
+        if (result.payoutTx && result.payoutTx.vout.length < 3) {
+          console.log(result.payoutTx);
+        } else {
+          if (result.payoutTx.vout[1].address === result.payoutTx.vout[2].address) {
             startIndex = 3
           }
+          for (let i = startIndex; i < result.payoutTx.vout.length - 1; i++) {
+               if(result.payoutTx.vout[i].address === config.coin.oracle_payout_address[0] || result.payoutTx.vout[i].address === config.coin.dev_payout_address[0])
+              {
+                totalMint += result.payoutTx.vout[i].value // oracle/dev reward
+              }
+           
+            
         }
-        for (let i = startIndex; i < queryResult.payoutTx.vout.length - 1; i++) {
-          totalMint = totalMint + queryResult.payoutTx.vout[i].value
-        }
-      })
-    }
-
+      }
     
-      let total_bet_wgr = 0;
-      let total_bet_usd = 0;
-      let total_parlay_wgr = 0;
-      let total_parlay_usd = 0;
-          
-      if (betactionPayoutData[block.height]){
-        total_bet_wgr = betactionPayoutData[block.height]
-        total_bet_usd = betactionPayoutUSDData[block.height]
-      }
-
-      if (parlayPayoutData[block.height]){
-        total_parlay_wgr = parlayPayoutData[block.height]
-        total_parlay_usd = parlayPayoutUSDData[block.height]
-      }
-        
-      totalPayout = totalPayout + (total_bet_wgr + total_parlay_wgr);
-      totalPayoutUSD = totalPayoutUSD + (total_bet_usd + total_parlay_usd);
+      }) 
    
     // console.log('totalBet', totalBet);
     // console.log('totalMint', totalMint);
     // console.log('totalPayout', totalPayout);
     // console.log('totalPayoutUSD', totalPayoutUSD);
    
+  
   let statistic = new Statistic({
-    blockHeight: block.height,
-    createdAt: block.createdAt,
+    createdAt: last_block_date,
     totalBet: totalBet,
     totalMint: totalMint,
     totalPayout: totalPayout,
     totalPayoutUSD: totalPayoutUSD
   })
 
-  batchStatistic.push(statistic);
-}
+  await statistic.save()
 
-await Statistic.insertMany(batchStatistic);
 
-console.log('syncBlocksForStatistic', start, stop);
+console.log('syncBlocksForStatistic', last_date);
 }
 
 /**
@@ -173,39 +179,10 @@ async function update () {
  
   try {
     log('Running statistic cron job');
-    const statistic = await Statistic.findOne().sort({blockHeight: -1})
-    const betResult = await BetResult.findOne().sort({blockHeight: -1})
-
-    let clean = true // Always clear for now.
-    let dbStatisticHeight =  statistic && statistic.blockHeight ? statistic.blockHeight : 10000
-
-    let startHeight = dbStatisticHeight
-
     
-    let dbResultHeight =  betResult && betResult.blockHeight ? betResult.blockHeight : 1
-
-    let stopHeight = [dbResultHeight].sort().reverse()[0]
-
-    // If heights provided then use them instead.
-    if (!isNaN(process.argv[2])) {
-      clean = true
-      startHeight = parseInt(process.argv[2], 10)
-    }
-    if (!isNaN(process.argv[3])) {
-      clean = true
-      stopHeight = parseInt(process.argv[3], 10)
-    }
-    console.log(startHeight, stopHeight, clean)
-    // If nothing to do then exit.
-    if (startHeight >= stopHeight) {
-      return
-    }
-    // If starting from genesis skip.
-    else if (startHeight === 0) {
-      startHeight = 10000
-    }
+    
     locker.lock(type)
-    await syncBlocksForStatistic(startHeight, stopHeight, clean)
+    await syncBlocksForStatistic()
     locker.unlock(type)
   } catch (err) {
     log(err)
