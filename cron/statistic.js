@@ -130,6 +130,7 @@ async function syncBlocksForStatistic () {
       let duplicateTxs = {};
       resultDatas.forEach(result => {
         if(duplicateTxs[result.payoutTx.txId]) return;
+        duplicateTxs[result.payoutTx.txId]=1;
         // const { payoutTx } = result;
         let startIndex = 2
         if (result.payoutTx && result.payoutTx.vout.length < 3) {

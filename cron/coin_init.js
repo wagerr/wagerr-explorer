@@ -291,6 +291,7 @@ async function syncCoin() {
   let duplicateTxs = {};
   resultDatas.forEach(result => {
     if(duplicateTxs[result.payoutTx.txId]) return; //multiple betresult have same payoutTx (txid), because multiple event can be processed in same payoutTx.
+    duplicateTxs[result.payoutTx.txId]=1;
     // const { payoutTx } = result;
     let startIndex = 2
     if (result.payoutTx && result.payoutTx.vout.length < 3) {
