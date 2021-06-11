@@ -39,7 +39,7 @@ export default class CardMarket extends Component {
     const dirArrow = isPos ? 'arrow-up' : 'arrow-down';
     return (
       <div className="animated fadeInUp">
-        <Card className="card--market" title="Market">
+        <Card className="card--market" title="Market" style={{height:"10.3rem"}}>
           <p className="card__data-main bariol">
             <CountUp
               decimals={2}

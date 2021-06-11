@@ -11,7 +11,7 @@ export default class CardOracleMNRoi extends Component {
   render() {
     return (
       <div className="animated fadeInUp">
-        <Card className="card--market" title="Total Oracle Masternode ROI">
+        <Card className="card--market" title="Total Oracle Masternode ROI" style={{height:"8.1rem"}}>
           <p className="card__data-main bariol text-center">
           {numeral(this.props.totalROI).format('0,0.00')} % APR
           </p>          

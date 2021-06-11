@@ -77,9 +77,6 @@ export default class CardBetStatus extends Component {
           <span className="card__label">{this.state.YTD? 'NET SUPPLY CHANGE':'NET SUPPLY CHANGE (YTD)'} :</span>
           <span className="card__result">{!this.state.YTD? numeral(this.props.totalMintYTD - this.props.totalBetYTD).format('0,0.00'):numeral(this.props.totalMint - this.props.totalBet).format('0,0.00')} WGR</span>
         </div>
-        <div className="card__row">
-          <span  style={{color:"rgba(0, 0, 0,.5)", fontSize: '15px', padding: '5px 0px'}}> Please refer to total supply currently, these numbers are being improved</span>
-        </div>
       </Card>
       </div>
     );

@@ -50,13 +50,7 @@ const CardEarnings = ({ coin }) => {
           { nbtc(year) } WGR / { nbtc(year * coin.btcPrice) } BTC / { nusd(year * coin.usd) } USD
         </div>
       </div>
-      <div className="row p-5-0">
-        <div className="col">
-          <small className="u--text-gray">
-            * Estimates based on current block subsidy and active masternodes.
-          </small>
-        </div>
-      </div>
+      
     </Card>
   );
 };

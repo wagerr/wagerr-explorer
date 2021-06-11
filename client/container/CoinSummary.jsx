@@ -1,6 +1,6 @@
 import Actions from '../core/Actions';
 import Component from '../core/Component';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -32,7 +32,7 @@ class CoinSummary extends Component {
     render() {
         const coin = this.props.coins && this.props.coins.length
             ? this.props.coins[0]
-            : {diff: 0, netHash: 0};
+            : { diff: 0, netHash: 0 };
 
         const height = this.props.txs.length
             ? this.props.txs[0].blockHeight
@@ -57,25 +57,38 @@ class CoinSummary extends Component {
                                     peers={coin.peers}
                                     online={coin.mnsOn}
                                     status={coin.status}
-                                    supply={coin.supply}/>
-                                    <CardMasternodeInfo usd={coin.usd} online={coin.mnsOn} />
+                                    supply={coin.supply} />
+
                             </div>
                             <div className="col-md-12 col-lg-6">
                                 <CardOracleProfit
-                                    oracleBalance= {coin.oracleBalance}
+                                    oracleBalance={coin.oracleBalance}
                                     oracleProfitPerSecond={coin.oracleProfitPerSecond}
                                     online={coin.mnsOn}
                                     btc={coin.btc}
-                                    usd={coin.usd}/>
+                                    usd={coin.usd} />
                                 <CardMasternodeReward
                                     online={coin.mnsOn}
-                                    usd={coin.usd}/>
-                                <CardOracleMNRoi 
-                                    usd={coin.usd}
-                                    totalROI={coin.totalROI}
-                                    />
+                                    usd={coin.usd} />
+
                             </div>
                         </div>}
+
+
+                        {!onlyBet && <div className="row">
+                            <div className="col-md-12 col-lg-6">
+                                <CardMasternodeInfo usd={coin.usd} online={coin.mnsOn} />
+
+                            </div>
+                            <div className="col-md-12 col-lg-6">
+                                <CardOracleMNRoi
+                                    usd={coin.usd}
+                                    totalROI={coin.totalROI}
+                                />
+                            </div>
+                        </div>
+                        }
+
                         <div className="row">
                             {!onlyBet && <div className="col-md-12 col-lg-6">
                                 <CardMarket
@@ -83,15 +96,15 @@ class CoinSummary extends Component {
                                     btc={coin.btc}
                                     usd={coin.usd}
                                     xAxis={this.props.coins.map(c => c.createdAt)}
-                                    yAxis={this.props.coins.map(c => c.usd ? c.usd : 0.0)}/>
+                                    yAxis={this.props.coins.map(c => c.usd ? c.usd : 0.0)} />
                             </div>}
                             <div className="col-md-12 col-lg-6">
-                            { isParlay?
-                            <CardParlayBetStatus totalBetParlay={coin.totalBetParlay} totalMintParlay={coin.totalMintParlay}/>
-                            :<CardBetStatus totalBet={coin.totalBet} totalMint={coin.totalMint} totalBetPending={coin.totalPendingBet} totalBetYTD={coin.totalBetYTD} totalMintYTD={coin.totalMintYTD}/>
-                            }
+                                {isParlay ?
+                                    <CardParlayBetStatus totalBetParlay={coin.totalBetParlay} totalMintParlay={coin.totalMintParlay} />
+                                    : <CardBetStatus totalBet={coin.totalBet} totalMint={coin.totalMint} totalBetPending={coin.totalPendingBet} totalBetYTD={coin.totalBetYTD} totalMintYTD={coin.totalMintYTD} />
+                                }
                             </div>
-                            
+
                         </div>
                     </div>
 

@@ -32,7 +32,7 @@ export default class CardMasternodeReward extends Component {
 
     return (
       <div className="animated fadeInUp">
-      <Card title="Estimated Masternode Block Rewards(COIN/USD)" className="card--status" >
+      <Card title="Estimated Masternode Block Rewards(COIN/USD)" className="card--status"  >
         <div className="card__row bg-eee">
           <span className="card__label">DAILY</span>
           <span className="card__result">
@@ -50,9 +50,6 @@ export default class CardMasternodeReward extends Component {
           <span className="card__result">
             <span>{numeral(rewardPerYear).format('0,0.00')} WGR / {numeral(rewardPerYearUsd).format('0,0.00')} USD </span>
           </span>          
-        </div>
-        <div className="card__row">
-          <span  style={{color:"rgba(0, 0, 0,.5)", fontSize: '15px', padding: '5px 0px'}}> Estimates based on current block subsidy and active masternodes</span>
         </div>
       </Card>
       </div>
