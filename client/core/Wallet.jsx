@@ -51,6 +51,21 @@ export default class Wallet {
 
     }
 
+    getSpentAddresses = async () => {
+        return new promise((resolve, reject) => {
+      this.wgrClient.wallet.getUsedAddresses().then((spentaddresses) => {
+        spentaddresses = spentaddresses.map((addr) => {
+            return addr.address
+          })
+        resolve(spentaddresses)
+    }).catch((e) => {
+        reject(e)
+    })
+      
+});
+
+    }
+
     sendBet(opcode, amount) {
         return new promise((resolve, reject) => {
             if (!this.walletInstalled) reject("no wallet installed");

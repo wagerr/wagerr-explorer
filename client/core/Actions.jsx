@@ -263,6 +263,12 @@ export const getParlayBetsInfo = (query) => {
   });
 };
 
+export const getBetsForAccount = (query) => {
+  return new promise((resolve, reject) => {
+    return getFromWorker('getbetsforaccount', resolve, reject, query);
+  });
+};
+
 export const getCurrentPPs = (query) => {
   return new promise((resolve, reject) => {
     return getFromWorker('currentpps', resolve, reject, query);
@@ -322,6 +328,7 @@ export default {
   getBetEventInfo,
   getBetEventsInfo,
   getParlayBetsInfo,
+  getBetsForAccount,
   getCurrentPPs,
   getBetPerWeek,
   setWatch,

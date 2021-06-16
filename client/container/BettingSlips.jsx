@@ -138,7 +138,7 @@ export default class BettingSlips extends Component {
                     </label>
                     <button id="clearSlip" className="btn-clear-slip" onClick={this.clearBetSlips}>CLEAR SLIP</button>
                 </div>
-                <div className='bet-black-card bet-slip-card animated fadeInUp'>{
+                <div className='bet-black-card bet-slip-card animated fadeInUp scrollable'>{
 
                     this.state.currentSelection == 'single' ? 
                         

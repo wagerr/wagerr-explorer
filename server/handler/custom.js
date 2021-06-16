@@ -177,6 +177,63 @@ const getAddressesInfo = async (req, res) => {
   }
 };
 
+const getBetsForAccount = async (req,res) => {
+  req.clearTimeout();
+  try {
+    const hashlist = req.params.hashlist.split(",");
+    let results = [];
+
+    const txs = await TX.aggregate([
+      {
+        $match: {
+          $or: [
+            { "vout.address": { $in: hashlist } },
+            { "vin.address": { $in: hashlist } },
+          ],
+        },
+      },
+      { $sort: { blockHeight: -1 } },
+      {
+        $lookup: {
+          from: "betactions",
+          localField: "txId",
+          foreignField: "txId",
+          as: "betTxs",
+        }
+      },
+      {
+        $lookup: {
+          from: "betparlays",
+          localField: "txId",
+          foreignField: "txId",
+          as: "parlayTxs",
+        }
+      }
+    ])
+      .allowDiskUse(true)
+      .exec();
+
+    txs.map((tx) => {
+      
+        for (const bet of tx.betTxs) {
+             results.push(bet);
+         }
+
+         for (const parlay of tx.parlayTxs) {
+          results.push(parlay);
+      }
+
+      
+    });
+
+    res.json(results);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message || err);
+  }
+
+}
+
 const getunspenttransactions = async (req, res) => {
   try {
     const hashlist = req.params.hashlist.split(',');
@@ -221,6 +278,7 @@ module.exports = {
   getCustomSupply,
   getTotalPayout,
   getAddressesInfo,
+  getBetsForAccount,
   getunspenttransactions,
   getMapping
 }

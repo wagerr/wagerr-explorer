@@ -143,6 +143,18 @@ class EventList extends Component {
             <div className="scrollable"> {
                 this.state.filteredEvents.map((event) => {
 
+                    if(!event.odds[0].mlHome &&
+                       !event.odds[0].mlAway &&
+                       !event.odds[0].mlDraw &&
+                       !event.odds[1].spreadHome &&
+                       !event.odds[1].spreadAway &&
+                       !event.odds[2].totalsOver &&
+                       !event.odds[2].totalsUnder) return;
+
+
+
+
+
                     let moneylineHomeOdds = (event.odds[0].mlHome / 10000)
                     let moneylineAwayOdds = (event.odds[0].mlAway / 10000)
                     let moneylineDrawOdds = (event.odds[0].mlDraw / 10000)

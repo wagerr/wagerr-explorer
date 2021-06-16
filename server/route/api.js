@@ -73,6 +73,7 @@ router.get('/custom/betstatus', custom.getBetStatus);
 router.get('/custom/supply', custom.getCustomSupply);
 router.get('/custom/totalpayout', custom.getTotalPayout);
 router.get('/custom/getaddressesinfo/:hashlist', custom.getAddressesInfo);
+router.get('/custom/getbetsforaccount/:hashlist', custom.getBetsForAccount);
 router.get('/custom/getunspenttransactions/:hashlist', custom.getunspenttransactions);
 router.get('/custom/mapping/:search',custom.getMapping);
 
