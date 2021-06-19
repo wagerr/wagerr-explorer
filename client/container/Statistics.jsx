@@ -21,7 +21,6 @@ class Statistics extends Component {
     }
   }
 
-
   render() {
     return (
       <div className="content content-top" id="body-content">
@@ -40,23 +39,25 @@ class Statistics extends Component {
             </div>
           </div>
           <div className="content__wrapper">
+          <div className='card'>
+              <div className='card__body'>
             <Nav tabs>
-              <NavItem>
+              <NavItem >
                 <NavLink
-                  className={classnames({ active: this.state.activeTab === 'betting' })}
+                  className={classnames({ 'tab':true, 'tab__active': this.state.activeTab === 'betting'})}
                   onClick={() => { this.setState({ activeTab: 'betting' }) }}>
                   Betting Stats
           </NavLink>
               </NavItem>
-              <NavItem>
+              <NavItem >
                 <NavLink
-                  className={classnames({ active: this.state.activeTab === 'masternode' })}
+                className={classnames({'tab':true ,'tab__active': this.state.activeTab === 'masternode'})}
                   onClick={() => { this.setState({ activeTab: 'masternode' }) }}>
                   Masternode Stats
           </NavLink>
               </NavItem>
             </Nav>
-            <TabContent activeTab={this.state.activeTab}>
+            <TabContent activeTab={this.state.activeTab}  className="pr-3 pl-3">
               <TabPane tabId="betting">
                 <BettingStat />
               </TabPane>
@@ -67,6 +68,8 @@ class Statistics extends Component {
 
               </TabPane>
             </TabContent>
+            </div>
+            </div>
           </div>
         </div>
 

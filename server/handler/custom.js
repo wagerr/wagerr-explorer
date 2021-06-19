@@ -68,7 +68,7 @@ const getAddressesInfo = async (req, res) => {
   req.clearTimeout();
   try {
     const hashlist = req.params.hashlist.split(',');
-    console.log('getAddressesInfo hashlist', hashlist);
+    //console.log('getAddressesInfo hashlist', hashlist);
     let results = {};
 
     const txs = await TX
