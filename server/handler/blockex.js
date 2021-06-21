@@ -1230,6 +1230,34 @@ const getBetLatestActions = async (req, res) => {
   }
 };
 
+const getBetLatestParlays = async (req, res) => {
+  try {
+    const range = req.query.range ? parseInt(req.query.range, 10) : 30;
+    let timestamp = Date.now() - range * 60 * 1000;
+    const parlays = await BetParlay.find({
+      createdAt: { $gt: timestamp }
+    }).sort({ createdAt: -1 });
+
+    const result = []
+    for (const parlay of parlays) {
+      const item = {
+        eventId: parlay.eventId,
+        betValue: parlay.betValue,
+        legs: parlay.legs,
+        createdAt: parlay.createdAt
+      }
+      result.push(item)
+    }
+
+    res.json({ result });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message || err);
+  }
+};
+
+
 const getBetActions = async (req, res) => {
   try {
     const limit = req.query.limit ? parseInt(req.query.limit, 10) : 1000;
@@ -2812,5 +2840,6 @@ module.exports = {
   getBettotalUSD,
   getBetHotEvents,
   getBetInfoByPayout,
-  getBetLatestActions
+  getBetLatestActions,
+  getBetLatestParlays
 };

@@ -35,6 +35,7 @@ router.get('/bet/hotevents', blockex.getBetHotEvents);
 router.get('/bet/events/query', blockex.getBetQuery);
 router.get('/bet/actions', blockex.getBetActions);
 router.get('/bet/latest_actions', blockex.getBetLatestActions);
+router.get('/bet/latest_parlays', blockex.getBetLatestParlays);
 router.get('/bet/results', blockex.getBetResults);
 router.get('/bet/spreads', blockex.getBetspreads);
 router.get('/bet/totals', blockex.getBetTotals);
