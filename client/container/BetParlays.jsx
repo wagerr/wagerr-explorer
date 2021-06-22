@@ -314,7 +314,7 @@ class BetParlays extends Component {
                     black={true}
                     cols={cols}
                     data={this.state.parlaybets.map((bet) => {
-                      if(bet.legs.count <= 1) return;
+                      if(bet.legs.length <= 1) return;
                       const betAmount = bet.betValue;
                       const betTime = moment(bet.createdAt).utc().local().format('YYYY-MM-DD HH:mm:ss');
                       const betTxId = bet.txId.substr(0, 5) + '...';
