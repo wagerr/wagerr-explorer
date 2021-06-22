@@ -150,6 +150,7 @@ class BetParlays extends Component {
                   item.supplyChange = (totalMint - totalBet);  
                 }
               })
+              data = data.filter((d) => d.legs.length > 1)
               this.setState({ parlaybets: data, pages, loading: false })
             }
           })
@@ -314,7 +315,6 @@ class BetParlays extends Component {
                     black={true}
                     cols={cols}
                     data={this.state.parlaybets.map((bet) => {
-                      if(bet.legs.length <= 1) return;
                       const betAmount = bet.betValue;
                       const betTime = moment(bet.createdAt).utc().local().format('YYYY-MM-DD HH:mm:ss');
                       const betTxId = bet.txId.substr(0, 5) + '...';
