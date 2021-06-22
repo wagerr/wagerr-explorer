@@ -65,7 +65,7 @@ async function getBettingChartData(filter) {
         let groupingIds = {}
         let sort = {}
 
-        if(!["7d","30d","90d" ].includes(filter)){
+        /* if(!["7d","30d","90d" ].includes(filter)){
             groupingIds = {
                 year: "$year",
                 week: "$week"
@@ -77,7 +77,7 @@ async function getBettingChartData(filter) {
                 }
             }
 
-        } else {
+        } else { */
             groupingIds = {
                 year: "$year",
                 month: "$month",
@@ -92,7 +92,7 @@ async function getBettingChartData(filter) {
             
                 }
             }
-        }
+        //}
 
 
         let grp =  {
@@ -427,7 +427,7 @@ const getMasternodeData = async(req,res) => {
     let sort = {}
     let limit = {}
     
-    if (!["7d", "30d", "90d"].includes(filter)) {
+   /*  if (!["7d", "30d", "90d"].includes(filter)) {
         groupingIds = {
             year: "$year",
             week: "$week"
@@ -439,7 +439,7 @@ const getMasternodeData = async(req,res) => {
             }
         }
 
-    } else {
+    } else { */
         groupingIds = {
             year: "$year",
             month: "$month",
@@ -453,7 +453,7 @@ const getMasternodeData = async(req,res) => {
                 "_id.day": 1
             }
         }
-    }
+    //}
     
     const unwind = {
         $unwind: {

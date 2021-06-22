@@ -53,7 +53,7 @@ class BettingStat extends Component {
               if (CHART_TIME_FRAME.includes(this.state.bettingFilter)) {
                 bettingLabels.push(r._id.day + "/" + r._id.month + "/" + r._id.year)
               } else {
-                bettingLabels.push("week " + (index + 1))
+                bettingLabels.push("day " + (index + 1))
               }
             })
             let bettingChartData = {
