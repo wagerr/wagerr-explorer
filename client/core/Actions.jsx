@@ -1,6 +1,5 @@
-
-import fetchWorker from '../../lib/fetch.worker';
-import promise from 'bluebird';
+import fetchWorker from "../../lib/fetch.worker";
+import promise from "bluebird";
 import {
   COIN,
   COINS,
@@ -8,8 +7,8 @@ import {
   EVENTS,
   TXS,
   WATCH_ADD,
-  WATCH_REMOVE
-} from '../constants';
+  WATCH_REMOVE,
+} from "../constants";
 
 const promises = new Map();
 const worker = new fetchWorker();
@@ -36,27 +35,27 @@ worker.onmessage = (ev) => {
 };
 
 const getFromWorker = (type, resolve, reject, query = null) => {
-  promises.set(type, { resolve, reject });  
+  promises.set(type, { resolve, reject });
   worker.postMessage({ query, type });
   return true;
 };
 
 export const getAddress = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('address', resolve, reject, query);
+    return getFromWorker("address", resolve, reject, query);
   });
 };
 
 export const getBlock = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('block', resolve, reject, query);
+    return getFromWorker("block", resolve, reject, query);
   });
 };
 
 export const getCoinHistory = (dispatch, query) => {
   return new promise((resolve, reject) => {
     return getFromWorker(
-      'coins',
+      "coins",
       (payload) => {
         if (payload && payload.length) {
           dispatch({ payload: payload[0], type: COIN });
@@ -75,26 +74,26 @@ export const getCoinHistory = (dispatch, query) => {
 
 export const getCoinsWeek = () => {
   return new promise((resolve, reject) => {
-    return getFromWorker('coins-week', resolve, reject);
+    return getFromWorker("coins-week", resolve, reject);
   });
 };
 
 export const getIsBlock = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('is-block', resolve, reject, query);
+    return getFromWorker("is-block", resolve, reject, query);
   });
 };
 
 export const getMNs = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('mns', resolve, reject, query);
+    return getFromWorker("mns", resolve, reject, query);
   });
 };
 
 export const getPeers = () => {
   return new promise((resolve, reject) => {
     return getFromWorker(
-      'peers',
+      "peers",
       (peers) => {
         resolve(peers);
       },
@@ -105,20 +104,20 @@ export const getPeers = () => {
 
 export const getTop100 = () => {
   return new promise((resolve, reject) => {
-    return getFromWorker('top-100', resolve, reject);
+    return getFromWorker("top-100", resolve, reject);
   });
 };
 
 export const getTX = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('tx', resolve, reject, query);
+    return getFromWorker("tx", resolve, reject, query);
   });
 };
 
 export const getTXLatest = (dispatch, query) => {
   return new promise((resolve, reject) => {
     return getFromWorker(
-      'txs-latest',
+      "txs-latest",
       (payload) => {
         if (dispatch) {
           dispatch({ payload, type: TXS });
@@ -139,7 +138,7 @@ export const getTXLatest = (dispatch, query) => {
 export const getTXs = (dispatch, query) => {
   return new promise((resolve, reject) => {
     return getFromWorker(
-      'txs',
+      "txs",
       (payload) => {
         if (dispatch) {
           dispatch({ payload, type: TXS });
@@ -159,7 +158,7 @@ export const getTXs = (dispatch, query) => {
 
 export const getTXsWeek = () => {
   return new promise((resolve, reject) => {
-    return getFromWorker('txs-week', resolve, reject);
+    return getFromWorker("txs-week", resolve, reject);
   });
 };
 
@@ -177,129 +176,139 @@ export const removeWatch = (dispatch, term) => {
 
 export const getListEvents = (dispatch, query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('listevents', (payload) => {
-      dispatch({ payload, type: EVENTS });
-      resolve(payload);
-    },
-    (payload) => {
-      dispatch({ payload, type: ERROR });
-      reject(payload);
-    }, query);
+    return getFromWorker(
+      "listevents",
+      (payload) => {
+        dispatch({ payload, type: EVENTS });
+        resolve(payload);
+      },
+      (payload) => {
+        dispatch({ payload, type: ERROR });
+        reject(payload);
+      },
+      query
+    );
   });
 };
 
 export const getBetActionsWeek = () => {
   return new promise((resolve, reject) => {
-    return getFromWorker('betactions-week', resolve, reject);
+    return getFromWorker("betactions-week", resolve, reject);
   });
 };
 export const getBettingStatData = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('betstatdata', resolve, reject,query);
+    return getFromWorker("betstatdata", resolve, reject, query);
   });
 };
 export const getMasternodeStatData = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('masternodestatdata', resolve, reject,query);
+    return getFromWorker("masternodestatdata", resolve, reject, query);
   });
 };
 export const getBetEvents = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('betevents', resolve, reject, query);
+    return getFromWorker("betevents", resolve, reject, query);
   });
 };
 export const getBetQuery = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('beteventquery', resolve, reject, query);
+    return getFromWorker("beteventquery", resolve, reject, query);
   });
 };
 export const getBetActions = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('betactions', resolve, reject, query);
+    return getFromWorker("betactions", resolve, reject, query);
   });
 };
 export const getBetResults = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('betresults', resolve, reject, query);
+    return getFromWorker("betresults", resolve, reject, query);
   });
 };
 export const getBetspreads = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('betspreads', resolve, reject, query);
+    return getFromWorker("betspreads", resolve, reject, query);
   });
 };
 export const getBetTotals = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('bettotals', resolve, reject, query);
+    return getFromWorker("bettotals", resolve, reject, query);
   });
 };
 export const getBetUpdates = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('betupdates', resolve, reject, query);
+    return getFromWorker("betupdates", resolve, reject, query);
   });
 };
 export const getBetEventInfo = (query) => {
-  //console.log('call getBetEventInfo', query)  
+  //console.log('call getBetEventInfo', query)
   return new promise((resolve, reject) => {
-    return getFromWorker('beteventinfo', resolve, reject, query);
+    return getFromWorker("beteventinfo", resolve, reject, query);
   });
 };
 
 export const getLottoEventInfo = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('lottoeventinfo', resolve, reject, query);
+    return getFromWorker("lottoeventinfo", resolve, reject, query);
   });
 };
 
 export const getBetEventsInfo = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('beteventsinfo', resolve, reject, query);
+    return getFromWorker("beteventsinfo", resolve, reject, query);
   });
 };
 
 export const getParlayBetsInfo = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('betparlaysinfo', resolve, reject, query);
+    return getFromWorker("betparlaysinfo", resolve, reject, query);
   });
 };
 
 export const getBetsForAccount = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('getbetsforaccount', resolve, reject, query);
+    return getFromWorker("getbetsforaccount", resolve, reject, query);
   });
 };
 
 export const getCurrentPPs = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('currentpps', resolve, reject, query);
+    return getFromWorker("currentpps", resolve, reject, query);
   });
 };
 export const getBetPerWeek = () => {
   return new promise((resolve, reject) => {
-    return getFromWorker('betperweek', resolve, reject);
+    return getFromWorker("betperweek", resolve, reject);
   });
 };
 export const getOpCode = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('opcode', resolve, reject, query);
+    return getFromWorker("opcode", resolve, reject, query);
   });
 };
 
 export const getLottoEvents = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('lottoevents', resolve, reject, query);
+    return getFromWorker("lottoevents", resolve, reject, query);
   });
 };
 
 export const getLottoBets = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('lottobets', resolve, reject, query);
+    return getFromWorker("lottobets", resolve, reject, query);
   });
 };
 
 export const getLottoResults = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker('lottoresults', resolve, reject, query);
+    return getFromWorker("lottoresults", resolve, reject, query);
+  });
+};
+
+export const getCrosschainBets = (query) => {
+  return new promise((resolve, reject) => {
+    return getFromWorker("crosschainBets", resolve, reject, query);
   });
 };
 
@@ -340,4 +349,5 @@ export default {
   getLottoEvents,
   getLottoResults,
   getLottoEventInfo,
+  getCrosschainBets,
 };

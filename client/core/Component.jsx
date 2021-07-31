@@ -1,8 +1,8 @@
+import React from "react";
 
-import React from 'react';
-
-import ErrorBlock from '../component/ErrorBlock';
-import Loading from '../component/Loading';
+import ErrorBlock from "../component/ErrorBlock";
+import Loading from "../component/Loading";
+import Overlay from "../component/Overlay";
 
 export default class Component extends React.Component {
   /**
@@ -13,7 +13,7 @@ export default class Component extends React.Component {
    *  - kH
    */
   formatNetHash = (hash) => {
-    const labels = ['H', 'kH', 'MH', 'GH', 'TH'];
+    const labels = ["H", "kH", "MH", "GH", "TH"];
     let idx = 0;
     while (hash > 1000) {
       hash = hash / 1000;
@@ -27,16 +27,24 @@ export default class Component extends React.Component {
    * Generate a random string.
    */
   randomString = () => {
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    return (
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15)
+    );
   };
 
   /**
    * Render the provided error for the component.
    */
-  renderError = (err) => (<ErrorBlock error={ err } />);
+  renderError = (err) => <ErrorBlock error={err} />;
 
   /**
    * Render the loading indicator.
    */
-  renderLoading = () => (<Loading />);
+  renderLoading = () => <Loading />;
+
+  /**
+   * Render the overlay indicator.
+   */
+  renderOverlay = (text) => <Overlay text={text} />;
 }

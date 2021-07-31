@@ -1,62 +1,74 @@
-import Component from '../core/Component';
-import { compose } from 'redux'
-import { connect } from 'react-redux'
-import { translate } from 'react-i18next'
-import React from 'react';
-import Card from '../component/Card';
-import BettingMenuDesktop from '../component/Menu/BettingMenuDesktop';
-import BettingMobileMenu from '../component/Menu/BettingMobileMenu';
-import BettingSlips from './BettingSlips';
-import EventList from './EventList';
-import PubSub from 'pubsub-js';
+import Component from "../core/Component";
+import { compose } from "redux";
+import { connect } from "react-redux";
+import { translate } from "react-i18next";
+import React from "react";
+import Card from "../component/Card";
+import BettingMenuDesktop from "../component/Menu/BettingMenuDesktop";
+import BettingMobileMenu from "../component/Menu/BettingMobileMenu";
+import BettingSlips from "./BettingSlips";
+import EventList from "./EventList";
+import PubSub from "pubsub-js";
+import Overlay from "../component/Overlay";
 
 class Betting extends Component {
- 
   constructor(props) {
-    super(props)
-    this.state = { 
-      sport:"allevent"
-    }
-    
+    super(props);
+    this.state = {
+      sport: "allevent",
+      betProcessing: false,
+    };
+
+    PubSub.subscribe("bet-processing", (msg, status) => {
+      console.log("bet-processing:", status);
+      this.setState({ betProcessing: status });
+    });
   }
 
   componentWillReceiveProps(props) {
     const sport = props.match.params.id;
-    PubSub.publish('sport-changed',sport)
+    PubSub.publish("sport-changed", sport);
   }
-  
+
   render() {
-    
     return (
-      <div className='content'>
+      <div className="content">
         <div className="menu-wrapper">
           <BettingMenuDesktop location={this.props.location} />
         </div>
         <div className="content__wrapper_total">
           <BettingMobileMenu />
           <div className="row m-20">
+            {this.state.betProcessing ? (
+              <Overlay text="Bet Processing...." />
+            ) : null}
             <div className="col-lg-9 col-md-12">
-              <EventList toggleSwitchOddsStyle={this.props.toggleSwitchOddsStyle} toggleSwitchOdds={this.props.toggleSwitchOdds} />
+              <EventList
+                toggleSwitchOddsStyle={this.props.toggleSwitchOddsStyle}
+                toggleSwitchOdds={this.props.toggleSwitchOdds}
+              />
             </div>
             <div className="col-lg-3 col-md-12">
               <BettingSlips />
             </div>
           </div>
         </div>
-        {this.state.connected && <div className='m-20'>
-          <h2>Betting</h2>
-          <Card>
-            <div className='m-20 flex-center'>
-              <div>Looks like Wallet Not Connected</div>
-              <div>Go to <span className='link'>Help</span>  to install wallet</div>
-            </div>
-          </Card>
-        </div>}
+        {this.state.connected && (
+          <div className="m-20">
+            <h2>Betting</h2>
+            <Card>
+              <div className="m-20 flex-center">
+                <div>Looks like Wallet Not Connected</div>
+                <div>
+                  Go to <span className="link">Help</span> to install wallet
+                </div>
+              </div>
+            </Card>
+          </div>
+        )}
       </div>
     );
-  };
+  }
 }
 
-export default compose(
-  translate('betting'),
-)(Betting);
+export default compose(translate("betting"))(Betting);

@@ -1,120 +1,151 @@
-import Component from '../../core/Component';
-import React from 'react';
-import _ from 'lodash';
-import Wallet from '../../core/Wallet';
-import { parlayToOpcode } from '../utils/betUtils';
-import { alertPopup } from '../utils/alerts';
+import Component from "../../core/Component";
+import React from "react";
+import _ from "lodash";
+import Wallet from "../../core/Wallet";
+import { parlayToOpcode } from "../utils/betUtils";
 
 export default class CardParlayBetBox extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            legs: [],
-            totalOdds: 0,
-            betAmount:"",
-            potentialReturn: 0
+  constructor(props) {
+    super(props);
+    this.state = {
+      legs: [],
+      totalOdds: 0,
+      betAmount: "",
+      potentialReturn: 0,
+    };
+
+    this.walletClient = null;
+  }
+  componentWillReceiveProps(props) {
+    const parlayslips = props.parlaySlips;
+    parlayslips.forEach((event) => {
+      switch (event.outcome) {
+        case 1:
+          event.effectiveOddValue = event.odds[0].mlHomeEO;
+          break;
+        case 2:
+          event.effectiveOddValue = event.odds[0].mlAwayEO;
+          break;
+        case 3:
+          event.effectiveOddValue = event.odds[0].mlDrawEO;
+          break;
+        case 4:
+          event.effectiveOddValue = event.odds[1].spreadHomeEO;
+          break;
+        case 5:
+          event.effectiveOddValue = event.odds[1].spreadAwayEO;
+          break;
+        case 6:
+          event.effectiveOddValue = event.odds[2].totalsOverEO;
+          break;
+        case 7:
+          event.effectiveOddValue = event.odds[2].totalsUnderEO;
+          break;
+      }
+    });
+
+    const totalodds = _.round(
+      _.reduce(
+        parlayslips,
+        (mul, s) => mul * parseFloat(s.effectiveOddValue),
+        1
+      ),
+      2
+    );
+    const legs = parlayslips.map((s) => {
+      return {
+        eventid: s.event_id,
+        outcome: s.outcome,
+      };
+    });
+
+    this.setState({
+      legs: legs,
+      totalOdds: totalodds,
+      potentialReturn: _.round(this.state.betAmount * totalodds, 2),
+    });
+  }
+
+  handleChange = (e) => {
+    console.log(e.target.value);
+    this.setState({
+      betAmount: e.target.value,
+      potentialReturn: _.round(e.target.value * this.state.totalOdds, 2),
+    });
+  };
+
+  doBet = async () => {
+    let opcode = "";
+    try {
+      opcode = parlayToOpcode(this.state.legs);
+    } catch (e) {
+      console.log("invalid opcode: ", e);
+      alert("Invalid opcode: " + e.toString().replace(/Error:/g, ""));
+      return;
+    }
+
+    PubSub.publish("bet-processing", true);
+    const res = await Wallet.instance.sendBet(opcode, this.state.betAmount);
+    PubSub.publish("bet-processing", false);
+
+    this.props.clearBetSlip();
+    const txHash =
+      Wallet.instance.currentProvider == "WGR" ? res.hash : res.transactionHash;
+    if (Wallet.instance.currentProvider == "MM") {
+      const id = setInterval(async () => {
+        const lastBetCrosschainTxId =
+          await Wallet.instance.getLastBetCrosschainTx();
+        if (lastBetCrosschainTxId !== "") {
+          clearInterval(id);
+          alert("CrossChainTx :" + lastBetCrosschainTxId);
         }
-
-        this.walletClient = null
+      }, 10000);
+    } else if (Wallet.instance.currentProvider == "WGR") {
+      alert("Bet Sent: (txid: " + txHash + " ) ");
     }
-    componentWillReceiveProps(props) { 
+  };
 
-        const parlayslips = props.parlaySlips;
-        parlayslips.forEach((event) => {
-        switch(event.outcome) {
-            case 1:
-                event.effectiveOddValue = event.odds[0].mlHomeEO
-                break;
-            case 2:
-                event.effectiveOddValue = event.odds[0].mlAwayEO
-                break;
-            case 3:
-                event.effectiveOddValue = event.odds[0].mlDrawEO
-                break;
-            case 4:
-                event.effectiveOddValue = event.odds[1].spreadHomeEO
-                break;
-            case 5:
-                event.effectiveOddValue = event.odds[1].spreadAwayEO
-                break;
-            case 6:
-                event.effectiveOddValue = event.odds[2].totalsOverEO
-                break;
-            case 7:
-                event.effectiveOddValue = event.odds[2].totalsUnderEO
-                break;
-            
-        }
-
-    })
-        
-       const totalodds = _.round(_.reduce(parlayslips, (mul,s) => mul * parseFloat(s.effectiveOddValue),1),2)
-       const legs = parlayslips.map((s) => {
-       return {
-           eventid:s.event_id, 
-           outcome:s.outcome
-        }
-    })
-      
-       this.setState({
-           legs: legs,
-           totalOdds:totalodds,
-           potentialReturn: _.round(this.state.betAmount * totalodds,2)
-        })
-    }
-
-
-    handleChange = (e) => {
-        console.log(e.target.value)
-        this.setState({
-            betAmount:e.target.value,
-            potentialReturn: _.round(e.target.value * this.state.totalOdds,2)
-        })
-        
-    }
-
-    doBet = () => {
-        let opcode = ""
-        try {
-            
-           opcode = parlayToOpcode(this.state.legs)
-        } catch (e) {
-            console.log('invalid opcode: ',e)
-            alertPopup('Invalid opcode: '+ e.toString().replace(/Error:/g, ''))
-            return
-        }
-
-        Wallet.instance.sendBet(opcode, this.state.betAmount).then((res) => {
-            this.props.clearBetSlip()
-
-            alertPopup('Bet Sent: (txid: ' + res.hash + ' )')
-            console.log(res)
-        }).catch((e) => {
-            console.log('send bet error: ',e)
-            alertPopup('send bet error: '+ e.toString().replace(/Error:/g, ''))
-        })
-    }
-
-    render() {
-        return (
-            
-            <div className="place-bet-box">
-                        <div className="total-parlay">
-                            <span>Total Legs : {this.state.legs.length}</span>
-                            <span>Total Odds : {this.state.totalOdds}</span>
-                        </div>
-                        <div className="parlay-form">
-                            <label className="total-parlay">
-                                <span className="span_bet">BET</span>
-                                <input type="text" className="bet-value" placeholder="Enter bet amount" onChange={this.handleChange} value={this.state.betAmount} /><span className="afterInput"></span>
-                                
-                            </label>
-                            { this.state.betAmount > 0 && (this.state.betAmount < 25 || this.state.betAmount > 10000)  && <p className="text-center"> (Min 25 - Max 10000)</p> }
-                            <label className="place-bet-box__label">Potential Returns : <span>{this.state.potentialReturn} tWGR</span></label>
-                            <button className="btn-place-bet" disabled= {this.state.betAmount < 25 || this.state.betAmount > 10000 || this.state.legs.length < 2 } onClick={this.doBet}>PLACE BET</button>
-                        </div>
-                    </div>
-        )
-
-    }
+  render() {
+    return (
+      <div className="place-bet-box">
+        <div className="total-parlay">
+          <span>Total Legs : {this.state.legs.length}</span>
+          <span>Total Odds : {this.state.totalOdds}</span>
+        </div>
+        <div className="parlay-form">
+          <label className="total-parlay">
+            <span className="span_bet">BET</span>
+            <input
+              type="text"
+              className="bet-value"
+              placeholder="Enter bet amount"
+              onChange={this.handleChange}
+              value={this.state.betAmount}
+            />
+            <span className="afterInput"></span>
+          </label>
+          {this.state.betAmount > 0 &&
+            (this.state.betAmount < 25 || this.state.betAmount > 10000) && (
+              <p className="text-center"> (Min 25 - Max 10000)</p>
+            )}
+          <label className="place-bet-box__label">
+            Potential Returns : <span>{this.state.potentialReturn} tWGR</span>
+          </label>
+          <button
+            className="btn-place-bet"
+            disabled={
+              this.state.betAmount < 25 ||
+              this.state.betAmount > 10000 ||
+              this.state.legs.length < 2
+            }
+            onClick={async () => {
+              await this.doBet();
+            }}
+          >
+            PLACE BET
+          </button>
+        </div>
+      </div>
+    );
+  }
 }
