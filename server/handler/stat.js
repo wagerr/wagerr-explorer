@@ -65,19 +65,19 @@ async function getBettingChartData(filter) {
         let groupingIds = {}
         let sort = {}
 
-        /* if(!["7d","30d","90d" ].includes(filter)){
+        if(!["7d","30d","90d" ].includes(filter)){
             groupingIds = {
                 year: "$year",
                 week: "$week"
             }
            sort = {
                 $sort: {
-                    "_id.year": 1,
-                    "_id.week":1
+                    "_id.year": -1,
+                    "_id.week":-1
                 }
             }
 
-        } else { */
+        } else { 
             groupingIds = {
                 year: "$year",
                 month: "$month",
@@ -88,11 +88,11 @@ async function getBettingChartData(filter) {
                 $sort: {
                     "_id.year":-1,
                     "_id.month":-1,
-                    "_id.day": 1
+                    "_id.day": -1
             
                 }
             }
-        //}
+        }
 
 
         let grp =  {
@@ -222,6 +222,11 @@ async function getBettingData() {
 
 async function getParlayLegData() {
     const legData = await BetParlay.aggregate([
+        {
+            $match: {
+                "completed":true
+            }
+          },
         {
             $unwind: "$legs"
         },
@@ -427,19 +432,19 @@ const getMasternodeData = async(req,res) => {
     let sort = {}
     let limit = {}
     
-   /*  if (!["7d", "30d", "90d"].includes(filter)) {
+   if (!["7d", "30d", "90d"].includes(filter)) {
         groupingIds = {
             year: "$year",
             week: "$week"
         }
         sort = {
             $sort: {
-                "_id.year": 1,
-                "_id.week": 1
+                "_id.year": -1,
+                "_id.week": -1
             }
         }
 
-    } else { */
+    } else { 
         groupingIds = {
             year: "$year",
             month: "$month",
@@ -450,10 +455,10 @@ const getMasternodeData = async(req,res) => {
             $sort: {
                 "_id.year": -1,
                 "_id.month": -1,
-                "_id.day": 1
+                "_id.day": -1
             }
         }
-    //}
+    }
     
     const unwind = {
         $unwind: {

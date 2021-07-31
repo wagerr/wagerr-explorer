@@ -8,8 +8,7 @@ import { Row, Col } from 'reactstrap';
 import numeral from 'numeral'
 import CardBigTable from "../component/Card/CardBigTable";
 import HorizontalRule from '../component/HorizontalRule';
-import Select from '../component/Select'
-import { CHART_TIME_FRAME } from '../constants'
+
 
 class MasternodeStat extends Component {
 
@@ -21,14 +20,19 @@ class MasternodeStat extends Component {
       blockRewardInfo: null,
       oracleMasternodeRewardInfo: null,
       oracleMasternodeChartData: null,
-      loading: true,
-      filter: "90d"
+      loading: true
     }
   }
 
   componentDidMount() {
     this.getMasternodeData()
   }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.timeFrame !== prevProps.timeFrame) {
+      this.getMasternodeData();
+    }
+  };
 
   getMasternodeData = () => {
     this.setState({ loading: true }, () => {
@@ -37,7 +41,7 @@ class MasternodeStat extends Component {
       }
 
       let getMethod = this.props.getMasternodeStatData;
-      const params = { filter: this.state.filter }
+      const params = { filter: this.props.timeFrame }
       this.debounce = setTimeout(() => {
         getMethod(params)
           .then((data) => {
@@ -46,10 +50,10 @@ class MasternodeStat extends Component {
 
             data.oracleMNChartData.forEach((r, index) => {
               oracleMNrewards.push(r.oraclePayouts)
-              if (["7d", "30d", "90d"].includes(this.state.filter)) {
+              if (["7d", "30d", "90d"].includes(this.props.timeFrame)) {
                 oracleMNLabels.push(r._id.day + "/" + r._id.month + "/" + r._id.year)
               } else {
-                oracleMNLabels.push("week " + (index + 1))
+                oracleMNLabels.push("week " + (r._id.week + 1) + "/" + r._id.year)
               }
             })
 
@@ -84,10 +88,6 @@ class MasternodeStat extends Component {
     })
   }
 
-  handleFilterBy = value => this.setState({ filter: value }, () => {
-    this.getMasternodeData()
-  });
-
   render() {
     if (!!this.state.error) {
       return this.renderError(this.state.error)
@@ -102,18 +102,12 @@ class MasternodeStat extends Component {
             <HorizontalRule title="Masternode Reward Information" />
             <div className="w3-tables__title">
               <div>Masternode Reward Chart</div>
-              <div className="d-flex flex-row align-items-center">
-                <Select
-                  onChange={value => this.handleFilterBy(value)}
-                  selectedValue={this.state.filter}
-                  options={CHART_TIME_FRAME} />
-              </div>
             </div>
             <BarChart data={this.state.oracleMasternodeChartData} height="30em" width="100%" type="bar" title="Masternode Reward Info" />
           </Col>
         </Row>
 
-        <Row className="mt-5">
+        <Row className="mt-3">
           <Col sm="12">
             <HorizontalRule title="General Information" />
             {this.state.masternodeInfo && <CardBigTable
@@ -121,7 +115,7 @@ class MasternodeStat extends Component {
                 { key: 'masternodeCount', title: 'Masternodes', className: 'w-m-160' },
                 { key: 'collateral', title: 'Required Collateral', className: 'w-m-120' },
                 { key: 'supplyLockedPercent', title: 'Locked Supply' },
-                { key: 'cost', title: 'Cost($)' }
+                { key: 'cost', title: 'Cost (USD)' }
               ]}
               data={[this.state.masternodeInfo].map((data) => {
 
@@ -139,7 +133,7 @@ class MasternodeStat extends Component {
           </Col>
         </Row>
 
-        <Row className="mt-5">
+        <Row>
           <Col sm="12">
             <HorizontalRule title="Oracle Reward Information" />
             {this.state.oracleRewardInfo && <CardBigTable
@@ -155,7 +149,7 @@ class MasternodeStat extends Component {
                   data,
                   lastOraclePayout: numeral(data.lastOraclePayout).format('0,0.00'),
                   unpaidAccuredreward: numeral(data.unpaidAccuredreward).format('0,0.00'),
-                  oracleYearlyEstReward: numeral(data.oracleYearlyEstReward).format('0,0.00') + ' WGR / ' + numeral(data.oracleYearlyEstReward * this.props.coin.usd).format('0,0.00') + ' USD',
+                  oracleYearlyEstReward: numeral(data.oracleYearlyEstReward).format('0,0.00') + ' WGR / ' + '$' + numeral(data.oracleYearlyEstReward * this.props.coin.usd).format('0,0.00'),
                   oracleAnnualized: numeral(data.oracleAnnualized).format('0,0.00') + '%'
 
                 };
@@ -165,7 +159,7 @@ class MasternodeStat extends Component {
           </Col>
         </Row>
 
-        <Row className="mt-5">
+        <Row>
           <Col sm="12">
             <HorizontalRule title="Block Reward Information" />
             {this.state.blockRewardInfo && <CardBigTable
@@ -181,7 +175,7 @@ class MasternodeStat extends Component {
                   data,
                   blockReward: numeral(data.blockReward).format('0,0.00'),
                   blockPerDay: numeral(data.blockPerDay).format('0,0.00'),
-                  yearlyEst: numeral(data.yearlyEst).format('0,0.00') + ' WGR / ' + numeral(data.yearlyEst * this.props.coin.usd).format('0,0.00') + ' USD',
+                  yearlyEst: numeral(data.yearlyEst).format('0,0.00') + ' WGR / ' + '$' + numeral(data.yearlyEst * this.props.coin.usd).format('0,0.00'),
                   blockRewardPercent: numeral(data.blockRewardPercent).format('0,0.00') + '%'
 
                 };
@@ -191,7 +185,7 @@ class MasternodeStat extends Component {
           </Col>
         </Row>
 
-        <Row className="mt-5">
+        <Row>
           <Col sm="12">
             <HorizontalRule title="Combined Oracle Masternode Rewards Information" />
             {this.state.oracleMasternodeRewardInfo && <CardBigTable
@@ -203,7 +197,7 @@ class MasternodeStat extends Component {
 
                 return {
                   data,
-                  yearlyEstimate: numeral(data.yearlyEstimate).format('0,0.00') + ' WGR / ' + numeral(data.yearlyEstimate * this.props.coin.usd).format('0,0.00') + ' USD',
+                  yearlyEstimate: numeral(data.yearlyEstimate).format('0,0.00') + ' WGR / ' + '$' + numeral(data.yearlyEstimate * this.props.coin.usd).format('0,0.00'),
                   oracleMNAnnual: numeral(data.oracleMNAnnual).format('0,0.00') + '%'
 
                 };

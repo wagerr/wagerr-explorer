@@ -8,9 +8,6 @@ import { Card, Row, Col } from 'reactstrap';
 import numeral from 'numeral'
 import CardBigTable from "../component/Card/CardBigTable";
 import HorizontalRule from '../component/HorizontalRule';
-import MultilineChart from '../component/Graph/MultilineChart';
-import Select from '../component/Select'
-import { CHART_TIME_FRAME } from '../constants'
 
 class BettingStat extends Component {
 
@@ -19,8 +16,7 @@ class BettingStat extends Component {
     this.debounce = null
     this.state = {
       error: null,
-      loading: true,
-      filter: "90d", //"7d","30d","90d"
+      loading: true
     }
   }
 
@@ -28,6 +24,11 @@ class BettingStat extends Component {
     this.getBetChartData()
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.timeFrame !== prevProps.timeFrame) {
+      this.getBetChartData();
+    }
+  };
   getBetChartData = () => {
     this.setState({ loading: true }, () => {
       if (this.debounce) {
@@ -37,7 +38,7 @@ class BettingStat extends Component {
       let getMethod = this.props.getBettingStatData;
 
       const params = {
-        filter: this.state.filter
+        filter: this.props.timeFrame
       }
 
       this.debounce = setTimeout(() => {
@@ -50,10 +51,10 @@ class BettingStat extends Component {
             data.chartData.forEach((r, index) => {
               bettingTotals.push(r.totalBetValue)
               bettingSupplyChanges.push(r.supplyChange)
-              if (CHART_TIME_FRAME.includes(this.state.bettingFilter)) {
+              if (["7d", "30d", "90d"].includes(this.props.timeFrame)) {
                 bettingLabels.push(r._id.day + "/" + r._id.month + "/" + r._id.year)
               } else {
-                bettingLabels.push("day " + (index + 1))
+                bettingLabels.push("week " + (r._id.week + 1) + "/" + r._id.year)
               }
             })
             let bettingChartData = {
@@ -102,7 +103,7 @@ class BettingStat extends Component {
               ]
             }
 
-
+            delete data.parlayLegData[data.parlayLegData.length-1] //delete data with 1 legs
             this.setState({
               bettingChartData: bettingChartData,
               bettingData: data.bettingData,
@@ -119,13 +120,7 @@ class BettingStat extends Component {
     })
   }
 
-  handleFilterBy = value => this.setState({ filter: value }, () => {
-    this.getBetChartData()
-  });
-
-
-
-
+  
   render() {
 
     if (!!this.state.error) {
@@ -133,11 +128,11 @@ class BettingStat extends Component {
   } else if (this.state.loading) {
       return this.renderLoading()
   }
-
+const mintBurnRate = ((this.props.coin.totalMint - this.props.coin.totalBet) / this.props.coin.totalBet) * 100;
     return (
       <div className="mt-4">
         <Row >
-          <Col sm="4">
+          <Col sm="5">
             <Card className="card--status">
               <div className="card__row bg-eee">
                 <span className="card__label">Total Bet</span>
@@ -159,11 +154,14 @@ class BettingStat extends Component {
               </div>
             </Card>
           </Col>
-          <Col sm="4">
-            <h4 className="text-center">Mint/Burn rate</h4>
-            <h4 className="text-center mt-3">{numeral(((this.props.coin.totalMint - this.props.coin.totalBet) / this.props.coin.totalBet) * 100).format('0,0.00')}%</h4>
-          </Col>
-          <Col sm="4">
+          <Col sm="2">
+          <Card className="card--market pt-3" >
+          <h4 className="text-center">Mint/Burn rate</h4>
+          <h4 className="text-center mt-2">{(mintBurnRate > 0? "+" : "")}{ numeral(mintBurnRate).format('0,0.00')}%</h4>
+              
+        </Card>
+              </Col>
+          <Col sm="5">
             <Card className="card--status">
               <div className="card__row bg-eee">
                 <span className="card__label">Total Supply</span>
@@ -191,13 +189,7 @@ class BettingStat extends Component {
           <Col sm="12">
             <div className="w3-tables__title">
               <div>Betting Chart</div>
-              <div className="d-flex flex-row align-items-center">
-                <Select
-                  onChange={value => this.handleFilterBy(value)}
-                  selectedValue={this.state.filter}
-                  options={CHART_TIME_FRAME} />
-              </div>
-            </div>
+             </div>
             { this.state.bettingChartData && <BarChart data={this.state.bettingChartData} height="30em" width="auto" type="bar" title="Weekly Betting Volume (WGR)" />}
           </Col>
         </Row>
@@ -210,7 +202,7 @@ class BettingStat extends Component {
           </Col>
         </Row>
 
-        <Row className="mt-5">
+        <Row >
           <Col sm="12">
             <HorizontalRule title="Bet Data" />
             {this.state.bettingData && <CardBigTable
@@ -219,9 +211,9 @@ class BettingStat extends Component {
                 { key: 'totalBet', title: 'Total WGR Bet', className: 'w-m-120' },
                 { key: 'burnMint', title: 'Burn/Mint' },
                 { key: 'burnMintRate', title: 'Burn/Mint rate' },
-                { key: 'betUSD', title: 'Bet USD' },
-                { key: 'betAnnualized', title: 'Annualized' },
-                { key: 'betDaily', title: 'Daily Average USD' },
+                { key: 'betUSD', title: 'Bet (USD)' },
+                { key: 'betAnnualized', title: 'Annualized (USD)' },
+                { key: 'betDaily', title: 'Daily Average (USD)' },
               ]}
               data={[this.state.bettingData.singleBets].map((bet) => {
 
@@ -231,9 +223,9 @@ class BettingStat extends Component {
                   totalBet: numeral(bet.totalBet).format('0,0.00'),
                   burnMint: numeral(bet.burnMint).format('0,0.00'),
                   burnMintRate: numeral(bet.burnMintRate).format('0,0.00') + '%',
-                  betUSD: numeral(bet.betUSD).format('0,0.00'),
-                  betAnnualized: numeral(bet.betAnnualized).format('0,0.00'),
-                  betDaily: numeral(bet.betDaily).format('0,0.00')
+                  betUSD: '$' + numeral(bet.betUSD).format('0,0.00'),
+                  betAnnualized: '$' + numeral(bet.betAnnualized).format('0,0.00'),
+                  betDaily: '$' + numeral(bet.betDaily).format('0,0.00')
 
                 };
               })}
@@ -242,7 +234,7 @@ class BettingStat extends Component {
           </Col>
         </Row>
 
-        <Row className="mt-5">
+        <Row >
           <Col sm="12">
             <HorizontalRule title="Parlay Data" />
             {this.state.bettingData && <CardBigTable
@@ -251,9 +243,9 @@ class BettingStat extends Component {
                 { key: 'totalBet', title: 'Total WGR Bet', className: 'w-m-120' },
                 { key: 'burnMint', title: 'Burn/Mint' },
                 { key: 'burnMintRate', title: 'Burn/Mint rate' },
-                { key: 'betUSD', title: 'Bet USD' },
-                { key: 'betAnnualized', title: 'Annualized' },
-                { key: 'betDaily', title: 'Daily Average USD' },
+                { key: 'betUSD', title: 'Bet (USD)' },
+                { key: 'betAnnualized', title: 'Annualized (USD)' },
+                { key: 'betDaily', title: 'Daily Average (USD)' },
               ]}
               data={[this.state.bettingData.parlayBets].map((bet) => {
 
@@ -263,9 +255,9 @@ class BettingStat extends Component {
                   totalBet: numeral(bet.totalBet).format('0,0.00'),
                   burnMint: numeral(bet.burnMint).format('0,0.00'),
                   burnMintRate: numeral(bet.burnMintRate).format('0,0.00') + '%',
-                  betUSD: numeral(bet.betUSD).format('0,0.00'),
-                  betAnnualized: numeral(bet.betAnnualized).format('0,0.00'),
-                  betDaily: numeral(bet.betDaily).format('0,0.00')
+                  betUSD: '$' + numeral(bet.betUSD).format('0,0.00'),
+                  betAnnualized: '$' + numeral(bet.betAnnualized).format('0,0.00'),
+                  betDaily: '$' + numeral(bet.betDaily).format('0,0.00')
 
                 };
               })}
@@ -273,7 +265,7 @@ class BettingStat extends Component {
             }
           </Col>
         </Row>
-        <Row className="mt-5">
+        <Row >
           <Col sm="12">
             <HorizontalRule title="Parlay Leg Data" />
             {this.state.bettingData && <CardBigTable
@@ -282,8 +274,8 @@ class BettingStat extends Component {
                 { key: 'count', title: 'Bet Counts', className: 'w-m-160' },
                 { key: 'wins', title: 'Wins', className: 'w-m-120' },
                 { key: 'winPercent', title: 'Win %' },
-                { key: 'totalBet', title: 'Total Bets' },
-                { key: 'burn', title: 'Burn' },
+                { key: 'totalBet', title: 'Total Bets (WGR)' },
+                { key: 'burn', title: 'Burn (WGR)' },
                 { key: 'burnRate', title: 'Burn Rate' }
 
               ]}
@@ -295,9 +287,9 @@ class BettingStat extends Component {
                   count: leg.count,
                   wins: leg.wins,
                   winPercent: numeral(leg.winPercent).format('0,0.00'),
-                  totalBet: numeral(leg.totalBet).format('0,0.00'),
-                  burn: numeral(leg.burn).format('0,0.00'),
-                  burnRate: numeral(leg.burnRate).format('0,0.00')
+                  totalBet: numeral(leg.totalBet).format('0,0.00') + ' WGR',
+                  burn: numeral(leg.burn).format('0,0.00') + ' WGR',
+                  burnRate: numeral(leg.burnRate).format('0,0.00') + '%'
                 };
               })}
             />

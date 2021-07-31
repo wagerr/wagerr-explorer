@@ -5,21 +5,26 @@ import { connect } from 'react-redux';
 import React from 'react';
 import ExplorerMenu from '../component/Menu/ExplorerMenu';
 import SearchBar from '../component/SearchBar';
+import Select from '../component/Select'
 import ExplorerOverviewMenu from '../component/Menu/ExplorerOverviewMenu';
 import BettingStat from './BettingStat'
 import MasternodeStat from './MasternodeStat'
 import { TabContent, TabPane, Nav, NavItem, NavLink, Card, Button, CardTitle, CardText } from 'reactstrap';
 import classnames from 'classnames';
+import { CHART_TIME_FRAME } from '../constants'
 
 
 class Statistics extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      activeTab: 'betting'
+      activeTab: 'betting',
+      filter:'90d'
 
     }
   }
+
+  handleFilterBy = value => this.setState({ filter: value });
 
   render() {
     return (
@@ -56,13 +61,23 @@ class Statistics extends Component {
                   Masternode Stats
           </NavLink>
               </NavItem>
+              <NavItem className="ml-auto mr-2 mt-2 mb-2">
+              
+                <Select
+                  onChange={value => this.handleFilterBy(value)}
+                  selectedValue={this.state.filter}
+                  options={CHART_TIME_FRAME} 
+                  />
+
+              
+              </NavItem>
             </Nav>
             <TabContent activeTab={this.state.activeTab}  className="pr-3 pl-3">
               <TabPane tabId="betting">
-                <BettingStat />
+                <BettingStat timeFrame={this.state.filter}/>
               </TabPane>
               <TabPane tabId="masternode">
-                <MasternodeStat />
+                <MasternodeStat timeFrame={this.state.filter}/>
               </TabPane>
               <TabPane tabId="network">
 
