@@ -140,6 +140,7 @@ An advanced explorer based on node-js for the Wagerr block chain. Components doc
 ```
 docker-compose up -d
 ```
+15. Setup nginx with nginx.conf
 
 [![Discord](https://img.shields.io/discord/374271866308919296.svg)](https://discord.gg/wBhxXss) <a href="https://twitter.com/intent/follow?screen_name=wagerrx"> <img src="https://img.shields.io/twitter/follow/wagerrx.svg?style=social&logo=twitter" alt="follow on Twitter"></a>
 
