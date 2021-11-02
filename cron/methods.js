@@ -297,6 +297,7 @@ async function syncBlocksForBet(start, stop, clean = false, waitTime = 50) {
       if (height >= dataStartBlock) {
 
         const block = await getBlockData(height);
+        if (block.confirmations < 3) break; 
         let rpcblock = block;
         let txs = rpcblock.rpctxs ? rpcblock.rpctxs : [];
 
