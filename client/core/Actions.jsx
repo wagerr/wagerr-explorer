@@ -306,9 +306,15 @@ export const getLottoResults = (query) => {
   });
 };
 
-export const getCrosschainBets = (query) => {
+export const getCrosschainBetsByAccount = (query) => {
   return new promise((resolve, reject) => {
-    return getFromWorker("crosschainBets", resolve, reject, query);
+    return getFromWorker("crosschainBetsByAccount", resolve, reject, query);
+  });
+};
+
+export const getCrosschainBetByTxId = (query) => {
+  return new promise((resolve, reject) => {
+    return getFromWorker("crosschainBetByTxId", resolve, reject, query);
   });
 };
 
@@ -349,5 +355,6 @@ export default {
   getLottoEvents,
   getLottoResults,
   getLottoEventInfo,
-  getCrosschainBets,
+  getCrosschainBetsByAccount,
+  getCrosschainBetByTxId,
 };

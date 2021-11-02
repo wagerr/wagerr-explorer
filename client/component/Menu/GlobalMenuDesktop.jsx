@@ -2,30 +2,62 @@ import Component from "core/Component";
 import React from "react";
 import { Link } from "react-router-dom";
 import SearchBar from "../SearchBar";
-import Wallet from "../../core/Wallet";
+import Wallet from "../../core/Web3/Wallet";
+import {
+  UncontrolledDropdown,
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from "reactstrap";
+import { Coins } from "../../core/Web3/bscCoins";
 
 export default class GlobalMenuDesktop extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isOpen: true,
-      walletInstalled: Wallet.instance.walletInstalled,
       walletConnected: false,
       walletBalance: 0,
+      currentBscCoin: "WGR",
     };
-    console.log("walletInstalled ", Wallet.instance.walletInstalled);
-    setInterval(Wallet.instance.updateWalletBalance, 40000);
   }
 
-  connectWallet = async (wallet) => {
-    await Wallet.instance.connectWallet(wallet);
-    const balance = await Wallet.instance.updateWalletBalance();
+  connectWallet = async () => {
+    try {
+      await Wallet.instance.connectWallet();
+      await this.updateWalletBalance();
+      this.setState({ walletConnected: true });
+
+      Wallet.instance.providerEvents.subscribe(async (event) => {
+        if (["accountChanged", "block"].includes(event)) {
+          await this.updateWalletBalance();
+        }
+      });
+    } catch (e) {
+      console.log(
+        "Error connecting Wallet:",
+        typeof e === "string" ? e : e.message
+      );
+      alert(typeof e === "string" ? e : e.message);
+    }
+  };
+
+  updateWalletBalance = async () => {
+    const balance = await Wallet.instance.getWalletBalance();
     this.setState({
-      walletConnected: true,
       walletBalance: balance,
     });
   };
 
+  setBscCoin = async (coin) => {
+    Wallet.instance.setCurrentBscCoin(coin);
+    const balance = await Wallet.instance.getWalletBalance();
+    this.setState({
+      walletBalance: balance,
+      currentBscCoin: coin,
+    });
+  };
   getLinks = () => {
     const { props, state } = this;
 
@@ -44,7 +76,7 @@ export default class GlobalMenuDesktop extends Component {
       let isActive = false;
       let isDisabled = false;
 
-      let disabledList = ["/bethistory", "/lottos", "/betting", "/help"];
+      let disabledList = ["/lottos", , "/help"];
       if (disabledList.includes(i.href)) isDisabled = true;
 
       if (pathname.includes("help") && i.href === "/help") isActive = true;
@@ -114,7 +146,7 @@ export default class GlobalMenuDesktop extends Component {
       pathname.includes("help")
     )
       explore_class = "global-menu-desktop-unexplorer";
-    console.log("explore_class --:", explore_class);
+
     return (
       <div className={pathname.includes("help") ? "h-140" : ""}>
         <div className={`global-menu-desktop ${explore_class}`}>
@@ -132,20 +164,50 @@ export default class GlobalMenuDesktop extends Component {
                 <div className="global-menu-desktop_wallet_connection text-center">
                   {this.state.walletConnected ? (
                     <div>
+                      <span>
+                        {Wallet.instance.currentProvider == "MM" ? (
+                          <UncontrolledDropdown size="sm">
+                            <DropdownToggle
+                              caret
+                              tag="a"
+                              style={{ color: "white" }}
+                            >
+                              <div className="wallet_connection_status_mark"></div>
+                              {this.state.currentBscCoin}
+                            </DropdownToggle>
+                            <DropdownMenu>
+                              {Object.keys(Coins()).map((c) => {
+                                return (
+                                  <DropdownItem
+                                    key={c}
+                                    onClick={() => {
+                                      this.setBscCoin(c);
+                                    }}
+                                  >
+                                    {c}
+                                  </DropdownItem>
+                                );
+                              })}
+                            </DropdownMenu>
+                          </UncontrolledDropdown>
+                        ) : (
+                          <p style={{ color: "white" }}>
+                            <div className="wallet_connection_status_mark"></div>
+                            WGR
+                          </p>
+                        )}
+                      </span>
                       <span className="global-menu-desktop_wallet_balance">
-                        {this.state.walletBalance} WGR
+                        {this.state.walletBalance} {this.state.currentBscCoin}
                       </span>
                       <div className="global-menu-desktop_wallet_connection_status">
-                        <div className="wallet_connection_status_mark"></div>
-                        <span className="wallet_connection_status_text">
-                          Wallet Connected
-                        </span>
                         <p style={{ color: "#03a358" }}>
                           <a
                             href=""
-                            onClick={(e) => {
+                            onClick={async (e) => {
                               this.setState({ walletConnected: false }),
                                 e.preventDefault();
+                              await Wallet.instance.disconnect();
                             }}
                           >
                             Switch Wallet
@@ -157,37 +219,16 @@ export default class GlobalMenuDesktop extends Component {
                     <div className="global-menu-desktop_wallet_connection_status">
                       {
                         <div>
-                          {this.state.walletInstalled["MM"] ? (
-                            <button
-                              className="wallet_connection_button"
-                              onClick={async () => {
-                                await this.connectWallet("MM");
-                                Wallet.instance.walletChanged.next("MM");
-                              }}
-                            >
-                              BSC
-                            </button>
-                          ) : null}
-                          &nbsp; &nbsp;
-                          {this.state.walletInstalled["WGR"] ? (
-                            <button
-                              className="wallet_connection_button"
-                              onClick={async () => {
-                                await this.connectWallet("WGR");
-                                Wallet.instance.walletChanged.next("WGR");
-                              }}
-                            >
-                              WGR
-                            </button>
-                          ) : null}
+                          <button
+                            className="wallet_connection_button"
+                            onClick={async () => {
+                              await this.connectWallet();
+                            }}
+                          >
+                            Connect Wallet
+                          </button>
                         </div>
                       }
-                      {this.state.walletInstalled["MM"] == false &&
-                      this.state.walletInstalled["WGR"] == false ? (
-                        <p className="wallet_connection_status_text">
-                          No Wallet Installed
-                        </p>
-                      ) : null}
                     </div>
                   )}
                 </div>

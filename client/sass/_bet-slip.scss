@@ -1,221 +1,217 @@
-
 .betslip-container {
-    margin-top: 50px;
+  margin-top: 50px;
 }
 
-.bet-select{
-    align-items: center;
-    background: black;
-    color: #fff;
-    display: flex;
-    font-weight: 500;
-    flex-direction: row;
-    font-size: 12px;
-    justify-content: space-between;
-    padding: 5px 10px 5px 10px;
-    @media (max-width: 767px) {
-        padding: 5px 5px 0px 5px;
-    }
-}
-.bet-select input{
-    vertical-align: middle;
-     margin-right: 5px;
+.bet-select {
+  align-items: center;
+  background: black;
+  color: #fff;
+  display: flex;
+  font-weight: 500;
+  flex-direction: row;
+  font-size: 12px;
+  justify-content: space-between;
+  padding: 5px 10px 5px 10px;
+  @media (max-width: 767px) {
+    padding: 5px 5px 0px 5px;
   }
-.btn-clear-slip{
-     background-color:  #b40101;
-     border-radius: 4px;
-     color: #fff;
-     border-color:#b40101;
-     font-size: 12px;
-     padding: 5px 10px;
 }
-.bet-slip-card{
-    padding-top:5px;
+.bet-select input {
+  vertical-align: middle;
+  margin-right: 5px;
 }
-.bet-slip-box{
-    border:1px solid #b40101;
-    // font-family: $fontLarge;
-    font-weight: 600;
+.btn-clear-slip {
+  background-color: #b40101;
+  border-radius: 4px;
+  color: #fff;
+  border-color: #b40101;
+  font-size: 12px;
+  padding: 5px 10px;
+}
+.bet-slip-card {
+  padding-top: 5px;
+}
+.bet-slip-box {
+  border: 1px solid #b40101;
+  // font-family: $fontLarge;
+  font-weight: 600;
+  font-size: 14px;
+  justify-content: center;
+  margin: 5px;
+}
+.slip-body {
+  text-align: center;
+  margin: 5px;
+  label {
     font-size: 14px;
+    display: block;
+    margin-bottom: 10px;
+  }
+  &__points {
+    font-size: 14px;
+    background: #e9e9e9;
+    padding: 0px 25px;
+  }
+}
+.slip-title {
+  padding: 5px 15px 5px 15px;
+  background: #b40101;
+  color: #fff;
+  text-align: left;
+  margin-bottom: 10px;
+  @media (max-width: 767px) {
+    height: 24px;
+    font-size: 13px;
+    padding: 4px;
+  }
+}
+
+.slip-close {
+  float: right;
+  background: none;
+  border: none;
+  color: #fff;
+}
+
+.team-name {
+  color: #b40101;
+  font-weight: 600;
+}
+
+.bet-form {
+  font-size: 12px;
+  margin-top: 10px;
+  text-align: left;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  input {
+    height: 24px;
+    display: inline;
+  }
+
+  &__btn-bet {
+    padding: 5px 10px;
+    margin: 8px;
+    text-align: center;
     justify-content: center;
-    margin: 5px; 
-
-} 
-.slip-body{
-     text-align: center;
-     margin: 5px; 
-     label{
-        font-size: 14px;
-        display: block;
-        margin-bottom: 10px;
-     }
-    &__points{
-        font-size: 14px;
-        background: #E9E9E9;
-       padding: 0px 25px;
-     }
- }
-.slip-title{
-    padding: 5px 15px 5px 15px;
-    background:  #b40101;
+    border: 1px solid #b40101;
+    border-radius: 4px;
+    background: #b40101;
     color: #fff;
-    text-align: left;
-    margin-bottom:10px;
-    @media (max-width: 767px) {
-        height: 24px;
-        font-size: 13px;
-        padding: 4px;
-    }
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0.1), 0 1px 0 rgba(0, 0, 0, 0.1);
+  }
 }
-
-.slip-close{
-    float: right;
-    background: none;
-    border: none;
-    color: #fff;
- }
-
- .team-name{
-     color: #b40101;
-     font-weight: 600;
- }
-
- .bet-form{
-    font-size: 12px;
-    margin-top: 10px;
-    text-align: left;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    input{
-        height: 24px;
-        display: inline;
-    }
-
-     &__btn-bet{
-        padding: 5px 10px;
-        margin: 8px;
-         text-align: center;
-       justify-content: center;
-        border: 1px solid #BEBEBE;
-        border-radius: 4px;
-        background: #fff;
-        box-shadow: 0 0 0 rgba(0, 0, 0, 0.1), 0 1px 0 rgba(0, 0, 0, 0.1);
-     }
-
- }
-.bet-value{
-   flex-grow: 1;
-    padding: 5px;
+.bet-value {
+  flex-grow: 1;
+  padding: 5px;
 }
-.afterElement:after{
-    content: 'WGR';
-    position: absolute;
-    color: $gray;
-    right:5rem;
-    margin-top: .8rem;
+.afterElement:after {
+  content: "WGR";
+  position: absolute;
+  color: $gray;
+  right: 2rem;
+  margin-top: 0.8rem;
 }
-.bet-returns{
-    margin-top: 10px;
-    font-size: 14px;
-    line-height:2;
-    p.total{
-        color: #b40101;
-        font-weight: 600;
-    }
+.bet-returns {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 2;
+  p.total {
+    color: #b40101;
+    font-weight: 600;
+  }
 }
-
 
 /* The container */
 .radio-container {
-    display: inline-block;
-    position: relative;
-    padding-left: 20px;
-    margin-top: 10px;
-    margin-bottom: 12px;
-    cursor: pointer;
+  display: inline-block;
+  position: relative;
+  padding-left: 20px;
+  margin-top: 10px;
+  margin-bottom: 12px;
+  cursor: pointer;
 }
-  /* Hide the browser's default radio button */
+/* Hide the browser's default radio button */
 .radio-container input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-  }
-  /* Create a custom radio button */
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+/* Create a custom radio button */
 .checkmark {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 15px;
-    width: 15px;
-    background-color: #eee;
-    border: 1px solid black;
-    border-radius: 50%;
-  }
-  /* When the radio button is checked, add a blue background */
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 15px;
+  width: 15px;
+  background-color: #eee;
+  border: 1px solid black;
+  border-radius: 50%;
+}
+/* When the radio button is checked, add a blue background */
 .radio-container input:checked ~ .checkmark {
-    background-color: #2196F3;
-    border: 1px solid black;
-  }
+  background-color: #2196f3;
+  border: 1px solid black;
+}
 
-  /* Create the indicator (the dot/circle - hidden when not checked) */
-  .checkmark:after {
-    content: "";
-    position: absolute;
-    display: none;
-  }
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
 
-  /* Show the indicator (dot/circle) when checked */
-  .radio-container input:checked ~ .checkmark:after {
-    display: block;
-  }
+/* Show the indicator (dot/circle) when checked */
+.radio-container input:checked ~ .checkmark:after {
+  display: block;
+}
 
-  /* Style the indicator (dot/circle) */
-  .radio-container .checkmark:after {
-       top: 4px;
-      left: 4px;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: white;
-  }
+/* Style the indicator (dot/circle) */
+.radio-container .checkmark:after {
+  top: 4px;
+  left: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: white;
+}
 /* Parlay Slip */
-.place-bet-box{
-    background: black;
-    color: #fff;
-    margin: 5px 0px;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 10px 10px 5px 10px;
-    .parlay-form{
-        display: flex;
-        flex-direction: column;
-        input{
-            background: black;
-            height: 24px;
-            display: inline;
-            color:white
-        }
-        .span_bet{
-            padding: 10px 10px 0px 0px;
-        }
-
-   }/*End of parlay-form*/
-   &__label{
-       display: block;
-       padding:0px 10px 0px 0px;
-       margin-bottom: 10px;
-   }
-   .btn-place-bet{
-      @extend .btn-clear-slip;
-   }
-}/*End of  place-bet-box*/
-.afterInput:after{
-    @extend .afterElement;
-   right: 1.8rem;
+.place-bet-box {
+  background: black;
+  color: #fff;
+  margin: 5px 0px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 10px 10px 5px 10px;
+  .parlay-form {
+    display: flex;
+    flex-direction: column;
+    input {
+      background: black;
+      height: 24px;
+      display: inline;
+      color: white;
+    }
+    .span_bet {
+      padding: 10px 10px 0px 0px;
+    }
+  } /*End of parlay-form*/
+  &__label {
+    display: block;
+    padding: 0px 10px 0px 0px;
+    margin-bottom: 10px;
+  }
+  .btn-place-bet {
+    @extend .btn-clear-slip;
+  }
+} /*End of  place-bet-box*/
+.afterInput:after {
+  @extend .afterElement;
+  right: 1.8rem;
 }
 .total-parlay {
-    display: flex;
-    flex-direction: row;
-    justify-content:space-between;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }

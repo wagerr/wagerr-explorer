@@ -2,8 +2,9 @@ import Component from "../../core/Component";
 import React from "react";
 import _ from "lodash";
 import { singleToOpcode } from "../utils/betUtils";
-import Wallet from "../../core/Wallet";
+import Wallet from "../../core/Web3/Wallet";
 import PubSub from "pubsub-js";
+import { MIN_BETTING_AMOUNT, MAX_BETTING_AMOUNT } from "../../constants";
 
 export default class CardSingleBetSlip extends Component {
   constructor(props) {
@@ -11,7 +12,10 @@ export default class CardSingleBetSlip extends Component {
     this.state = {
       event: null,
       betAmount: 0,
+      minAmountIn: 0,
+      bscFee: 0,
       betProcessing: false,
+      needApproval: false,
     };
   }
 
@@ -19,8 +23,24 @@ export default class CardSingleBetSlip extends Component {
     this.prepareSlip();
   }
 
-  handleChange = (e) => {
-    this.setState({ betAmount: e.target.value });
+  handleChange = async (e) => {
+    if (!Wallet.instance.currentProvider) return;
+    const target = { ...e.target };
+    this.setState({ betAmount: target.value });
+    if (!target.value || target.value <= 0) return;
+
+    if (Wallet.instance.currentProvider == "WGR") {
+      this.setState({ minAmountIn: target.value });
+      return;
+    }
+    const minAmountIn = await Wallet.instance.getInputAmount(target.value);
+    this.setState({ minAmountIn: minAmountIn });
+    const fee = await Wallet.instance.getFee();
+    this.setState({ bscFee: fee.toString() });
+    const needApproval = await Wallet.instance.needApproval(minAmountIn);
+    this.setState({
+      needApproval: needApproval,
+    });
   };
   prepareSlip = () => {
     const { event } = this.props;
@@ -75,30 +95,35 @@ export default class CardSingleBetSlip extends Component {
       alert("Invalid opcode: " + e.toString().replace(/Error:/g, ""));
       return;
     }
-    PubSub.publish("bet-processing", true);
-    const res = await Wallet.instance.sendBet(opcode, this.state.betAmount);
-    PubSub.publish("bet-processing", false);
-
+    PubSub.publish("processing", true);
+    const res = await Wallet.instance.sendBet(opcode, this.state.minAmountIn);
+    PubSub.publish("processing", false);
     if (res == null) return;
 
     this.props.removeBetSlip();
 
-    const txHash =
-      Wallet.instance.currentProvider == "WGR" ? res.hash : res.transactionHash;
+    const txHash = res.hash;
 
     if (Wallet.instance.currentProvider == "MM") {
       const id = setInterval(async () => {
-        const lastBetCrosschainTxId =
-          await Wallet.instance.getLastBetCrosschainTx();
-
-        if (lastBetCrosschainTxId !== "") {
+        const crosschainTxId = await Wallet.instance.getCrosschainTx(txHash);
+        if (crosschainTxId) {
           clearInterval(id);
-          alert("CrossChainTx :" + lastBetCrosschainTxId);
+          alert("CrossChainTx :" + crosschainTxId);
         }
-      }, 10000);
+      }, 2000);
     } else if (Wallet.instance.currentProvider == "WGR") {
       alert("Bet Sent: (txid: " + txHash + " )");
     }
+  };
+  approve = async () => {
+    PubSub.publish("processing", true);
+    const approved = await Wallet.instance.approve(this.state.minAmountIn);
+
+    this.setState({
+      needApproval: !approved,
+    });
+    PubSub.publish("processing", false);
   };
 
   render() {
@@ -129,22 +154,36 @@ export default class CardSingleBetSlip extends Component {
                 onChange={this.handleChange}
               />
               <span className="afterElement"></span>
-              <button
-                className="bet-form__btn-bet"
-                disabled={
-                  this.state.betAmount < 25 || this.state.betAmount > 10000
-                }
-                onClick={async () => {
-                  await this.doBet();
-                }}
-              >
-                BET
-              </button>
             </form>
+            <button
+              className="bet-form__btn-bet"
+              disabled={
+                this.state.betAmount < MIN_BETTING_AMOUNT ||
+                this.state.betAmount > MAX_BETTING_AMOUNT
+              }
+              onClick={async () => {
+                this.state.needApproval
+                  ? await this.approve()
+                  : await this.doBet();
+              }}
+            >
+              {this.state.needApproval ? "APPROVE" : "BET"}
+            </button>
             {this.state.betAmount > 0 &&
-              (this.state.betAmount < 25 || this.state.betAmount > 10000) && (
-                <p className="text-center"> (Min 25 - Max 10000)</p>
+              (this.state.betAmount < MIN_BETTING_AMOUNT ||
+                this.state.betAmount > MAX_BETTING_AMOUNT) && (
+                <p className="text-center">
+                  {" "}
+                  (Min {MIN_BETTING_AMOUNT} - Max {MAX_BETTING_AMOUNT})
+                </p>
               )}
+            <p className="text-center">
+              Actual: {_.round(this.state.minAmountIn, 6)}
+              {Wallet.instance.currentProvider == "MM"
+                ? " , (fees included): " + (+this.state.bscFee).toFixed(10)
+                : ""}{" "}
+              {Wallet.instance.currentBscCoin.label}
+            </p>
             <div className="bet-returns">
               <p>Potential Returns:</p>
               <p className="total">

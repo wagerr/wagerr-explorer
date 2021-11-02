@@ -16,12 +16,12 @@ class Betting extends Component {
     super(props);
     this.state = {
       sport: "allevent",
-      betProcessing: false,
+      processing: false,
     };
 
-    PubSub.subscribe("bet-processing", (msg, status) => {
-      console.log("bet-processing:", status);
-      this.setState({ betProcessing: status });
+    PubSub.subscribe("processing", (msg, status) => {
+      console.log("processing:", status);
+      this.setState({ processing: status });
     });
   }
 
@@ -39,9 +39,7 @@ class Betting extends Component {
         <div className="content__wrapper_total">
           <BettingMobileMenu />
           <div className="row m-20">
-            {this.state.betProcessing ? (
-              <Overlay text="Bet Processing...." />
-            ) : null}
+            {this.state.processing ? <Overlay text="Processing...." /> : null}
             <div className="col-lg-9 col-md-12">
               <EventList
                 toggleSwitchOddsStyle={this.props.toggleSwitchOddsStyle}

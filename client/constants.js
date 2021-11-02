@@ -6,6 +6,8 @@ export const EVENTS = "EVENTS";
 export const WATCH_ADD = "WATCH_ADD";
 export const WATCH_REMOVE = "WATCH_REMOVE";
 export const OPCODE_CHANED_BLOCK = 1501000;
+export const MIN_BETTING_AMOUNT = 100;
+export const MAX_BETTING_AMOUNT = 10000;
 
 export const API_BASE = location.origin;
 export const PAGINATION_PAGE_SIZE = [
@@ -84,4 +86,6 @@ export default {
   FILTER_EVENTS_OPTIONS,
   API_BASE,
   CHART_TIME_FRAME,
+  MIN_BETTING_AMOUNT,
+  MAX_BETTING_AMOUNT,
 };

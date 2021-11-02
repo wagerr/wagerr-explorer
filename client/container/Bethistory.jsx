@@ -8,10 +8,12 @@ import Card from "../component/Card";
 import CardBigTable from "../component/Card/CardBigTable";
 import { TabContent, TabPane, Nav, NavItem, NavLink } from "reactstrap";
 import Actions from "../core/Actions";
-import Wallet from "../core/Wallet";
+import Wallet from "../core/Web3/Wallet";
 import moment from "moment";
 import { date24Format } from "../../lib/date";
 import classnames from "classnames";
+import Icon from "../component/Icon";
+import { UncontrolledTooltip } from "reactstrap";
 
 class Bethistory extends Component {
   constructor(props) {
@@ -20,6 +22,16 @@ class Bethistory extends Component {
       betHistory: [],
       loading: true,
     };
+
+    this.outcomeToSides = {
+      1: "ML-HOME",
+      2: "ML-AWAY",
+      3: "SPD-HOME",
+      4: "SPD-AWAY",
+      5: "TLS-UNDER",
+      6: "TLS-OVER",
+    };
+
     this.bscExplorer = "https://testnet.bscscan.com/";
     setInterval(() => {
       this.getBetHistory();
@@ -27,7 +39,13 @@ class Bethistory extends Component {
   }
   componentDidMount() {
     this.getBetHistory();
-    Wallet.instance.walletChanged.subscribe(() => this.refreshHistory());
+
+    Wallet.instance.client &&
+      Wallet.instance.providerEvents.subscibe((event) => {
+        if (["accountChanged"].includes(event)) {
+          this.refreshHistory();
+        }
+      });
   }
   refreshHistory = () => {
     this.setState({ betHistory: [] }, () => this.getBetHistory());
@@ -60,6 +78,97 @@ class Bethistory extends Component {
     });
   };
 
+  generateLegToolTip = (bet) => {
+    if (Wallet.instance.currentProvider == "MM") {
+      return (
+        bet.legsInfo && (
+          <span id={"_" + bet._id}>
+            <Icon name="info-circle" />
+            <UncontrolledTooltip
+              placement="right"
+              target={"_" + bet._id}
+              autohide={false}
+            >
+              {bet.legsInfo.map((l) => {
+                return (
+                  <div>
+                    <Link
+                      Link
+                      to={`/bet/event/${l["event-id"]}`}
+                      style={{ color: "white" }}
+                    >
+                      {l.lockedEvent.tournament}
+                      <br />
+                      {l.lockedEvent.home + " vs " + l.lockedEvent.away}
+                      <br />
+                    </Link>
+
+                    <span>
+                      {l.legResultType} <br />
+                      {l["event-id"].toString()} <br />
+                      {this.outcomeToSides[l.outcome.toString()]}
+                    </span>
+                    <br />
+                    <br />
+                  </div>
+                );
+              })}
+            </UncontrolledTooltip>
+          </span>
+        )
+      );
+    }
+
+    if (Wallet.instance.currentProvider == "WGR") {
+      const info = (l) => (
+        <div>
+          <Link
+            Link
+            to={`/bet/event/${l["eventId"]}`}
+            style={{ color: "white" }}
+          >
+            {l.league}
+            <br />
+            {l.homeTeam + " vs " + l.awayTeam}
+            <br />
+          </Link>
+
+          <span>
+            {l.resultType} <br />
+            {l["eventId"].toString()} <br />
+            {this.outcomeToSides[l.outcome.toString()]}
+          </span>
+          <br />
+          <br />
+        </div>
+      );
+
+      const view = bet.legs
+        ? bet.legs.map((l) => {
+            return info(l);
+          })
+        : info({
+            ...bet,
+            outcome: bet.transaction.outcome,
+            resultType: bet.betResultType,
+            homeTeam: bet.event.homeTeam,
+            awayTeam: bet.event.awayTeam,
+          });
+
+      return (
+        <span id={"_" + bet._id}>
+          <Icon name="info-circle" />
+          <UncontrolledTooltip
+            placement="right"
+            target={"_" + bet._id}
+            autohide={false}
+          >
+            {view}
+          </UncontrolledTooltip>
+        </span>
+      );
+    }
+  };
   render() {
     let betHistory = [];
     if (Wallet.instance.currentProvider == "WGR") {
@@ -68,8 +177,9 @@ class Bethistory extends Component {
           ...bet,
           txId: <Link to={`/tx/${bet.txId}`}>{bet.txId}</Link>,
           betValue: bet.betValue,
-          betResultType: bet.betResultType,
           betType: bet.legs && bet.legs.length > 1 ? "Parlay" : "Single",
+          betInfo: this.generateLegToolTip(bet),
+          betResultType: bet.betResultType,
           payout:
             bet.payout == 0 || bet.betResultType == "pending"
               ? "-"
@@ -107,11 +217,14 @@ class Bethistory extends Component {
                 {bet.wgrBetTx.substring(0, 10)}
               </Link>
             ),
-          betAmount: bet.betAmount / 10 ** 18,
+          wgrAmount: bet.wgrAmount,
+          coin: bet.coin,
+          coinAmount: bet.coinAmount,
           betType: bet.betType,
-          wgrBetStatus: bet.wgrBetStatus,
+          betInfo: this.generateLegToolTip(bet),
+          crosschainStatus: bet.crosschainStatus,
           betResultType: bet.wgrBetResultType,
-          payout: bet.payout,
+          payout: bet.payout ? bet.payout : "-",
           wgrPayoutTxId:
             bet.wgrPayoutTx == null ? (
               "-"
@@ -147,12 +260,13 @@ class Bethistory extends Component {
               cols={[
                 { title: "TxId", key: "txId" },
                 {
-                  title: "Bet Value",
+                  title: "Bet Amount",
                   key: "betValue",
                   className: "cell-ellipsis",
                 },
-                { title: "Bet Result", key: "betResultType" },
                 { title: "Type", key: "betType" },
+                { title: "betInfo", key: "betInfo" },
+                { title: "Bet Result", key: "betResultType" },
                 { title: "Payout", key: "payout", className: "w-m-80" },
                 { title: "PayoutTx", key: "payoutTxId" },
                 { title: "Created", key: "createdAt" },
@@ -168,14 +282,25 @@ class Bethistory extends Component {
                 { title: "TxId", key: "txId" },
                 { title: "WgrTxId", key: "wgrBetTx" },
                 {
-                  title: "Bet Value",
-                  key: "betAmount",
+                  title: "Bet Amount",
+                  key: "wgrAmount",
+                  className: "cell-ellipsis",
+                },
+                {
+                  title: "Coin",
+                  key: "coin",
+                  className: "cell-ellipsis",
+                },
+                {
+                  title: "Coin Amount",
+                  key: "coinAmount",
                   className: "cell-ellipsis",
                 },
                 { title: "Type", key: "betType" },
-                { title: "CrossChain Status", key: "wgrBetStatus" },
+                { title: "betInfo", key: "betInfo" },
+                { title: "CrossChain Status", key: "crosschainStatus" },
                 { title: "Bet Result", key: "betResultType" },
-                { title: "Payout", key: "wgrPayout", className: "w-m-80" },
+                { title: "Payout", key: "payout", className: "w-m-80" },
                 { title: "PayoutTxWGR", key: "wgrPayoutTxId" },
                 { title: "PayoutTxBSC", key: "bscPayoutTxId" },
                 { title: "Created", key: "createdAt" },
@@ -201,7 +326,7 @@ class Bethistory extends Component {
 
 const mapDispatch = (dispatch) => ({
   getBetsForAccount: (query) => Actions.getBetsForAccount(query),
-  getCrosschainBets: (query) => Actions.getCrosschainBets(query),
+  getCrosschainBets: (query) => Actions.getCrosschainBetsByAccount(query),
 });
 
 export default compose(

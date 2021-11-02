@@ -1,8 +1,9 @@
 import Component from "../../core/Component";
 import React from "react";
 import _ from "lodash";
-import Wallet from "../../core/Wallet";
+import Wallet from "../../core/Web3/Wallet";
 import { parlayToOpcode } from "../utils/betUtils";
+import { MIN_BETTING_AMOUNT, MAX_BETTING_AMOUNT } from "../../constants";
 
 export default class CardParlayBetBox extends Component {
   constructor(props) {
@@ -11,7 +12,10 @@ export default class CardParlayBetBox extends Component {
       legs: [],
       totalOdds: 0,
       betAmount: "",
+      minAmountIn: 0,
+      bscFee: 0,
       potentialReturn: 0,
+      needApproval: false,
     };
 
     this.walletClient = null;
@@ -66,11 +70,25 @@ export default class CardParlayBetBox extends Component {
     });
   }
 
-  handleChange = (e) => {
-    console.log(e.target.value);
+  handleChange = async (e) => {
+    const target = { ...e.target };
     this.setState({
-      betAmount: e.target.value,
-      potentialReturn: _.round(e.target.value * this.state.totalOdds, 2),
+      betAmount: target.value,
+      potentialReturn: _.round(target.value * this.state.totalOdds, 2),
+    });
+
+    if (!target.value || target.value <= 0) return;
+
+    if (Wallet.instance.currentProvider == "WGR") {
+      this.setState({ minAmountIn: target.value });
+      return;
+    }
+
+    const minAmountIn = await Wallet.instance.getInputAmount(target.value);
+    this.setState({ minAmountIn: minAmountIn });
+    const needApproval = await Wallet.instance.needApproval(minAmountIn);
+    this.setState({
+      needApproval: needApproval,
     });
   };
 
@@ -84,27 +102,31 @@ export default class CardParlayBetBox extends Component {
       return;
     }
 
-    PubSub.publish("bet-processing", true);
-    const res = await Wallet.instance.sendBet(opcode, this.state.betAmount);
-    PubSub.publish("bet-processing", false);
+    PubSub.publish("processing", true);
+    const res = await Wallet.instance.sendBet(opcode, this.state.minAmountIn);
+    PubSub.publish("processing", false);
 
     this.props.clearBetSlip();
-    const txHash =
-      Wallet.instance.currentProvider == "WGR" ? res.hash : res.transactionHash;
+    const txHash = res.hash;
     if (Wallet.instance.currentProvider == "MM") {
       const id = setInterval(async () => {
-        const lastBetCrosschainTxId =
-          await Wallet.instance.getLastBetCrosschainTx();
-        if (lastBetCrosschainTxId !== "") {
+        const crosschainTxId = await Wallet.instance.getCrosschainTx(txHash);
+        if (crosschainTxId) {
           clearInterval(id);
-          alert("CrossChainTx :" + lastBetCrosschainTxId);
+          alert("CrossChainTx :" + crosschainTxId);
         }
-      }, 10000);
+      }, 2000);
     } else if (Wallet.instance.currentProvider == "WGR") {
       alert("Bet Sent: (txid: " + txHash + " ) ");
     }
   };
 
+  approve = async () => {
+    PubSub.publish("processing", true);
+    const approved = await Wallet.instance.approve(this.state.minAmountIn);
+    this.setState({ needApproval: !approved });
+    PubSub.publish("processing", false);
+  };
   render() {
     return (
       <div className="place-bet-box">
@@ -125,24 +147,37 @@ export default class CardParlayBetBox extends Component {
             <span className="afterInput"></span>
           </label>
           {this.state.betAmount > 0 &&
-            (this.state.betAmount < 25 || this.state.betAmount > 10000) && (
-              <p className="text-center"> (Min 25 - Max 10000)</p>
+            (this.state.betAmount < MIN_BETTING_AMOUNT ||
+              this.state.betAmount > MAX_BETTING_AMOUNT) && (
+              <p className="text-center">
+                {" "}
+                (Min {MIN_BETTING_AMOUNT} - Max {MAX_BETTING_AMOUNT})
+              </p>
             )}
+          <p className="text-center">
+            Actual: {_.round(this.state.minAmountIn, 5)}{" "}
+            {Wallet.instance.currentProvider == "MM"
+              ? " , (fees included): " + (+this.state.bscFee).toFixed(10)
+              : ""}{" "}
+            {Wallet.instance.currentBscCoin.label}
+          </p>
           <label className="place-bet-box__label">
             Potential Returns : <span>{this.state.potentialReturn} tWGR</span>
           </label>
           <button
             className="btn-place-bet"
             disabled={
-              this.state.betAmount < 25 ||
-              this.state.betAmount > 10000 ||
+              this.state.betAmount < MIN_BETTING_AMOUNT ||
+              this.state.betAmount > MAX_BETTING_AMOUNT ||
               this.state.legs.length < 2
             }
             onClick={async () => {
-              await this.doBet();
+              this.state.needApproval
+                ? await this.approve()
+                : await this.doBet();
             }}
           >
-            PLACE BET
+            {this.state.needApproval ? "APPROVE" : "PLACE BET"}
           </button>
         </div>
       </div>
