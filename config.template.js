@@ -33,14 +33,8 @@ const config = {
   coin: {
     testnet: "MainNet" || "MainNet",
     // testnet address, replace with mainnet if needed, oracle/dev address changed after 1501000, index [0] should be new one.
-    oracle_payout_address: [
-      "TDunmyDASGDjYwhTF3SeDLsnDweyEBpfnP",
-      "TGFKr64W3tTMLZrKBhMAou9wnQmdNMrSG2",
-    ],
-    dev_payout_address: [
-      "TDunmyDASGDjYwhTF3SeDLsnDweyEBpfnP",
-      "TLceyDrdPLBu8DK6UZjKu4vCDUQBGPybcY",
-    ],
+    oracle_payout_address: ["new", "old"],
+    dev_payout_address: ["new", "old"],
     oracle_wallet_address: "WRBs8QD22urVNeGGYeAMP765ncxtUA1Rv2",
   },
   redis: {
