@@ -1,37 +1,32 @@
-
-const compressionPlugin = require('compression-webpack-plugin');
-const htmlWebpackPlugin = require('html-webpack-plugin');
-const path = require('path');
-const uglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const webpack = require('webpack');
+const compressionPlugin = require("compression-webpack-plugin");
+const htmlWebpackPlugin = require("html-webpack-plugin");
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+const path = require("path");
+const uglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const webpack = require("webpack");
 
 const htmlPlugin = new htmlWebpackPlugin({
-  filename: 'index.html',
+  filename: "index.html",
   hash: true,
-  inject: 'body',
-  template: './client/template.html'
+  inject: "body",
+  template: "./client/template.html",
 });
 
 const basePlugins = [
   htmlPlugin,
-  new webpack.EnvironmentPlugin({
-    DEBUG: JSON.stringify(process.env.DEBUG || false),
-    NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
-    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
-  }),
   new webpack.HotModuleReplacementPlugin(),
-  new webpack.NamedModulesPlugin(),
+  new NodePolyfillPlugin(),
   new webpack.ProvidePlugin({
-    Promise: 'bluebird'
-  })
+    Promise: "bluebird",
+  }),
 ];
 
 const prodPlugins = [
   new compressionPlugin({
-    algorithm: 'gzip',
-    asset: '[path].gz[query]'
+    algorithm: "gzip",
+    asset: "[path].gz[query]",
   }),
- /* new webpack.optimize.UglifyJsPlugin({
+  /* new webpack.optimize.UglifyJsPlugin({
     compress: { warnings: false },
     comments: false,
     sourceMap: true,
@@ -39,68 +34,68 @@ const prodPlugins = [
   })*/
 ];
 
-const envPlugins = process.env.NODE_ENV === 'production'
-  ? [...basePlugins, ...prodPlugins]
-  : basePlugins;
+const envPlugins =
+  process.env.NODE_ENV === "production"
+    ? [...basePlugins, ...prodPlugins]
+    : basePlugins;
 
 module.exports = {
   devServer: {
     compress: true,
-    contentBase: path.resolve('public'),
+    contentBase: path.resolve("public"),
     hot: true,
-    host: '0.0.0.0',
+    host: "0.0.0.0",
     port: 8081,
-    publicPath: '/'
+    publicPath: "/",
   },
-  devtool: 'source-map',
-  entry: ['babel-polyfill', './client/index.js'],
+  mode: "development",
+  stats: { warnings: false },
+  devtool: "source-map",
+  entry: ["./client/index.js"],
   module: {
     rules: [
       {
         test: /\.worker\.js$/,
         use: {
-          loader: 'worker-loader',
+          loader: "worker-loader",
           options: {
             inline: true,
-            name: 'fetch.worker.js'
-          }
-        }
+            name: "fetch.worker.js",
+          },
+        },
       },
       {
         exclude: /node_modules/,
         test: /\.jsx?$/,
         use: {
-          loader: 'babel-loader',
+          loader: "babel-loader",
           options: {
             plugins: [
-              'transform-class-properties',
-              'transform-object-rest-spread'
+              "@babel/plugin-proposal-class-properties",
+              "@babel/plugin-proposal-object-rest-spread",
             ],
-            presets: ['env','react']
-          }
-        }
+            presets: ["@babel/env", "@babel/preset-react"],
+          },
+        },
       },
       {
         test: /\.s?css/,
         use: [
-          { loader: 'style-loader' },
-          { loader: 'css-loader' },
-          { loader: 'sass-loader' }
-        ]
-      }
-    ]
+          { loader: "style-loader" },
+          { loader: "css-loader" },
+          { loader: "sass-loader" },
+        ],
+      },
+    ],
   },
   output: {
-    filename: 'bundle.js',
-    path: path.resolve('public'),
-    publicPath: '/'
+    filename: "bundle.js",
+    path: path.resolve("public"),
+    publicPath: "/",
   },
   plugins: envPlugins,
   resolve: {
-    extensions: ['.js', '.jsx'],
-    modules: [
-      path.resolve(__dirname, "client"),
-      "node_modules"
-    ]
-  }
+    extensions: [".js", ".jsx"],
+    modules: [path.resolve(__dirname, "client"), "node_modules"],
+  },
 };
