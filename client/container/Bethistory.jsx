@@ -32,7 +32,6 @@ class Bethistory extends Component {
       6: "TLS-OVER",
     };
 
-    this.bscExplorer = "https://testnet.bscscan.com/";
     setInterval(() => {
       this.getBetHistory();
     }, 25000);
@@ -40,12 +39,11 @@ class Bethistory extends Component {
   componentDidMount() {
     this.getBetHistory();
 
-    Wallet.instance.client &&
-      Wallet.instance.providerEvents.subscibe((event) => {
-        if (["accountChanged"].includes(event)) {
-          this.refreshHistory();
-        }
-      });
+    Wallet.instance.providerEvents.subscribe((event) => {
+      if (["accountsChanged", "walletConnected"].includes(event)) {
+        this.refreshHistory();
+      }
+    });
   }
   refreshHistory = () => {
     this.setState({ betHistory: [] }, () => this.getBetHistory());
@@ -92,16 +90,15 @@ class Bethistory extends Component {
               {bet.legsInfo.map((l) => {
                 return (
                   <div>
-                    <Link
-                      Link
-                      to={`/bet/event/${l["event-id"]}`}
+                    <a
+                      href={`#/bet/event/${l["event-id"]}`}
                       style={{ color: "white" }}
                     >
                       {l.lockedEvent.tournament}
                       <br />
                       {l.lockedEvent.home + " vs " + l.lockedEvent.away}
                       <br />
-                    </Link>
+                    </a>
 
                     <span>
                       {l.legResultType} <br />
@@ -202,7 +199,7 @@ class Bethistory extends Component {
               "-"
             ) : (
               <a
-                href={`${this.bscExplorer}/tx/${bet.chainBetTxHash}`}
+                href={`${Wallet.instance.network.explorer}/tx/${bet.chainBetTxHash}`}
                 target="_blank"
               >
                 {bet.chainBetTxHash.substring(0, 10)}
@@ -222,14 +219,28 @@ class Bethistory extends Component {
           coinAmount: bet.coinAmount,
           betType: bet.betType,
           betInfo: this.generateLegToolTip(bet),
-          crosschainStatus: bet.crosschainStatus,
+          crosschainStatus:
+            bet.crosschainStatus == "refunded" ? (
+              <div>
+                {bet.crosschainStatus} (
+                <a
+                  href={`${Wallet.instance.network.explorer}/tx/${bet.bscRefundTx}`}
+                  target="_blank"
+                >
+                  {bet.bscRefundTx.substring(0, 6)}
+                </a>
+                )
+              </div>
+            ) : (
+              bet.crosschainStatus
+            ),
           betResultType: bet.wgrBetResultType,
           payout: bet.payout ? bet.payout : "-",
           wgrPayoutTxId:
             bet.wgrPayoutTx == null ? (
               "-"
             ) : (
-              <Link to={`/tx/${bet.wgrPayoutTx}`}>
+              <Link to={`/tx/${bet.wgrPayoutTx.split("-")[0]}`}>
                 {bet.wgrPayoutTx.substring(0, 10)}
               </Link>
             ),
@@ -238,7 +249,7 @@ class Bethistory extends Component {
               "-"
             ) : (
               <a
-                href={`${this.bscExplorer}/tx/${bet.bscPayoutTx}`}
+                href={`${Wallet.instance.network.explorer}/tx/${bet.bscPayoutTx}`}
                 target="_blank"
               >
                 {bet.bscPayoutTx.substring(0, 10)}

@@ -10,7 +10,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "reactstrap";
-import { Coins } from "../../core/Web3/bscCoins";
+import { Coins } from "../../core/Web3/bsc_config";
 
 export default class GlobalMenuDesktop extends Component {
   constructor(props) {
@@ -21,25 +21,41 @@ export default class GlobalMenuDesktop extends Component {
       walletBalance: 0,
       currentBscCoin: "WGR",
     };
+
+    if (Wallet.instance.web3Modal.cachedProvider) {
+      this.connectWallet();
+    }
   }
 
   connectWallet = async () => {
     try {
-      await Wallet.instance.connectWallet();
-      await this.updateWalletBalance();
-      this.setState({ walletConnected: true });
-
       Wallet.instance.providerEvents.subscribe(async (event) => {
-        if (["accountChanged", "block"].includes(event)) {
+        if (event == "accountsChanged") {
           await this.updateWalletBalance();
+        } else if (event == "walletConnected") {
+          await this.updateWalletBalance();
+          this.setState({ walletConnected: true });
+
+          this.balanceRefresher = setInterval(() => {
+            this.updateWalletBalance();
+          }, 30000);
         }
       });
+
+      await Wallet.instance.connectWallet();
     } catch (e) {
       console.log(
         "Error connecting Wallet:",
         typeof e === "string" ? e : e.message
       );
-      alert(typeof e === "string" ? e : e.message);
+
+      if (
+        (typeof e === "string" && e == "Modal closed by user") ||
+        e.message == "User closed modal"
+      )
+        return;
+
+      alert(e.message);
     }
   };
 
@@ -198,7 +214,17 @@ export default class GlobalMenuDesktop extends Component {
                         )}
                       </span>
                       <span className="global-menu-desktop_wallet_balance">
-                        {this.state.walletBalance} {this.state.currentBscCoin}
+                        {this.state.walletBalance} {this.state.currentBscCoin} (
+                        <img
+                          src={
+                            Wallet.instance.network?.chain
+                              ? `/img/${Wallet.instance.network.chain}_logo.svg`
+                              : "/img/wgr_logo.svg"
+                          }
+                          width="24"
+                          height="24"
+                        />{" "}
+                        {Wallet.instance.network?.name || "wagerr"})
                       </span>
                       <div className="global-menu-desktop_wallet_connection_status">
                         <p style={{ color: "#03a358" }}>
@@ -206,8 +232,9 @@ export default class GlobalMenuDesktop extends Component {
                             href=""
                             onClick={async (e) => {
                               this.setState({ walletConnected: false }),
-                                e.preventDefault();
-                              await Wallet.instance.disconnect();
+                                e.preventDefault(),
+                                await Wallet.instance.disconnect(),
+                                clearInterval(this.balanceRefresher);
                             }}
                           >
                             Switch Wallet
