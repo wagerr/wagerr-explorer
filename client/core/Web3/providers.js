@@ -1,6 +1,6 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 export const Providers = () => {
-  return {
+  var defaultProvider = {
     walletconnect: {
       package: WalletConnectProvider,
       options: {
@@ -13,14 +13,18 @@ export const Providers = () => {
         },
       },
     },
-
-    binancechainwallet: {
-      package: true,
-    },
-    wagerrchainwallet: {
-      package: true,
-    },
   };
+
+  //if (window.BinanceChain) {
+  defaultProvider["binancechainwallet"] = {
+    package: true,
+  };
+  // }
+  if (window.providerManager) {
+    defaultProvider["wagerrchainwallet"] = { package: true };
+  }
+
+  return defaultProvider;
 };
 
 export default {
