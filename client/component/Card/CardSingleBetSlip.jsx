@@ -109,11 +109,11 @@ export default class CardSingleBetSlip extends Component {
         const crosschainTxId = await Wallet.instance.getCrosschainTx(txHash);
         if (crosschainTxId) {
           clearInterval(id);
-          alert("CrossChainTx :" + crosschainTxId);
+          alert("Bet Placed, Check bet history.");
         }
       }, 2000);
     } else if (Wallet.instance.currentProvider == "WGR") {
-      alert("Bet Sent: (txid: " + txHash + " )");
+      alert("Bet Placed, Check bet history.");
     }
   };
   approve = async () => {
