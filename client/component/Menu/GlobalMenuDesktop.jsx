@@ -55,15 +55,23 @@ export default class GlobalMenuDesktop extends Component {
       )
         return;
 
-      alert(e.message);
+      alert(typeof e === "string" ? e : e.message);
     }
   };
 
   updateWalletBalance = async () => {
-    const balance = await Wallet.instance.getWalletBalance();
-    this.setState({
-      walletBalance: balance,
-    });
+    try {
+      const balance = await Wallet.instance.getWalletBalance();
+      this.setState({
+        walletBalance: balance,
+      });
+    } catch (e) {
+      console.log(
+        "Error getting wallet balance:",
+        typeof e === "string" ? e : e.message
+      );
+      alert(typeof e === "string" ? e : e.message);
+    }
   };
 
   setBscCoin = async (coin) => {
