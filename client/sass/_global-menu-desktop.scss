@@ -129,6 +129,20 @@
   }
 }
 
+.global-menu-desktop_chain_section {
+  width: 30%;
+  display: inline-block;
+  border: 3px solid white;
+  color: white;
+  padding: 10px;
+  height: 100%;
+  @media (max-width: 768px) {
+    padding: 3px 2px 0 7px;
+    width: 120px;
+    height: 45px;
+  }
+}
+
 .global-menu-desktop_wallet_balance {
   color: white;
   font-weight: bold;

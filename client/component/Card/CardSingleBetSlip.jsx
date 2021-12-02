@@ -182,7 +182,7 @@ export default class CardSingleBetSlip extends Component {
               {Wallet.instance.currentProvider == "MM"
                 ? " , (fees included): " + (+this.state.bscFee).toFixed(10)
                 : ""}{" "}
-              {Wallet.instance.currentBscCoin.label}
+              {Wallet.instance.currentCoin.label}
             </p>
             <div className="bet-returns">
               <p>Potential Returns:</p>

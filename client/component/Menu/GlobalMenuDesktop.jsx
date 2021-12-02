@@ -10,7 +10,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "reactstrap";
-import { Coins } from "../../core/Web3/bsc_config";
+import { Networks } from "../../core/Web3/chain_config";
 
 export default class GlobalMenuDesktop extends Component {
   constructor(props) {
@@ -19,7 +19,11 @@ export default class GlobalMenuDesktop extends Component {
       isOpen: true,
       walletConnected: false,
       walletBalance: 0,
-      currentBscCoin: "WGR",
+      currentCoin: "WGR",
+      currentNetwork:
+        Wallet.instance.currentNetwork.chain +
+        "_" +
+        Wallet.instance.currentNetwork.name,
     };
 
     if (Wallet.instance.web3Modal.cachedProvider) {
@@ -39,11 +43,14 @@ export default class GlobalMenuDesktop extends Component {
           this.balanceRefresher = setInterval(() => {
             this.updateWalletBalance();
           }, 30000);
+        } else if (event == "chainChanged") {
+          await this.disconnectWallet();
         }
       });
 
       await Wallet.instance.connectWallet();
     } catch (e) {
+      console.log(e);
       console.log(
         "Error connecting Wallet:",
         typeof e === "string" ? e : e.message
@@ -55,8 +62,23 @@ export default class GlobalMenuDesktop extends Component {
       )
         return;
 
+      if (
+        e &&
+        e.message == "The method 'wallet_switchEthereumChain' is not supported."
+      ) {
+        e.message =
+          "Network not supported, please changed network from wallet.";
+        this.disconnectWallet();
+      }
+
       alert(typeof e === "string" ? e : e.message);
     }
+  };
+
+  disconnectWallet = async () => {
+    this.setState({ walletConnected: false }),
+      await Wallet.instance.disconnect(),
+      clearInterval(this.balanceRefresher);
   };
 
   updateWalletBalance = async () => {
@@ -74,13 +96,21 @@ export default class GlobalMenuDesktop extends Component {
     }
   };
 
-  setBscCoin = async (coin) => {
-    Wallet.instance.setCurrentBscCoin(coin);
+  setCoin = async (coin) => {
+    Wallet.instance.setCurrentCoin(coin);
     const balance = await Wallet.instance.getWalletBalance();
     this.setState({
       walletBalance: balance,
-      currentBscCoin: coin,
+      currentCoin: coin,
     });
+  };
+
+  setNetwork = async (network) => {
+    Wallet.instance.setCurrentNetwork(network);
+    this.setState({
+      currentNetwork: network.chain + "_" + network.name,
+    });
+    await this.disconnectWallet();
   };
   getLinks = () => {
     const { props, state } = this;
@@ -185,6 +215,37 @@ export default class GlobalMenuDesktop extends Component {
               <div className="global-menu-desktop_links">{this.getLinks()}</div>
 
               <div className="global-menu-desktop_wallet_setion">
+                <div className="global-menu-desktop_chain_section text-center">
+                  <strong>Select Chain: </strong>
+                  <UncontrolledDropdown size="sm">
+                    <DropdownToggle
+                      caret
+                      tag="a"
+                      className=""
+                      style={{ color: "white", "text-transform": "uppercase" }}
+                    >
+                      {this.state.currentNetwork}
+                    </DropdownToggle>
+                    <DropdownMenu>
+                      {Object.values(Networks()).map((n) => {
+                        return (
+                          <DropdownItem
+                            style={{
+                              "text-transform": "uppercase",
+                            }}
+                            key={n.chain + "_" + n.name}
+                            onClick={() => {
+                              this.setNetwork(n);
+                            }}
+                          >
+                            {n.chain + "_" + n.name}
+                          </DropdownItem>
+                        );
+                      })}
+                    </DropdownMenu>
+                  </UncontrolledDropdown>
+                </div>
+
                 <div className="global-menu-desktop_wallet_connection text-center">
                   {this.state.walletConnected ? (
                     <div>
@@ -197,15 +258,17 @@ export default class GlobalMenuDesktop extends Component {
                               style={{ color: "white" }}
                             >
                               <div className="wallet_connection_status_mark"></div>
-                              {this.state.currentBscCoin}
+                              {this.state.currentCoin}
                             </DropdownToggle>
                             <DropdownMenu>
-                              {Object.keys(Coins()).map((c) => {
+                              {Object.keys(
+                                Wallet.instance.currentNetwork.coins
+                              ).map((c) => {
                                 return (
                                   <DropdownItem
                                     key={c}
                                     onClick={() => {
-                                      this.setBscCoin(c);
+                                      this.setCoin(c);
                                     }}
                                   >
                                     {c}
@@ -222,27 +285,28 @@ export default class GlobalMenuDesktop extends Component {
                         )}
                       </span>
                       <span className="global-menu-desktop_wallet_balance">
-                        {this.state.walletBalance} {this.state.currentBscCoin} (
+                        {this.state.walletBalance} {this.state.currentCoin} (
                         <img
                           src={
-                            Wallet.instance.network?.chain
-                              ? `/img/${Wallet.instance.network.chain}_logo.svg`
+                            Wallet.instance.currentProvider == "MM"
+                              ? `/img/${Wallet.instance.currentNetwork.chain}_logo.svg`
                               : "/img/wgr_logo.svg"
                           }
                           width="24"
                           height="24"
                         />{" "}
-                        {Wallet.instance.network?.name || "wagerr"})
+                        {Wallet.instance.currentProvider == "MM"
+                          ? Wallet.instance.currentNetwork?.name
+                          : "wagerr"}
+                        )
                       </span>
                       <div className="global-menu-desktop_wallet_connection_status">
                         <p style={{ color: "#03a358" }}>
                           <a
                             href=""
                             onClick={async (e) => {
-                              this.setState({ walletConnected: false }),
-                                e.preventDefault(),
-                                await Wallet.instance.disconnect(),
-                                clearInterval(this.balanceRefresher);
+                              e.preventDefault();
+                              await this.disconnectWallet();
                             }}
                           >
                             Switch Wallet

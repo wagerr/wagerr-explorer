@@ -7,19 +7,19 @@ import BEP20Token from "../../abis/BEP20Token.json";
 import Betting from "../../abis/BettingV4.json";
 import { Subject } from "rxjs";
 import { getCrosschainBetByTxId } from "../Actions";
-import { Coins, Networks } from "./bsc_config";
+import { Networks } from "./chain_config";
 import { Providers } from "./providers";
 
 export default class Wallet {
   static instance = Wallet.instance || new Wallet();
   client = null; //web3 metamask or wagerr extenstion wallet
   currentProvider = null; //metamask(MM) or wagerr(WGR) network
-  bscCoin = null; //token contract
-  bscBetting = null; //betting contract
-  currentProviderAccounts = null; // all metamask accounts
-  network = null;
-  WGR = Coins()["WGR"]; //wgr bsc contract address
-  currentBscCoin = this.WGR;
+  coinContract = null; //token contract
+  bettingContract = null; //betting contract
+  currentProviderAccount = null;
+  currentNetwork = Networks()["97"];
+  WGR = null; //wgr chain contract address
+  currentCoin = null;
 
   constructor() {
     this.providerEvents = new Subject();
@@ -30,13 +30,18 @@ export default class Wallet {
       theme: "dark",
     });
   }
-  setCurrentBscCoin = (coin) => {
-    this.currentBscCoin = Coins()[coin];
-    this.init_coin(this.currentBscCoin);
+  setCurrentCoin = (coin) => {
+    this.currentCoin = this.currentNetwork.coins[coin];
+    this.init_coin(this.currentCoin);
   };
+
+  setCurrentNetwork = (network) => {
+    this.currentNetwork = network;
+  };
+
   init_coin = (coin) => {
-    this.bscCoin = new ethers.Contract(
-      coin[this.network.name], //token address
+    this.coinContract = new ethers.Contract(
+      coin[this.currentNetwork.name], //token address for network
       BEP20Token.abi,
       this.client //provider
     );
@@ -44,13 +49,16 @@ export default class Wallet {
 
   init_contracts = () => {
     try {
-      this.bscBetting = new ethers.Contract(
-        this.network.contractAddress,
+      this.bettingContract = new ethers.Contract(
+        this.currentNetwork.contractAddress,
         Betting.abi,
         this.client
       );
 
-      this.init_coin(this.currentBscCoin);
+      this.WGR = this.currentNetwork.coins["WGR"]; // get WGR contract config
+      this.currentCoin = this.WGR; //get WGR as default betting coin.
+      this.init_coin(this.currentCoin);
+
       this.currentProviderAccount = this.client.getSigner();
     } catch (e) {
       console.log("Error:", e);
@@ -64,10 +72,6 @@ export default class Wallet {
     return provider;
   };
 
-  getNetwork = () => {
-    const chainId = this.client.provider ? this.client.provider.chainId : 0x00;
-    return Networks()[parseInt(chainId, 16)];
-  };
   connectWallet = async () => {
     const provider = await this.getProvider();
 
@@ -79,11 +83,36 @@ export default class Wallet {
       await provider.enable();
       this.currentProvider = "WGR";
     } else {
-      this.client = new ethers.providers.Web3Provider(provider);
-      this.network = this.getNetwork();
-      if (!this.network) {
-        throw new Error("Unsupported Network");
+      const providerChainId = provider ? provider.chainId : "0x00";
+
+      if (this.currentNetwork.chainIdHex !== providerChainId) {
+        try {
+          await provider.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: this.currentNetwork.chainIdHex }],
+          });
+        } catch (e) {
+          if (e.code === 4902) {
+            try {
+              await provider.request({
+                method: "wallet_addEthereumChain",
+                params: [
+                  {
+                    chainId: this.currentNetwork.chainIdHex,
+                    rpcUrl: this.currentNetwork.rpcUrl,
+                  },
+                ],
+              });
+            } catch (e) {
+              throw e;
+            }
+          } else {
+            throw e;
+          }
+        }
       }
+      this.client = new ethers.providers.Web3Provider(provider);
+
       this.currentProvider = "MM";
       this.init_contracts();
       this.subscribe(this.client);
@@ -99,7 +128,7 @@ export default class Wallet {
     });
     // Subscribe to chainId change
     client.provider.on("chainChanged", (chainId) => {
-      window.location.reload();
+      //window.location.reload();
       this.providerEvents.next("chainChanged");
       console.log("chain changed:", chainId);
     });
@@ -112,10 +141,9 @@ export default class Wallet {
   };
 
   disconnect = async () => {
-    if (this.client.provider && this.client.provider.close) {
+    if (this.client && this.client.provider && this.client.provider.close) {
       await this.client.provider.close();
     }
-    this.network = null;
     this.currentProvider = null;
     this.web3Modal.clearCachedProvider();
   };
@@ -166,20 +194,20 @@ export default class Wallet {
         let amt = ethers.utils.parseEther(amount.toString());
 
         let res = null;
-        if (this.currentBscCoin.symbol == "WGR") {
-          res = await this.bscBetting
+        if (this.currentCoin.symbol == "WGR") {
+          res = await this.bettingContract
             .connect(this.currentProviderAccount)
             .betWithWGR(opcode, amt);
-        } else if (this.currentBscCoin.symbol == "BNB") {
-          res = await this.bscBetting
+        } else if (this.currentCoin.mainCoin) {
+          res = await this.bettingContract
             .connect(this.currentProviderAccount)
             .betWithNativeCoin(opcode, {
               value: amt,
             });
         } else {
-          res = await this.bscBetting
+          res = await this.bettingContract
             .connect(this.currentProviderAccount)
-            .betWithToken(opcode, this.currentBscCoin.symbol, amt);
+            .betWithToken(opcode, this.currentCoin.symbol, amt);
         }
 
         return res;
@@ -199,10 +227,11 @@ export default class Wallet {
   balanceOfCurrentCoin = async () => {
     let balance = 0,
       address = await this.currentProviderAccount.getAddress();
-    if (this.currentBscCoin.symbol === "BNB") {
+
+    if (this.currentCoin.mainCoin) {
       balance = await this.client.getBalance(address);
     } else {
-      balance = await this.bscCoin.balanceOf(address);
+      balance = await this.coinContract.balanceOf(address);
     }
 
     return balance;
@@ -223,9 +252,9 @@ export default class Wallet {
         return;
       }
 
-      const approve = await this.bscCoin
+      const approve = await this.coinContract
         .connect(this.currentProviderAccount)
-        .approve(this.network.contractAddress, balance); //approving whole wallet balance.
+        .approve(this.currentNetwork.contractAddress, balance); //approving whole wallet balance.
       await approve.wait();
 
       return true;
@@ -238,10 +267,10 @@ export default class Wallet {
   };
 
   needApproval = async (amount) => {
-    if (this.currentBscCoin.symbol == "BNB") false;
-    const allowance = await this.bscCoin.allowance(
+    if (this.currentCoin.mainCoin) false;
+    const allowance = await this.coinContract.allowance(
       await this.currentProviderAccount.getAddress(),
-      this.network.contractAddress
+      this.currentNetwork.contractAddress
     );
 
     const amt = ethers.utils.parseEther(amount.toString());
@@ -251,18 +280,18 @@ export default class Wallet {
 
   getInputAmount = async (amount) => {
     try {
-      const feeWGR = await this.bscBetting.convertFeeToCoin(
-        this.WGR[this.network.name]
+      const feeWGR = await this.bettingContract.convertFeeToCoin(
+        this.WGR[this.currentNetwork.name]
       );
 
-      if (this.currentBscCoin.symbol == "WGR") {
+      if (this.currentCoin.symbol == "WGR") {
         return ethers.utils.formatEther(
           ethers.utils.parseEther(amount.toString()).add(feeWGR)
         );
       }
-      const res = await this.bscBetting.getAmountInMin(
-        this.currentBscCoin[this.network.name],
-        this.WGR[this.network.name],
+      const res = await this.bettingContract.getAmountInMin(
+        this.currentCoin[this.currentNetwork.name],
+        this.WGR[this.currentNetwork.name],
         ethers.utils.parseEther(amount.toString()).add(feeWGR)
       );
 
@@ -274,8 +303,8 @@ export default class Wallet {
   };
 
   getFee = async () => {
-    const res = await this.bscBetting.convertFeeToCoin(
-      this.currentBscCoin[this.network.name]
+    const res = await this.bettingContract.convertFeeToCoin(
+      this.currentCoin[this.currentNetwork.name]
     );
 
     return ethers.utils.formatEther(res);

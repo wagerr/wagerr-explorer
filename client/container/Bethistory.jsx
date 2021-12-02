@@ -199,7 +199,7 @@ class Bethistory extends Component {
               "-"
             ) : (
               <a
-                href={`${Wallet.instance.network.explorer}/tx/${bet.chainBetTxHash}`}
+                href={`${Wallet.instance.currentNetwork.explorer}/tx/${bet.chainBetTxHash}`}
                 target="_blank"
               >
                 {bet.chainBetTxHash.substring(0, 10)}
@@ -214,7 +214,8 @@ class Bethistory extends Component {
                 {bet.wgrBetTx.substring(0, 10)}
               </Link>
             ),
-          wgrAmount: bet.wgrAmount,
+          wgrAmount:
+            bet.wgrAmount.toString() + " + " + bet.fees.toFixed(2) + " fees",
           coin: bet.coin,
           coinAmount: bet.coinAmount,
           betType: bet.betType,
@@ -224,10 +225,10 @@ class Bethistory extends Component {
               <div>
                 {bet.crosschainStatus} (
                 <a
-                  href={`${Wallet.instance.network.explorer}/tx/${bet.bscRefundTx}`}
+                  href={`${Wallet.instance.currentNetwork.explorer}/tx/${bet.chainRefundTx}`}
                   target="_blank"
                 >
-                  {bet.bscRefundTx.substring(0, 6)}
+                  {bet.chainRefundTx.substring(0, 6)}
                 </a>
                 )
               </div>
@@ -235,7 +236,12 @@ class Bethistory extends Component {
               bet.crosschainStatus
             ),
           betResultType: bet.wgrBetResultType,
-          payout: bet.payout ? bet.payout : "-",
+          payout: bet.payout
+            ? bet.payout.toString() +
+              " + " +
+              bet.payoutFees.toFixed(2) +
+              " fees"
+            : "-",
           wgrPayoutTxId:
             bet.wgrPayoutTx == null ? (
               "-"
@@ -244,15 +250,15 @@ class Bethistory extends Component {
                 {bet.wgrPayoutTx.substring(0, 10)}
               </Link>
             ),
-          bscPayoutTxId:
-            bet.bscPayoutTx == null ? (
+          chainPayoutTxId:
+            bet.chainPayoutTx == null ? (
               "-"
             ) : (
               <a
-                href={`${Wallet.instance.network.explorer}/tx/${bet.bscPayoutTx}`}
+                href={`${Wallet.instance.currentNetwork.explorer}/tx/${bet.chainPayoutTx}`}
                 target="_blank"
               >
-                {bet.bscPayoutTx.substring(0, 10)}
+                {bet.chainPayoutTx.substring(0, 10)}
               </a>
             ),
           createdAt: date24Format(moment(bet.createdAt).utc()),
@@ -313,7 +319,7 @@ class Bethistory extends Component {
                 { title: "Bet Result", key: "betResultType" },
                 { title: "Payout", key: "payout", className: "w-m-80" },
                 { title: "PayoutTxWGR", key: "wgrPayoutTxId" },
-                { title: "PayoutTxBSC", key: "bscPayoutTxId" },
+                { title: "PayoutTXChain", key: "chainPayoutTxId" },
                 { title: "Created", key: "createdAt" },
               ]}
             />

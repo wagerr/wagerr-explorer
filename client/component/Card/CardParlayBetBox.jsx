@@ -159,7 +159,7 @@ export default class CardParlayBetBox extends Component {
             {Wallet.instance.currentProvider == "MM"
               ? " , (fees included): " + (+this.state.bscFee).toFixed(10)
               : ""}{" "}
-            {Wallet.instance.currentBscCoin.label}
+            {Wallet.instance.currentCoin.label}
           </p>
           <label className="place-bet-box__label">
             Potential Returns : <span>{this.state.potentialReturn} tWGR</span>
