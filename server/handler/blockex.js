@@ -1723,7 +1723,7 @@ const getDataListing = async (Model, actions, results, req, res) => {
       }
     ];
 
-    let result = await Model.aggregate(resultParams);
+    let result = await Model.aggregate(resultParams).allowDiskUse(true);
     let pages = total.length > 0 ? (total[0].count <= limit ? 1 : Math.ceil(total[0].count / limit)) : 0;
     //console.log('result', result);
     return res.json({
