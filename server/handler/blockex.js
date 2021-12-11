@@ -1627,7 +1627,7 @@ const getDataListing = async (Model, actions, results, req, res) => {
         $count: 'count',
       },
     ];
-    const total = await Model.aggregate(totalParams);
+    const total = await Model.aggregate(totalParams).allowDiskUse(true);
 
     const resultParams = [
       {
