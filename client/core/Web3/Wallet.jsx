@@ -3,8 +3,6 @@ import Web3Modal from "web3modal";
 import utils from "../../component/utils/utils";
 import InjectedProvider from "@wagerr-wdk/injected-provider";
 import { ethers } from "ethers";
-import BEP20Token from "../../abis/BEP20Token.json";
-import Betting from "../../abis/BettingV4.json";
 import { Subject } from "rxjs";
 import { getCrosschainBetByTxId } from "../Actions";
 import { Networks } from "./chain_config";
@@ -40,15 +38,18 @@ export default class Wallet {
   };
 
   init_coin = (coin) => {
+    const Token = require(`../../abis/${this.currentNetwork.tokenABI}`);
+    
     this.coinContract = new ethers.Contract(
       coin[this.currentNetwork.name], //token address for network
-      BEP20Token.abi,
+      Token.abi,
       this.client //provider
     );
   };
 
   init_contracts = () => {
     try {
+      const Betting = require(`../../abis/BettingV4-${this.currentNetwork.chain}.json`);
       this.bettingContract = new ethers.Contract(
         this.currentNetwork.contractAddress,
         Betting.abi,
@@ -310,7 +311,7 @@ export default class Wallet {
     return ethers.utils.formatEther(res);
   };
   getCrosschainTx = async (txId) => {
-    const bet = await getCrosschainBetByTxId(txId);
+    const bet = await getCrosschainBetByTxId({ chain: this.currentNetwork.chain, txid: txId });
 
     return bet ? bet.wgrBetTx : undefined;
   };

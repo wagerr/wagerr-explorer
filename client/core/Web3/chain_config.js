@@ -18,7 +18,19 @@ export const Coins = (chain) => {
         mainnet: "0xe9e7cea3dedca5984780bafc599bd69add087d56",
       },*/
     },
-    cronos: {},
+    cronos: {
+      WGR: {
+        symbol: "WGR",
+        testnet: "0x4EaC16E4D2bB1f737F0eC307617F38eF9b1e7D5e",
+        mainnet: "0x",
+      },
+      CRO: {
+        symbol: "CRO",
+        mainCoin: true,
+        testnet: "0xca2503482e5D6D762b524978f400f03E38d5F962",
+        mainnet: "0x",
+      },
+    },
   };
 
   return coins[chain];
@@ -30,6 +42,8 @@ export const Networks = () => {
       name: "testnet",
       contractAddress: "0x5ef0260999de24bd65aF05e706527355267De286",
       chain: "bsc",
+      tokenABI: "BEP20Token.json",
+      contractABI: "BettingV4-bsc.json",
       explorer: "https://testnet.bscscan.com",
       rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545",
       coins: Coins("bsc"),
@@ -43,6 +57,17 @@ export const Networks = () => {
       rpcUrl: "https://bsc-dataseed1.binance.org",
       coins: Coins("bsc"),
     },*/
+    338: {
+      chainIdHex: "0x152",
+      name: "testnet",
+      contractAddress: "0xfB41d43b533151e473A40f8a9a40aDD3D2E1475d",
+      chain: "cronos",
+      tokenABI: "CRC20Token.json",
+      contractABI: "BettingV4-cronos.json",
+      explorer: "https://cronos.crypto.org/explorer/testnet3",
+      rpcUrl: "https://cronos-testnet-3.crypto.org:8545",
+      coins: Coins("cronos"),
+    },
   };
 };
 

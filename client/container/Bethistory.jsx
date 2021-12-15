@@ -63,7 +63,10 @@ class Bethistory extends Component {
             });
         } else if (Wallet.instance.currentProvider == "MM") {
           let getCrosschainBets = this.props.getCrosschainBets;
-          getCrosschainBets(spentaddresses[0])
+          getCrosschainBets({
+            chain: Wallet.instance.currentNetwork.chain,
+            account: spentaddresses[0],
+          })
             .then((data) => {
               this.setState({ betHistory: data, loading: false });
             })
@@ -237,10 +240,14 @@ class Bethistory extends Component {
             ),
           betResultType: bet.wgrBetResultType,
           payout: bet.payout
-            ? bet.payout.toString() +
+            ? bet.payout.toFixed(2) +
               " + " +
               bet.payoutFees.toFixed(2) +
-              " fees"
+              " fees (" +
+              bet.payoutCoinAmount.toFixed(4) +
+              " " +
+              bet.coin +
+              ")"
             : "-",
           wgrPayoutTxId:
             bet.wgrPayoutTx == null ? (

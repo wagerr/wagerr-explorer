@@ -44,7 +44,7 @@ export default class GlobalMenuDesktop extends Component {
             this.updateWalletBalance();
           }, 30000);
         } else if (event == "chainChanged") {
-          await this.disconnectWallet();
+          //await this.disconnectWallet();
         }
       });
 
