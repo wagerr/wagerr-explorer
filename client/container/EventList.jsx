@@ -74,7 +74,7 @@ class EventList extends Component {
 
   refreshEvents = () => {
     this.getEvents();
-    this.eventRefreshInterval = setTimeout(this.refreshEvents, 20000);
+    this.eventRefreshInterval = setTimeout(this.refreshEvents, 15000);
   };
 
   filterEvents = () => {
@@ -119,8 +119,10 @@ class EventList extends Component {
 
       getMethod()
         .then((data) => {
+          if (!data.events) setTimeout(this.refreshEvents,5000);
+          
           this.setState(
-            { events: data.events, loading: false },
+            { events: data.events , loading: false },
             this.filterEvents
           );
         })
