@@ -11,9 +11,9 @@ export default class CardSingleBetSlip extends Component {
     super(props);
     this.state = {
       event: null,
-      betAmount: 0,
+      betAmount: "",
       minAmountIn: 0,
-      bscFee: 0,
+      chainFee: 0,
       betProcessing: false,
       needApproval: false,
     };
@@ -26,8 +26,12 @@ export default class CardSingleBetSlip extends Component {
   handleChange = async (e) => {
     if (!Wallet.instance.currentProvider) return;
     const target = { ...e.target };
+    
+    if (!target.value || target.value <= 0) {
+      this.setState({ betAmount: "" });
+      return;
+    };
     this.setState({ betAmount: target.value });
-    if (!target.value || target.value <= 0) return;
 
     if (Wallet.instance.currentProvider == "WGR") {
       this.setState({ minAmountIn: target.value });
@@ -36,7 +40,7 @@ export default class CardSingleBetSlip extends Component {
     const minAmountIn = await Wallet.instance.getInputAmount(target.value);
     this.setState({ minAmountIn: minAmountIn });
     const fee = await Wallet.instance.getFee();
-    this.setState({ bscFee: fee.toString() });
+    this.setState({ chainFee: fee.toString() });
     const needApproval = await Wallet.instance.needApproval(minAmountIn);
     this.setState({
       needApproval: needApproval,
@@ -126,8 +130,10 @@ export default class CardSingleBetSlip extends Component {
     PubSub.publish("processing", false);
   };
 
+
   render() {
     const { props } = this;
+    const isValidBetAmount = (betAmount) => betAmount >= MIN_BETTING_AMOUNT && betAmount <= MAX_BETTING_AMOUNT;
     return (
       this.state.event && (
         <div className="bet-slip-box">
@@ -152,15 +158,13 @@ export default class CardSingleBetSlip extends Component {
                 className="bet-value"
                 value={this.state.betAmount}
                 onChange={this.handleChange}
+                onFocus={this.handleChange}
               />
               <span className="afterElement"></span>
             </form>
             <button
               className="bet-form__btn-bet"
-              disabled={
-                this.state.betAmount < MIN_BETTING_AMOUNT ||
-                this.state.betAmount > MAX_BETTING_AMOUNT
-              }
+              disabled={!isValidBetAmount(this.state.betAmount)}
               onClick={async () => {
                 this.state.needApproval
                   ? await this.approve()
@@ -169,30 +173,39 @@ export default class CardSingleBetSlip extends Component {
             >
               {this.state.needApproval ? "APPROVE" : "BET"}
             </button>
+            {isValidBetAmount(this.state.betAmount) &&
+              this.state.needApproval && (
+                <p className="mb-2 text-danger">
+                  You need to approve one time to allow token access to
+                  smartcontract.
+                </p>
+              )}
             {this.state.betAmount > 0 &&
-              (this.state.betAmount < MIN_BETTING_AMOUNT ||
-                this.state.betAmount > MAX_BETTING_AMOUNT) && (
-                <p className="text-center">
-                  {" "}
+              !isValidBetAmount(this.state.betAmount) && (
+                <p className="text-center text-danger mb-3">
                   (Min {MIN_BETTING_AMOUNT} - Max {MAX_BETTING_AMOUNT})
                 </p>
               )}
-            <p className="text-center">
-              Actual: {_.round(this.state.minAmountIn, 6)}
-              {Wallet.instance.currentProvider == "MM"
-                ? " , (fees included): " + (+this.state.bscFee).toFixed(10)
-                : ""}{" "}
-              {Wallet.instance.currentCoin.label}
-            </p>
-            <div className="bet-returns">
-              <p>Potential Returns:</p>
-              <p className="total">
-                {_.round(
-                  this.state.betAmount * this.state.event.effectiveOddValue,
-                  2
-                )}
-              </p>
-            </div>
+            {isValidBetAmount(this.state.betAmount) && (
+              <div>
+                <p className="text-center">
+                  Actual: {_.round(this.state.minAmountIn, 6)}
+                  {Wallet.instance.currentProvider == "MM"
+                    ? " , (fees included): " + (+this.state.chainFee).toFixed(4)
+                    : ""}{" "}
+                  {Wallet.instance.currentCoin.label}
+                </p>
+                <div className="bet-returns">
+                  <p>Potential Returns:</p>
+                  <p className="total">
+                    {_.round(
+                      this.state.betAmount * this.state.event.effectiveOddValue,
+                      2
+                    )}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )

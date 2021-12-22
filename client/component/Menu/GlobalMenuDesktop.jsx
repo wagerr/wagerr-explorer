@@ -68,7 +68,7 @@ export default class GlobalMenuDesktop extends Component {
       ) {
         e.message =
           "Network not supported, please changed network from wallet.";
-        this.disconnectWallet();
+        await this.disconnectWallet();
       }
 
       alert(typeof e === "string" ? e : e.message);
@@ -93,6 +93,7 @@ export default class GlobalMenuDesktop extends Component {
         typeof e === "string" ? e : e.message
       );
       alert(typeof e === "string" ? e : e.message);
+      await this.disconnectWallet();
     }
   };
 

@@ -43,7 +43,7 @@ export default class CardBettingEvent extends Component {
               {props.data.odds[0].mlHome}
             </button>
             <button
-              className="w-20 card__content__button"
+              className="w-20 card__content__button align-center"
               disabled={props.data.odds[1].spreadHome == 0}
               onClick={() => PubSub.publish("event-clicked", [props.data, 4])}
             >
@@ -61,7 +61,7 @@ export default class CardBettingEvent extends Component {
               )}
             </button>
             <button
-              className="w-20 card__content__button"
+              className="w-20 card__content__button align-center"
               disabled={props.data.odds[2].totalsOver == 0}
               onClick={() => PubSub.publish("event-clicked", [props.data, 6])}
             >
@@ -86,7 +86,7 @@ export default class CardBettingEvent extends Component {
               {props.data.odds[0].mlAway}
             </button>
             <button
-              className="w-20 card__content__button"
+              className="w-20 card__content__button align-center"
               disabled={props.data.odds[1].spreadAway == 0}
               onClick={() => PubSub.publish("event-clicked", [props.data, 5])}
             >
@@ -104,7 +104,7 @@ export default class CardBettingEvent extends Component {
               )}
             </button>
             <button
-              className="w-20 card__content__button"
+              className="w-20 card__content__button align-center"
               disabled={props.data.odds[2].totalsUnder == 0}
               onClick={() => PubSub.publish("event-clicked", [props.data, 7])}
             >

@@ -86,6 +86,7 @@ class Bethistory extends Component {
           <span id={"_" + bet._id}>
             <Icon name="info-circle" />
             <UncontrolledTooltip
+              modifiers={{ preventOverflow: { boundariesElement: "window" } }}
               placement="right"
               target={"_" + bet._id}
               autohide={false}
@@ -218,9 +219,9 @@ class Bethistory extends Component {
               </Link>
             ),
           wgrAmount:
-            bet.wgrAmount.toString() + " + " + bet.fees.toFixed(2) + " fees",
+            bet.wgrAmount.toString() + " + " + bet.fees.toFixed(4) + " fees",
           coin: bet.coin,
-          coinAmount: bet.coinAmount,
+          coinAmount: bet.coinAmount.toFixed(4),
           betType: bet.betType,
           betInfo: this.generateLegToolTip(bet),
           crosschainStatus:
@@ -240,9 +241,9 @@ class Bethistory extends Component {
             ),
           betResultType: bet.wgrBetResultType,
           payout: bet.payout
-            ? bet.payout.toFixed(2) +
+            ? bet.payout.toFixed(4) +
               " + " +
-              bet.payoutFees.toFixed(2) +
+              bet.payoutFees.toFixed(4) +
               " fees (" +
               bet.payoutCoinAmount.toFixed(4) +
               " " +

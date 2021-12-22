@@ -13,7 +13,7 @@ export default class CardParlayBetBox extends Component {
       totalOdds: 0,
       betAmount: "",
       minAmountIn: 0,
-      bscFee: 0,
+      chainFee: 0,
       potentialReturn: 0,
       needApproval: false,
     };
@@ -77,7 +77,10 @@ export default class CardParlayBetBox extends Component {
       potentialReturn: _.round(target.value * this.state.totalOdds, 2),
     });
 
-    if (!target.value || target.value <= 0) return;
+    if (!target.value || target.value <= 0) {
+      this.setState({ betAmount: "" });
+      return;
+    }
 
     if (Wallet.instance.currentProvider == "WGR") {
       this.setState({ minAmountIn: target.value });
@@ -86,11 +89,13 @@ export default class CardParlayBetBox extends Component {
 
     const minAmountIn = await Wallet.instance.getInputAmount(target.value);
     this.setState({ minAmountIn: minAmountIn });
+    const fee = await Wallet.instance.getFee();
+    this.setState({ chainFee: fee.toString() });
     const needApproval = await Wallet.instance.needApproval(minAmountIn);
     this.setState({
       needApproval: needApproval,
     });
-  };
+  };;
 
   doBet = async () => {
     let opcode = "";
@@ -128,6 +133,8 @@ export default class CardParlayBetBox extends Component {
     PubSub.publish("processing", false);
   };
   render() {
+    const isValidBetAmount = (betAmount) =>
+      betAmount >= MIN_BETTING_AMOUNT && betAmount <= MAX_BETTING_AMOUNT;
     return (
       <div className="place-bet-box">
         <div className="total-parlay">
@@ -142,33 +149,36 @@ export default class CardParlayBetBox extends Component {
               className="bet-value"
               placeholder="Enter bet amount"
               onChange={this.handleChange}
+              onFocus={this.handleChange}
               value={this.state.betAmount}
             />
             <span className="afterInput"></span>
           </label>
-          {this.state.betAmount > 0 &&
-            (this.state.betAmount < MIN_BETTING_AMOUNT ||
-              this.state.betAmount > MAX_BETTING_AMOUNT) && (
+          {this.state.betAmount > 0 && !isValidBetAmount(this.state.betAmount) && (
+            <p className="text-center">
+              {" "}
+              (Min {MIN_BETTING_AMOUNT} - Max {MAX_BETTING_AMOUNT})
+            </p>
+          )}
+          {isValidBetAmount(this.state.betAmount) && (
+            <div>
               <p className="text-center">
-                {" "}
-                (Min {MIN_BETTING_AMOUNT} - Max {MAX_BETTING_AMOUNT})
+                Actual: {_.round(this.state.minAmountIn, 5)}{" "}
+                {Wallet.instance.currentProvider == "MM"
+                  ? " , (fees included): " + (+this.state.chainFee).toFixed(4)
+                  : ""}{" "}
+                {Wallet.instance.currentCoin.label}
               </p>
-            )}
-          <p className="text-center">
-            Actual: {_.round(this.state.minAmountIn, 5)}{" "}
-            {Wallet.instance.currentProvider == "MM"
-              ? " , (fees included): " + (+this.state.bscFee).toFixed(10)
-              : ""}{" "}
-            {Wallet.instance.currentCoin.label}
-          </p>
-          <label className="place-bet-box__label">
-            Potential Returns : <span>{this.state.potentialReturn} tWGR</span>
-          </label>
+              <label className="place-bet-box__label text-center">
+                Potential Returns :
+                <span>{this.state.potentialReturn} tWGR</span>
+              </label>
+            </div>
+          )}
           <button
             className="btn-place-bet"
             disabled={
-              this.state.betAmount < MIN_BETTING_AMOUNT ||
-              this.state.betAmount > MAX_BETTING_AMOUNT ||
+              !isValidBetAmount(this.state.betAmount) ||
               this.state.legs.length < 2
             }
             onClick={async () => {
@@ -179,6 +189,13 @@ export default class CardParlayBetBox extends Component {
           >
             {this.state.needApproval ? "APPROVE" : "PLACE BET"}
           </button>
+          {isValidBetAmount(this.state.betAmount) &&
+            this.state.needApproval && (
+              <p className="mb-2 text-danger text-center">
+                You need to approve one time to allow token access to
+                smartcontract.
+              </p>
+            )}
         </div>
       </div>
     );

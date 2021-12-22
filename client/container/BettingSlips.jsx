@@ -58,7 +58,7 @@ export default class BettingSlips extends Component {
     if (type === "single") {
       let singleArray = [...this.state.currentSlips.single];
       const newSingleArray = singleArray.filter(
-        (e) => e.event_id + "-" + e.outcome !== eventid
+        (e) => e.event_id + "-" + e.outcome + "-" + e.slipTime !== eventid
       );
       this.setState({
         currentSlips: {
@@ -85,10 +85,9 @@ export default class BettingSlips extends Component {
   addBetSlip = (msg, data) => {
     let event = { ...data[0] };
     let outcome = data[1];
-    console.log("outcome:", outcome);
     if (this.state.currentSelection == "single") {
       event.outcome = outcome;
-      console.log("addbetslipsingle", event);
+      event.slipTime = Date.now(); //create unique identifier for slip
       this.setState({
         currentSlips: {
           single: [...this.state.currentSlips.single, event],
@@ -153,11 +152,11 @@ export default class BettingSlips extends Component {
             ? this.state.currentSlips.single.map((slp, key) => {
                 return (
                   <CardSingleBetSlip
-                    key={slp.event_id + "-" + slp.outcome}
+                    key={slp.event_id + "-" + slp.outcome + "-" + slp.slipTime}
                     event={slp}
                     removeBetSlip={() =>
                       this.removeBetSlip(
-                        slp.event_id + "-" + slp.outcome,
+                        slp.event_id + "-" + slp.outcome + "-" + slp.slipTime,
                         "single"
                       )
                     }
