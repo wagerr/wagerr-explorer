@@ -70,8 +70,21 @@ export const Networks = () => {
     },
   };
 };
+export const currentNetwork = () => {
+  if (!localStorage.currentNetwork) {
+    localStorage.currentNetwork = JSON.stringify(Networks()["97"]);
 
+  }
+  return JSON.parse(localStorage.currentNetwork);
+}
+
+export const setCurrentNetwork = (network) => {
+  localStorage.currentNetwork =  JSON.stringify(network);
+};
+  
 export default {
   Coins,
   Networks,
+  currentNetwork,
+  setCurrentNetwork,
 };

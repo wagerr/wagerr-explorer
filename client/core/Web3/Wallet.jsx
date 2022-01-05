@@ -5,7 +5,7 @@ import InjectedProvider from "@wagerr-wdk/injected-provider";
 import { ethers } from "ethers";
 import { Subject } from "rxjs";
 import { getCrosschainBetByTxId } from "../Actions";
-import { Networks } from "./chain_config";
+import { currentNetwork,setCurrentNetwork } from "./chain_config";
 import { Providers } from "./providers";
 
 export default class Wallet {
@@ -15,7 +15,7 @@ export default class Wallet {
   coinContract = null; //token contract
   bettingContract = null; //betting contract
   currentProviderAccount = null;
-  currentNetwork = Networks()["97"];
+  currentNetwork = currentNetwork();
   WGR = null; //wgr chain contract address
   currentCoin = null;
 
@@ -35,6 +35,7 @@ export default class Wallet {
 
   setCurrentNetwork = (network) => {
     this.currentNetwork = network;
+    setCurrentNetwork(network);
   };
 
   init_coin = (coin) => {
@@ -86,21 +87,29 @@ export default class Wallet {
     } else {
       const providerChainId = provider ? provider.chainId : "0x00";
 
-      if (this.currentNetwork.chainIdHex !== providerChainId) {
+      if (
+        this.currentNetwork.chainIdHex !== providerChainId &&
+        this.currentNetwork.chainIdHex !== "0x" + providerChainId.toString(16)
+      ) {
         try {
           await provider.request({
             method: "wallet_switchEthereumChain",
             params: [{ chainId: this.currentNetwork.chainIdHex }],
-          });
+          })
+          
         } catch (e) {
-          if (e.code === 4902) {
+          if (e.code === 4902 || e) {
             try {
               await provider.request({
                 method: "wallet_addEthereumChain",
                 params: [
                   {
                     chainId: this.currentNetwork.chainIdHex,
-                    rpcUrl: this.currentNetwork.rpcUrl,
+                    chainName:
+                      this.currentNetwork.chain +
+                      "-" +
+                      this.currentNetwork.name,
+                    rpcUrls: [this.currentNetwork.rpcUrl]
                   },
                 ],
               });

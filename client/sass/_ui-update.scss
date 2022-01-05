@@ -74,12 +74,12 @@
 	}
 	&__hidden {
 		@media (max-width: 767px) {
-			height: 12px!important;
+			height: 25px!important;
 		}
 	}
 	&__th {
 		@media (max-width: 767px) {
-			font-size: 0;
+			font-size: 10px;
 		}
 	}
 	@media (max-width: 900px) {
@@ -248,7 +248,7 @@ td.brk {
 		width: 26.6%;
 	}
 	@media (max-width: 767px) {
-		margin: 0;
+		//margin: 0;
 	}
 }
 .w-33 {
@@ -391,7 +391,7 @@ td.brk {
 	width: 60px;
 	height: 45px;
 	position: absolute;
-	left: 40%
+	left: 15%
 }
 /* chain-game */
 .chain-game {

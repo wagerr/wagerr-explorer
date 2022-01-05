@@ -108,43 +108,30 @@
   opacity: 0.9;
 }
 
-.global-menu-desktop_wallet_setion {
-  width: 100%;
-  padding: 10px 25px;
+.global-menu_wallet_section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  width: 20%;
+  position: absolute;
+  right: 20px;
   @media (max-width: 768px) {
     padding: 0;
+    right: 100px;
   }
 }
 
-.global-menu-desktop_wallet_connection {
-    padding: 5px 10px;
-    float: right;
-    width: 280px;
-    height: 80px;
-    background-color: #570502;
-    position: absolute;
-    right: 40px;
-  @media (max-width: 768px) {
-    padding: 3px 2px 0 7px;
-    width: 280px;
-    height: 80px;
-  }
+.global-menu_wallet_connection {
+  width:240px;
+  text-align: center;
+  margin-right: 10px;
+  color:white;
+  
 }
 
-.global-menu-desktop_chain_section {
-    display: block;
-    background-color: #570502;
-    color: white;
-    padding: 10px;
-    position: absolute;
-    right: 400px;
-    width: 300px;
-    height: 80px;
-  @media (max-width: 768px) {
-    padding: 3px 2px 0 7px;
-    width: 300px;
-    height: 80px;
-  }
+.global-menu_chain_section {
+  text-align: center;
 }
 
 .global-menu-desktop_wallet_balance {
@@ -157,7 +144,6 @@
 }
 
 .desktop_wallet_connection_status {
-  display: flex;
   @media (max-width: 768px) {
     margin-top: -3px;
   }
@@ -179,12 +165,16 @@
   }
 }
 
+.wallet_connection_switch_wallet {
+  color: "#03a358";
+  text-align: center;
+}
+
 .wallet_connection_button {
   background: #970e15;
   color: white;
   border: 1px solid #970e15;
   font-weight: bold;
-  margin-top: 0.8em;
   border-radius: 5px;
   @media (max-width: 768px) {
     font-size: 11px;

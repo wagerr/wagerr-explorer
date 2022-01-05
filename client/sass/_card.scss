@@ -214,6 +214,12 @@
 				font-size: 9px;
 				margin-top: 18px;
 			}
+			&:active {
+            transform: scale(0.98);
+            /* Scaling button to 0.98 to its original size */
+            box-shadow: 3px 2px 22px 1px rgba(129, 2, 2, 0.801);
+            /* Lowering the shadow */
+        }
 		}
 		
 		&__title {
@@ -227,7 +233,7 @@
 		@media (max-width: 767px) {
 			font-size: 12px;
 			margin-top: -12px;
-			div {
+			 & > div {
 				margin-top: 17px;
 			}
 		}

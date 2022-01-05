@@ -5,6 +5,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../Icon';
 import ClientUtils from '../utils/utils';
+import GlobalMenuWalletSection from "./GlobalMenuWalletSection";
 export default class GlobalMenuMobile extends Component {
   static propTypes = {
     links: PropTypes.array
@@ -25,7 +26,7 @@ export default class GlobalMenuMobile extends Component {
   getLinks = () => {
     const { props } = this;
 
-    let ignoreFilter = ['/bethistory', '/lottos', '/betting', '/help'];
+    let ignoreFilter = ['/lottos', '/help'];
 
     let links = props.links.filter(link => {
       return !ignoreFilter.includes(link.href)
@@ -71,32 +72,43 @@ export default class GlobalMenuMobile extends Component {
 
   render() {
     return (
-      <div className={`menu-mobile ${this.state.isOpen ? 'menu-mobile--open' : 'menu-mobile--close'}`}>
+      <div
+        className={`menu-mobile ${
+          this.state.isOpen ? "menu-mobile--open" : "menu-mobile--close"
+        }`}
+      >
         <div className="menu-mobile__search-wrapper">
-          
-          <div style={{ height: 50, paddingTop: 7, marginBottom: -7}} onMouseLeave={() => this.setState({ isOpen: false })}>
-            <a onClick={this.handleToggle} >
-              <Icon name="bars" className="menu-mobile__toggle" onClick={this.handleToggle} />
+          <div
+            style={{ height: 50, paddingTop: 7, marginBottom: -7 }}
+            onMouseLeave={() => this.setState({ isOpen: false })}
+          >
+            <a onClick={this.handleToggle}>
+              <Icon
+                name="bars"
+                className="menu-mobile__toggle"
+                onClick={this.handleToggle}
+              />
             </a>
           </div>
 
-          <h5 style={{ color: '#FFF', fontWeight: 700 }}>{ClientUtils.getHeader(window.location.hash)}</h5>
-          <img src="/img/uiupdate/wgrlogomodernICONallwhite.svg" className="global-menu-desktop__logo" className='mobile-logo' />
-          {/* <div className="global-menu-desktop_wallet_setion">
-            <div className="global-menu-desktop_wallet_connection">
-              <span className="global-menu-desktop_wallet_balance">0 WGR</span>
-              <div className="desktop_wallet_connection_status">
-                <div className="wallet_connection_status_mark"></div>
-                <span className="wallet_connection_status_text">Wallet Connected</span>
-              </div>
-            </div>
-          </div> */}
-
+          {/* <h5 style={{ color: "#FFF", fontWeight: 700 }}>
+            {ClientUtils.getHeader(window.location.hash)}
+          </h5> */}
+           <img
+            src="/img/uiupdate/wgrlogomodernICONallwhite.svg"
+            className="global-menu-desktop__logo"
+            className="mobile-logo"
+          /> 
+          <GlobalMenuWalletSection> </GlobalMenuWalletSection>
         </div>
-        <div className="menu-mobile__item-wrapper" onMouseEnter={() => this.setState({ isOpen: true })} onMouseLeave={() => this.setState({ isOpen: false })} >
+        <div
+          className="menu-mobile__item-wrapper"
+          onMouseEnter={() => this.setState({ isOpen: true })}
+          onMouseLeave={() => this.setState({ isOpen: false })}
+        >
           {this.getLinks()}
         </div>
       </div>
-    )
+    );
   }
 }
