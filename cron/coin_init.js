@@ -135,17 +135,20 @@ async function getAddressBalance(address){
  * like price coinmarketcap.com or coingecko data.
  */
 async function syncCoin() {
-  console.log('syncCoin');
+  console.log("syncCoin");
   await Coin.deleteMany({});
-  
-  const coin = await Coin.findOne().sort({createdAt: -1});
-  const last_block = await Block.findOne().sort({createdAt:-1})
-  let last_block_date = last_block && last_block.createdAt ? moment(last_block.createdAt).toDate() : moment('2021-01-07T07:03:00.000+00:00').toDate()
-  let last_date =  coin && coin.createdAt ? moment(coin.createdAt).toDate() : moment('2021-01-07T07:03:00.000+00:00').toDate()
-  
-  
-  
-  
+
+  const last_block = await Block.findOne().sort({ createdAt: -1 });
+  let last_block_date =
+    last_block && last_block.createdAt
+      ? moment(last_block.createdAt).toDate()
+      : moment("2021-01-07T07:03:00.000+00:00").toDate();
+  let start_date = moment("2021-01-07T07:03:00.000+00:00").toDate();
+
+  const start_of_year_date = new Date(new Date().getFullYear(), 0, 1);
+
+  let totalBetFigure = 548512041; //2.0 + 3.0 bet supply is fixed
+  let totalMintFigure = 561968234; //2.0 + 3.0 bet supply is fixed
 
   let totalBetSingleYTD = 0;
   let totalBetParlayYTD = 0;
@@ -156,118 +159,129 @@ async function syncCoin() {
   let totalBetYTD = 0;
   let totalMintYTD = 0;
 
-  
+  let totalBetParlay = 0;
+  let totalMintParlay = 0;
+
   const betData = await BetAction.aggregate([
     {
       $sort: {
-        payoutDate: -1
-      }
+        payoutDate: -1,
+      },
     },
     {
-      $match: { 
-        $and:[
-        { payoutDate: { $gte: last_date } },
-        { payoutDate: { $lt: last_block_date } },
-        
-      ] 
-    }
-  }
-
+      $match: {
+        $and: [
+          { payoutDate: { $gte: start_date } },
+          { payoutDate: { $lt: last_block_date } },
+        ],
+      },
+    },
   ]).allowDiskUse(true);
 
   const parlayData = await BetParlay.aggregate([
     {
       $sort: {
-        payoutDate: -1
-      }
+        payoutDate: -1,
+      },
     },
     {
-      $match: { 
-        $and:[
-        { payoutDate: { $gte: last_date } },
-        { payoutDate: { $lt: last_block_date } }
-      ] 
-    }
-  }
-
+      $match: {
+        $and: [
+          { payoutDate: { $gte: start_date } },
+          { payoutDate: { $lt: last_block_date } },
+        ],
+      },
+    },
   ]).allowDiskUse(true);
 
   const pendingBetData = await BetAction.aggregate([
-
     {
-      $match: { 
+      $match: {
         $and: [
-          {completed: false },
-          {createdAt: {$gt: moment('2021-01-01T00:00:00.000+00:00').toDate()} }
-        ]
-        
-    }
-  }
-
+          { completed: false },
+          {
+            createdAt: {
+              $gt: moment("2021-01-01T00:00:00.000+00:00").toDate(),
+            },
+          },
+        ],
+      },
+    },
   ]).allowDiskUse(true);
 
   const pendingParlayData = await BetParlay.aggregate([
-
     {
-      $match: { 
+      $match: {
         $and: [
-          {completed: false },
-          {createdAt: {$gt: moment('2021-01-01T00:00:00.000+00:00').toDate()} }
-        ]
-        
-    }
-  }
-
+          { completed: false },
+          {
+            createdAt: {
+              $gt: moment("2021-01-01T00:00:00.000+00:00").toDate(),
+            },
+          },
+        ],
+      },
+    },
   ]).allowDiskUse(true);
-
 
   const resultDatas = await BetResult.aggregate([
     {
       $sort: {
-        "payoutTx.createdAt": -1
-      }
+        "payoutTx.createdAt": -1,
+      },
     },
     {
       $match: {
-        $and:[
-        {"payoutTx.createdAt": {
-          $gte: last_date
-        } },
-        {"payoutTx.createdAt": {
-          $lt: last_block_date
-        } }
-      ]
+        $and: [
+          {
+            "payoutTx.createdAt": {
+              $gte: start_date,
+            },
+          },
+          {
+            "payoutTx.createdAt": {
+              $lt: last_block_date,
+            },
+          },
+        ],
       },
-    }]).allowDiskUse(true);
+    },
+  ]).allowDiskUse(true);
 
- 
-   
-  betData.forEach(action => {
-   
-      totalBetSingleYTD += action.betValue
-      totalMintYTD += action.payout
-      
-  })
+  betData.forEach((action) => {
+    if (action.payoutDate >= start_of_year_date) {
+      //YTD
+      totalBetSingleYTD += action.betValue;
+      totalMintYTD += action.payout;
+    } else {
+      //fix figure + older years , not YTD
+      totalBetFigure += action.betValue;
+      totalMintFigure += action.payout;
+    }
+  });
 
-  pendingBetData.forEach(action => {
-    totalBetPending += action.betValue
+  pendingBetData.forEach((action) => {
+    totalBetPending += action.betValue;
+  });
 
-  })
+  parlayData.forEach((action) => {
+    
+    if (action.payoutDate >= start_of_year_date) {
+      //YTD
+      totalBetParlayYTD += action.betValue;
+      totalMintParlayYTD += action.payout;
+      totalMintYTD += action.payout;
+    } else { //fix figure + older years , not YTD
+       totalBetFigure += action.betValue;
+      totalMintFigure += action.payout;
+      totalBetParlay += action.betValue;
+      totalMintParlay += action.payout;
+    }
+  });
 
-  parlayData.forEach(action => { //parlay is always YTD , because it implemented after wagerr 4.0
-
-      totalBetParlayYTD += action.betValue
-      totalMintParlayYTD += action.payout
-      totalMintYTD += action.payout
-  })
-
-  pendingParlayData.forEach(action => {
-
-    totalBetPending += action.betValue
-  })
-
-
-
+  pendingParlayData.forEach((action) => {
+    totalBetPending += action.betValue;
+  });
 
   /* resultDatas.forEach(result => {
     // const { payoutTx } = result;
@@ -289,137 +303,153 @@ async function syncCoin() {
   }) */
 
   let duplicateTxs = {};
-  resultDatas.forEach(result => {
-    if(duplicateTxs[result.payoutTx.txId]) return; //multiple betresult have same payoutTx (txid), because multiple event can be processed in same payoutTx.
-    duplicateTxs[result.payoutTx.txId]=1;
+  resultDatas.forEach((result) => {
+    if (duplicateTxs[result.payoutTx.txId]) return; //multiple betresult have same payoutTx (txid), because multiple event can be processed in same payoutTx.
+    duplicateTxs[result.payoutTx.txId] = 1;
     // const { payoutTx } = result;
-    let startIndex = 2
+    let startIndex = 2;
     if (result.payoutTx && result.payoutTx.vout.length < 3) {
       console.log(result.payoutTx);
     } else {
       if (result.payoutTx.vout[1].address === result.payoutTx.vout[2].address) {
-        startIndex = 3
+        startIndex = 3;
       }
       for (let i = startIndex; i < result.payoutTx.vout.length - 1; i++) {
-        
-          if(result.payoutTx.vout[i].address === config.coin.oracle_payout_address[0] || result.payoutTx.vout[i].address === config.coin.dev_payout_address[0])
-          {
-            totalMintYTD += result.payoutTx.vout[i].value
+        if (
+          result.payoutTx.vout[i].address ===
+            config.coin.oracle_payout_address[0] ||
+          result.payoutTx.vout[i].address === config.coin.dev_payout_address[0]
+        ) {
+          if (result.payoutTx.createdAt >= start_of_year_date) {
+            //YTD
+            totalMintYTD += result.payoutTx.vout[i].value;
+          } else {
+            //fix figure + older years , not YTD
+            totalMintFigure += result.payoutTx.vout[i].value;
           }
-          
-        
+        }
       }
     }
-
-  }) 
-
-  
-  totalBetYTD = totalBetSingleYTD + totalBetParlayYTD // YTD
-
-  console.log('syncCoin4 YTD', totalMintYTD, totalBetYTD);
-  
-  rpc.timeout(50000)
-  const info = await rpc.call('getinfo');  
-  const masternodes = await rpc.call('getmasternodecount');
-  console.log('syncCoin1');
-  const nethashps = await rpc.call('getnetworkhashps');
-  const utxo = await UTXO.aggregate([
-    {$match: {address: {$ne: 'ZERO_COIN_MINT'}}},
-    {$match: {address: {$not: /OP_RETURN/}}},
-    {$group: {_id: 'supply', total: {$sum: '$value'}}}
-  ])
-  console.log('syncCoin2');
-  const firstSentFromOracle = (await TX.find({'vin.address': config.coin.oracle_payout_address[0]})
-    .sort({blockHeight: 1})
-    .limit(1).exec())[0]
-  let payoutPerSecond = 0
-  if (firstSentFromOracle){
-    const oracleTxs = await TX
-      .aggregate([
-        {
-          $match: {
-            $and: [
-              {'blockHeight': {$gt: firstSentFromOracle.blockHeight}},
-              {'vout.address': config.coin.oracle_payout_address[0]}
-            ]
-          }
-        },
-        {$sort: {blockHeight: 1}}
-      ])
-      .allowDiskUse(true)
-      .exec()
-
-    const payout = oracleTxs.reduce((acc, tx) => acc + tx.vout.reduce((a, t) => {
-      if (t.address === config.coin.oracle_payout_address[0]) {
-        return a + t.value
-      } else {
-        return a
-      }
-    }, 0.0), 0.0)
-    payoutPerSecond = payout / (moment().unix() - moment(firstSentFromOracle.createdAt).unix())
-  }
-
-  const oracleBalance = (await getAddressBalance(config.coin.oracle_payout_address[0])).balance
-
-  const profitOraclePerDay = payoutPerSecond * 60 * 60 * 24 / masternodes.stable;
-  const rewardMasternodePerDay = 2.85 * 1440 / masternodes.stable;
-  const totalROI = (profitOraclePerDay + rewardMasternodePerDay) * 36500 / 25000
-
-  console.log('syncCoin3');
-
-try {
-
-  const priceTicker = 'https://api.coingecko.com/api/v3/simple/price?ids=wagerr&vs_currencies=btc%2Cusd&include_market_cap=true';
-
-  let ticker = await fetch(priceTicker);
-  let usdPrice, btcPrice, marketCapUsd, marketCapBtc;
-
-  if (ticker.wagerr) {
-    usdPrice = ticker.wagerr.usd;
-    btcPrice = ticker.wagerr.btc;
-    marketCapUsd = ticker.wagerr.usd_market_cap;
-    marketCapBtc = ticker.wagerr.btc_market_cap;
-  }
-  
-  console.log('syncCoin5');
-  
-  const nextSuperBlock = await rpc.call('getnextsuperblock')
-  
-  const coin = new Coin({
-    cap: marketCapUsd,
-    capEur: 0,//eurMarket.quote.EUR.market_cap,
-    createdAt: last_block_date,
-    blocks: info.blocks,
-    btc: marketCapBtc,
-    btcPrice: btcPrice,
-    diff: info.difficulty,
-    mnsOff: masternodes.total - masternodes.stable,
-    mnsOn: masternodes.stable,
-    netHash: nethashps,
-    peers: info.connections,
-    status: 'Online',
-    supply: info.moneysupply,
-    usd: usdPrice,
-    eur: 0,//eurMarket.quote.EUR.price,
-    totalBetParlay: totalBetParlayYTD,
-    totalMintParlay: totalMintParlayYTD,
-    oracleBalance: oracleBalance,
-    totalBet: totalBetYTD + 548512041 , //2.0 + 3.0 supply is fixed
-    totalPendingBet: totalBetPending,
-    totalMint: totalMintYTD + 561968234 , 
-    totalBetYTD: totalBetYTD,
-    totalMintYTD: totalMintYTD,
-    oracleProfitPerSecond: payoutPerSecond,
-    totalROI: totalROI,
-    nextSuperBlock:nextSuperBlock
   });
 
-  await coin.save();
-} catch(err) {
-  log(err)
-  return;
-}
-  console.log('Finished coin sync function');
+  totalBetYTD = totalBetSingleYTD + totalBetParlayYTD; // YTD
+
+  console.log("syncCoin4 YTD", totalMintYTD, totalBetYTD);
+
+  rpc.timeout(50000);
+  const info = await rpc.call("getinfo");
+  const masternodes = await rpc.call("getmasternodecount");
+  console.log("syncCoin1");
+  const nethashps = await rpc.call("getnetworkhashps");
+  const utxo = await UTXO.aggregate([
+    { $match: { address: { $ne: "ZERO_COIN_MINT" } } },
+    { $match: { address: { $not: /OP_RETURN/ } } },
+    { $group: { _id: "supply", total: { $sum: "$value" } } },
+  ]);
+  console.log("syncCoin2");
+  const firstSentFromOracle = (
+    await TX.find({ "vin.address": config.coin.oracle_payout_address[0] })
+      .sort({ blockHeight: 1 })
+      .limit(1)
+      .exec()
+  )[0];
+  let payoutPerSecond = 0;
+  if (firstSentFromOracle) {
+    const oracleTxs = await TX.aggregate([
+      {
+        $match: {
+          $and: [
+            { blockHeight: { $gt: firstSentFromOracle.blockHeight } },
+            { "vout.address": config.coin.oracle_payout_address[0] },
+          ],
+        },
+      },
+      { $sort: { blockHeight: 1 } },
+    ])
+      .allowDiskUse(true)
+      .exec();
+
+    const payout = oracleTxs.reduce(
+      (acc, tx) =>
+        acc +
+        tx.vout.reduce((a, t) => {
+          if (t.address === config.coin.oracle_payout_address[0]) {
+            return a + t.value;
+          } else {
+            return a;
+          }
+        }, 0.0),
+      0.0
+    );
+    payoutPerSecond =
+      payout / (moment().unix() - moment(firstSentFromOracle.createdAt).unix());
+  }
+
+  const oracleBalance = (
+    await getAddressBalance(config.coin.oracle_payout_address[0])
+  ).balance;
+
+  const profitOraclePerDay =
+    (payoutPerSecond * 60 * 60 * 24) / masternodes.stable;
+  const rewardMasternodePerDay = (2.85 * 1440) / masternodes.stable;
+  const totalROI =
+    ((profitOraclePerDay + rewardMasternodePerDay) * 36500) / 25000;
+
+  console.log("syncCoin3");
+
+  try {
+    const priceTicker =
+      "https://api.coingecko.com/api/v3/simple/price?ids=wagerr&vs_currencies=btc%2Cusd&include_market_cap=true";
+
+    let ticker = await fetch(priceTicker);
+    let usdPrice, btcPrice, marketCapUsd, marketCapBtc;
+
+    if (ticker.wagerr) {
+      usdPrice = ticker.wagerr.usd;
+      btcPrice = ticker.wagerr.btc;
+      marketCapUsd = ticker.wagerr.usd_market_cap;
+      marketCapBtc = ticker.wagerr.btc_market_cap;
+    }
+
+    console.log("syncCoin5");
+
+    const nextSuperBlock = await rpc.call("getnextsuperblock");
+
+    const coin = new Coin({
+      cap: marketCapUsd,
+      capEur: 0, //eurMarket.quote.EUR.market_cap,
+      createdAt: last_block_date,
+      blocks: info.blocks,
+      btc: marketCapBtc,
+      btcPrice: btcPrice,
+      diff: info.difficulty,
+      mnsOff: masternodes.total - masternodes.stable,
+      mnsOn: masternodes.stable,
+      netHash: nethashps,
+      peers: info.connections,
+      status: "Online",
+      supply: info.moneysupply,
+      usd: usdPrice,
+      eur: 0, //eurMarket.quote.EUR.price,
+      totalBetParlay: totalBetParlay,
+      totalMintParlay: totalMintParlay,
+      oracleBalance: oracleBalance,
+      totalBet: totalBetYTD + totalBetFigure, 
+      totalPendingBet: totalBetPending,
+      totalMint: totalMintYTD + totalMintFigure,
+      totalBetYTD: totalBetYTD,
+      totalMintYTD: totalMintYTD,
+      oracleProfitPerSecond: payoutPerSecond,
+      totalROI: totalROI,
+      nextSuperBlock: nextSuperBlock,
+    });
+
+    await coin.save();
+  } catch (err) {
+    log(err);
+    return;
+  }
+  console.log("Finished coin sync function");
 }
 
 /**
