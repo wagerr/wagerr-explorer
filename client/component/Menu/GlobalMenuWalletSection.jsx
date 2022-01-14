@@ -127,7 +127,7 @@ export default class GlobalMenuWalletSection extends Component {
                         {this.state.walletBalance} {this.state.currentCoin} (
                         {Wallet.instance.currentNetwork?.name})
                       </DropdownToggle>
-                      <DropdownMenu>
+                      <DropdownMenu right>
                         {Object.keys(Wallet.instance.currentNetwork.coins).map(
                           (c) => {
                             return (
@@ -203,7 +203,7 @@ export default class GlobalMenuWalletSection extends Component {
                 height="24"
               />
             </DropdownToggle>
-            <DropdownMenu>
+            <DropdownMenu right>
               {Object.values(Networks()).map((n) => {
                 return (
                   <DropdownItem
