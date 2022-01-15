@@ -71,6 +71,7 @@ export default class CardParlayBetBox extends Component {
   }
 
   handleChange = async (e) => {
+    if (!Wallet.instance.currentProvider) return;
     const target = { ...e.target };
     this.setState({
       betAmount: target.value,
