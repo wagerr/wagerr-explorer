@@ -313,11 +313,15 @@ export default class Wallet {
   };
 
   getFee = async () => {
-    const res = await this.bettingContract.convertFeeToCoin(
-      this.currentCoin[this.currentNetwork.name]
-    );
+    try {
+      const res = await this.bettingContract.convertFeeToCoin(
+        this.currentCoin[this.currentNetwork.name]
+      );
 
-    return ethers.utils.formatEther(res);
+      return ethers.utils.formatEther(res);
+    } catch (e) {
+      return 0;
+    }
   };
   getCrosschainTx = async (txId) => {
     const bet = await getCrosschainBetByTxId({ chain: this.currentNetwork.chain, txid: txId });
