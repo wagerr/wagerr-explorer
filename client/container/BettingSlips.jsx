@@ -4,6 +4,7 @@ import CardSingleBetSlip from "../component/Card/CardSingleBetSlip";
 import CardParlayBetSlip from "../component/Card/CardParlayBetSlip";
 import CardParlayBetBox from "../component/Card/CardParlayBetBox";
 import PubSub from "pubsub-js";
+import classnames from "classnames";
 
 export default class BettingSlips extends Component {
   constructor(props) {
@@ -147,7 +148,14 @@ export default class BettingSlips extends Component {
             CLEAR SLIP
           </button>
         </div>
-        <div className="bet-black-card bet-slip-card animated fadeInUp scrollable">
+        <div className={classnames({
+          'bet-black-card': true,
+          'bet-slip-card': true,
+          animated: true,
+          fadeInUp: true,
+          scrollable: true,
+          'betslip-container__parlay': this.state.currentSelection === "parlay"
+        })} >
           {this.state.currentSelection == "single"
             ? this.state.currentSlips.single.map((slp, key) => {
                 return (

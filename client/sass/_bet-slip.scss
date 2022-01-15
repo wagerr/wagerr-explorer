@@ -1,7 +1,9 @@
 .betslip-container {
   margin-top: 50px;
+  &__parlay {
+  max-height:460px!important;
+  }
 }
-
 .bet-select {
   align-items: center;
   background: black;
