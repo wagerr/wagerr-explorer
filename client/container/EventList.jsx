@@ -119,7 +119,7 @@ class EventList extends Component {
 
       getMethod()
         .then((data) => {
-          if (!data.events) setTimeout(this.refreshEvents,5000);
+          if (!data.events) setTimeout(this.refreshEvents,1000);
           
           this.setState(
             { events: data.events , loading: false },
