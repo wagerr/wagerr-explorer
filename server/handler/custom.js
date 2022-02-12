@@ -1,8 +1,10 @@
+const _ = require("lodash");
 const Coin = require("../../model/coin");
 const BetAction = require("../../model/betaction");
 const BetParlay = require("../../model/betparlay");
 const config = require("../../config");
 const TX = require("../../model/tx");
+const BLOCK = require("../../model/block");
 const { BigNumber } = require("bignumber.js");
 const UTXO = require("../../model/utxo");
 const { rpc } = require("../../lib/cron");
@@ -301,6 +303,46 @@ const getunspenttransactions = async (req, res) => {
   }
 };
 
+const gettransaction = async (req, res) => {
+  if (!req.query.hash || !isNaN(req.query.hash)) {
+    throw new Error("Transaction hash must be a string!");
+  }
+  const hash = req.query.hash;
+  try {
+    const rawTx = await TX.findOne({ txId: hash }).lean();
+    if (!rawTx) {
+      return res.json({
+        txid: hash,
+        confirmations: 0,
+        status: {
+          confirmed: false,
+          block_height: -1,
+          block_hash: "",
+          block_time: Math.floor(new Date().getTime() / 1000),
+        },
+      });
+    }
+    const block = await BLOCK.findOne({ height: rawTx.blockHeight });
+
+    const txinfo = _.merge(
+      { txid: rawTx.txId,
+        confirmations: block.confirmations,
+        status: {
+          confirmed: block.confirmations > 0,
+          block_height: block.height,
+          block_hash: block.hash,
+          block_time: Math.floor(new Date(block.createdAt).getTime() / 1000),
+        },
+      },
+      rawTx
+    );
+    res.json(txinfo);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message || err);
+  }
+};
+
 const getMapping = async (req, res) => {
   try {
     const search = req.params.search;
@@ -327,5 +369,6 @@ module.exports = {
   getAddressesInfo,
   getBetsForAccount,
   getunspenttransactions,
+  gettransaction,
   getMapping,
 };

@@ -76,6 +76,7 @@ router.get('/custom/totalpayout', custom.getTotalPayout);
 router.get('/custom/getaddressesinfo/:hashlist', custom.getAddressesInfo);
 router.get('/custom/getbetsforaccount/:hashlist', custom.getBetsForAccount);
 router.get('/custom/getunspenttransactions/:hashlist', custom.getunspenttransactions);
+router.get("/custom/gettransaction", custom.gettransaction);
 router.get('/custom/mapping/:search',custom.getMapping);
 
 
