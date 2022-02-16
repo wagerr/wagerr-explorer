@@ -158,21 +158,20 @@ export default class CardParlayBetBox extends Component {
           {this.state.betAmount > 0 && !isValidBetAmount(this.state.betAmount) && (
             <p className="text-center">
               {" "}
-              (Min {MIN_BETTING_AMOUNT} - Max {MAX_BETTING_AMOUNT})
+              Amount error: (Min {MIN_BETTING_AMOUNT} - Max {MAX_BETTING_AMOUNT})
             </p>
           )}
           {isValidBetAmount(this.state.betAmount) && (
             <div>
               <p className="text-center">
-                Actual: {_.round(this.state.minAmountIn, 5)}{" "}
+                Total: {_.round(this.state.minAmountIn, 5)}{" "}
                 {Wallet.instance.currentProvider == "MM"
-                  ? " , (fees included): " + (+this.state.chainFee).toFixed(4)
+                  ? " , fees included : " + (+this.state.chainFee).toFixed(4)
                   : ""}{" "}
                 {Wallet.instance.currentCoin.label}
               </p>
               <label className="place-bet-box__label text-center">
-                Potential Returns :
-                <span>{this.state.potentialReturn} tWGR</span>
+                Potential Return :<span>{this.state.potentialReturn} tWGR</span>
               </label>
             </div>
           )}

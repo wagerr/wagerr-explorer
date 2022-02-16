@@ -183,7 +183,8 @@ export default class CardSingleBetSlip extends Component {
             {this.state.betAmount > 0 &&
               !isValidBetAmount(this.state.betAmount) && (
                 <p className="text-center text-danger mb-3">
-                  (Min {MIN_BETTING_AMOUNT} - Max {MAX_BETTING_AMOUNT})
+                  Amount error: (Min {MIN_BETTING_AMOUNT} - Max{" "}
+                  {MAX_BETTING_AMOUNT})
                 </p>
               )}
             {isValidBetAmount(this.state.betAmount) && (

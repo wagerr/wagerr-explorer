@@ -28,21 +28,42 @@ class BettingMenuDesktop extends Component {
 
     return generateBettingMenu(this.props.events).map((i, idx) => {
       const isActive = props.location.pathname.includes(i.href);
-      return (
+      const isDisabled = !(i.count > 0);
+      return isDisabled ? (
+        <div className="betting-menu">
+          <img
+            alt={i.href}
+            className="betting-menu-desktop__item-icon"
+            src={`/img/uiupdate/betting_${i.href}_${
+              isActive ? "red" : "white"
+            }.png`}
+            title={this.state.isOpen ? null : i.label}
+          />
+          <div className="menu-betting-label flex-1">{i.label}</div>
+          <div className="menu-betting-label ft-12">
+            {i.count > 0 && "(" + i.count + ")"}
+          </div>
+        </div>
+      ) : (
         <Link
           key={idx}
-          to={'/betting/' + i.href}
-          className={`betting-menu ${isActive && 'betting-menu--active'}`}
+          to={"/betting/" + i.href}
+          className={`betting-menu ${isActive && "betting-menu--active"}`}
         >
           <img
             alt={i.href}
             className="betting-menu-desktop__item-icon"
-            src={`/img/uiupdate/betting_${i.href}_${isActive ? 'red' : 'white'}.png`}
-            title={this.state.isOpen ? null : i.label} />
-          <div className="menu-betting-label flex-1" >{i.label}</div>
-          <div className="menu-betting-label ft-12" >{i.count > 0 && "(" + i.count + ")"}</div>
+            src={`/img/uiupdate/betting_${i.href}_${
+              isActive ? "red" : "white"
+            }.png`}
+            title={this.state.isOpen ? null : i.label}
+          />
+          <div className="menu-betting-label flex-1">{i.label}</div>
+          <div className="menu-betting-label ft-12">
+            {i.count > 0 && "(" + i.count + ")"}
+          </div>
         </Link>
-      )
+      );
     }
     )
   };
