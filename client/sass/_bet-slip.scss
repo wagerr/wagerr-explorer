@@ -1,7 +1,7 @@
 .betslip-container {
   margin-top: 50px;
   &__parlay {
-  max-height:460px!important;
+  max-height:500px!important;
   }
 }
 .bet-select {
@@ -115,14 +115,25 @@
   right: 2rem;
   margin-top: 0.8rem;
 }
-.bet-returns {
+.bet-figures{
   margin-top: 10px;
   font-size: 14px;
-  line-height: 2;
-  p.total {
+
+ text-align: left!important;
+ padding:5px;
+ margin: auto;
+ width:250px;
+ border: 1px solid #b40101;
+ p.title {
+   margin-bottom: 2px;
+   font-weight: 800;
+   color: #b40101;
+   text-align: center;
+
+ }
+ span {
     color: #b40101;
-    font-weight: 600;
-  }
+ }
 }
 
 /* The container */

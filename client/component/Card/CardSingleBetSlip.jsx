@@ -26,11 +26,11 @@ export default class CardSingleBetSlip extends Component {
   handleChange = async (e) => {
     if (!Wallet.instance.currentProvider) return;
     const target = { ...e.target };
-    
+
     if (!target.value || target.value <= 0) {
       this.setState({ betAmount: "" });
       return;
-    };
+    }
     this.setState({ betAmount: target.value });
 
     if (Wallet.instance.currentProvider == "WGR") {
@@ -50,43 +50,51 @@ export default class CardSingleBetSlip extends Component {
     const { event } = this.props;
     switch (event.outcome) {
       case 1:
+        event.betType = "ML";
         event.outComeTeam = event.teams.home;
         event.selectedOddValue = event.odds[0].mlHome;
         event.effectiveOddValue = event.odds[0].mlHomeEO;
         break;
       case 2:
+        event.betType = "ML";
         event.outComeTeam = event.teams.away;
         event.selectedOddValue = event.odds[0].mlAway;
         event.effectiveOddValue = event.odds[0].mlAwayEO;
         break;
       case 3:
-        event.outComeTeam = "";
+        event.betType = "ML";
+        event.outComeTeam = "DRAW";
         event.selectedOddValue = event.odds[0].mlDraw;
         event.effectiveOddValue = event.odds[0].mlDrawEO;
         break;
       case 4:
+        event.betType = "SP";
         event.outComeTeam = event.teams.home;
         event.selectedOddValue = event.odds[1].spreadHome;
         event.effectiveOddValue = event.odds[1].spreadHomeEO;
         event.handicap = "Handicape " + event.spreadPoints;
         break;
       case 5:
+        event.betType = "SP";
         event.outComeTeam = event.teams.away;
         event.selectedOddValue = event.odds[1].spreadAway;
         event.effectiveOddValue = event.odds[1].spreadAwayEO;
         event.handicap = "Handicape " + event.spreadPoints;
         break;
       case 6:
-        event.outComeTeam = "Over " + event.odds[2].totalsPoints;
+        event.betType = "OVER";
+        event.outComeTeam = event.odds[2].totalsPoints;
         event.selectedOddValue = event.odds[2].totalsOver;
         event.effectiveOddValue = event.odds[2].totalsOverEO;
         break;
       case 7:
-        event.outComeTeam = "Under " + event.odds[2].totalsPoints;
+        event.betType = "UNDER";
+        event.outComeTeam = event.odds[2].totalsPoints;
         event.selectedOddValue = event.odds[2].totalsUnder;
         event.effectiveOddValue = event.odds[2].totalsUnderEO;
         break;
     }
+
     this.setState({ event: event });
   };
 
@@ -130,10 +138,10 @@ export default class CardSingleBetSlip extends Component {
     PubSub.publish("processing", false);
   };
 
-
   render() {
     const { props } = this;
-    const isValidBetAmount = (betAmount) => betAmount >= MIN_BETTING_AMOUNT && betAmount <= MAX_BETTING_AMOUNT;
+    const isValidBetAmount = (betAmount) =>
+      betAmount >= MIN_BETTING_AMOUNT && betAmount <= MAX_BETTING_AMOUNT;
     return (
       this.state.event && (
         <div className="bet-slip-box">
@@ -147,7 +155,11 @@ export default class CardSingleBetSlip extends Component {
               </button>
             </div>
             <label>YOUR PICK :</label>
-            <label className="team-name">{this.state.event.outComeTeam}</label>
+            <label className="team-name">
+              {this.state.event.betType}
+              {" | "}
+              {this.state.event.outComeTeam}
+            </label>
             <span className="slip-body__points">
               {this.state.event.selectedOddValue}
             </span>
@@ -188,23 +200,28 @@ export default class CardSingleBetSlip extends Component {
                 </p>
               )}
             {isValidBetAmount(this.state.betAmount) && (
-              <div>
-                <p className="text-center">
-                  Actual: {_.round(this.state.minAmountIn, 6)}
-                  {Wallet.instance.currentProvider == "MM"
-                    ? " , (fees included): " + (+this.state.chainFee).toFixed(4)
-                    : ""}{" "}
-                  {Wallet.instance.currentCoin.label}
+              <div className="bet-figures">
+                <p className="title"> Transaction Details</p>
+                <p>
+                  <span>Total: </span>
+                  {_.round(this.state.minAmountIn, 6)}
                 </p>
-                <div className="bet-returns">
-                  <p>Potential Returns:</p>
-                  <p className="total">
-                    {_.round(
-                      this.state.betAmount * this.state.event.effectiveOddValue,
-                      2
-                    )}
-                  </p>
-                </div>
+                
+                  {Wallet.instance.currentProvider == "MM"
+                    ? <p>
+                        <span>Fees included: </span>
+                    {(+this.state.chainFee).toFixed(4)}</p>
+                    : ""}
+                  {Wallet.instance.currentCoin.label}
+               
+                <p>
+                  <span>Potential Returns: </span>
+                  {_.round(
+                    this.state.betAmount * this.state.event.effectiveOddValue,
+                    2
+                  )} {" "}
+                  WGR (less fees)
+                </p>
               </div>
             )}
           </div>
