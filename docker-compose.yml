@@ -32,7 +32,7 @@ services:
     command: dev.sh
 
   mongo:
-    image: mongo:latest
+    image: mongo:5.0
     env_file: .env
     restart: always
     networks:
